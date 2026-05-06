@@ -8,9 +8,12 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 import json
 import re
+import os
 import requests
 import subprocess
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+
+REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
 AIP_URL = "https://aip.dfs.de/BasicAIP/"
 NFL_FALLBACK_URL = "https://nfl.dfs.de/basic/scripts/stub/startApplication.php"
@@ -137,16 +140,17 @@ def main():
         export['eintraege'] = unique
         print(f"{len(unique)} NfL-Einträge gespeichert.")
 
-        with open("nfl_notams_export.json", "w", encoding="utf-8") as f:
+        out_path = os.path.join(REPO_DIR, "nfl_notams_export.json")
+        with open(out_path, "w", encoding="utf-8") as f:
             json.dump(export, f, indent=2, ensure_ascii=False)
 
         print("JSON gespeichert.")
 
         git = r"C:\Program Files\Git\cmd\git.exe"
-        subprocess.run([git, "add", "nfl_notams_export.json"], check=True)
-        result = subprocess.run([git, "commit", "-m", "NfL-NOTAMs automatisch aktualisiert"])
+        subprocess.run([git, "-C", REPO_DIR, "add", "nfl_notams_export.json"], check=True)
+        result = subprocess.run([git, "-C", REPO_DIR, "commit", "-m", "NfL-NOTAMs automatisch aktualisiert"])
         if result.returncode == 0:
-            subprocess.run([git, "push"], check=True)
+            subprocess.run([git, "-C", REPO_DIR, "push"], check=True)
             print("GitHub aktualisiert.")
         else:
             print("Keine Änderungen – kein Push nötig.")
