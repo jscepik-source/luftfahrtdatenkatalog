@@ -920,7 +920,7 @@ function baueKarte(icao, ap) {
                 <div class="notam-extern">
                     <span class="notam-extern-label">Weitere Quellen:</span>
                     <a class="btn-ext" href="https://www.icao.int/safety/iStars/Pages/NOTAM-Search.aspx" target="_blank" rel="noopener">🌐 ICAO NOTAMSearch</a>
-                    <a class="btn-ext" href="https://notams.aim.faa.gov/notamSearch" target="_blank" rel="noopener">✈ FAA NOTAM</a>
+                    <a class="btn-ext" href="https://notams.aim.faa.gov/notamSearch/nsapp.html#/" target="_blank" rel="noopener">✈ FAA NOTAM System</a>
                     <a class="btn-ext" href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">🇪🇺 EAD Basic / DFS AIM</a>
                 </div>
             </section>
@@ -1030,43 +1030,51 @@ async function ladeWetter(icao) {
     }
 }
 
+async function fetchNotamDaten(icao) {
+    const url = `https://aviationweather.gov/api/data/notam?format=json&location=${icao}`;
+    const versuche = [
+        { label: 'Aviation Weather Center (direkt)', u: url },
+        { label: 'via allorigins.win', u: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
+        { label: 'via corsproxy.io',   u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
+        { label: 'via codetabs.com',   u: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}` },
+    ];
+    for (const { label, u } of versuche) {
+        try {
+            const res = await fetch(u);
+            if (!res.ok) continue;
+            const text = await res.text();
+            const data = JSON.parse(text);
+            return { data: Array.isArray(data) ? data : [], quelle: label };
+        } catch(e) { console.warn('NOTAM Versuch fehlgeschlagen:', u, e.message); }
+    }
+    throw new Error('Alle Quellen fehlgeschlagen');
+}
+
 async function ladeNotams(icao) {
     const el = document.getElementById(`notam-${icao}`);
     if (!el || el.dataset.geladen) return;
     el.dataset.geladen = '1';
     if (notamcache[icao]) { el.innerHTML = notamcache[icao]; return; }
     try {
-        const { data, quelle } = await fetchProxy(`https://aviationweather.gov/api/data/notam?format=json&location=${icao}`);
+        const { data, quelle } = await fetchNotamDaten(icao);
+        let html = '';
         if (!data || data.length === 0) {
-            const h = `<span class="status-loading">Keine NOTAMs gefunden</span><p class="wx-quelle">Quelle: ${quelle}</p>`;
-            notamcache[icao] = h; el.innerHTML = h; return;
+            html = `<span class="status-loading">Keine NOTAMs für ${icao} gefunden</span>`;
+        } else {
+            html = `<div class="notam-list">${data.slice(0, 15).map(n => {
+                const text = n.notamText || n.text || JSON.stringify(n);
+                const nr   = n.notamNumber || n.number || '';
+                const von  = n.startTime ? new Date(n.startTime).toUTCString().slice(5,22) : '';
+                const bis  = n.endTime   ? new Date(n.endTime).toUTCString().slice(5,22)   : '';
+                return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis}</span>\n` : ''}${text}</div>`;
+            }).join('')}${data.length > 15 ? `<p class="status-loading">… und ${data.length - 15} weitere NOTAMs</p>` : ''}</div>`;
         }
-        const html = `<div class="notam-list">${data.slice(0, 15).map(n => {
-            const text = n.notamText || n.text || '';
-            const nr   = n.notamNumber || n.number || '';
-            const von  = n.startTime  ? new Date(n.startTime).toUTCString().slice(0,22)  : '';
-            const bis  = n.endTime    ? new Date(n.endTime).toUTCString().slice(0,22)    : '';
-            return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von}–${bis}</span>\n` : ''}${text}</div>`;
-        }).join('')}${data.length > 15 ? `<p class="status-loading">… und ${data.length - 15} weitere NOTAMs</p>` : ''}</div>
-        <p class="wx-quelle">Quelle: ${quelle}</p>`;
+        html += `<p class="wx-quelle">Quelle: ${quelle}</p>`;
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
-        el.innerHTML = `<span class="status-error">NOTAMs nicht verfügbar: ${e.message}</span>`;
-        console.error('NOTAM Fehler:', e);
-    }
-    // NfL-Einträge (DFS Nachrichten für Luftfahrer) anhängen
-    if (nflDaten.length > 0) {
-        const nflEl = document.createElement('div');
-        nflEl.className = 'card-section';
-        nflEl.innerHTML = `
-            <h3 class="section-title">📋 DFS NfL (Nachrichten für Luftfahrer)</h3>
-            <div class="notam-list">${nflDaten.slice(0, 20).map(n =>
-                `<div class="notam-item"><strong>${n.nummer}</strong>${n.teil ? ' · ' + n.teil : ''}</div>`
-            ).join('')}</div>
-            ${nflDaten.length > 20 ? `<p class="wx-quelle">… und ${nflDaten.length - 20} weitere NfL-Einträge</p>` : ''}
-            <p class="wx-quelle">Quelle: DFS AIP BasicAIP</p>`;
-        el.after(nflEl);
+        el.innerHTML = `<span class="status-error">NOTAMs nicht verfügbar</span>`;
+        console.error('NOTAM Fehler:', icao, e);
     }
 }
 
