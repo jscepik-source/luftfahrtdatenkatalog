@@ -351,8 +351,9 @@
         }
 
         .card-info { flex: 1; min-width: 0; }
-        .card-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-text); }
         .card-meta { font-size: 0.78rem; color: var(--color-text-sub); margin-top: 3px; }
+        [data-theme="dark"] .card-name { color: #ffffff; }
 
         .badge-type {
             font-size: 0.7rem;
@@ -946,15 +947,20 @@ async function fetchProxy(url) {
         url,
         `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
         `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-        `https://corsproxy.io/?${url}`,
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
     ];
     for (const versuch of versuche) {
         try {
             const res = await fetch(versuch);
-            if (res.ok) return await res.json();
-        } catch(e) {}
+            if (!res.ok) { console.warn('fetchProxy nicht ok:', versuch, res.status); continue; }
+            const data = await res.json();
+            console.log('fetchProxy OK via:', versuch);
+            return data;
+        } catch(e) {
+            console.warn('fetchProxy Fehler:', versuch, e.message);
+        }
     }
-    throw new Error('Keine Daten verfügbar');
+    throw new Error('Alle Proxies fehlgeschlagen');
 }
 
 async function ladeWetter(icao) {
@@ -1002,7 +1008,8 @@ async function ladeWetter(icao) {
         wettercache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
-        el.innerHTML = '<span class="status-error">Wetterdaten nicht verfügbar</span>';
+        console.error('Wetter Fehler:', e);
+        el.innerHTML = `<span class="status-error">Wetterdaten nicht verfügbar (${e.message}) — siehe Browser-Konsole (F12)</span>`;
     }
 }
 
