@@ -941,16 +941,31 @@ function ladeErst(icao, lat, lon) {
         <div class="sun-item"><dt>Sonnenuntergang</dt><dd>${s.unter}</dd></div>`;
 }
 
+const PROXIES = [
+    url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    url => `https://corsproxy.io/?${url}`,
+];
+
+async function fetchProxy(url) {
+    for (const proxy of PROXIES) {
+        try {
+            const res = await fetch(proxy(url), { signal: AbortSignal.timeout(8000) });
+            if (res.ok) return res.json();
+        } catch(e) {}
+    }
+    throw new Error('Alle Proxies fehlgeschlagen');
+}
+
 async function ladeWetter(icao) {
     const el = document.getElementById(`wetter-${icao}`);
     if (!el || el.dataset.geladen) return;
     el.dataset.geladen = '1';
     if (wettercache[icao]) { el.innerHTML = wettercache[icao]; return; }
     try {
-        const proxy = 'https://corsproxy.io/?';
         const [mRes, tRes] = await Promise.all([
-            fetch(proxy + `https://aviationweather.gov/api/data/metar?ids=${icao}&format=json&hours=2`).then(r => r.json()),
-            fetch(proxy + `https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`).then(r => r.json())
+            fetchProxy(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=json&hours=2`),
+            fetchProxy(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`)
         ]);
         let html = '';
         if (mRes && mRes.length > 0) {
@@ -997,8 +1012,7 @@ async function ladeNotams(icao) {
     el.dataset.geladen = '1';
     if (notamcache[icao]) { el.innerHTML = notamcache[icao]; return; }
     try {
-        const res = await fetch('https://corsproxy.io/?' + `https://aviationweather.gov/api/data/notam?format=json&location=${icao}`);
-        const data = await res.json();
+        const data = await fetchProxy(`https://aviationweather.gov/api/data/notam?format=json&location=${icao}`);
         if (!data || data.length === 0) {
             const h = '<span class="status-loading">Keine NOTAMs gefunden</span>';
             notamcache[icao] = h; el.innerHTML = h; return;
