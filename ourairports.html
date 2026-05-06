@@ -703,6 +703,12 @@ let aktuelleEintraege = [];
 let angezeigtBis = 0;
 const wettercache = {};
 const notamcache = {};
+let nflDaten = [];
+
+fetch('https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json')
+    .then(r => r.json())
+    .then(d => { nflDaten = d.eintraege || []; })
+    .catch(() => {});
 
 const TYP_LABEL = {
     large_airport:'Großflughafen', medium_airport:'Regionalflughafen',
@@ -1046,7 +1052,21 @@ async function ladeNotams(icao) {
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
-        el.innerHTML = '<span class="status-error">NOTAMs nicht verfügbar</span>';
+        el.innerHTML = `<span class="status-error">NOTAMs nicht verfügbar: ${e.message}</span>`;
+        console.error('NOTAM Fehler:', e);
+    }
+    // NfL-Einträge (DFS Nachrichten für Luftfahrer) anhängen
+    if (nflDaten.length > 0) {
+        const nflEl = document.createElement('div');
+        nflEl.className = 'card-section';
+        nflEl.innerHTML = `
+            <h3 class="section-title">📋 DFS NfL (Nachrichten für Luftfahrer)</h3>
+            <div class="notam-list">${nflDaten.slice(0, 20).map(n =>
+                `<div class="notam-item"><strong>${n.nummer}</strong>${n.teil ? ' · ' + n.teil : ''}</div>`
+            ).join('')}</div>
+            ${nflDaten.length > 20 ? `<p class="wx-quelle">… und ${nflDaten.length - 20} weitere NfL-Einträge</p>` : ''}
+            <p class="wx-quelle">Quelle: DFS AIP BasicAIP</p>`;
+        el.after(nflEl);
     }
 }
 
