@@ -5,6 +5,9 @@ on:
     - cron: '0 */6 * * *'  # Alle 6 Stunden
   workflow_dispatch:        # Auch manuell startbar
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -23,7 +26,7 @@ jobs:
         run: pip install selenium requests beautifulsoup4
 
       - name: Chrome installieren
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v1.7.2
 
       - name: Flughafen-Bot ausführen
         run: python dfs_bot.py
