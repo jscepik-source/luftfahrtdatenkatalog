@@ -1058,8 +1058,11 @@ async function ladeNotams(icao) {
     try {
         const { data, quelle } = await fetchNotamDaten(icao);
         let html = '';
+        const isEurope = icao.match(/^(E[BDGHIKLMNOPSTU]|L[BEFGHIKLMORSTU]|U[BDEGHIKLM])/);
         if (!data || data.length === 0) {
-            html = `<span class="status-loading">Keine NOTAMs für ${icao} gefunden</span>`;
+            html = `<span class="status-loading">
+                Keine NOTAMs in Aviation Weather Center (US-System)${isEurope ? ' — für europäische Flughäfen bitte EAD oder ICAO iStars verwenden' : ''}.
+            </span>`;
         } else {
             html = `<div class="notam-list">${data.slice(0, 15).map(n => {
                 const text = n.notamText || n.text || JSON.stringify(n);
