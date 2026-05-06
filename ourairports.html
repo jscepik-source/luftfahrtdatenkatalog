@@ -540,6 +540,7 @@
         }
 
         .wx-quelle { font-size: 0.7rem; color: var(--color-text-dim); margin-top: var(--space-xs); }
+        .notam-zeit { font-size: 0.7rem; color: var(--color-text-dim); display: block; margin-bottom: 2px; }
 
         /* ── NOTAMs ── */
         .notam-list { display: flex; flex-direction: column; gap: var(--space-xs); }
@@ -1029,14 +1030,19 @@ async function ladeNotams(icao) {
     el.dataset.geladen = '1';
     if (notamcache[icao]) { el.innerHTML = notamcache[icao]; return; }
     try {
-        const data = await fetchProxy(`https://aviationweather.gov/api/data/notam?format=json&location=${icao}`);
+        const { data, quelle } = await fetchProxy(`https://aviationweather.gov/api/data/notam?format=json&location=${icao}`);
         if (!data || data.length === 0) {
-            const h = '<span class="status-loading">Keine NOTAMs gefunden</span>';
+            const h = `<span class="status-loading">Keine NOTAMs gefunden</span><p class="wx-quelle">Quelle: ${quelle}</p>`;
             notamcache[icao] = h; el.innerHTML = h; return;
         }
-        const html = `<div class="notam-list">${data.slice(0, 10).map(n =>
-            `<div class="notam-item">${n.notamText || n.text || JSON.stringify(n)}</div>`
-        ).join('')}${data.length > 10 ? `<p class="status-loading">… und ${data.length - 10} weitere</p>` : ''}</div>`;
+        const html = `<div class="notam-list">${data.slice(0, 15).map(n => {
+            const text = n.notamText || n.text || '';
+            const nr   = n.notamNumber || n.number || '';
+            const von  = n.startTime  ? new Date(n.startTime).toUTCString().slice(0,22)  : '';
+            const bis  = n.endTime    ? new Date(n.endTime).toUTCString().slice(0,22)    : '';
+            return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von}–${bis}</span>\n` : ''}${text}</div>`;
+        }).join('')}${data.length > 15 ? `<p class="status-loading">… und ${data.length - 15} weitere NOTAMs</p>` : ''}</div>
+        <p class="wx-quelle">Quelle: ${quelle}</p>`;
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
