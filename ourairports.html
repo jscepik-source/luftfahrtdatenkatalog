@@ -539,6 +539,8 @@
             line-height: 1.7;
         }
 
+        .wx-quelle { font-size: 0.7rem; color: var(--color-text-dim); margin-top: var(--space-xs); }
+
         /* ── NOTAMs ── */
         .notam-list { display: flex; flex-direction: column; gap: var(--space-xs); }
         .notam-item {
@@ -942,23 +944,27 @@ function ladeErst(icao, lat, lon) {
         <div class="sun-item"><dt>Sonnenuntergang</dt><dd>${s.unter}</dd></div>`;
 }
 
+const PROXY_NAMEN = {
+    direct: 'Aviation Weather Center (direkt)',
+    allorigins: 'Aviation Weather Center via allorigins.win',
+    corsproxy: 'Aviation Weather Center via corsproxy.io',
+    codetabs: 'Aviation Weather Center via codetabs.com',
+};
+
 async function fetchProxy(url) {
     const versuche = [
-        url,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+        { key: 'direct',    u: url },
+        { key: 'allorigins', u: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
+        { key: 'corsproxy',  u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
+        { key: 'codetabs',   u: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}` },
     ];
-    for (const versuch of versuche) {
+    for (const { key, u } of versuche) {
         try {
-            const res = await fetch(versuch);
-            if (!res.ok) { console.warn('fetchProxy nicht ok:', versuch, res.status); continue; }
+            const res = await fetch(u);
+            if (!res.ok) continue;
             const data = await res.json();
-            console.log('fetchProxy OK via:', versuch);
-            return data;
-        } catch(e) {
-            console.warn('fetchProxy Fehler:', versuch, e.message);
-        }
+            return { data, quelle: PROXY_NAMEN[key] };
+        } catch(e) {}
     }
     throw new Error('Alle Proxies fehlgeschlagen');
 }
@@ -969,10 +975,13 @@ async function ladeWetter(icao) {
     el.dataset.geladen = '1';
     if (wettercache[icao]) { el.innerHTML = wettercache[icao]; return; }
     try {
-        const [mRes, tRes] = await Promise.all([
+        const [mResult, tResult] = await Promise.all([
             fetchProxy(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=json&hours=2`),
             fetchProxy(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`)
         ]);
+        const mRes = mResult.data;
+        const tRes = tResult.data;
+        const quelle = mResult.quelle;
         let html = '';
         if (mRes && mRes.length > 0) {
             const m = mRes[0];
@@ -1005,6 +1014,7 @@ async function ladeWetter(icao) {
                 <pre class="taf-pre">${tRes[0].rawTAF}</pre>
             </section>`;
         }
+        html += `<p class="wx-quelle">Quelle: ${quelle}</p>`;
         wettercache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
