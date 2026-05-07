@@ -29,7 +29,7 @@
   "EBBR": {
     "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBR-en-GB.html",
     "karten": {
-      "https://ops.skeyes.be/html/internal_static/eaip/eAIP_Product/Documents/EBBR_Standard_Push-back_Procedures.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Product/Documents/EBBR_Standard_Push-back_Procedures.pdf",
+      "Standard Push-back Procedures": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Product/Documents/EBBR_Standard_Push-back_Procedures.pdf",
       "ADC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_ADC01_v64.pdf",
       "ADC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_ADC02_v25.pdf",
       "ADC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_ADC03_v08.pdf",
@@ -268,7 +268,7 @@
   "EBCV": {
     "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBCV-en-GB.html",
     "karten": {
-      "https://ops.skeyes.be/html/internal_static/eaip/eAIP_Product/Forms/EBCV_PPR_Form.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Product/Forms/EBCV_PPR_Form.pdf",
+      "PPR Form": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Product/Forms/EBCV_PPR_Form.pdf",
       "EB_AD_2_EBCV_GMC_01_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBCV_GMC_01_en_v04.pdf",
       "EB_AD_2_EBCV_IAC_01_en_v16.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBCV_IAC_01_en_v16.pdf",
       "EB_AD_2_EBCV_IAC_02_en_v14.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBCV_IAC_02_en_v14.pdf",

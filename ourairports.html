@@ -1246,6 +1246,14 @@ const FAA_GRUPPEN_DEF = [
     { label: '🗺 Übersicht',  re: /AREA|ENROUTE|FLYWAY|CHART/i,                           offen: true },
     { label: '📋 Sonstiges',  re: null,                                                     offen: true },
 ];
+const GENERIC_GRUPPEN_DEF = [
+    { label: '🏗 Platz & Rollwege',    re: /^(ADC|GMC|APDC|AOC|PATC|PDC|GC|GND|GRD|SMAC|ATCS|Aerodrome|Ground|Parking|Docking|Obstacle|Terrain)/i, offen: true  },
+    { label: '🔽 Anflüge – STAR',      re: /^STAR|arrival/i,                                                                                           offen: true  },
+    { label: '🎯 Instrumentenanflüge', re: /^(IAC|ILS|RNAV|RNP|VOR|NDB|LOC|LDA|GPS|APP|Instrument|Approach)/i,                                        offen: true  },
+    { label: '🛫 Abflüge – SID',       re: /^(SID|DEP|Departure)/i,                                                                                    offen: true  },
+    { label: '🗺 Sichtanflug',         re: /^(VAC|VFR|Visual|Sicht)/i,                                                                                 offen: true  },
+    { label: '📋 Sonstiges',           re: null,                                                                                                         offen: true  },
+];
 
 function verteileGruppen(eintraege, defs) {
     const gs = defs.map(d => ({ ...d, items: [] }));
@@ -1375,7 +1383,7 @@ async function ladeDfsKarten(icao) {
             const eintrag = kat && kat[icao];
             const aipInfo = getAipLink(icao);
             const titel = aipInfo ? `🗺 ${aipInfo.name}` : `🗺 AIP-Karten (${prefix})`;
-            html += chartSection(titel, eintrag, null);
+            html += chartSection(titel, eintrag, null, GENERIC_GRUPPEN_DEF);
         } catch(e) {}
     }
 

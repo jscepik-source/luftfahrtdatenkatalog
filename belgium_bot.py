@@ -61,7 +61,7 @@ def get_links(url):
 def chart_label(href, text):
     """Lesbarer Kartenname aus Linktext oder Dateiname."""
     t = text.strip()
-    if t and len(t) > 2 and not t.startswith('../'):
+    if t and len(t) > 2 and not t.startswith('../') and '://' not in t and len(t) < 80:
         return t
     fname = unquote(href.split('/')[-1].split('?')[0])
     m = LABEL_RE.match(fname)
