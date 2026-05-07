@@ -27,9 +27,9 @@ LAENDER = [
     {
         'prefix':    'EB',
         'name':      'skeyes eAIP Belgien',
-        'portal':    'https://ops.skeyes.be/',
+        'portal':    'https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/index-en-GB.html',
         'eaip_re':   re.compile(r'ops\.skeyes\.be.*index.*en-GB\.html', re.I),
-        'fallback':  'https://ops.skeyes.be/html/belgocontrol_static/eaip/eAIP_Main/html/index-en-GB.html',
+        'fallback':  'https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/index-en-GB.html',
         'output':    'eb_katalog_export.json',
     },
     {
