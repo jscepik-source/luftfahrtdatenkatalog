@@ -43,6 +43,10 @@ jobs:
       - name: FAA-Karten-Bot ausführen
         run: python faa_bot.py
 
+      - name: Südafrika-Bot ausführen
+        run: python southafrica_bot.py
+        continue-on-error: true
+
       - name: Austrocontrol-Bot ausführen
         run: python austrocontrol_bot.py
         continue-on-error: true
