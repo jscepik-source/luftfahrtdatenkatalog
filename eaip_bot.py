@@ -351,13 +351,7 @@ LAND_KONFIGS = [
         'output':   'fa_katalog_export.json',
     },
     # ── Asien-Pazifik ───────────────────────────────────────────────────────
-    {
-        'prefix':   'RJ',
-        'name':     'JCAB AIP (Japan)',
-        'start_url':'https://aisjapan.mlit.go.jp/',
-        'mode':     'selenium',
-        'output':   'rj_katalog_export.json',
-    },
+    # Japan → japan_bot.py (nagodede.github.io mirror, kein Selenium nötig)
     {
         'prefix':   'RK',
         'name':     'MOLIT AIP (Südkorea)',

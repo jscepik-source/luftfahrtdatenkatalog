@@ -47,6 +47,10 @@ jobs:
         run: python austrocontrol_bot.py
         continue-on-error: true
 
+      - name: Japan-AIP-Bot ausführen
+        run: python japan_bot.py
+        continue-on-error: true
+
       - name: Welt-eAIP-Bot ausführen
         run: python eaip_bot.py
         continue-on-error: true
