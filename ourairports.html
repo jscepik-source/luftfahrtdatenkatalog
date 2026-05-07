@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -432,6 +434,21 @@
         }
         .btn-sv:hover { background: var(--color-sv-hov); transform: translateY(-1px); }
 
+        .btn-aip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background: #065f46;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.83rem;
+            font-weight: 700;
+            transition: background var(--transition), transform var(--transition);
+        }
+        .btn-aip:hover { background: #047857; transform: translateY(-1px); }
+
         .btn-ext {
             display: inline-flex;
             align-items: center;
@@ -611,6 +628,125 @@
         footer a:hover { color: var(--color-primary-hov); text-decoration: underline; }
         footer .sep { margin: 0 var(--space-xs); opacity: 0.4; }
 
+        /* ── Distance Calculator ── */
+        .dist-panel {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-sm) var(--space-lg);
+            transition: background var(--transition);
+        }
+        .dist-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+        .dist-label { font-size: 0.78rem; font-weight: 600; color: var(--color-text-dim); white-space: nowrap; }
+        .dist-input {
+            padding: 7px 11px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            border: 1.5px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-surface);
+            color: var(--color-text);
+            outline: none;
+            width: 80px;
+            text-transform: uppercase;
+            transition: border-color var(--transition), background var(--transition);
+        }
+        .dist-input:focus { border-color: var(--color-primary); }
+        .dist-input::placeholder { text-transform: none; color: var(--color-text-dim); font-weight: 400; font-size: 0.78rem; }
+        .dist-arrow { font-size: 1rem; color: var(--color-text-dim); }
+        .btn-dist-calc {
+            padding: 7px 14px;
+            background: var(--color-primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font);
+            font-size: 0.83rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        .btn-dist-calc:hover { background: var(--color-primary-hov); }
+        .dist-result { font-size: 0.88rem; font-weight: 600; color: var(--color-text); }
+        .dist-result small { font-weight: 400; color: var(--color-text-dim); margin-left: 8px; font-size: 0.78rem; }
+
+        /* ── DFS Chart Grid ── */
+        .chart-grid {
+            display: flex;
+            gap: var(--space-xs);
+            flex-wrap: wrap;
+            margin-top: var(--space-xs);
+        }
+        .btn-chart {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 10px;
+            background: var(--color-surface);
+            color: var(--color-text-sub);
+            text-decoration: none;
+            border: 1.5px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.76rem;
+            font-weight: 500;
+            transition: background var(--transition), color var(--transition), border-color var(--transition);
+            white-space: nowrap;
+        }
+        .btn-chart:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-bg); }
+        .btn-chart-main {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        /* ── Continent / Country select ── */
+        .filter-select {
+            padding: 5px 8px;
+            font-family: var(--font);
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: var(--radius-pill);
+            border: 1.5px solid var(--color-chip-bd);
+            background: var(--color-chip-bg);
+            color: var(--color-chip-text);
+            cursor: pointer;
+            outline: none;
+            transition: border-color var(--transition), color var(--transition);
+            max-width: 140px;
+        }
+        .filter-select:focus, .filter-select:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+        /* ── Runway SVG Diagram ── */
+        .rwy-svg-wrap { display: inline-block; vertical-align: middle; margin-left: 8px; color: var(--color-primary); }
+
+        /* ── Leaflet Map ── */
+        .map-container {
+            height: 280px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-top: var(--space-xs);
+            border: 1px solid var(--color-border);
+        }
+        .map-links {
+            display: flex;
+            gap: var(--space-xs);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-xs);
+        }
+        .leaflet-popup-content-wrapper { font-family: var(--font); font-size: 0.82rem; }
+        .leaflet-control-layers-toggle { background-size: 20px; }
+        .rwy-legend { display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-top: 6px; font-size: 0.72rem; color: var(--color-text-dim); align-items: center; }
+        .rwy-legend span { display: inline-flex; align-items: center; gap: 4px; }
+        .rwy-legend i { display: inline-block; width: 18px; height: 4px; border-radius: 2px; }
+
         /* ── Responsive ── */
         @media (max-width: 640px) {
             header { padding: var(--space-sm) var(--space-md); }
@@ -632,7 +768,7 @@
         <div class="header-logo" aria-hidden="true">🌍</div>
         <div class="header-text">
             <h1>Weltweiter Flughafen-Katalog</h1>
-            <p>~72.000 Flughäfen · Runways · Frequenzen · Nav-Aids · METAR/TAF · NOTAMs · SkyVector</p>
+            <p>~72.000 Flughäfen · Runways · Frequenzen · Nav-Aids · METAR/TAF · NOTAMs · SkyVector · ChartFox · FlightAware · DFS VFR/IFR · Entfernungsrechner</p>
         </div>
         <button class="btn-theme" id="theme-btn" onclick="toggleTheme()" aria-label="Hell/Dunkel-Modus umschalten">🌙</button>
     </div>
@@ -655,11 +791,35 @@
             <button class="chip" data-typ="heliport">Heliport</button>
             <button class="chip" data-typ="seaplane_base">Wasserflugzeug</button>
             <button class="chip" data-sched="yes">✈ Linienflug</button>
+            <button class="chip" data-iata="yes">IATA</button>
+            <select class="filter-select" id="kontinent-sel" aria-label="Kontinent filtern">
+                <option value="">🌍 Alle Kontinente</option>
+                <option value="EU">🇪🇺 Europa</option>
+                <option value="NA">🌎 Nordamerika</option>
+                <option value="SA">🌎 Südamerika</option>
+                <option value="AS">🌏 Asien</option>
+                <option value="AF">🌍 Afrika</option>
+                <option value="OC">🌏 Ozeanien</option>
+                <option value="AN">🧊 Antarktis</option>
+            </select>
+            <button class="chip" id="dist-toggle-btn" onclick="toggleDistPanel()">📏 Entfernung</button>
         </div>
 
         <p id="zaehler" aria-live="polite" aria-atomic="true"></p>
     </div>
 </nav>
+
+<!-- ── Distance Calculator Panel ── -->
+<div class="dist-panel" id="dist-panel" style="display:none" role="region" aria-label="Entfernungsrechner">
+    <div class="dist-inner">
+        <span class="dist-label">📏 Entfernung berechnen:</span>
+        <input class="dist-input" id="dist-a" placeholder="EDDF" maxlength="4" aria-label="Abflughafen ICAO">
+        <span class="dist-arrow">→</span>
+        <input class="dist-input" id="dist-b" placeholder="EGLL" maxlength="4" aria-label="Zielflughafen ICAO">
+        <button class="btn-dist-calc" onclick="berechneDistanz()">Berechnen</button>
+        <span id="dist-result" class="dist-result"></span>
+    </div>
+</div>
 
 <!-- ── Main Content ── -->
 <main class="catalog" aria-label="Flughafenliste">
@@ -704,6 +864,41 @@ let angezeigtBis = 0;
 const wettercache = {};
 const notamcache = {};
 let nflDaten = [];
+let aktivIata = false;
+let aktivKontinent = '';
+
+// DFS VFR / IFR catalog lookup maps  {ICAO -> {_url, karten}}
+let vfrKatalog = null;
+let ifrKatalog = null;
+let _dfsPromise = null;
+
+function ladeDfsDaten() {
+    if (_dfsPromise) return _dfsPromise;
+    _dfsPromise = Promise.all([
+        fetch('https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/dfs_katalog_export.json').then(r => r.json()).catch(() => ({})),
+        fetch('https://raw.githubusercontent.com/jscepik-source/dfs-ifr-katalog/main/ifr_katalog_export.json').then(r => r.json()).catch(() => ({}))
+    ]).then(([vfr, ifr]) => {
+        vfrKatalog = {};
+        ifrKatalog = {};
+        for (const [key, val] of Object.entries(vfr)) {
+            const m = key.match(/([A-Z]{4})/);
+            if (m) vfrKatalog[m[1]] = val;
+        }
+        for (const [key, val] of Object.entries(ifr)) {
+            const m = key.match(/([A-Z]{4})/);
+            if (m) ifrKatalog[m[1]] = val;
+        }
+    }).catch(() => {});
+    return _dfsPromise;
+}
+ladeDfsDaten().then(() => {
+    // Patch any already-rendered AIP buttons for German airports with direct catalog URL
+    document.querySelectorAll('.btn-aip[data-dfsicao]').forEach(btn => {
+        const code = btn.dataset.dfsicao;
+        const entry = (vfrKatalog && vfrKatalog[code]) || (ifrKatalog && ifrKatalog[code]);
+        if (entry) btn.href = entry._url;
+    });
+});
 
 fetch('https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json')
     .then(r => r.json())
@@ -753,6 +948,8 @@ function suche() {
     aktuelleEintraege = Object.entries(katalog).filter(([icao, ap]) => {
         if (aktiverTyp && ap.type !== aktiverTyp) return false;
         if (aktivSched && !ap.scheduled) return false;
+        if (aktivIata && !ap.iata) return false;
+        if (aktivKontinent && ap.continent !== aktivKontinent) return false;
         if (!q) return true;
         return icao.toLowerCase().includes(q) || (ap.iata||'').toLowerCase().includes(q)
             || (ap.name||'').toLowerCase().includes(q) || (ap.city||'').toLowerCase().includes(q)
@@ -809,8 +1006,485 @@ function calcSonne(lat, lon) {
     return { auf: fmt(noon - H / 15), unter: fmt(noon + H / 15) };
 }
 
+const karteInstanzen = {};
+
+async function ladeKarte(icao, lat, lon) {
+    const el = document.getElementById(`karte-${icao}`);
+    if (!el || el.dataset.geladen) return;
+    el.dataset.geladen = '1';
+
+    const map = L.map(el, { center: [lat, lon], zoom: 13, scrollWheelZoom: false });
+    karteInstanzen[icao] = map;
+
+    const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+    });
+    const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '© Esri World Imagery',
+        maxZoom: 19
+    });
+    osmLayer.addTo(map);
+    L.control.layers({ 'Straßenkarte': osmLayer, '🛰 Satellit': satLayer }, {}, { position: 'topright' }).addTo(map);
+
+    const icon = L.divIcon({
+        className: '',
+        html: `<div style="background:var(--color-primary);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:monospace;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3)">${icao.slice(0,2)}</div>`,
+        iconSize: [28, 28], iconAnchor: [14, 14]
+    });
+    L.marker([lat, lon], { icon }).addTo(map).bindPopup(`<strong>${icao}</strong>`);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => map.invalidateSize()));
+    ladeFlughafenLayout(map, lat, lon);
+}
+
+async function ladeFlughafenLayout(map, lat, lon) {
+    const query = `[out:json][timeout:15];
+(way["aeroway"~"runway|taxiway|apron|terminal|gate|helipad"](around:6000,${lat},${lon});
+ relation["aeroway"="aerodrome"](around:6000,${lat},${lon}););
+out geom;`;
+    try {
+        const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        const FARBEN = { runway:'#3b82f6', taxiway:'#f59e0b', apron:'#94a3b8', terminal:'#8b5cf6', gate:'#10b981', helipad:'#ef4444' };
+        const BREITE = { runway:5, taxiway:2, apron:1, terminal:1, gate:1 };
+        for (const el of (data.elements || [])) {
+            if (!el.geometry) continue;
+            const coords = el.geometry.map(p => [p.lat, p.lon]);
+            const typ = el.tags?.aeroway || '';
+            if (coords.length < 2) continue;
+            const opts = { color: FARBEN[typ] || '#64748b', weight: BREITE[typ] || 1.5, opacity: 0.85 };
+            (coords[0][0] === coords[coords.length-1][0] && coords[0][1] === coords[coords.length-1][1]
+                ? L.polygon(coords, { ...opts, fillOpacity: 0.15 })
+                : L.polyline(coords, opts)
+            ).addTo(map).bindPopup(typ ? typ.charAt(0).toUpperCase() + typ.slice(1) : '');
+        }
+    } catch(e) { console.warn('Overpass:', e.message); }
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dL = (lat2 - lat1) * Math.PI / 180;
+    const dO = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dL/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dO/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function toggleDistPanel() {
+    const panel = document.getElementById('dist-panel');
+    const btn = document.getElementById('dist-toggle-btn');
+    const vis = panel.style.display === 'none';
+    panel.style.display = vis ? 'block' : 'none';
+    btn.classList.toggle('active', vis);
+    if (vis) document.getElementById('dist-a').focus();
+}
+
+function berechneDistanz() {
+    const a = (document.getElementById('dist-a').value || '').trim().toUpperCase();
+    const b = (document.getElementById('dist-b').value || '').trim().toUpperCase();
+    const el = document.getElementById('dist-result');
+    const ap1 = katalog[a], ap2 = katalog[b];
+    if (!ap1 || !ap2) { el.innerHTML = '<span style="color:#ef4444">Flughafen nicht gefunden</span>'; return; }
+    if (ap1.lat === undefined || ap2.lat === undefined) { el.innerHTML = '<span style="color:#ef4444">Koordinaten fehlen</span>'; return; }
+    const km = haversine(ap1.lat, ap1.lon, ap2.lat, ap2.lon);
+    const nm = km / 1.852;
+    el.innerHTML = `<strong>${a}→${b}:</strong> ${Math.round(nm)} NM<small>/ ${Math.round(km)} km</small>`;
+}
+
+function zeichneRunwaySVG(runways) {
+    if (!runways || !runways.length) return '';
+    const size = 88, cx = 44, cy = 44, rLen = 36, rWid = 7;
+    const seen = new Set();
+    let paths = '';
+    for (const r of runways) {
+        if (r.le_hdg === undefined) continue;
+        const key = Math.round(r.le_hdg / 5) * 5;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const ang = (r.le_hdg - 90) * Math.PI / 180;
+        const dx = Math.cos(ang) * rLen, dy = Math.sin(ang) * rLen;
+        const op = r.closed ? '0.22' : '0.9';
+        paths += `<line x1="${(cx-dx).toFixed(1)}" y1="${(cy-dy).toFixed(1)}" x2="${(cx+dx).toFixed(1)}" y2="${(cy+dy).toFixed(1)}" stroke="currentColor" stroke-width="${rWid}" stroke-linecap="round" opacity="${op}"/>`;
+    }
+    if (!paths) return '';
+    const compass = [['N',0],['E',90],['S',180],['W',270]].map(([l,a]) => {
+        const ang = (a-90)*Math.PI/180;
+        return `<text x="${(cx+Math.cos(ang)*40).toFixed(1)}" y="${(cy+Math.sin(ang)*40).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="7" fill="currentColor" opacity="0.35" font-family="system-ui,sans-serif">${l}</text>`;
+    }).join('');
+    return `<span class="rwy-svg-wrap"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
+        <circle cx="${cx}" cy="${cy}" r="41" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.15"/>
+        <circle cx="${cx}" cy="${cy}" r="26" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+        ${paths}${compass}
+    </svg></span>`;
+}
+
+// ── Generisches Länder-Kartenkatalog-System ─────────────────────────────────
+
+const RAW = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/';
+
+// ICAO-Präfix → Dateiname ohne .json (null = eigener Loader)
+const KATALOG_DATEI = {
+    // DFS – eigener Loader
+    'ED': null, 'ET': null,
+    // FAA – eigener Loader
+    'K':  'faa', 'P': 'faa', 'T': 'faa',
+    // Europa (2-stellige Präfixe)
+    'LO': 'lo', 'LS': 'ls', 'LK': 'lk', 'LZ': 'lz', 'LH': 'lh',
+    'LR': 'lr', 'LB': 'lb', 'LJ': 'lj', 'LD': 'ld', 'LI': 'li',
+    'LE': 'le', 'LP': 'lp', 'LG': 'lg', 'LT': 'lt', 'LF': 'lf',
+    'LM': 'lm', 'LC': 'lc', 'LY': 'ly', 'LQ': 'lq', 'LU': 'lu',
+    'EG': 'eg', 'EI': 'ei', 'EK': 'ek', 'EF': 'ef', 'EN': 'en',
+    'ES': 'es', 'EB': 'eb', 'EH': 'eh', 'EL': 'el', 'EP': 'ep',
+    'EE': 'ee', 'EV': 'ev', 'EY': 'ey', 'BI': 'bi',
+    // Naher Osten
+    'OJ': 'oj', 'OI': 'oi', 'OO': 'oo', 'OK': 'ok', 'OB': 'ob',
+    'OT': 'ot', 'OM': 'om', 'OY': 'oy', 'OS': 'os', 'OR': 'or',
+    'OL': 'ol', 'OP': 'op', 'OA': 'oa',
+    // Asien
+    'VT': 'vt', 'VH': 'vh', 'WM': 'wm', 'WI': 'wi', 'WS': 'ws',
+    'RP': 'rp', 'RJ': 'rj', 'RK': 'rk', 'RC': 'rc',
+    'VE': 'vi', 'VI': 'vi', 'VO': 'vi', 'VA': 'vi',  // Indien teilen
+    'ZB': 'zb', 'ZG': 'zb', 'ZS': 'zb', 'ZU': 'zb',  // China teilen
+    'UP': 'up', 'UT': 'ut', 'UB': 'ub', 'UG': 'ug',
+    // Afrika
+    'FA': 'fa', 'HK': 'hk', 'HA': 'ha', 'HE': 'he', 'HT': 'ht',
+    // Amerika (nicht-USA)
+    'C':  'c',  // Canada (single letter)
+    'SB': 'sb', 'SK': 'sk', 'SA': 'sa', 'SC': 'sc',
+    'MM': 'mm', 'MP': 'mp', 'MR': 'mr',
+    // Ozeanien
+    'Y':  'y',  // Australia (single letter)
+    'NZ': 'nz',
+    'YS': 'y', 'YM': 'y',
+};
+
+// Ladeversprechen-Cache: dateiname → Promise<Katalog-Objekt>
+const _katalogPromises = {};
+
+function ladeKatalogDatei(dateiname) {
+    if (_katalogPromises[dateiname]) return _katalogPromises[dateiname];
+    _katalogPromises[dateiname] = fetch(`${RAW}${dateiname}_katalog_export.json`)
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .catch(() => ({}));
+    return _katalogPromises[dateiname];
+}
+
+// FAA – eigener vorgelader Katalog (für schnelleren Zugriff bei mehreren US-Airports)
+let _faaPromise = null;
+function ladeFaaDaten() {
+    if (_faaPromise) return _faaPromise;
+    _faaPromise = ladeKatalogDatei('faa').then(d => d).catch(() => ({}));
+    return _faaPromise;
+}
+
+function chartSection(titel, eintrag, navRe) {
+    if (!eintrag) return '';
+    const links = Object.entries(eintrag.karten || {})
+        .filter(([n]) => !navRe || !navRe.test(n.trim()))
+        .map(([n, u]) => `<a class="btn-chart" href="${u}" target="_blank" rel="noopener">${n}</a>`)
+        .join('');
+    if (!links && !eintrag._url) return '';
+    return `<section class="card-section">
+        <h3 class="section-title">${titel}</h3>
+        <div class="chart-grid">
+            ${eintrag._url ? `<a class="btn-chart btn-chart-main" href="${eintrag._url}" target="_blank" rel="noopener">📄 AIP-Seite ↗</a>` : ''}
+            ${links}
+        </div>
+    </section>`;
+}
+
+// Ermittelt den Katalog-Dateinamen für ein ICAO-Kürzel
+function katalogDateiname(icao) {
+    if (!icao) return null;
+    // Einzel-Buchstaben-Regionen (K, P, T → FAA; C → Canada; Y → Australia)
+    if (KATALOG_DATEI[icao[0]] !== undefined) return KATALOG_DATEI[icao[0]];
+    // Zweistelliger Präfix
+    const p2 = icao.slice(0, 2);
+    if (KATALOG_DATEI[p2] !== undefined) return KATALOG_DATEI[p2];
+    return null;
+}
+
+async function ladeDfsKarten(icao) {
+    const el = document.getElementById(`dfs-${icao}`);
+    if (!el || el.dataset.geladen) return;
+    el.dataset.geladen = '1';
+
+    const prefix = icao.slice(0, 2);
+    const navRe  = /^[A-Z](-[A-Z])?$/;
+    let html = '';
+
+    // ── DFS Deutschland (ED / ET) ──────────────────────────────────
+    if (prefix === 'ED' || prefix === 'ET') {
+        try { await ladeDfsDaten(); } catch(e) {}
+        html += chartSection('🛩 DFS VFR-Karten', vfrKatalog && vfrKatalog[icao], navRe);
+        html += chartSection('✈ DFS IFR-Karten', ifrKatalog && ifrKatalog[icao], navRe);
+        if (html) { el.innerHTML = html; return; }
+    }
+
+    // ── FAA USA / Pazifik / Karibik ────────────────────────────────
+    const first = icao[0];
+    if (first === 'K' || first === 'P' || first === 'T') {
+        try {
+            const kat = await ladeFaaDaten();
+            html += chartSection('📋 FAA-Karten (d-TPP)', kat && kat[icao], null);
+        } catch(e) {}
+        if (html) { el.innerHTML = html; return; }
+    }
+
+    // ── Alle anderen Länder – generischer Katalog ──────────────────
+    const dateiname = katalogDateiname(icao);
+    if (dateiname && dateiname !== 'faa') {
+        try {
+            const kat = await ladeKatalogDatei(dateiname);
+            const eintrag = kat && kat[icao];
+            const aipInfo = getAipLink(icao);
+            const titel = aipInfo ? `🗺 ${aipInfo.name}` : `🗺 AIP-Karten (${prefix})`;
+            html += chartSection(titel, eintrag, null);
+        } catch(e) {}
+    }
+
+    if (html) el.innerHTML = html;
+}
+
 function fltcatClass(cat) {
     return { VFR:'cat-VFR', MVFR:'cat-MVFR', IFR:'cat-IFR', LIFR:'cat-LIFR' }[cat] || '';
+}
+
+// ── Worldwide National AIP lookup ──────────────────────────────────────────
+const AIP_PREFIXES = {
+    // Europe – ICAO 2-letter prefixes
+    'ED': { name: 'DFS AIP Deutschland',        url: 'https://aip.dfs.de/basicAIP/' },
+    'ET': { name: 'DFS AIP Deutschland (Mil)',   url: 'https://aip.dfs.de/basicAIP/' },
+    'EG': { name: 'NATS AIP United Kingdom',     url: 'https://nats-uk.ead-it.com/cms-nats/opencms/en/Publications/AIP/' },
+    'EI': { name: 'IAA AIP Ireland',             url: 'https://www.iaa.ie/commercial-aviation/aeronautical-information-infrastructure-aai/publications' },
+    'EK': { name: 'Naviair AIP Denmark',         url: 'https://ais.naviair.dk/en/pages/aip' },
+    'EF': { name: 'Finavia AIP Finland',         url: 'https://ais.fi/aip/fi/index.html' },
+    'EN': { name: 'Avinor AIP Norway',           url: 'https://www.ippc.no/norway_aip/current/AIRAC/html/eAIP/ENG/html/index-ENG.html' },
+    'ES': { name: 'LFV AIP Sweden',              url: 'https://aro.lfv.se/' },
+    'EB': { name: 'skeyes AIP Belgium',          url: 'https://ops.skeyes.be/html/belgocontrol_static/eaip/eAIP_Main/html/index-en-GB.html' },
+    'EH': { name: 'LVNL AIP Netherlands',        url: 'https://www.lvnl.nl/eaip/2024-10-31-AIRAC/html/' },
+    'EL': { name: 'Administration de la Navigation Aérienne AIP Luxembourg', url: 'https://www.ana.lu/en/aeronautical-information/integrated-aeronautical-information-package' },
+    'EP': { name: 'PANSA AIP Poland',            url: 'https://www.ais.pansa.pl/aip/' },
+    'LO': { name: 'Austrocontrol AIP Austria',   url: 'https://eaip.austrocontrol.at/' },
+    'LK': { name: 'ŘLP AIP Czech Republic',      url: 'https://lis.rlp.cz/vfrmanual/actual/index_en.html' },
+    'LZ': { name: 'LPS SR AIP Slovakia',         url: 'https://lps.sk/en/index.php/aeronautical-information-services/aip' },
+    'LH': { name: 'HungaroControl AIP Hungary',  url: 'https://www.hungarocontrol.hu/aip/' },
+    'LI': { name: 'ENAV AIP Italy',              url: 'https://www.enav.it/sites/public/en/aeronautical-services/publications/aip.html' },
+    'LS': { name: 'Skyguide AIP Switzerland',    url: 'https://www.skyguide.ch/services/aeronautical-information' },
+    'LP': { name: 'NAV Portugal AIP',            url: 'https://www.nav.pt/en/aeronautical-information' },
+    'LE': { name: 'ENAIRE AIP Spain',            url: 'https://ais.enaire.es/AIP/AIP_VIG/aip/indexEN.html' },
+    'GC': { name: 'ENAIRE AIP Spain (Canarias)', url: 'https://ais.enaire.es/AIP/AIP_VIG/aip/indexEN.html' },
+    'LF': { name: 'DSNA AIP France',             url: 'https://www.sia.aviation-civile.gouv.fr/dvd/eAIP_France/AIRAC-2024-10-31/FRANCE/html/index-fr-FR.html' },
+    'LG': { name: 'HCAA AIP Greece',             url: 'https://www.hcaa.gr/en/aeronautical-information' },
+    'LB': { name: 'BULATSA AIP Bulgaria',        url: 'https://www.bulatsa.com/en/aip' },
+    'LR': { name: 'ROMATSA AIP Romania',         url: 'https://www.romatsa.ro/en/aip' },
+    'LY': { name: 'SMATSA AIP Serbia',           url: 'https://www.smatsa.rs/en/aip' },
+    'LQ': { name: 'BHANSA AIP Bosnia',           url: 'https://www.bhansa.gov.ba/en/aeronautical-information' },
+    'LW': { name: 'M-NAV AIP North Macedonia',   url: 'https://www.m-nav.com.mk/en/aeronautical-information' },
+    'LA': { name: 'ALBCONTROL AIP Albania',      url: 'https://www.albcontrol.al/en/aeronautical-information' },
+    'LC': { name: 'DCAC AIP Cyprus',             url: 'https://www.dcac.gov.cy/dcac/web.nsf/page62_en/page62_en?opendocument' },
+    'LD': { name: 'Croatia Control AIP Croatia', url: 'https://www.crocontrol.hr/en/aip' },
+    'LJ': { name: 'Sloveniacontrol AIP Slovenia',url: 'https://www.sloveniacontrol.si/acrobat/aip/info/index.html' },
+    'LM': { name: 'Malta MATS AIP',              url: 'https://www.mats.com.mt/aip' },
+    'LT': { name: 'DHMI AIP Turkey',             url: 'https://aip.dhmi.gov.tr/' },
+    'LU': { name: 'MoldATSA AIP Moldova',        url: 'https://moldatsa.md/en/aip' },
+    'UK': { name: 'UkSATSE AIP Ukraine',         url: 'https://uksatse.ua/index.php?act=Prods&PHPSESSID=&CODE=014' },
+    'UM': { name: 'BelAeronavigation AIP Belarus',url: 'https://www.belaeronavigation.by/en/aeronautical-information/' },
+    'UB': { name: 'Azeronavigation AIP Azerbaijan', url: 'https://www.ans.az/en/' },
+    'UG': { name: 'SAKAERONAVIGATSIA AIP Georgia', url: 'https://ais.sakaeronavigatsia.ge/aip/en/index.html' },
+    'UD': { name: 'Armaviamet AIP Armenia',      url: 'https://www.armaviamct.am/en/' },
+    'EV': { name: 'LGS AIP Latvia',              url: 'https://www.lgs.lv/en/products-and-services/aeronautical-information' },
+    'EY': { name: 'Oro navigacija AIP Lithuania',url: 'https://www.ans.lt/en/aeronautical-information' },
+    'EE': { name: 'EANS AIP Estonia',            url: 'https://www.eans.ee/en/aeronautical-information' },
+    'EI': { name: 'IAA AIP Ireland',             url: 'https://www.iaa.ie/commercial-aviation/aeronautical-information-infrastructure-aai/publications' },
+    'BI': { name: 'ISAVIA AIP Iceland',          url: 'https://www.isavia.is/en/civil-aviation/aeronautical-information' },
+
+    // Middle East
+    'OJ': { name: 'CARC AIP Jordan',             url: 'https://www.carc.gov.jo/en/Pages/default.aspx' },
+    'OI': { name: 'CAAI AIP Iran',               url: 'https://ais.airport.ir/' },
+    'OO': { name: 'DGCA AIP Oman',               url: 'https://www.dgcam.gov.om/aip' },
+    'OK': { name: 'DGCA AIP Kuwait',             url: 'https://www.dgca.gov.kw/en/aip' },
+    'OB': { name: 'GACA AIP Bahrain',            url: 'https://www.caa.gov.bh/en/aip' },
+    'OT': { name: 'CAA AIP Qatar',               url: 'https://www.caa.gov.qa/en/services/aeronautical-information' },
+    'OM': { name: 'GCAA AIP UAE',                url: 'https://www.gcaa.gov.ae/en/ais/pages/aip.aspx' },
+    'OY': { name: 'CAMA AIP Yemen',              url: 'https://www.cama.gov.ye/' },
+    'OS': { name: 'GACA AIP Saudi Arabia',       url: 'https://www.gaca.gov.sa/en/services/Pages/aip.aspx' },
+    'OR': { name: 'ICAA AIP Iraq',               url: 'https://www.icaa.gov.iq/en/' },
+    'OL': { name: 'DGCA AIP Lebanon',            url: 'https://www.dgca.gov.lb/aip' },
+    'OP': { name: 'CAA AIP Pakistan',            url: 'https://www.caapakistan.com.pk/aip' },
+    'OA': { name: 'ACAA AIP Afghanistan',        url: 'https://www.acaa.gov.af/en/' },
+
+    // Asia
+    'VT': { name: 'AEROTHAI AIP Thailand',       url: 'https://www.aerothai.co.th/en/services/aip' },
+    'VH': { name: 'CAAV AIP Vietnam',            url: 'https://aim.vaa.gov.vn/w/integrated-aip/aip-en' },
+    'VB': { name: 'MACA AIP Myanmar',            url: 'https://www.maca.gov.mm/' },
+    'VE': { name: 'AAI AIP India (East)',        url: 'https://www.aai.aero/en/air-traffic-management/aip' },
+    'VI': { name: 'AAI AIP India (North)',       url: 'https://www.aai.aero/en/air-traffic-management/aip' },
+    'VO': { name: 'AAI AIP India (South)',       url: 'https://www.aai.aero/en/air-traffic-management/aip' },
+    'VA': { name: 'AAI AIP India (West)',        url: 'https://www.aai.aero/en/air-traffic-management/aip' },
+    'VG': { name: 'CAAB AIP Bangladesh',         url: 'https://www.caab.gov.bd/' },
+    'VC': { name: 'AASL AIP Sri Lanka',          url: 'https://www.aasl.lk/aip' },
+    'VN': { name: 'CAAN AIP Nepal',              url: 'https://caanepal.gov.np/aip' },
+    'VQ': { name: 'DGCA AIP Bhutan',             url: 'https://www.dcab.gov.bt/' },
+    'VY': { name: 'DCA AIP Myanmar',             url: 'https://www.moca.gov.mm/' },
+    'WM': { name: 'CAAM AIP Malaysia',           url: 'https://aip.caam.gov.my/' },
+    'WI': { name: 'AirNav AIP Indonesia',        url: 'https://airnav.co.id/en/aip' },
+    'WS': { name: 'CAAS AIP Singapore',          url: 'https://www.caas.gov.sg/publications-resources/aip' },
+    'RP': { name: 'CAAP AIP Philippines',        url: 'https://www.caap.gov.ph/index.php/aip' },
+    'VL': { name: 'KCAB AIP Laos',              url: 'https://www.kcab.gov.la/' },
+    'VD': { name: 'SSCA AIP Cambodia',           url: 'https://www.ssca.gov.kh/' },
+    'ZB': { name: 'CAAC AIP China (Beijing)',    url: 'https://www.caac.gov.cn/' },
+    'ZG': { name: 'CAAC AIP China (Guangzhou)',  url: 'https://www.caac.gov.cn/' },
+    'ZS': { name: 'CAAC AIP China (Shanghai)',   url: 'https://www.caac.gov.cn/' },
+    'ZH': { name: 'CAAC AIP China',             url: 'https://www.caac.gov.cn/' },
+    'ZJ': { name: 'CAAC AIP China (Hainan)',     url: 'https://www.caac.gov.cn/' },
+    'ZK': { name: 'CAAC AIP China',             url: 'https://www.caac.gov.cn/' },
+    'ZL': { name: 'CAAC AIP China (Lanzhou)',    url: 'https://www.caac.gov.cn/' },
+    'ZP': { name: 'CAAC AIP China',             url: 'https://www.caac.gov.cn/' },
+    'ZU': { name: 'CAAC AIP China (Chengdu)',    url: 'https://www.caac.gov.cn/' },
+    'ZW': { name: 'CAAC AIP China',             url: 'https://www.caac.gov.cn/' },
+    'ZY': { name: 'CAAC AIP China (Shenyang)',   url: 'https://www.caac.gov.cn/' },
+    'RK': { name: 'MOLIT AIP South Korea',       url: 'https://aim.molit.go.kr/' },
+    'RJ': { name: 'JCAB AIP Japan',             url: 'https://aisjapan.mlit.go.jp/' },
+    'RC': { name: 'CAA AIP Taiwan',             url: 'https://www.caa.gov.tw/en/aip' },
+    'VM': { name: 'GCAA AIP Macau',             url: 'https://www.aacm.gov.mo/en/p_aip.aspx' },
+    'VH': { name: 'CAD AIP Hong Kong',           url: 'https://www.cad.gov.hk/english/aip.html' },
+    'UP': { name: 'Kazaeronavigatsia AIP Kazakhstan', url: 'https://kan.kz/en/aip' },
+    'UT': { name: 'Uzbekaeronavigation AIP Uzbekistan', url: 'https://uan.uz/en/' },
+    'UK': { name: 'BAKAD AIP Kyrgyzstan',        url: 'https://gaacm.gov.kg/' },
+    'UА': { name: 'Tajikistan SCAIMT AIP',       url: 'https://www.scaimt.tj/' },
+    'UT': { name: 'MTKM AIP Turkmenistan',       url: 'https://www.mtk.gov.tm/' },
+
+    // Africa
+    'DA': { name: 'ANSP AIP Algeria',            url: 'https://www.ansp.dz/aip' },
+    'DT': { name: 'OACA AIP Tunisia',            url: 'https://www.oaca.nat.tn/' },
+    'DI': { name: 'ANAC AIP Côte d\'Ivoire',     url: 'https://www.anac.ci/aip' },
+    'DB': { name: 'ANAC AIP Benin',              url: 'https://www.anac.bj/aip' },
+    'DF': { name: 'ANAC AIP Burkina Faso',       url: 'https://www.anac.bf/' },
+    'DG': { name: 'GCAA AIP Ghana',              url: 'https://www.gcaa.com.gh/aip' },
+    'DN': { name: 'NCAA AIP Nigeria',            url: 'https://www.ncaa.gov.ng/aip' },
+    'DR': { name: 'ANAC AIP Niger',              url: 'https://www.anac.ne/' },
+    'GQ': { name: 'ANAC AIP Mauritania',         url: 'https://www.anac.mr/' },
+    'GF': { name: 'SLCAA AIP Sierra Leone',      url: 'https://www.slcaa.sl/' },
+    'GG': { name: 'IACGB AIP Guinea-Bissau',     url: 'https://www.iacgb.gw/' },
+    'GU': { name: 'ANAC AIP Guinea',             url: 'https://www.anac.gov.gn/' },
+    'HC': { name: 'SCAA AIP Somalia',            url: 'https://www.scaa.so/' },
+    'HA': { name: 'ECAA AIP Ethiopia',           url: 'https://www.ecaa.gov.et/aip' },
+    'HH': { name: 'CAMA AIP Eritrea',            url: 'https://www.mot.gov.er/' },
+    'HK': { name: 'KCAA AIP Kenya',             url: 'https://www.kcaa.or.ke/aip' },
+    'HS': { name: 'SCAA AIP Sudan',              url: 'https://www.caasudanese.sd/' },
+    'HT': { name: 'TCAA AIP Tanzania',           url: 'https://www.tcaa.go.tz/aip' },
+    'HU': { name: 'UCAA AIP Uganda',             url: 'https://www.caa.go.ug/aip' },
+    'HR': { name: 'RCAA AIP Rwanda',             url: 'https://www.rcaa.gov.rw/aip' },
+    'HE': { name: 'ECAA AIP Egypt',              url: 'https://www.ecaa.gov.eg/aip' },
+    'GL': { name: 'ANAC AIP Liberia',            url: 'https://www.anac-liberia.com/' },
+    'GO': { name: 'ASECNA AIP Senegal',          url: 'https://www.asecna.aero/aip' },
+    'GS': { name: 'DGAC AIP Western Sahara',     url: 'https://www.asecna.aero/' },
+    'GV': { name: 'ASA AIP Cabo Verde',          url: 'https://www.asa.cv/en/' },
+    'FP': { name: 'ENASA AIP São Tomé',          url: 'https://www.enasa.st/' },
+    'FE': { name: 'ASECNA AIP CAR',              url: 'https://www.asecna.aero/aip' },
+    'FK': { name: 'ASECNA AIP Cameroon',         url: 'https://www.asecna.aero/aip' },
+    'FL': { name: 'DCAA AIP Zambia',             url: 'https://www.dcaa.gov.zm/aip' },
+    'FM': { name: 'DGAC AIP Madagascar',         url: 'https://www.acm.mg/aip' },
+    'FN': { name: 'INAVIC AIP Angola',           url: 'https://www.inavic.gv.ao/' },
+    'FO': { name: 'ASECNA AIP Gabon',            url: 'https://www.asecna.aero/aip' },
+    'FQ': { name: 'IACM AIP Mozambique',         url: 'https://www.iacm.gov.mz/' },
+    'FS': { name: 'SCAA AIP Seychelles',         url: 'https://www.scaa.sc/aip' },
+    'FT': { name: 'ASECNA AIP Chad',             url: 'https://www.asecna.aero/aip' },
+    'FV': { name: 'CAAZ AIP Zimbabwe',           url: 'https://www.caaz.co.zw/aip' },
+    'FW': { name: 'DCAM AIP Malawi',             url: 'https://www.dcam.gov.mw/aip' },
+    'FX': { name: 'GCAA AIP Lesotho',            url: 'https://www.gcaa.org.ls/aip' },
+    'FA': { name: 'ATNS AIP South Africa',       url: 'https://www.atns.co.za/aip' },
+    'FB': { name: 'CAAB AIP Botswana',           url: 'https://www.caab.co.bw/aip' },
+    'FY': { name: 'Namibia Airports AIP',        url: 'https://www.airports.com.na/' },
+    'FD': { name: 'SACAA AIP Eswatini',          url: 'https://www.sacaa.org.sz/' },
+    'FI': { name: 'DGAC AIP Comoros',            url: 'https://www.dgac.km/' },
+    'OE': { name: 'GACA AIP Saudi Arabia',       url: 'https://www.gaca.gov.sa/en/services/Pages/aip.aspx' },
+    'OG': { name: 'CARC AIP Jordan (Mil)',       url: 'https://www.carc.gov.jo/' },
+
+    // Americas
+    'MX': { name: 'SENEAM AIP Mexico',           url: 'https://www.seneam.gob.mx/aip' },
+    'MD': { name: 'IDAC AIP Dominican Republic', url: 'https://www.idac.gov.do/aip' },
+    'MU': { name: 'IACC AIP Cuba',               url: 'https://www.iacc.cu/' },
+    'MK': { name: 'CAA AIP Jamaica',             url: 'https://www.caa.gov.jm/aip' },
+    'MT': { name: 'OFNAC AIP Haiti',             url: 'https://www.ofnac.ht/' },
+    'MB': { name: 'TCCA AIP Turks & Caicos',     url: 'https://www.tcaa.tc/' },
+    'MY': { name: 'BCAD AIP Bahamas',            url: 'https://www.bcad.gov.bs/' },
+    'MM': { name: 'SENEAM AIP Mexico',           url: 'https://www.seneam.gob.mx/aip' },
+    'SB': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
+    'SN': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
+    'SW': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
+    'SS': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
+    'SD': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
+    'SI': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
+    'SK': { name: 'UAEAC AIP Colombia',          url: 'https://www.aerocivil.gov.co/aip' },
+    'SV': { name: 'INAC AIP Venezuela',          url: 'https://www.inac.gob.ve/' },
+    'SE': { name: 'DGAC AIP Ecuador',            url: 'https://www.dgac.gob.ec/aip' },
+    'SP': { name: 'CORPAC AIP Peru',             url: 'https://www.corpac.gob.pe/aip' },
+    'SL': { name: 'AASANA AIP Bolivia',          url: 'https://www.aasana.bo/aip' },
+    'SY': { name: 'AAAC AIP Guyana',             url: 'https://www.caa.gov.gy/' },
+    'SM': { name: 'DC AIP Suriname',             url: 'https://www.dc.sr.org/' },
+    'SF': { name: 'DGAC AIP French Guiana',      url: 'https://www.sia.aviation-civile.gouv.fr/' },
+    'SA': { name: 'ANAC AIP Argentina',          url: 'https://www.anac.gob.ar/aip' },
+    'SC': { name: 'DGAC AIP Chile',              url: 'https://www.dgac.gob.cl/aip' },
+    'SU': { name: 'DINACIA AIP Uruguay',         url: 'https://www.dinacia.gub.uy/aip' },
+    'SG': { name: 'DINAC AIP Paraguay',          url: 'https://www.dinac.gov.py/aip' },
+    'TI': { name: 'VRSTT AIP USVI',              url: 'https://www.faa.gov/air_traffic/publications/' },
+    'TJ': { name: 'FAA AIP Puerto Rico',         url: 'https://www.faa.gov/air_traffic/publications/' },
+    'TN': { name: 'DCAR AIP Aruba/Curaçao',      url: 'https://www.dcar.nl/aip' },
+    'TB': { name: 'TTCAA AIP Trinidad & Tobago', url: 'https://www.ttcaa.com/aip' },
+    'TF': { name: 'DSAC AIP Martinique/Guadeloupe', url: 'https://www.sia.aviation-civile.gouv.fr/' },
+    'TV': { name: 'AIA AIP St. Vincent',         url: 'https://www.aiasvg.com/' },
+    'TR': { name: 'ECCAA AIP Montserrat',        url: 'https://www.eccaa.org/aip' },
+    'MP': { name: 'AAC AIP Panama',              url: 'https://www.aac.gob.pa/aip' },
+    'MR': { name: 'DGCA AIP Costa Rica',         url: 'https://www.dgac.go.cr/aip' },
+    'MN': { name: 'INAC AIP Nicaragua',          url: 'https://www.inac.gob.ni/' },
+    'MH': { name: 'AHAC AIP Honduras',           url: 'https://www.ahac.gob.hn/' },
+    'MGT': { name: 'DGAC AIP Guatemala',         url: 'https://www.dgac.gob.gt/' },
+    'YV': { name: 'Transport Canada AIP Canada', url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CY': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CF': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CG': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CU': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CW': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CZ': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CE': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CS': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'CO': { name: 'NAV CANADA AIP',              url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+
+    // Oceania
+    'YS': { name: 'Airservices AIP Australia',   url: 'https://www.airservicesaustralia.com/aip/current/aip.asp' },
+    'YM': { name: 'Airservices AIP Australia',   url: 'https://www.airservicesaustralia.com/aip/current/aip.asp' },
+    'NZ': { name: 'Airways AIP New Zealand',     url: 'https://www.aip.net.nz/' },
+    'AG': { name: 'CASA AIP Solomon Islands',    url: 'https://www.casasi.com.sb/' },
+    'AN': { name: 'CASA AIP Nauru',              url: 'https://www.casanauru.com/' },
+    'AY': { name: 'CASA AIP Papua New Guinea',   url: 'https://www.casapng.com.pg/' },
+    'NF': { name: 'CAAF AIP Fiji',               url: 'https://www.caaf.org.fj/aip' },
+    'NC': { name: 'DGAC AIP Cook Islands',       url: 'https://www.moi.gov.ck/' },
+    'NGT': { name: 'CATV AIP Tuvalu',            url: 'https://www.tuvalu-gov.tv/' },
+    'NS': { name: 'MCIL AIP Samoa',              url: 'https://www.mcil.gov.ws/' },
+    'NT': { name: 'DGAC AIP French Polynesia',   url: 'https://www.dgac.pf/' },
+    'NI': { name: 'DCAM AIP Niue',              url: 'https://www.gov.nu/pm/niue-aviation.htm' },
+    'NW': { name: 'DGAC AIP New Caledonia',      url: 'https://www.dgac.pf/' },
+    'FW': { name: 'DGAC AIP Wallis & Futuna',    url: 'https://www.sia.aviation-civile.gouv.fr/' },
+    'RO': { name: 'DGAC AIP French Polynesia',   url: 'https://www.dgac.pf/' },
+    'NL': { name: 'Wallis & Futuna DGAC',        url: 'https://www.sia.aviation-civile.gouv.fr/' },
+};
+
+// Single-letter prefixes and special overrides
+const AIP_SINGLE_LETTER = {
+    'K': { name: 'FAA AIP USA',              url: 'https://www.faa.gov/air_traffic/publications/' },
+    'P': { name: 'FAA AIP USA/Pacific',      url: 'https://www.faa.gov/air_traffic/publications/' },
+    'C': { name: 'NAV CANADA AIP',           url: 'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx' },
+    'Y': { name: 'Airservices AIP Australia', url: 'https://www.airservicesaustralia.com/aip/current/aip.asp' },
+};
+
+function getAipLink(icao) {
+    if (!icao || icao.length < 2) return null;
+    // Single-letter ICAO regions (USA K, Pacific P, Canada C, Australia Y)
+    const single = AIP_SINGLE_LETTER[icao[0]];
+    if (single) return single;
+    return AIP_PREFIXES[icao.slice(0, 2)] || null;
 }
 
 function baueKarte(icao, ap) {
@@ -824,6 +1498,29 @@ function baueKarte(icao, ap) {
     const kontinent = KONTINENT[ap.continent] || ap.continent || '';
     const svUrl = `https://skyvector.com/airport/${icao}`;
     const mapsUrl = hasCoords ? `https://maps.google.com/?q=${ap.lat},${ap.lon}` : null;
+    const chartfoxUrl = `https://chartfox.org/${icao}`;
+    const flightawareUrl = `https://www.flightaware.com/live/airport/${icao}`;
+    const fr24Url = ap.iata ? `https://www.flightradar24.com/airport/${ap.iata.toLowerCase()}` : `https://www.flightradar24.com/airport/${icao.toLowerCase()}`;
+    // Windy mit Airspace-Layer, zentriert auf Flughafenkoordinaten
+    const windyUrl = hasCoords
+        ? `https://www.windy.com/${ap.lat}/${ap.lon}/12?airspace`
+        : 'https://www.windy.com/?airspace';
+    // OpenAIP: kein Deep-Link möglich → Startseite, Nutzer sucht dort manuell
+    const openAipUrl = 'https://www.openaip.net/';
+    // Overpass Turbo: sucht den Flughafen in OSM anhand ICAO-Tag — Overpass zoomt selbst hin
+    const overpRawQuery = `[out:json][timeout:25];
+(
+  node["aerodrome:icao"="${icao}"];
+  way["aerodrome:icao"="${icao}"];
+  relation["aerodrome:icao"="${icao}"];
+  node["icao"="${icao}"];
+  way["icao"="${icao}"];
+  relation["icao"="${icao}"];
+);
+out body;
+>;
+out skel qt;`;
+    const overpUrl = `https://overpass-turbo.eu/?Q=${encodeURIComponent(overpRawQuery)}&run=true`;
 
     const rwyRows = ap.runways && ap.runways.length
         ? ap.runways.map(r => `<tr class="${r.closed ? 'rwy-closed' : ''}">
@@ -845,6 +1542,12 @@ function baueKarte(icao, ap) {
           </tr>`).join('') : '';
 
     const meta = [ap.city, ap.country_name || ap.country, kontinent].filter(Boolean).join(' · ');
+    // For German airports: use direct catalog URL if already loaded, else generic fallback
+    const _aipBase = getAipLink(icao);
+    const _prefix = icao.slice(0, 2);
+    const _isDFS = _prefix === 'ED' || _prefix === 'ET';
+    const _catEntry = _isDFS && ((vfrKatalog && vfrKatalog[icao]) || (ifrKatalog && ifrKatalog[icao]));
+    const aip = _catEntry ? { name: _aipBase ? _aipBase.name : 'DFS AIP', url: _catEntry._url } : _aipBase;
 
     article.innerHTML = `
         <button class="card-header" onclick="toggle(this,'${icao}',${ap.lat||'null'},${ap.lon||'null'})" aria-expanded="false">
@@ -874,14 +1577,18 @@ function baueKarte(icao, ap) {
             </dl>
 
             <div class="action-links">
-                <a class="btn-sv" href="${svUrl}" target="_blank" rel="noopener">✈ Auf SkyVector öffnen</a>
+                <a class="btn-sv" href="${svUrl}" target="_blank" rel="noopener">✈ SkyVector</a>
+                ${aip ? `<a class="btn-aip"${_isDFS ? ` data-dfsicao="${icao}"` : ''} href="${aip.url}" target="_blank" rel="noopener">📚 ${aip.name}</a>` : ''}
+                <a class="btn-ext" href="${chartfoxUrl}" target="_blank" rel="noopener">📋 ChartFox</a>
+                <a class="btn-ext" href="${flightawareUrl}" target="_blank" rel="noopener">🛫 FlightAware</a>
+                <a class="btn-ext" href="${fr24Url}" target="_blank" rel="noopener">📡 Flightradar24</a>
                 ${mapsUrl ? `<a class="btn-ext" href="${mapsUrl}" target="_blank" rel="noopener">🗺 Google Maps</a>` : ''}
                 ${ap.web  ? `<a class="btn-ext" href="${ap.web}"  target="_blank" rel="noopener">🌐 Website</a>` : ''}
                 ${ap.wiki ? `<a class="btn-ext" href="${ap.wiki}" target="_blank" rel="noopener">📖 Wikipedia</a>` : ''}
             </div>
 
             ${rwyRows ? `<section class="card-section">
-                <h3 class="section-title">🛬 Runways</h3>
+                <h3 class="section-title">🛬 Runways ${zeichneRunwaySVG(ap.runways)}</h3>
                 <table class="data-table">
                     <thead><tr><th>Kennung</th><th>Länge (ft)</th><th>Breite (ft)</th><th>Kurs LE / HE</th><th>Belag</th><th>Bel.</th></tr></thead>
                     <tbody>${rwyRows}</tbody>
@@ -909,6 +1616,25 @@ function baueKarte(icao, ap) {
                 <dl class="sun-grid" id="sonne-${icao}"><span class="status-loading">wird berechnet…</span></dl>
             </section>` : ''}
 
+            ${hasCoords ? `<section class="card-section">
+                <h3 class="section-title">🗺 Karte & Luftraum</h3>
+                <div class="map-links">
+                    ${hasCoords ? `<a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy Luftraum</a>` : ''}
+                    <a class="btn-ext" href="${openAipUrl}" target="_blank" rel="noopener">✈ OpenAIP</a>
+                    ${hasCoords ? `<a class="btn-ext" href="https://skyvector.com/?ll=${ap.lat},${ap.lon}&chart=301&zoom=4" target="_blank" rel="noopener">📋 SkyVector Luftraum</a>` : ''}
+                    <a class="btn-ext" href="${overpUrl}" target="_blank" rel="noopener">🔍 OSM Overpass</a>
+                    ${mapsUrl ? `<a class="btn-ext" href="${mapsUrl}&t=k" target="_blank" rel="noopener">🛰 Google Satellit</a>` : ''}
+                </div>
+                <div id="karte-${icao}" class="map-container"></div>
+                <div class="rwy-legend">
+                    <span><i style="background:#3b82f6"></i>Runway</span>
+                    <span><i style="background:#f59e0b"></i>Taxiway</span>
+                    <span><i style="background:#8b5cf6"></i>Terminal</span>
+                    <span><i style="background:#94a3b8"></i>Apron</span>
+                    <small>Quelle: OpenStreetMap Overpass · Luftraumdaten: OpenAIP</small>
+                </div>
+            </section>` : ''}
+
             <section class="card-section">
                 <h3 class="section-title">🌤 Wetter — METAR / TAF</h3>
                 <div id="wetter-${icao}"><span class="status-loading">wird geladen…</span></div>
@@ -925,6 +1651,8 @@ function baueKarte(icao, ap) {
                 </div>
             </section>
 
+            <div id="dfs-${icao}"></div>
+
         </div>`;
     return article;
 }
@@ -934,9 +1662,13 @@ function toggle(btn, icao, lat, lon) {
     btn.setAttribute('aria-expanded', offen);
     btn.nextElementSibling.classList.toggle('open');
     if (offen) {
-        if (lat && lon) ladeErst(icao, lat, lon);
+        if (lat && lon) {
+            ladeErst(icao, lat, lon);
+            ladeKarte(icao, lat, lon);
+        }
         ladeWetter(icao);
         ladeNotams(icao);
+        ladeDfsKarten(icao);
     }
 }
 
@@ -1088,17 +1820,28 @@ document.getElementById('suche').addEventListener('input', () => {
 
 document.getElementById('filter').addEventListener('click', e => {
     const btn = e.target.closest('.chip');
-    if (!btn) return;
+    if (!btn || btn.id === 'dist-toggle-btn') return;
     if (btn.dataset.sched) {
         btn.classList.toggle('active');
         aktivSched = btn.classList.contains('active');
-    } else {
-        document.querySelectorAll('.chip:not([data-sched])').forEach(b => b.classList.remove('active'));
+    } else if (btn.dataset.iata) {
+        btn.classList.toggle('active');
+        aktivIata = btn.classList.contains('active');
+    } else if (btn.dataset.typ !== undefined) {
+        document.querySelectorAll('.chip[data-typ]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         aktiverTyp = btn.dataset.typ;
     }
     suche();
 });
+
+document.getElementById('kontinent-sel').addEventListener('change', e => {
+    aktivKontinent = e.target.value;
+    suche();
+});
+
+document.getElementById('dist-a').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('dist-b').focus(); });
+document.getElementById('dist-b').addEventListener('keydown', e => { if (e.key === 'Enter') berechneDistanz(); });
 </script>
 </body>
 </html>

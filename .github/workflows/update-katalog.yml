@@ -40,10 +40,31 @@ jobs:
       - name: NfL-NOTAMs-Bot ausführen
         run: python nfl_notams_bot.py
 
+      - name: FAA-Karten-Bot ausführen
+        run: python faa_bot.py
+
+      - name: Welt-eAIP-Bot ausführen
+        run: python eaip_bot.py
+        continue-on-error: true
+
       - name: Dateien committen und pushen
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add dfs_katalog_export.json notam_info.json nfl_katalog.json nfl_notams_export.json
-          git diff --staged --quiet || git commit -m "Katalog, NOTAM und NfL automatisch aktualisiert"
+          git add ourairports.html \
+                  dfs_katalog_export.json notam_info.json nfl_katalog.json nfl_notams_export.json \
+                  faa_katalog_export.json \
+                  lo_katalog_export.json ls_katalog_export.json lk_katalog_export.json \
+                  lz_katalog_export.json lh_katalog_export.json lr_katalog_export.json \
+                  lb_katalog_export.json lj_katalog_export.json ld_katalog_export.json \
+                  li_katalog_export.json le_katalog_export.json lp_katalog_export.json \
+                  lg_katalog_export.json lt_katalog_export.json lf_katalog_export.json \
+                  eg_katalog_export.json ei_katalog_export.json ek_katalog_export.json \
+                  ef_katalog_export.json es_katalog_export.json en_katalog_export.json \
+                  eb_katalog_export.json eh_katalog_export.json ep_katalog_export.json \
+                  ee_katalog_export.json ev_katalog_export.json ey_katalog_export.json \
+                  bi_katalog_export.json om_katalog_export.json oj_katalog_export.json \
+                  rj_katalog_export.json rk_katalog_export.json ws_katalog_export.json \
+                  c_katalog_export.json y_katalog_export.json nz_katalog_export.json 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "Kataloge, NOTAM, NfL und eAIP-Karten aktualisiert"
           git push
