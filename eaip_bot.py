@@ -345,8 +345,8 @@ LAND_KONFIGS = [
     },
     {
         'prefix':   'FA',
-        'name':     'ATNS AIP (Südafrika)',
-        'start_url':'https://www.atns.com/',
+        'name':     'CAA AIP (Südafrika)',
+        'start_url':'https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/',
         'mode':     'selenium',
         'output':   'fa_katalog_export.json',
     },
