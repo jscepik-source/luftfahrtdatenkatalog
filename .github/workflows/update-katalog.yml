@@ -78,6 +78,7 @@ jobs:
                   ll_katalog_export.json ot_katalog_export.json oo_katalog_export.json \
                   oe_katalog_export.json he_katalog_export.json \
                   hk_katalog_export.json gm_katalog_export.json fa_katalog_export.json \
+                  asecna_katalog_export.json \
                   rj_katalog_export.json rk_katalog_export.json ws_katalog_export.json \
                   vt_katalog_export.json vh_katalog_export.json vi_katalog_export.json \
                   wi_katalog_export.json wm_katalog_export.json rp_katalog_export.json \

@@ -41,15 +41,15 @@ LAND_KONFIGS = [
     },
     {
         'prefix':   'LS',
-        'name':     'Skyguide AIP (Schweiz)',
-        'start_url':'https://www.skyguide.ch/services/aeronautical-information/eaip',
+        'name':     'Skybriefing AIP (Schweiz)',
+        'start_url':'https://www.skybriefing.com/',
         'mode':     'selenium',
         'output':   'ls_katalog_export.json',
     },
     {
         'prefix':   'LK',
         'name':     'ŘLP AIP (Tschechien)',
-        'start_url':'https://lis.rlp.cz/vfrmanual/actual/index_en.html',
+        'start_url':'https://aim.rlp.cz/',
         'mode':     'selenium',
         'output':   'lk_katalog_export.json',
     },
@@ -154,28 +154,28 @@ LAND_KONFIGS = [
     {
         'prefix':   'EK',
         'name':     'Naviair AIP (Dänemark)',
-        'start_url':'https://ais.naviair.dk/en/pages/aip',
+        'start_url':'https://aim.naviair.dk/',
         'mode':     'selenium',
         'output':   'ek_katalog_export.json',
     },
     {
         'prefix':   'EF',
         'name':     'Finavia AIP (Finnland)',
-        'start_url':'https://ais.fi/aip/fi/index.html',
+        'start_url':'https://www.ais.fi/en/',
         'mode':     'selenium',
         'output':   'ef_katalog_export.json',
     },
     {
         'prefix':   'ES',
         'name':     'LFV AIP (Schweden)',
-        'start_url':'https://aro.lfv.se/',
+        'start_url':'https://aro.lfv.se/',  # AIP nur über EAD-Login – scraping limitiert
         'mode':     'selenium',
         'output':   'es_katalog_export.json',
     },
     {
         'prefix':   'EN',
         'name':     'Avinor AIP (Norwegen)',
-        'start_url':'https://www.ippc.no/norway_aip/current/AIRAC/html/eAIP/ENG/html/index-ENG.html',
+        'start_url':'https://avinor.no/en/ais/',
         'mode':     'selenium',
         'output':   'en_katalog_export.json',
     },
@@ -203,14 +203,14 @@ LAND_KONFIGS = [
     {
         'prefix':   'EE',
         'name':     'EANS AIP (Estland)',
-        'start_url':'https://www.eans.ee/en/aeronautical-information',
+        'start_url':'https://aim.eans.ee/',
         'mode':     'selenium',
         'output':   'ee_katalog_export.json',
     },
     {
         'prefix':   'EV',
         'name':     'LGS AIP (Lettland)',
-        'start_url':'https://www.lgs.lv/en/products-and-services/aeronautical-information',
+        'start_url':'https://ais.lgs.lv/',
         'mode':     'selenium',
         'output':   'ev_katalog_export.json',
     },
@@ -329,6 +329,14 @@ LAND_KONFIGS = [
         'output':   'he_katalog_export.json',
     },
     # ── Afrika ──────────────────────────────────────────────────────────────
+    {
+        # ASECNA: 17 afrikanische Staaten – alle Präfixe in einer JSON
+        'prefix':   ['DB','DF','DI','DR','DX','FC','FE','FG','FI','FK','FM','FO','FT','GA','GG','GO','GQ'],
+        'name':     'ASECNA AIP (17 afrikanische Staaten)',
+        'start_url':'https://aim.asecna.aero/',
+        'mode':     'selenium',
+        'output':   'asecna_katalog_export.json',
+    },
     {
         'prefix':   'HK',
         'name':     'KCAA AIP (Kenia)',
@@ -608,12 +616,13 @@ def ist_flughafen_link(text, href, prefix):
         return False
     if any(x in href for x in ['javascript:', '#popup', 'mailto:']):
         return False
-    # ICAO code must appear in text or href
     m = ICAO_RE.search(text + ' ' + (href or ''))
     if not m:
         return False
     code = m.group(1)
-    if not code.startswith(prefix):
+    # prefix kann ein String oder eine Liste sein
+    prefixes = prefix if isinstance(prefix, (list, tuple)) else [prefix]
+    if not any(code.startswith(p) for p in prefixes):
         return False
     if NAV_RE.match(text.strip()):
         return False
@@ -648,7 +657,8 @@ def finde_ad2_url(browser, prefix):
 
 
 def scrape_land_selenium(browser, konfig):
-    prefix = konfig['prefix']
+    prefix = konfig['prefix']  # str oder list
+    prefix_str = prefix[0] if isinstance(prefix, (list, tuple)) else prefix
     start  = konfig['start_url']
     domain = extrahiere_domain(start)
     katalog = {}
@@ -658,7 +668,7 @@ def scrape_land_selenium(browser, konfig):
     warte(browser)
 
     # ── Schritt 1: AD 2 finden und navigieren ─────────────────────
-    ad2_url = finde_ad2_url(browser, prefix)
+    ad2_url = finde_ad2_url(browser, prefix_str)
     if ad2_url:
         print(f"    AD-2: {ad2_url}")
         browser.get(ad2_url)
@@ -703,8 +713,12 @@ def scrape_alle(nur_prefix=None):
     try:
         for konfig in LAND_KONFIGS:
             prefix = konfig['prefix']
-            if nur_prefix and prefix != nur_prefix:
-                continue
+            if nur_prefix:
+                if isinstance(prefix, (list, tuple)):
+                    if nur_prefix not in prefix:
+                        continue
+                elif prefix != nur_prefix:
+                    continue
             print(f"\n[{prefix}] {konfig['name']}")
             try:
                 katalog = scrape_land_selenium(browser, konfig)
