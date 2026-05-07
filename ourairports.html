@@ -1172,25 +1172,33 @@ const KATALOG_DATEI = {
     'LR': 'lr', 'LB': 'lb', 'LJ': 'lj', 'LD': 'ld', 'LI': 'li',
     'LE': 'le', 'LP': 'lp', 'LG': 'lg', 'LT': 'lt', 'LF': 'lf',
     'LM': 'lm', 'LC': 'lc', 'LY': 'ly', 'LQ': 'lq', 'LU': 'lu',
+    'LA': 'la', 'UD': 'ud',
     'EG': 'eg', 'EI': 'ei', 'EK': 'ek', 'EF': 'ef', 'EN': 'en',
     'ES': 'es', 'EB': 'eb', 'EH': 'eh', 'EL': 'el', 'EP': 'ep',
     'EE': 'ee', 'EV': 'ev', 'EY': 'ey', 'BI': 'bi',
     // Naher Osten
     'OJ': 'oj', 'OI': 'oi', 'OO': 'oo', 'OK': 'ok', 'OB': 'ob',
     'OT': 'ot', 'OM': 'om', 'OY': 'oy', 'OS': 'os', 'OR': 'or',
-    'OL': 'ol', 'OP': 'op', 'OA': 'oa',
+    'OL': 'ol', 'OP': 'op', 'OA': 'oa', 'OE': 'oe', 'LL': 'll',
+    // Ägypten, Kenia, Marokko, Südafrika
+    'HE': 'he', 'HK': 'hk', 'GM': 'gm', 'FA': 'fa',
+    'HA': 'ha', 'HT': 'ht',
     // Asien
-    'VT': 'vt', 'VH': 'vh', 'WM': 'wm', 'WI': 'wi', 'WS': 'ws',
-    'RP': 'rp', 'RJ': 'rj', 'RK': 'rk', 'RC': 'rc',
+    'VT': 'vt', 'VH': 'vh',              // VH = Hongkong
+    'VV': 'vv', 'VM': 'vm',              // Vietnam, Macau
     'VE': 'vi', 'VI': 'vi', 'VO': 'vi', 'VA': 'vi',  // Indien teilen
-    'ZB': 'zb', 'ZG': 'zb', 'ZS': 'zb', 'ZU': 'zb',  // China teilen
+    'WM': 'wm', 'WI': 'wi', 'WS': 'ws',
+    'RP': 'rp', 'VC': 'vc',              // Philippinen, Sri Lanka
+    'RJ': 'rj', 'RK': 'rk', 'RC': 'rc',
+    'ZB': 'zb', 'ZG': 'zb', 'ZH': 'zb', 'ZJ': 'zb',  // China
+    'ZK': 'zb', 'ZL': 'zb', 'ZP': 'zb', 'ZS': 'zb',
+    'ZU': 'zb', 'ZW': 'zb', 'ZY': 'zb',
     'UP': 'up', 'UT': 'ut', 'UB': 'ub', 'UG': 'ug',
-    // Afrika
-    'FA': 'fa', 'HK': 'hk', 'HA': 'ha', 'HE': 'he', 'HT': 'ht',
     // Amerika (nicht-USA)
     'C':  'c',  // Canada (single letter)
-    'SB': 'sb', 'SK': 'sk', 'SA': 'sa', 'SC': 'sc',
-    'MM': 'mm', 'MP': 'mp', 'MR': 'mr',
+    'SA': 'sa', 'SB': 'sb', 'SC': 'sc', 'SE': 'se',
+    'SK': 'sk', 'SP': 'sp', 'SU': 'su', 'SV': 'sv',
+    'MM': 'mm', 'MU': 'mu', 'MP': 'mp', 'MR': 'mr',
     // Ozeanien
     'Y':  'y',  // Australia (single letter)
     'NZ': 'nz',
@@ -1438,8 +1446,9 @@ const AIP_PREFIXES = {
     'OA': { name: 'ACAA AIP Afghanistan',        url: 'https://www.acaa.gov.af/en/' },
 
     // Asia
-    'VT': { name: 'AEROTHAI AIP Thailand',       url: 'https://www.aerothai.co.th/en/services/aip' },
-    'VH': { name: 'CAAV AIP Vietnam',            url: 'https://aim.vaa.gov.vn/w/integrated-aip/aip-en' },
+    'VT': { name: 'CAAT AIP Thailand',            url: 'https://aip.caat.or.th/' },
+    'VH': { name: 'CAD AIP Hong Kong',           url: 'https://www.hkatc.gov.hk/' },
+    'VV': { name: 'VNAISC AIP Vietnam',          url: 'https://vnaic.vn/' },
     'VB': { name: 'MACA AIP Myanmar',            url: 'https://www.maca.gov.mm/' },
     'VE': { name: 'AAI AIP India (East)',        url: 'https://www.aai.aero/en/air-traffic-management/aip' },
     'VI': { name: 'AAI AIP India (North)',       url: 'https://www.aai.aero/en/air-traffic-management/aip' },
@@ -1470,8 +1479,7 @@ const AIP_PREFIXES = {
     'RK': { name: 'MOLIT AIP South Korea',       url: 'https://aim.molit.go.kr/' },
     'RJ': { name: 'JCAB AIP Japan',             url: 'https://aisjapan.mlit.go.jp/' },
     'RC': { name: 'CAA AIP Taiwan',             url: 'https://www.caa.gov.tw/en/aip' },
-    'VM': { name: 'GCAA AIP Macau',             url: 'https://www.aacm.gov.mo/en/p_aip.aspx' },
-    'VH': { name: 'CAD AIP Hong Kong',           url: 'https://www.cad.gov.hk/english/aip.html' },
+    'VM': { name: 'AACM AIP Macau',              url: 'https://www.aacm.gov.mo/' },
     'UP': { name: 'Kazaeronavigatsia AIP Kazakhstan', url: 'https://kan.kz/en/aip' },
     'UT': { name: 'Uzbekaeronavigation AIP Uzbekistan', url: 'https://uan.uz/en/' },
     'UK': { name: 'BAKAD AIP Kyrgyzstan',        url: 'https://gaacm.gov.kg/' },
@@ -1522,7 +1530,9 @@ const AIP_PREFIXES = {
     'FY': { name: 'Namibia Airports AIP',        url: 'https://www.airports.com.na/' },
     'FD': { name: 'SACAA AIP Eswatini',          url: 'https://www.sacaa.org.sz/' },
     'FI': { name: 'DGAC AIP Comoros',            url: 'https://www.dgac.km/' },
-    'OE': { name: 'GACA AIP Saudi Arabia',       url: 'https://www.gaca.gov.sa/en/services/Pages/aip.aspx' },
+    'OE': { name: 'GACA eAIS Saudi Arabia',      url: 'https://eais.gaca.gov.sa/' },
+    'LL': { name: 'CAA AIP Israel',              url: 'https://www.caa.gov.il/' },
+    'GM': { name: 'ONDA AIP Morocco',            url: 'https://www.onda.ma/' },
     'OG': { name: 'CARC AIP Jordan (Mil)',       url: 'https://www.carc.gov.jo/' },
 
     // Americas
@@ -1534,24 +1544,25 @@ const AIP_PREFIXES = {
     'MB': { name: 'TCCA AIP Turks & Caicos',     url: 'https://www.tcaa.tc/' },
     'MY': { name: 'BCAD AIP Bahamas',            url: 'https://www.bcad.gov.bs/' },
     'MM': { name: 'SENEAM AIP Mexico',           url: 'https://www.seneam.gob.mx/aip' },
-    'SB': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
-    'SN': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
-    'SW': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
-    'SS': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
-    'SD': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
-    'SI': { name: 'DECEA AIP Brazil',            url: 'https://www.aisweb.aer.mil.br/' },
-    'SK': { name: 'UAEAC AIP Colombia',          url: 'https://www.aerocivil.gov.co/aip' },
-    'SV': { name: 'INAC AIP Venezuela',          url: 'https://www.inac.gob.ve/' },
-    'SE': { name: 'DGAC AIP Ecuador',            url: 'https://www.dgac.gob.ec/aip' },
-    'SP': { name: 'CORPAC AIP Peru',             url: 'https://www.corpac.gob.pe/aip' },
+    'SA': { name: 'EANA AIP Argentina',          url: 'https://ais.eana.com.ar/' },
+    'SB': { name: 'DECEA AIP Brazil',            url: 'https://aisweb.decea.mil.br/' },
+    'SN': { name: 'DECEA AIP Brazil',            url: 'https://aisweb.decea.mil.br/' },
+    'SW': { name: 'DECEA AIP Brazil',            url: 'https://aisweb.decea.mil.br/' },
+    'SS': { name: 'DECEA AIP Brazil',            url: 'https://aisweb.decea.mil.br/' },
+    'SD': { name: 'DECEA AIP Brazil',            url: 'https://aisweb.decea.mil.br/' },
+    'SI': { name: 'DECEA AIP Brazil',            url: 'https://aisweb.decea.mil.br/' },
+    'SC': { name: 'DGAC AIP Chile',              url: 'https://www.aipchile.gob.cl/' },
+    'SE': { name: 'DGAC AIP Ecuador',            url: 'https://www.aviacioncivil.gob.ec/' },
+    'SK': { name: 'Aerocivil AIP Colombia',      url: 'https://www.aerocivil.gov.co/' },
+    'SP': { name: 'CORPAC AIP Peru',             url: 'https://www.corpac.gob.pe/' },
+    'SU': { name: 'DINACIA AIP Uruguay',         url: 'https://www.dinacia.gub.uy/' },
+    'SV': { name: 'INAC AIP Venezuela',          url: 'http://www.inac.gob.ve/' },
     'SL': { name: 'AASANA AIP Bolivia',          url: 'https://www.aasana.bo/aip' },
     'SY': { name: 'AAAC AIP Guyana',             url: 'https://www.caa.gov.gy/' },
     'SM': { name: 'DC AIP Suriname',             url: 'https://www.dc.sr.org/' },
     'SF': { name: 'DGAC AIP French Guiana',      url: 'https://www.sia.aviation-civile.gouv.fr/' },
-    'SA': { name: 'ANAC AIP Argentina',          url: 'https://www.anac.gob.ar/aip' },
-    'SC': { name: 'DGAC AIP Chile',              url: 'https://www.dgac.gob.cl/aip' },
-    'SU': { name: 'DINACIA AIP Uruguay',         url: 'https://www.dinacia.gub.uy/aip' },
     'SG': { name: 'DINAC AIP Paraguay',          url: 'https://www.dinac.gov.py/aip' },
+    'MU': { name: 'CACSA AIP Cuba',              url: 'https://www.cacsa.cu/' },
     'TI': { name: 'VRSTT AIP USVI',              url: 'https://www.faa.gov/air_traffic/publications/' },
     'TJ': { name: 'FAA AIP Puerto Rico',         url: 'https://www.faa.gov/air_traffic/publications/' },
     'TN': { name: 'DCAR AIP Aruba/Curaçao',      url: 'https://www.dcar.nl/aip' },
