@@ -1,0 +1,563 @@
+{
+  "EBAW": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBAW-en-GB.html",
+    "karten": {
+      "ADC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_ADC01_v48.pdf",
+      "ADC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_ADC02_v06.pdf",
+      "ADC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_ADC03_v03.pdf",
+      "ADC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_ADC04_v01.pdf",
+      "AOC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_AOC01_v12.pdf",
+      "ATCSMAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_ATCSMAC01_v13.pdf",
+      "STAR01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_STAR01_v13.pdf",
+      "STAR02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_STAR02_v05.pdf",
+      "SID01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_SID01_v23.pdf",
+      "SID02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_SID02_v24.pdf",
+      "SID03a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_SID03a_v03.pdf",
+      "SID03b": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_SID03b_v03.pdf",
+      "IAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_IAC01_v34.pdf",
+      "IAC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_IAC02_v17.pdf",
+      "IAC02a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_IAC02a_v02.pdf",
+      "IAC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_IAC03_v29.pdf",
+      "IAC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_IAC04_v27.pdf",
+      "IAC05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_IAC05_v08.pdf",
+      "IAC05a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_IAC05a_v01.pdf",
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_VAC01_v30.pdf",
+      "VAC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_VAC02_v13.pdf",
+      "VAC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBAW_VAC03_v07.pdf"
+    }
+  },
+  "EBBR": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBR-en-GB.html",
+    "karten": {
+      "https://ops.skeyes.be/html/internal_static/eaip/eAIP_Product/Documents/EBBR_Standard_Push-back_Procedures.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Product/Documents/EBBR_Standard_Push-back_Procedures.pdf",
+      "ADC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_ADC01_v64.pdf",
+      "ADC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_ADC02_v25.pdf",
+      "ADC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_ADC03_v08.pdf",
+      "GMC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC01_v72.pdf",
+      "GMC02a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC02a_v35.pdf",
+      "GMC02b": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC02b_v48.pdf",
+      "GMC02c": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC02c_v43.pdf",
+      "GMC02d": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC02d_v09.pdf",
+      "GMC02e": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC02e_v01.pdf",
+      "GMC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC03_v22.pdf",
+      "GMC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC04_v28.pdf",
+      "GMC05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC05_v12.pdf",
+      "GMC06a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC06a_v26.pdf",
+      "GMC06b": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC06b_v28.pdf",
+      "GMC07": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_GMC07_v18.pdf",
+      "APDC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_APDC01_v90.pdf",
+      "APDC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_APDC02_v33.pdf",
+      "APDC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_APDC03_v27.pdf",
+      "APDC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_APDC04_v12.pdf",
+      "AOC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_AOC01_v13.pdf",
+      "AOC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_AOC02_v12.pdf",
+      "AOC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_AOC03_v12.pdf",
+      "PATC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_PATC01_v03.pdf",
+      "PATC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_PATC02_v03.pdf",
+      "ATCSMAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_ATCSMAC01_v13.pdf",
+      "STAR01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_STAR01_v30.pdf",
+      "STAR02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_STAR02_v19.pdf",
+      "STAR03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_STAR03_v04.pdf",
+      "STAR04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_STAR04_v05.pdf",
+      "STAR05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_STAR05_v04.pdf",
+      "SID01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID01_v37.pdf",
+      "SID01a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID01a_v06.pdf",
+      "SID02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID02_v34.pdf",
+      "SID02a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID02a_v18.pdf",
+      "SID03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID03_v33.pdf",
+      "SID03a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID03a_v17.pdf",
+      "SID04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID04_v10.pdf",
+      "SID05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID05_v09.pdf",
+      "SID06": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID06_v11.pdf",
+      "SID06a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID06a_v19.pdf",
+      "SID07": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID07_v09.pdf",
+      "SID08": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID08_v10.pdf",
+      "SID09": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_SID09_v11.pdf",
+      "IAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC01_v40.pdf",
+      "IAC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC03_v38.pdf",
+      "IAC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC04_v39.pdf",
+      "IAC05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC05_v37.pdf",
+      "IAC07a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC07a_v20.pdf",
+      "IAC08": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC08_v31.pdf",
+      "IAC09": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC09_v34.pdf",
+      "IAC10": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC10_v24.pdf",
+      "IAC11": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC11_v17.pdf",
+      "IAC11a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC11a_v03.pdf",
+      "IAC12": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC12_v20.pdf",
+      "IAC12a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC12a_v04.pdf",
+      "IAC13": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC13_v16.pdf",
+      "IAC13a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC13a_v04.pdf",
+      "IAC14": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC14_v15.pdf",
+      "IAC14a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC14a_v03.pdf",
+      "IAC15": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC15_v10.pdf",
+      "IAC15a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_IAC15a_v05.pdf",
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBBR_VAC01_v29.pdf"
+    }
+  },
+  "EBCI": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBCI-en-GB.html",
+    "karten": {
+      "ADC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_ADC01_v35.pdf",
+      "ADC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_ADC02_v20.pdf",
+      "GMC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_GMC01_v36.pdf",
+      "GMC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_GMC02_v18.pdf",
+      "GMC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_GMC03_v11.pdf",
+      "GMC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_GMC04_v05.pdf",
+      "AOC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_AOC01_v16.pdf",
+      "PATC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_PATC01_v04.pdf",
+      "STAR01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_STAR01_v20.pdf",
+      "STAR02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_STAR02_v13.pdf",
+      "STAR03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_STAR03_v06.pdf",
+      "SID01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_SID01_v28.pdf",
+      "SID02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_SID02_v27.pdf",
+      "IAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_IAC01_v39.pdf",
+      "IAC02-v31": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_IAC02-v31.pdf",
+      "IAC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_IAC03_v33.pdf",
+      "IAC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_IAC04_v22.pdf",
+      "IAC04a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_IAC04a_v05.pdf",
+      "IAC05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_IAC05_v21.pdf",
+      "IAC05a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_IAC05a_v05.pdf",
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBCI_VAC01_v26.pdf"
+    }
+  },
+  "EBKT": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBKT-en-GB.html",
+    "karten": {
+      "ADC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_ADC01_v28.pdf",
+      "ADC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_ADC02_v08.pdf",
+      "GMC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_GMC01_v10.pdf",
+      "GMC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_GMC02_v01.pdf",
+      "APDC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_APDC01_v03.pdf",
+      "AOC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_AOC01_v14.pdf",
+      "SID01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_SID01_v09.pdf",
+      "SID02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_SID02_v08.pdf",
+      "SID03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_SID03_v08.pdf",
+      "IAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_IAC01_v27.pdf",
+      "IAC01a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_IAC01a_v02.pdf",
+      "IAC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_IAC02_v12.pdf",
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_VAC01_v26.pdf",
+      "VAC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKT_VAC02_v15.pdf"
+    }
+  },
+  "EBLG": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBLG-en-GB.html",
+    "karten": {
+      "ADC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_ADC01_v48.pdf",
+      "ADC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_ADC02_v16.pdf",
+      "GMC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_GMC01_v37.pdf",
+      "GMC02a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_GMC02a_v12.pdf",
+      "GMC02b": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_GMC02b_v11.pdf",
+      "GMC03a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_GMC03a_v02.pdf",
+      "GMC03b": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_GMC03b_v02.pdf",
+      "GMC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_GMC04_v08.pdf",
+      "GMC05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_GMC05_v15.pdf",
+      "GMC06": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_GMC06_v03.pdf",
+      "APDC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_APDC01_v05.pdf",
+      "AOC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_AOC01_v15.pdf",
+      "AOC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_AOC02_v12.pdf",
+      "PATC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_PATC01_v03.pdf",
+      "PATC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_PATC02_v03.pdf",
+      "PATC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_PATC03_v03.pdf",
+      "ATCSMAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_ATCSMAC01_v04.pdf",
+      "STAR01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_STAR01_v33.pdf",
+      "STAR02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_STAR02_v28.pdf",
+      "STAR03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_STAR03_v12.pdf",
+      "STAR04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_STAR04_v12.pdf",
+      "STAR05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_STAR05_v06.pdf",
+      "SID01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_SID01_v30.pdf",
+      "SID02-v29": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_SID02-v29.pdf",
+      "IAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC01_v34.pdf",
+      "IAC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC02_v33.pdf",
+      "IAC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC03_v30.pdf",
+      "IAC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC04_v31.pdf",
+      "IAC05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC05_v32.pdf",
+      "IAC05a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC05a_v01.pdf",
+      "IAC06": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC06_v31.pdf",
+      "IAC06a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC06a_v02.pdf",
+      "IAC07": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC07_v32.pdf",
+      "IAC07a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC07a_v02.pdf",
+      "IAC08": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC08_v24.pdf",
+      "IAC08a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_IAC08a_v03.pdf",
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBLG_VAC01_v25.pdf"
+    }
+  },
+  "EBOS": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBOS-en-GB.html",
+    "karten": {
+      "ADC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_ADC01_v47.pdf",
+      "ADC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_ADC02_v06.pdf",
+      "ADC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_ADC03_v05.pdf",
+      "ADC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_ADC04_v06.pdf",
+      "ADC05": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_ADC05_v01.pdf",
+      "APDC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_APDC01_v14.pdf",
+      "AOC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_AOC01_v10.pdf",
+      "PATC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_PATC01.pdf",
+      "PATC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_PATC02.pdf",
+      "STAR01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_STAR01_v24.pdf",
+      "STAR02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_STAR02_v11.pdf",
+      "STAR03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_STAR03_v07.pdf",
+      "SID01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_SID01_v30.pdf",
+      "SID02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_SID02_v31.pdf",
+      "SID03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_SID03_v05.pdf",
+      "IAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_IAC01_v30.pdf",
+      "IAC02": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_IAC02_v33.pdf",
+      "IAC03": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_IAC03_v30.pdf",
+      "IAC03a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_IAC03a_v01.pdf",
+      "IAC04": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_IAC04_v26.pdf",
+      "IAC04a": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_IAC04a_v01.pdf",
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBOS_VAC01_v35.pdf"
+    }
+  },
+  "EBBE": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBE-en-GB.html",
+    "karten": {
+      "EB_AD_2_EBBE_ADC_01_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_ADC_01_en_v19.pdf",
+      "EB_AD_2_EBBE_GMC_01_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_GMC_01_en_v12.pdf",
+      "EB_AD_2_EBBE_AOC_01_en_v06.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_AOC_01_en_v06.pdf",
+      "EB_AD_2_EBBE_AOC_02_en_v06.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_AOC_02_en_v06.pdf",
+      "EB_AD_2_EBBE_AOC_03_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_AOC_03_en_v04.pdf",
+      "EB_AD_2_EBBE_SID_01_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_SID_01_en_v12.pdf",
+      "EB_AD_2_EBBE_SID_02_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_SID_02_en_v12.pdf",
+      "EB_AD_2_EBBE_SID_03_en_v11.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_SID_03_en_v11.pdf",
+      "EB_AD_2_EBBE_SID_04_en_v14.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_SID_04_en_v14.pdf",
+      "EB_AD_2_EBBE_SID_05_en_v14.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_SID_05_en_v14.pdf",
+      "EB_AD_2_EBBE_SID_06_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_SID_06_en_v04.pdf",
+      "EB_AD_2_EBBE_SID_07_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_SID_07_en_v04.pdf",
+      "EB_AD_2_EBBE_MISC_01_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_MISC_01_en_v10.pdf",
+      "EB_AD_2_EBBE_MISC_02_en_v06.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_MISC_02_en_v06.pdf",
+      "EB_AD_2_EBBE_STAR_01_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_STAR_01_en_v12.pdf",
+      "EB_AD_2_EBBE_IAC_01_en_v16.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_01_en_v16.pdf",
+      "EB_AD_2_EBBE_IAC_02_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_02_en_v18.pdf",
+      "EB_AD_2_EBBE_IAC_03_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_03_en_v18.pdf",
+      "EB_AD_2_EBBE_IAC_04_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_04_en_v15.pdf",
+      "EB_AD_2_EBBE_IAC_05_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_05_en_v17.pdf",
+      "EB_AD_2_EBBE_IAC_06_en_v16.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_06_en_v16.pdf",
+      "EB_AD_2_EBBE_IAC_07_en_v13.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_07_en_v13.pdf",
+      "EB_AD_2_EBBE_IAC_08_en_v16.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_08_en_v16.pdf",
+      "EB_AD_2_EBBE_IAC_09_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_09_en_v17.pdf",
+      "EB_AD_2_EBBE_IAC_10_en_v16.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_10_en_v16.pdf",
+      "EB_AD_2_EBBE_IAC_11_en_v14.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_11_en_v14.pdf",
+      "EB_AD_2_EBBE_IAC_12_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_12_en_v17.pdf",
+      "EB_AD_2_EBBE_IAC_13_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_13_en_v18.pdf",
+      "EB_AD_2_EBBE_IAC_14_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_14_en_v18.pdf",
+      "EB_AD_2_EBBE_IAC_15_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_15_en_v18.pdf",
+      "EB_AD_2_EBBE_IAC_16_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_16_en_v18.pdf",
+      "EB_AD_2_EBBE_IAC_16a_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_16a_en_v04.pdf",
+      "EB_AD_2_EBBE_IAC_17_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_17_en_v15.pdf",
+      "EB_AD_2_EBBE_IAC_17a_en_v02.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_17a_en_v02.pdf",
+      "EB_AD_2_EBBE_IAC_18_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_18_en_v17.pdf",
+      "EB_AD_2_EBBE_IAC_18a_en_v02.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_18a_en_v02.pdf",
+      "EB_AD_2_EBBE_IAC_19_en_v08.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_19_en_v08.pdf",
+      "EB_AD_2_EBBE_IAC_19a_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_19a_en_v04.pdf",
+      "EB_AD_2_EBBE_IAC_20_en_v06.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_20_en_v06.pdf",
+      "EB_AD_2_EBBE_IAC_21_en_v05.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_IAC_21_en_v05.pdf",
+      "EB_AD_2_EBBE_VAC_01_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_VAC_01_en_v12.pdf",
+      "EB_AD_2_EBBE_VAC_02_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_VAC_02_en_v12.pdf",
+      "EB_AD_2_EBBE_VAC_03_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_VAC_03_en_v10.pdf",
+      "EB_AD_2_EBBE_VAC_04_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBE_VAC_04_en_v12.pdf"
+    }
+  },
+  "EBBX": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBX-en-GB.html",
+    "karten": {}
+  },
+  "EBMB": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBMB-en-GB.html",
+    "karten": {}
+  },
+  "EBCV": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBCV-en-GB.html",
+    "karten": {
+      "https://ops.skeyes.be/html/internal_static/eaip/eAIP_Product/Forms/EBCV_PPR_Form.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Product/Forms/EBCV_PPR_Form.pdf",
+      "EB_AD_2_EBCV_GMC_01_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBCV_GMC_01_en_v04.pdf",
+      "EB_AD_2_EBCV_IAC_01_en_v16.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBCV_IAC_01_en_v16.pdf",
+      "EB_AD_2_EBCV_IAC_02_en_v14.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBCV_IAC_02_en_v14.pdf",
+      "EB_AD_2_EBCV_IAC_03_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBCV_IAC_03_en_v15.pdf",
+      "EB_AD_2_EBCV_IAC_04_en_v03.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBCV_IAC_04_en_v03.pdf"
+    }
+  },
+  "EBDT": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBDT-en-GB.html",
+    "karten": {}
+  },
+  "EBFS": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBFS-en-GB.html",
+    "karten": {
+      "EB_AD_2_EBFS_ADC_01_en_v30.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_ADC_01_en_v30.pdf",
+      "EB_AD_2_EBFS_GMC_01_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_GMC_01_en_v18.pdf",
+      "EB_AD_2_EBFS_AOC_01_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_AOC_01_v10.pdf",
+      "EB_AD_2_EBFS_AOC_02_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_AOC_02_v10.pdf",
+      "EB_AD_2_EBFS_AOC_03_v09.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_AOC_03_v09.pdf",
+      "EB_AD_2_EBFS_SID_01_en_v13.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_SID_01_en_v13.pdf",
+      "EB_AD_2_EBFS_SID_02_en_v13.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_SID_02_en_v13.pdf",
+      "EB_AD_2_EBFS_SID_03_en_v13.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_SID_03_en_v13.pdf",
+      "EB_AD_2_EBFS_SID_04_en_v14.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_SID_04_en_v14.pdf",
+      "EB_AD_2_EBFS_SID_05_en_v14.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_SID_05_en_v14.pdf",
+      "EB_AD_2_EBFS_MISC_01_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_MISC_01_en_v18.pdf",
+      "EB_AD_2_EBFS_MISC_02_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_MISC_02_en_v10.pdf",
+      "EB_AD_2_EBFS_IAC_01_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_01_en_v21.pdf",
+      "EB_AD_2_EBFS_IAC_02_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_02_en_v21.pdf",
+      "EB_AD_2_EBFS_IAC_03_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_03_en_v21.pdf",
+      "EB_AD_2_EBFS_IAC_04_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_04_en_v21.pdf",
+      "EB_AD_2_EBFS_IAC_05_en_v20.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_05_en_v20.pdf",
+      "EB_AD_2_EBFS_IAC_06_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_06_en_v18.pdf",
+      "EB_AD_2_EBFS_IAC_07_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_07_en_v19.pdf",
+      "EB_AD_2_EBFS_IAC_08_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_08_en_v19.pdf",
+      "EB_AD_2_EBFS_IAC_09_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_09_en_v19.pdf",
+      "EB_AD_2_EBFS_IAC_10_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_10_en_v19.pdf",
+      "EB_AD_2_EBFS_IAC_11_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_11_en_v18.pdf",
+      "EB_AD_2_EBFS_IAC_12_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_12_en_v19.pdf",
+      "EB_AD_2_EBFS_IAC_13_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_13_en_v21.pdf",
+      "EB_AD_2_EBFS_IAC_14_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_14_en_v17.pdf",
+      "EB_AD_2_EBFS_IAC_15_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_15_en_v18.pdf",
+      "EB_AD_2_EBFS_IAC_16_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_16_en_v17.pdf",
+      "EB_AD_2_EBFS_IAC_17_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_17_en_v19.pdf",
+      "EB_AD_2_EBFS_IAC_18_en_v20.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_18_en_v20.pdf",
+      "EB_AD_2_EBFS_IAC_19_en_v20.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_19_en_v20.pdf",
+      "EB_AD_2_EBFS_IAC_19a_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_19a_en_v01.pdf",
+      "EB_AD_2_EBFS_IAC_20_en_v16.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_20_en_v16.pdf",
+      "EB_AD_2_EBFS_IAC_21_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_21_en_v10.pdf",
+      "EB_AD_2_EBFS_IAC_21a_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_21a_en_v01.pdf",
+      "EB_AD_2_EBFS_IAC_22_en_v11.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_22_en_v11.pdf",
+      "EB_AD_2_EBFS_IAC_23_en_v11.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_23_en_v11.pdf",
+      "EB_AD_2_EBFS_IAC_23a_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_23a_en_v01.pdf",
+      "EB_AD_2_EBFS_IAC_24_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_24_en_v12.pdf",
+      "EB_AD_2_EBFS_IAC_24a_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_24a_en_v01.pdf",
+      "EB_AD_2_EBFS_IAC_25_en_v08.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_25_en_v08.pdf",
+      "EB_AD_2_EBFS_IAC_26_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_IAC_26_en_v04.pdf",
+      "EB_AD_2_EBFS_VAC_01_en_v12.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_VAC_01_en_v12.pdf",
+      "EB_AD_2_EBFS_VAC_02_en_v13.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_VAC_02_en_v13.pdf",
+      "EB_AD_2_EBFS_VAC_03_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_VAC_03_en_v10.pdf",
+      "EB_AD_2_EBFS_VAC_04_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFS_VAC_04_en_v10.pdf"
+    }
+  },
+  "EBBL": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBL-en-GB.html",
+    "karten": {
+      "EB_AD_2_EBBL_ADC_01_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_ADC_01_en_v21.pdf",
+      "EB_AD_2_EBBL_GMC_01_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_GMC_01_en_v21.pdf",
+      "EB_AD_2_EBBL_AOC_01_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_AOC_01_en_v10.pdf",
+      "EB_AD_2_EBBL_AOC_02_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_AOC_02_en_v10.pdf",
+      "EB_AD_2_EBBL_AOC_03_en_v09.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_AOC_03_en_v09.pdf",
+      "EB_AD_2_EBBL_SID_01_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_01_en_v17.pdf",
+      "EB_AD_2_EBBL_SID_02_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_02_en_v17.pdf",
+      "EB_AD_2_EBBL_SID_03_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_03_en_v18.pdf",
+      "EB_AD_2_EBBL_SID_04_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_04_en_v15.pdf",
+      "EB_AD_2_EBBL_SID_05_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_05_en_v18.pdf",
+      "EB_AD_2_EBBL_SID_06_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_06_en_v17.pdf",
+      "EB_AD_2_EBBL_SID_07_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_07_en_v19.pdf",
+      "EB_AD_2_EBBL_SID_08_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_08_en_v19.pdf",
+      "EB_AD_2_EBBL_SID_09_en_v19.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_SID_09_en_v19.pdf",
+      "EB_AD_2_EBBL_MISC_01_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_MISC_01_en_v15.pdf",
+      "EB_AD_2_EBBL_MISC_02_en_v09.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_MISC_02_en_v09.pdf",
+      "EB_AD_2_EBBL_IAC_01_en_v24.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_01_en_v24.pdf",
+      "EB_AD_2_EBBL_IAC_02_en_v24.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_02_en_v24.pdf",
+      "EB_AD_2_EBBL_IAC_03_en_v23.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_03_en_v23.pdf",
+      "EB_AD_2_EBBL_IAC_04_en_v26.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_04_en_v26.pdf",
+      "EB_AD_2_EBBL_IAC_05_en_v24.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_05_en_v24.pdf",
+      "EB_AD_2_EBBL_IAC_06_en_v25.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_06_en_v25.pdf",
+      "EB_AD_2_EBBL_IAC_07_en_v22.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_07_en_v22.pdf",
+      "EB_AD_2_EBBL_IAC_08_en_v20.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_08_en_v20.pdf",
+      "EB_AD_2_EBBL_IAC_09_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_09_en_v21.pdf",
+      "EB_AD_2_EBBL_IAC_10_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_10_en_v21.pdf",
+      "EB_AD_2_EBBL_IAC_11_en_v23.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_11_en_v23.pdf",
+      "EB_AD_2_EBBL_IAC_12_en_v21.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_12_en_v21.pdf",
+      "EB_AD_2_EBBL_IAC_13_en_v24.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_13_en_v24.pdf",
+      "EB_AD_2_EBBL_IAC_14_en_v22.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_14_en_v22.pdf",
+      "EB_AD_2_EBBL_IAC_15_en_v24.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_15_en_v24.pdf",
+      "EB_AD_2_EBBL_IAC_16_en_v06.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_16_en_v06.pdf",
+      "EB_AD_2_EBBL_IAC_17_en_v08.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_17_en_v08.pdf",
+      "EB_AD_2_EBBL_IAC_18_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_18_en_v04.pdf",
+      "EB_AD_2_EBBL_IAC_18a_en_v02.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_18a_en_v02.pdf",
+      "EB_AD_2_EBBL_IAC_19_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_19_en_v04.pdf",
+      "EB_AD_2_EBBL_IAC_20_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_20_en_v01.pdf",
+      "EB_AD_2_EBBL_IAC_20a_en_v02.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_20a_en_v02.pdf",
+      "EB_AD_2_EBBL_IAC_21_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_21_en_v01.pdf",
+      "EB_AD_2_EBBL_IAC_22_en_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_22_en_v04.pdf",
+      "EB_AD_2_EBBL_IAC_23_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_23_en_v01.pdf",
+      "EB_AD_2_EBBL_IAC_24_en_v02.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_24_en_v02.pdf",
+      "EB_AD_2_EBBL_IAC_25_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_IAC_25_en_v01.pdf",
+      "EB_AD_2_EBBL_VAC_01_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_VAC_01_en_v15.pdf",
+      "EB_AD_2_EBBL_VAC_02_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_VAC_02_en_v15.pdf",
+      "EB_AD_2_EBBL_VAC_03_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBBL_VAC_03_en_v15.pdf"
+    }
+  },
+  "EBFN": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBFN-en-GB.html",
+    "karten": {
+      "EB_AD_2_EBFN_ADC_01_en_v18.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_ADC_01_en_v18.pdf",
+      "EB_AD_2_EBFN_GMC_01_en_v10.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_GMC_01_en_v10.pdf",
+      "AD_2_EBFN_AOC_01_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/AD_2_EBFN_AOC_01_v04.pdf",
+      "AD_2_EBFN_AOC_02_v03.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/AD_2_EBFN_AOC_02_v03.pdf",
+      "EB_AD_2_EBFN_SID_01_en_v20.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_SID_01_en_v20.pdf",
+      "EB_AD_2_EBFN_SID_02_en_v17.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_SID_02_en_v17.pdf",
+      "EB_AD_2_EBFN_MISC_01_en_v13.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_MISC_01_en_v13.pdf",
+      "EB_AD_2_EBFN_MISC_02_en_v05.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_MISC_02_en_v05.pdf",
+      "EB_AD_2_EBFN_IAC_01_en_v25.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_IAC_01_en_v25.pdf",
+      "EB_AD_2_EBFN_IAC_02_en_v25.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_IAC_02_en_v25.pdf",
+      "EB_AD_2_EBFN_IAC_03_en_v20.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_IAC_03_en_v20.pdf",
+      "EB_AD_2_EBFN_IAC_04_en_v05.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_IAC_04_en_v05.pdf",
+      "EB_AD_2_EBFN_IAC_04a_en_v01.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_IAC_04a_en_v01.pdf",
+      "EB_AD_2_EBFN_IAC_05_en_v02.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_IAC_05_en_v02.pdf",
+      "EB_AD_2_EBFN_VAC_01_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_VAC_01_en_v15.pdf",
+      "EB_AD_2_EBFN_VAC_02_en_v15.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EB_AD_2_EBFN_VAC_02_en_v15.pdf"
+    }
+  },
+  "EBSU": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBSU-en-GB.html",
+    "karten": {
+      "AD_2_EBSU_AOC.01_v04.pdf": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/AD_2_EBSU_AOC.01_v04.pdf"
+    }
+  },
+  "EBUL": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBUL-en-GB.html",
+    "karten": {}
+  },
+  "EBWE": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBWE-en-GB.html",
+    "karten": {}
+  },
+  "EBAM": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBAM-en-GB.html",
+    "karten": {}
+  },
+  "EBKH": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBKH-en-GB.html",
+    "karten": {
+      "ADC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKH_ADC01_v03.pdf",
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBKH_VAC01_v05.pdf"
+    }
+  },
+  "EBBT": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBT-en-GB.html",
+    "karten": {}
+  },
+  "EBCF": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBCF-en-GB.html",
+    "karten": {}
+  },
+  "EBZW": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBZW-en-GB.html",
+    "karten": {}
+  },
+  "EBGG": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBGG-en-GB.html",
+    "karten": {}
+  },
+  "EBTN": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBTN-en-GB.html",
+    "karten": {}
+  },
+  "EBGB": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBGB-en-GB.html",
+    "karten": {
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBGB_VAC01_v13.pdf"
+    }
+  },
+  "EBZH": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBZH-en-GB.html",
+    "karten": {}
+  },
+  "EBHN": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBHN-en-GB.html",
+    "karten": {}
+  },
+  "EBEH": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBEH-en-GB.html",
+    "karten": {}
+  },
+  "EBLE": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBLE-en-GB.html",
+    "karten": {}
+  },
+  "EBMO": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBMO-en-GB.html",
+    "karten": {
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBMO_VAC01_v03.pdf"
+    }
+  },
+  "EBNM": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBNM-en-GB.html",
+    "karten": {}
+  },
+  "EBSG": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBSG-en-GB.html",
+    "karten": {}
+  },
+  "EBSH": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBSH-en-GB.html",
+    "karten": {}
+  },
+  "EBST": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBST-en-GB.html",
+    "karten": {
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBST_VAC01_v11.pdf"
+    }
+  },
+  "EBSP": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBSP-en-GB.html",
+    "karten": {
+      "VAC01": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/graphics/eAIP/EBSP_VAC01_v14.pdf"
+    }
+  },
+  "EBTY": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBTY-en-GB.html",
+    "karten": {}
+  },
+  "EBTX": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBTX-en-GB.html",
+    "karten": {}
+  },
+  "EBZR": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBZR-en-GB.html",
+    "karten": {}
+  },
+  "EBSL": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBSL-en-GB.html",
+    "karten": {}
+  },
+  "EBAR": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBAR-en-GB.html",
+    "karten": {}
+  },
+  "EBML": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBML-en-GB.html",
+    "karten": {}
+  },
+  "EBIS": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBIS-en-GB.html",
+    "karten": {}
+  },
+  "EBBN": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBN-en-GB.html",
+    "karten": {}
+  },
+  "EBMG": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBMG-en-GB.html",
+    "karten": {}
+  },
+  "EBBY": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBY-en-GB.html",
+    "karten": {}
+  },
+  "EBAV": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBAV-en-GB.html",
+    "karten": {}
+  },
+  "EBBZ": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBBZ-en-GB.html",
+    "karten": {}
+  },
+  "EBOR": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBOR-en-GB.html",
+    "karten": {}
+  },
+  "EBZU": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBZU-en-GB.html",
+    "karten": {}
+  },
+  "EBSM": {
+    "_url": "https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/eAIP/EB-AD-2.EBSM-en-GB.html",
+    "karten": {}
+  }
+}

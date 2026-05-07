@@ -47,8 +47,8 @@ jobs:
         run: python southafrica_bot.py
         continue-on-error: true
 
-      - name: Benelux-Bot ausführen
-        run: python benelux_bot.py
+      - name: Belgien-Bot ausführen
+        run: python belgium_bot.py
         continue-on-error: true
 
       - name: Austrocontrol-Bot ausführen
