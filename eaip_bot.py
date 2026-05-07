@@ -189,7 +189,7 @@ LAND_KONFIGS = [
     {
         'prefix':   'EH',
         'name':     'LVNL AIP (Niederlande)',
-        'start_url':'https://www.lvnl.nl/eaip/',
+        'start_url':'https://www.lvnl.nl/diensten/aip',
         'mode':     'selenium',
         'output':   'eh_katalog_export.json',
     },
