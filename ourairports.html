@@ -1256,7 +1256,7 @@ function ladeKatalogDatei(dateiname) {
     if (_katalogPromises[dateiname]) return _katalogPromises[dateiname];
     _katalogPromises[dateiname] = fetch(`${RAW}${dateiname}_katalog_export.json`)
         .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-        .catch(() => ({}));
+        .catch(e => { console.warn(`[Katalog] Ladefehler ${dateiname}: ${e}`); return {}; });
     return _katalogPromises[dateiname];
 }
 
@@ -1416,14 +1416,18 @@ async function ladeDfsKarten(icao) {
 
     // ── Alle anderen Länder – generischer Katalog ──────────────────
     const dateiname = katalogDateiname(icao);
+    const aipInfo = getAipLink(icao);
     if (dateiname && dateiname !== 'faa') {
-        try {
-            const kat = await ladeKatalogDatei(dateiname);
-            const eintrag = kat && kat[icao];
-            const aipInfo = getAipLink(icao);
-            const titel = aipInfo ? `🗺 ${aipInfo.name}` : `🗺 AIP-Karten (${prefix})`;
+        const kat = await ladeKatalogDatei(dateiname);
+        const eintrag = kat && kat[icao];
+        const titel = aipInfo ? `🗺 ${aipInfo.name}` : `🗺 AIP-Karten (${prefix})`;
+        if (eintrag) {
             html += chartSection(titel, eintrag, null, GENERIC_GRUPPEN_DEF);
-        } catch(e) {}
+        } else if (aipInfo) {
+            html += `<section class="card-section"><h3 class="section-title">${titel} <a class="btn-ext" href="${aipInfo.url}" target="_blank" rel="noopener">↗ AIP-Quelle</a></h3></section>`;
+        }
+    } else if (aipInfo) {
+        html += `<section class="card-section"><h3 class="section-title">🗺 ${aipInfo.name} <a class="btn-ext" href="${aipInfo.url}" target="_blank" rel="noopener">↗ AIP-Quelle</a></h3></section>`;
     }
 
     if (html) el.innerHTML = html;
