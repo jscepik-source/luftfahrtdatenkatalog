@@ -1666,7 +1666,7 @@ function toggle(btn, icao, lat, lon) {
             ladeErst(icao, lat, lon);
             ladeKarte(icao, lat, lon);
         }
-        ladeWetter(icao);
+        ladeWetter(icao, lat, lon);
         ladeNotams(icao);
         ladeDfsKarten(icao);
     }
@@ -1708,7 +1708,58 @@ async function fetchProxy(url) {
     throw new Error('Alle Proxies fehlgeschlagen');
 }
 
-async function ladeWetter(icao) {
+function wetterExternLinks(icao, lat, lon) {
+    const latlon = (lat && lon) ? `${parseFloat(lat).toFixed(4)},${parseFloat(lon).toFixed(4)}` : '';
+    const windyUrl = latlon ? `https://www.windy.com/?${lat},${lon},12` : `https://www.windy.com/`;
+    const mblueUrl = latlon ? `https://www.meteoblue.com/de/wetter/outdoorsports/paragliding/${latlon}` : `https://www.meteoblue.com/`;
+    return `<div class="notam-extern" style="margin-top:0.5rem">
+        <span class="notam-extern-label">Wetterquellen:</span>
+        <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy</a>
+        <a class="btn-ext" href="${mblueUrl}" target="_blank" rel="noopener">☁ Meteoblue</a>
+    </div>`;
+}
+
+async function ladeBrightSky(lat, lon) {
+    const url = `https://api.brightsky.dev/current_weather?lat=${lat}&lon=${lon}`;
+    const versuche = [
+        url,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+        `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+    ];
+    for (const u of versuche) {
+        try {
+            const res = await fetch(u);
+            if (!res.ok) continue;
+            const data = await res.json();
+            return data.weather || null;
+        } catch(e) {}
+    }
+    return null;
+}
+
+function renderBrightSky(w, station) {
+    const wind = w.wind_direction_10 !== null ? `${w.wind_direction_10}° / ${(w.wind_speed_10 * 1.944).toFixed(0)} kt${w.wind_gust_speed_10 ? ` (Böen ${(w.wind_gust_speed_10 * 1.944).toFixed(0)} kt)` : ''}` : '–';
+    const vis  = w.visibility !== null ? `${(w.visibility / 1000).toFixed(1)} km` : '–';
+    const temp = w.temperature !== null ? `${w.temperature} °C` : '–';
+    const dew  = w.dew_point   !== null ? `${w.dew_point.toFixed(1)} °C` : '–';
+    const qnh  = w.pressure_msl !== null ? `${w.pressure_msl.toFixed(1)} hPa` : '–';
+    const cc   = w.cloud_cover !== null ? `${w.cloud_cover} %` : '–';
+    const ts   = w.timestamp ? new Date(w.timestamp).toUTCString().slice(5, 22) + ' UTC' : '';
+    return `<div class="metar-box">
+        <p class="metar-raw" style="color:var(--color-text-dim);font-size:0.75rem">DWD-Beobachtung${ts ? ' · ' + ts : ''}${station ? ' · nächste Station: ' + station : ''}</p>
+        <dl class="wx-grid">
+            <div class="wx-item"><dt>Wind</dt><dd>${wind}</dd></div>
+            <div class="wx-item"><dt>Sicht</dt><dd>${vis}</dd></div>
+            <div class="wx-item"><dt>Temp / TP</dt><dd>${temp} / ${dew}</dd></div>
+            <div class="wx-item"><dt>QNH</dt><dd>${qnh}</dd></div>
+            <div class="wx-item"><dt>Bedeckung</dt><dd>${cc}</dd></div>
+            ${w.condition ? `<div class="wx-item"><dt>Zustand</dt><dd>${w.condition}</dd></div>` : ''}
+        </dl>
+    </div>
+    <p class="wx-quelle">Quelle: Bright Sky / DWD Open Data (nächste Wetterstation, kein METAR)</p>`;
+}
+
+async function ladeWetter(icao, lat, lon) {
     const el = document.getElementById(`wetter-${icao}`);
     if (!el || el.dataset.geladen) return;
     el.dataset.geladen = '1';
@@ -1744,8 +1795,20 @@ async function ladeWetter(icao) {
                     ${m.wxString ? `<div class="wx-item"><dt>Phänomene</dt><dd>${m.wxString}</dd></div>` : ''}
                 </dl>
             </div>`;
+            html += `<p class="wx-quelle">Quelle: ${quelle}</p>`;
         } else {
-            html += '<span class="status-error">Kein METAR verfügbar</span>';
+            const isGerman = icao.startsWith('ED') || icao.startsWith('ET');
+            if (isGerman && lat && lon) {
+                const bsData = await ladeBrightSky(lat, lon);
+                if (bsData) {
+                    html += renderBrightSky(bsData, null);
+                } else {
+                    html += '<p class="status-error">Kein METAR für dieses Flugfeld — kein Wetterbericht verfügbar</p>';
+                }
+            } else {
+                html += '<p style="color:var(--color-text-dim);font-size:0.85rem">Dieses Flugfeld meldet keine METAR-Wetterdaten.</p>';
+            }
+            html += wetterExternLinks(icao, lat, lon);
         }
         if (tRes && tRes.length > 0 && tRes[0].rawTAF) {
             html += `<section class="card-section">
@@ -1753,12 +1816,11 @@ async function ladeWetter(icao) {
                 <pre class="taf-pre">${tRes[0].rawTAF}</pre>
             </section>`;
         }
-        html += `<p class="wx-quelle">Quelle: ${quelle}</p>`;
         wettercache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
         console.error('Wetter Fehler:', e);
-        el.innerHTML = `<span class="status-error">Wetterdaten nicht verfügbar (${e.message}) — siehe Browser-Konsole (F12)</span>`;
+        el.innerHTML = `<span class="status-error">Wetterdaten nicht verfügbar (${e.message})</span>${wetterExternLinks(icao, lat, lon)}`;
     }
 }
 
