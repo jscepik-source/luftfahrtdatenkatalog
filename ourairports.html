@@ -981,15 +981,54 @@ function zeigeHinweis() {
     document.getElementById('zaehler').textContent = `${Object.keys(katalog).length.toLocaleString()} Flughäfen geladen`;
 }
 
+const LAND_ALIASES = {
+    'afghanistan': 'AF', 'ägypten': 'EG', 'aegypten': 'EG', 'albanien': 'AL',
+    'algerien': 'DZ', 'angola': 'AO', 'argentinien': 'AR', 'armenien': 'AM',
+    'aserbaidschan': 'AZ', 'äthiopien': 'ET', 'aethiopien': 'ET',
+    'australien': 'AU', 'österreich': 'AT', 'oesterreich': 'AT',
+    'bahrain': 'BH', 'bangladesch': 'BD', 'belgien': 'BE', 'bolivien': 'BO',
+    'bosnien': 'BA', 'bosnien und herzegowina': 'BA', 'brasilien': 'BR',
+    'bulgarien': 'BG', 'chile': 'CL', 'china': 'CN', 'dänemark': 'DK',
+    'daenemark': 'DK', 'deutschland': 'DE', 'ecuador': 'EC', 'estland': 'EE',
+    'finnland': 'FI', 'frankreich': 'FR', 'georgien': 'GE', 'griechenland': 'GR',
+    'großbritannien': 'GB', 'grossbritannien': 'GB', 'uk': 'GB', 'england': 'GB',
+    'hongkong': 'HK', 'hong kong': 'HK', 'indien': 'IN', 'indonesien': 'ID',
+    'irak': 'IQ', 'iran': 'IR', 'irland': 'IE', 'island': 'IS', 'israel': 'IL',
+    'italien': 'IT', 'japan': 'JP', 'jemen': 'YE', 'jordanien': 'JO',
+    'kanada': 'CA', 'kasachstan': 'KZ', 'kenia': 'KE', 'kolumbien': 'CO',
+    'kroatien': 'HR', 'kuba': 'CU', 'kuwait': 'KW', 'lettland': 'LV',
+    'libanon': 'LB', 'litauen': 'LT', 'luxemburg': 'LU', 'macau': 'MO',
+    'malaysia': 'MY', 'marokko': 'MA', 'mexiko': 'MX', 'moldawien': 'MD',
+    'moldau': 'MD', 'mongolei': 'MN', 'montenegro': 'ME',
+    'neuseeland': 'NZ', 'niederlande': 'NL', 'holland': 'NL',
+    'nigeria': 'NG', 'nordkorea': 'KP', 'nordmazedonien': 'MK',
+    'norwegen': 'NO', 'oman': 'OM', 'pakistan': 'PK', 'panama': 'PA',
+    'peru': 'PE', 'philippinen': 'PH', 'polen': 'PL', 'portugal': 'PT',
+    'katar': 'QA', 'qatar': 'QA', 'rumänien': 'RO', 'rumaenien': 'RO',
+    'russland': 'RU', 'saudi-arabien': 'SA', 'saudi arabien': 'SA',
+    'schweden': 'SE', 'schweiz': 'CH', 'serbien': 'RS',
+    'singapur': 'SG', 'slowakei': 'SK', 'slowenien': 'SI', 'spanien': 'ES',
+    'sri lanka': 'LK', 'südafrika': 'ZA', 'suedafrika': 'ZA',
+    'südkorea': 'KR', 'suedkorea': 'KR', 'korea': 'KR',
+    'taiwan': 'TW', 'tansania': 'TZ', 'thailand': 'TH', 'tschechien': 'CZ',
+    'türkei': 'TR', 'tuerkei': 'TR', 'tunesien': 'TN', 'uganda': 'UG',
+    'ukraine': 'UA', 'ungarn': 'HU', 'uruguay': 'UY', 'usa': 'US',
+    'vereinigte arabische emirate': 'AE', 'vae': 'AE', 'uae': 'AE',
+    'vietnam': 'VN', 'weißrussland': 'BY', 'weissrussland': 'BY',
+    'belarus': 'BY', 'zypern': 'CY',
+};
+
 function suche() {
     const q = document.getElementById('suche').value.trim().toLowerCase();
     if (!q && !aktiverTyp && !aktivSched) { zeigeHinweis(); return; }
+    const aliasIso = q ? (LAND_ALIASES[q] || null) : null;
     aktuelleEintraege = Object.entries(katalog).filter(([icao, ap]) => {
         if (aktiverTyp && ap.type !== aktiverTyp) return false;
         if (aktivSched && !ap.scheduled) return false;
         if (aktivIata && !ap.iata) return false;
         if (aktivKontinent && ap.continent !== aktivKontinent) return false;
         if (!q) return true;
+        if (aliasIso && (ap.country||'').toUpperCase() === aliasIso) return true;
         return icao.toLowerCase().includes(q) || (ap.iata||'').toLowerCase().includes(q)
             || (ap.name||'').toLowerCase().includes(q) || (ap.city||'').toLowerCase().includes(q)
             || (ap.country||'').toLowerCase().includes(q) || (ap.country_name||'').toLowerCase().includes(q);
