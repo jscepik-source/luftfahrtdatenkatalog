@@ -182,7 +182,7 @@ LAND_KONFIGS = [
     {
         'prefix':   'EB',
         'name':     'skeyes AIP (Belgien)',
-        'start_url':'https://ops.skeyes.be/html/belgocontrol_static/eaip/eAIP_Main/html/index-en-GB.html',
+        'start_url':'https://ops.skeyes.be/',
         'mode':     'selenium',
         'output':   'eb_katalog_export.json',
     },
