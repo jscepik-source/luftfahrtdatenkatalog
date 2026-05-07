@@ -43,6 +43,10 @@ jobs:
       - name: FAA-Karten-Bot ausführen
         run: python faa_bot.py
 
+      - name: Austrocontrol-Bot ausführen
+        run: python austrocontrol_bot.py
+        continue-on-error: true
+
       - name: Welt-eAIP-Bot ausführen
         run: python eaip_bot.py
         continue-on-error: true
