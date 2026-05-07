@@ -1232,19 +1232,19 @@ function ladeFaaDaten() {
 let _kcId = 0;
 
 const IFR_GRUPPEN_DEF = [
-    { label: '🏗 Platz & Hindernis',   re: /\s2-\d/,   offen: true  },
-    { label: '🔽 Anflüge – STAR',      re: /\s3-\d/,   offen: false },
-    { label: '🎯 Instrumentenanflüge', re: /\s4-\d/,   offen: true  },
-    { label: '🛫 Abflüge – SID',       re: /\s5-\d/,   offen: false },
-    { label: '📍 Wegpunkte',           re: /\s6-\d/,   offen: false },
-    { label: '📋 Sonstiges',           re: null,        offen: false },
+    { label: '🏗 Platz & Hindernis',   re: /\s2-\d/,   offen: true },
+    { label: '🔽 Anflüge – STAR',      re: /\s3-\d/,   offen: true },
+    { label: '🎯 Instrumentenanflüge', re: /\s4-\d/,   offen: true },
+    { label: '🛫 Abflüge – SID',       re: /\s5-\d/,   offen: true },
+    { label: '📍 Wegpunkte',           re: /\s6-\d/,   offen: true },
+    { label: '📋 Sonstiges',           re: null,        offen: true },
 ];
 const FAA_GRUPPEN_DEF = [
-    { label: '🏗 Platz',           re: /DIAGRAM|HOT.?SPOT|GROUND/i,                              offen: true  },
-    { label: '🎯 Anflüge',        re: /ILS|RNAV|GPS|NDB|VOR|LOC|LDA|APPROACH|RNP/i,            offen: true  },
-    { label: '🛫 Abflüge',        re: /DEPARTURE|SID/i,                                          offen: false },
-    { label: '🗺 Übersicht',      re: /AREA|ENROUTE|FLYWAY|CHART/i,                             offen: false },
-    { label: '📋 Sonstiges',      re: null,                                                       offen: false },
+    { label: '🏗 Platz',       re: /DIAGRAM|HOT.?SPOT|GROUND/i,                           offen: true },
+    { label: '🎯 Anflüge',    re: /ILS|RNAV|GPS|NDB|VOR|LOC|LDA|APPROACH|RNP/i,         offen: true },
+    { label: '🛫 Abflüge',    re: /DEPARTURE|SID/i,                                        offen: true },
+    { label: '🗺 Übersicht',  re: /AREA|ENROUTE|FLYWAY|CHART/i,                           offen: true },
+    { label: '📋 Sonstiges',  re: null,                                                     offen: true },
 ];
 
 function verteileGruppen(eintraege, defs) {
