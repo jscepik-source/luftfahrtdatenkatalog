@@ -51,6 +51,10 @@ jobs:
         run: python belgium_bot.py
         continue-on-error: true
 
+      - name: Niederlande-Bot ausführen
+        run: python netherlands_bot.py
+        continue-on-error: true
+
       - name: Austrocontrol-Bot ausführen
         run: python austrocontrol_bot.py
         continue-on-error: true
