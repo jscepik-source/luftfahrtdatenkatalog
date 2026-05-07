@@ -339,8 +339,8 @@ LAND_KONFIGS = [
     },
     {
         'prefix':   'HK',
-        'name':     'KCAA AIP (Kenia)',
-        'start_url':'https://www.kcaa.or.ke/',
+        'name':     'KCAA eAIP (Kenia)',
+        'start_url':'https://eaip.kcaa.or.ke/',
         'mode':     'selenium',
         'output':   'hk_katalog_export.json',
     },
