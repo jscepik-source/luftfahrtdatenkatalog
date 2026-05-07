@@ -701,6 +701,41 @@
             white-space: nowrap;
         }
         .btn-chart:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-bg); }
+
+        /* ── Karten-Gruppen & Filter ── */
+        .karten-filter {
+            width: 100%;
+            padding: 0.3rem 0.6rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-surface);
+            color: var(--color-text);
+            font-size: 0.8rem;
+            margin-bottom: 0.4rem;
+            box-sizing: border-box;
+        }
+        .karten-filter:focus { outline: none; border-color: var(--color-primary); }
+        .karten-gruppe { margin-bottom: 0.3rem; }
+        .karten-gruppe-kopf {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            padding: 0.3rem 0.55rem;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            font-weight: 600;
+            user-select: none;
+        }
+        .karten-gruppe-kopf:hover { border-color: var(--color-primary); background: var(--color-primary-bg); }
+        .karten-gruppe-anzahl { font-weight: 400; color: var(--color-text-dim); font-size: 0.72rem; margin-left: auto; margin-right: 0.25rem; }
+        .karten-gruppe-chevron { font-size: 0.65rem; transition: transform 0.15s; }
+        .karten-gruppe-kopf.zu .karten-gruppe-chevron { transform: rotate(-90deg); }
+        .karten-gruppe-koerper { display: flex; flex-wrap: wrap; gap: 4px; padding: 0.35rem 0 0.1rem; }
+        .karten-gruppe-koerper.hidden { display: none; }
+
         .btn-chart-main {
             border-color: var(--color-primary);
             color: var(--color-primary);
@@ -1181,19 +1216,103 @@ function ladeFaaDaten() {
     return _faaPromise;
 }
 
-function chartSection(titel, eintrag, navRe) {
+let _kcId = 0;
+
+const IFR_GRUPPEN_DEF = [
+    { label: '🏗 Platz & Hindernis',   re: /\s2-\d/,   offen: true  },
+    { label: '🔽 Anflüge – STAR',      re: /\s3-\d/,   offen: false },
+    { label: '🎯 Instrumentenanflüge', re: /\s4-\d/,   offen: true  },
+    { label: '🛫 Abflüge – SID',       re: /\s5-\d/,   offen: false },
+    { label: '📍 Wegpunkte',           re: /\s6-\d/,   offen: false },
+    { label: '📋 Sonstiges',           re: null,        offen: false },
+];
+const FAA_GRUPPEN_DEF = [
+    { label: '🏗 Platz',           re: /DIAGRAM|HOT.?SPOT|GROUND/i,                              offen: true  },
+    { label: '🎯 Anflüge',        re: /ILS|RNAV|GPS|NDB|VOR|LOC|LDA|APPROACH|RNP/i,            offen: true  },
+    { label: '🛫 Abflüge',        re: /DEPARTURE|SID/i,                                          offen: false },
+    { label: '🗺 Übersicht',      re: /AREA|ENROUTE|FLYWAY|CHART/i,                             offen: false },
+    { label: '📋 Sonstiges',      re: null,                                                       offen: false },
+];
+
+function verteileGruppen(eintraege, defs) {
+    const gs = defs.map(d => ({ ...d, items: [] }));
+    for (const e of eintraege) {
+        let placed = false;
+        for (const g of gs.slice(0, -1)) {
+            if (g.re && g.re.test(e[0])) { g.items.push(e); placed = true; break; }
+        }
+        if (!placed) gs[gs.length - 1].items.push(e);
+    }
+    return gs.filter(g => g.items.length > 0);
+}
+
+function renderGruppen(gruppen) {
+    return gruppen.map(g => {
+        const items = g.items.map(([n, u]) =>
+            `<a class="btn-chart" href="${u}" target="_blank" rel="noopener">${n}</a>`
+        ).join('');
+        return `<div class="karten-gruppe">
+            <div class="karten-gruppe-kopf${g.offen ? '' : ' zu'}" onclick="toggleGruppe(this)">
+                <span>${g.label}</span>
+                <span class="karten-gruppe-anzahl">${g.items.length}</span>
+                <span class="karten-gruppe-chevron">▾</span>
+            </div>
+            <div class="karten-gruppe-koerper${g.offen ? '' : ' hidden'}">${items}</div>
+        </div>`;
+    }).join('');
+}
+
+function toggleGruppe(kopf) {
+    kopf.classList.toggle('zu');
+    kopf.nextElementSibling.classList.toggle('hidden');
+}
+
+function filterKarten(cid, suche) {
+    const container = document.getElementById(cid);
+    if (!container) return;
+    const q = suche.trim().toLowerCase();
+    for (const a of container.querySelectorAll('.btn-chart')) {
+        a.style.display = (!q || a.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    }
+    for (const gr of container.querySelectorAll('.karten-gruppe')) {
+        const body = gr.querySelector('.karten-gruppe-koerper');
+        const head = gr.querySelector('.karten-gruppe-kopf');
+        if (!body) continue;
+        const hatSichtbare = [...body.querySelectorAll('.btn-chart')].some(a => a.style.display !== 'none');
+        gr.style.display = (hatSichtbare || !q) ? '' : 'none';
+        if (q && hatSichtbare) { body.classList.remove('hidden'); head?.classList.remove('zu'); }
+    }
+}
+
+function chartSection(titel, eintrag, navRe, gruppenDef) {
     if (!eintrag) return '';
-    const links = Object.entries(eintrag.karten || {})
-        .filter(([n]) => !navRe || !navRe.test(n.trim()))
-        .map(([n, u]) => `<a class="btn-chart" href="${u}" target="_blank" rel="noopener">${n}</a>`)
-        .join('');
-    if (!links && !eintrag._url) return '';
+    const alle = Object.entries(eintrag.karten || {})
+        .filter(([n]) => !navRe || !navRe.test(n.trim()));
+    if (!alle.length && !eintrag._url) return '';
+
+    const cid = `kc-${++_kcId}`;
+    const mitFilter = alle.length > 8;
+    const mitGruppen = !!gruppenDef && alle.length > 12;
+
+    let body;
+    if (mitGruppen) {
+        body = renderGruppen(verteileGruppen(alle, gruppenDef));
+    } else {
+        const links = alle.map(([n, u]) =>
+            `<a class="btn-chart" href="${u}" target="_blank" rel="noopener">${n}</a>`
+        ).join('');
+        body = `<div class="chart-grid">${links}</div>`;
+    }
+
+    const filterHtml = mitFilter
+        ? `<input class="karten-filter" type="search" placeholder="Karte suchen…" oninput="filterKarten('${cid}',this.value)">`
+        : '';
+    const quellLink = eintrag._url
+        ? ` <a class="btn-ext" href="${eintrag._url}" target="_blank" rel="noopener">↗ Quelle</a>` : '';
+
     return `<section class="card-section">
-        <h3 class="section-title">${titel}</h3>
-        <div class="chart-grid">
-            ${eintrag._url ? `<a class="btn-chart btn-chart-main" href="${eintrag._url}" target="_blank" rel="noopener">📄 AIP-Seite ↗</a>` : ''}
-            ${links}
-        </div>
+        <h3 class="section-title">${titel}${quellLink}</h3>
+        <div id="${cid}">${filterHtml}${body}</div>
     </section>`;
 }
 
@@ -1220,8 +1339,8 @@ async function ladeDfsKarten(icao) {
     // ── DFS Deutschland (ED / ET) ──────────────────────────────────
     if (prefix === 'ED' || prefix === 'ET') {
         try { await ladeDfsDaten(); } catch(e) {}
-        html += chartSection('🛩 DFS VFR-Karten', vfrKatalog && vfrKatalog[icao], navRe);
-        html += chartSection('✈ DFS IFR-Karten', ifrKatalog && ifrKatalog[icao], navRe);
+        html += chartSection('🛩 DFS VFR-Karten', vfrKatalog && vfrKatalog[icao], navRe, null);
+        html += chartSection('✈ DFS IFR-Karten', ifrKatalog && ifrKatalog[icao], navRe, IFR_GRUPPEN_DEF);
         if (html) { el.innerHTML = html; return; }
     }
 
@@ -1230,7 +1349,7 @@ async function ladeDfsKarten(icao) {
     if (first === 'K' || first === 'P' || first === 'T') {
         try {
             const kat = await ladeFaaDaten();
-            html += chartSection('📋 FAA-Karten (d-TPP)', kat && kat[icao], null);
+            html += chartSection('📋 FAA-Karten (d-TPP)', kat && kat[icao], null, FAA_GRUPPEN_DEF);
         } catch(e) {}
         if (html) { el.innerHTML = html; return; }
     }
