@@ -884,9 +884,13 @@ function ladeDfsDaten() {
             const m = key.match(/([A-Z]{4})/);
             if (m) vfrKatalog[m[1]] = val;
         }
-        for (const [key, val] of Object.entries(ifr)) {
-            const m = key.match(/([A-Z]{4})/);
-            if (m) ifrKatalog[m[1]] = val;
+        for (const [, val] of Object.entries(ifr)) {
+            let icao = null;
+            for (const chartName of Object.keys(val.karten || {})) {
+                const m = chartName.match(/\b(E[DT][A-Z]{2})\b/);
+                if (m) { icao = m[1]; break; }
+            }
+            if (icao) ifrKatalog[icao] = val;
         }
     }).catch(() => {});
     return _dfsPromise;
