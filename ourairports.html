@@ -1711,7 +1711,9 @@ async function fetchProxy(url) {
 function wetterExternLinks(icao, lat, lon) {
     const latlon = (lat && lon) ? `${parseFloat(lat).toFixed(4)},${parseFloat(lon).toFixed(4)}` : '';
     const windyUrl = latlon ? `https://www.windy.com/?${lat},${lon},12` : `https://www.windy.com/`;
-    const mblueUrl = latlon ? `https://www.meteoblue.com/de/wetter/outdoorsports/paragliding/${latlon}` : `https://www.meteoblue.com/`;
+    const mblueUrl = (lat && lon)
+        ? `https://www.meteoblue.com/de/wetter/woche/point/${parseFloat(lat).toFixed(2)}N${parseFloat(lon).toFixed(2)}${parseFloat(lon) >= 0 ? 'E' : 'W'}`
+        : `https://www.meteoblue.com/`;
     return `<div class="notam-extern" style="margin-top:0.5rem">
         <span class="notam-extern-label">Wetterquellen:</span>
         <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy</a>
