@@ -17,16 +17,64 @@
       "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUBY.pdf"
     }
   },
+  "MUCC": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUCCAD_2.pdf"
+    }
+  },
+  "MUCF": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUCFAD_2.pdf"
+    }
+  },
+  "MUCL": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUCLAD_2.pdf"
+    }
+  },
+  "MUCM": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUCM_AD_2.pdf"
+    }
+  },
+  "MUCU": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUCUAD_2.pdf"
+    }
+  },
   "MUGT": {
     "_url": "https://aismet.avianet.cu/html/aip.html",
     "karten": {
       "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUGT.pdf"
     }
   },
+  "MUHA": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUHAAD_2.pdf"
+    }
+  },
+  "MUHG": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUHGAD_2.pdf"
+    }
+  },
   "MUMO": {
     "_url": "https://aismet.avianet.cu/html/aip.html",
     "karten": {
       "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUMO.pdf"
+    }
+  },
+  "MUMZ": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUMZAD_2.pdf"
     }
   },
   "MUNG": {
