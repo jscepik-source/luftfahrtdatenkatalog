@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DFS Flughafen-Katalog</title>
+    <title>AIP Welt-Katalog</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -75,8 +75,8 @@
 
 <header>
     <div>
-        <h1>DFS Flughafen-Katalog</h1>
-        <p>Aktuelle Karten aus AIP DFS BasicVFR — wird automatisch alle 6 Stunden aktualisiert</p>
+        <h1>AIP Welt-Katalog</h1>
+        <p>Aktuelle Karten aus über 70 nationalen AIP-Quellen — wird automatisch alle 6 Stunden aktualisiert</p>
     </div>
     <div class="header-links" id="webtrak-box" style="display:none">
         <a class="header-link" href="https://www.airservicesaustralia.com/community/environment/aircraft-noise/webtrak/" target="_blank">🛩 WebTrak Australien</a>
@@ -84,21 +84,59 @@
 </header>
 
 <div class="container">
-    <input type="text" id="suche" placeholder="Flughafen suchen (z.B. EDDF, Frankfurt)...">
+    <input type="text" id="suche" placeholder="Flughafen suchen (z.B. EDDF, HCMM, LATI, VTBS ...)">
     <div id="zaehler"></div>
     <div id="liste"><div id="laden">Daten werden geladen...</div></div>
 </div>
 
 <script>
-    const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/dfs_katalog_export.json';
+    const BASE = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/';
+    const KATALOG_FILES = [
+        'dfs_katalog_export.json',
+        'faa_katalog_export.json',
+        'lo_katalog_export.json', 'ls_katalog_export.json', 'lk_katalog_export.json',
+        'lz_katalog_export.json', 'lh_katalog_export.json', 'lr_katalog_export.json',
+        'lb_katalog_export.json', 'lj_katalog_export.json', 'ld_katalog_export.json',
+        'li_katalog_export.json', 'le_katalog_export.json', 'lp_katalog_export.json',
+        'lg_katalog_export.json', 'lt_katalog_export.json', 'lf_katalog_export.json',
+        'la_katalog_export.json', 'ud_katalog_export.json', 'lq_katalog_export.json',
+        'lu_katalog_export.json', 'ly_katalog_export.json', 'lc_katalog_export.json',
+        'eg_katalog_export.json', 'ei_katalog_export.json', 'ek_katalog_export.json',
+        'ef_katalog_export.json', 'es_katalog_export.json', 'en_katalog_export.json',
+        'eb_katalog_export.json', 'eh_katalog_export.json', 'ep_katalog_export.json',
+        'ee_katalog_export.json', 'ev_katalog_export.json', 'ey_katalog_export.json',
+        'bi_katalog_export.json',
+        'om_katalog_export.json', 'oj_katalog_export.json', 'ob_katalog_export.json',
+        'll_katalog_export.json', 'ot_katalog_export.json', 'oo_katalog_export.json',
+        'oe_katalog_export.json', 'he_katalog_export.json',
+        'hk_katalog_export.json', 'gm_katalog_export.json', 'fa_katalog_export.json',
+        'hc_katalog_export.json', 'asecna_katalog_export.json',
+        'rj_katalog_export.json', 'rk_katalog_export.json', 'ws_katalog_export.json',
+        'vt_katalog_export.json', 'vh_katalog_export.json', 'vi_katalog_export.json',
+        'wi_katalog_export.json', 'wm_katalog_export.json', 'rp_katalog_export.json',
+        'vc_katalog_export.json', 'rc_katalog_export.json', 'vv_katalog_export.json',
+        'vm_katalog_export.json', 'zb_katalog_export.json',
+        'c_katalog_export.json',
+        'sa_katalog_export.json', 'sb_katalog_export.json', 'sc_katalog_export.json',
+        'se_katalog_export.json', 'sk_katalog_export.json', 'mu_katalog_export.json',
+        'mm_katalog_export.json', 'sp_katalog_export.json', 'su_katalog_export.json',
+        'sv_katalog_export.json',
+        'y_katalog_export.json', 'nz_katalog_export.json',
+        'u_katalog_export.json',
+    ];
+
     let katalogDaten = {};
 
-    fetch(JSON_URL)
-        .then(r => r.json())
-        .then(data => { katalogDaten = data; zeige(data); })
-        .catch(() => {
-            document.getElementById('laden').textContent = 'Fehler beim Laden der Daten.';
+    Promise.allSettled(
+        KATALOG_FILES.map(f =>
+            fetch(BASE + f).then(r => r.ok ? r.json() : {}).catch(() => ({}))
+        )
+    ).then(results => {
+        results.forEach(r => {
+            if (r.status === 'fulfilled') Object.assign(katalogDaten, r.value);
         });
+        zeige(katalogDaten);
+    });
 
     function zeige(data) {
         const liste = document.getElementById('liste');
