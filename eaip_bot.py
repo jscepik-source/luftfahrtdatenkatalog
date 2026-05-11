@@ -264,13 +264,6 @@ LAND_KONFIGS = [
         'mode':     'selenium',
         'output':   'ly_katalog_export.json',
     },
-    {
-        'prefix':   'LC',
-        'name':     'DCAC AIP (Zypern)',
-        'start_url':'https://www.mcw.gov.cy/',
-        'mode':     'selenium',
-        'output':   'lc_katalog_export.json',
-    },
     # ── Naher Osten ─────────────────────────────────────────────────────────
     {
         'prefix':   'OM',

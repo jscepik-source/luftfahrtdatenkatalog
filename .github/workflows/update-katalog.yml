@@ -87,6 +87,10 @@ jobs:
         run: python albania_bot.py
         continue-on-error: true
 
+      - name: Zypern-AIP-Bot ausführen
+        run: python cyprus_bot.py
+        continue-on-error: true
+
       - name: Dateien committen und pushen
         run: |
           git config user.name "github-actions[bot]"
