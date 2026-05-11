@@ -488,13 +488,7 @@ LAND_KONFIGS = [
         'mode':     'selenium',
         'output':   'sk_katalog_export.json',
     },
-    {
-        'prefix':   'MU',
-        'name':     'CACSA AIP (Kuba)',
-        'start_url':'https://www.cacsa.cu/',
-        'mode':     'selenium',
-        'output':   'mu_katalog_export.json',
-    },
+    # Kuba → cuba_bot.py (statisch, kein Selenium nötig)
     {
         'prefix':   'MM',
         'name':     'SENEAM AIP (Mexiko)',
