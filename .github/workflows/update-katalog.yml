@@ -91,6 +91,10 @@ jobs:
         run: python cyprus_bot.py
         continue-on-error: true
 
+      - name: Somalia-AIP-Bot ausführen
+        run: python somalia_bot.py
+        continue-on-error: true
+
       - name: Dateien committen und pushen
         run: |
           git config user.name "github-actions[bot]"
@@ -113,7 +117,7 @@ jobs:
                   om_katalog_export.json oj_katalog_export.json ob_katalog_export.json \
                   ll_katalog_export.json ot_katalog_export.json oo_katalog_export.json \
                   oe_katalog_export.json he_katalog_export.json \
-                  hk_katalog_export.json gm_katalog_export.json fa_katalog_export.json \
+                  hk_katalog_export.json gm_katalog_export.json fa_katalog_export.json hc_katalog_export.json \
                   asecna_katalog_export.json \
                   rj_katalog_export.json rk_katalog_export.json ws_katalog_export.json \
                   vt_katalog_export.json vh_katalog_export.json vi_katalog_export.json \
