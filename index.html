@@ -9,9 +9,16 @@
 
         body { font-family: Arial, sans-serif; background: #f4f4f4; color: #333; }
 
-        header { background: #003366; color: white; padding: 20px 30px; }
+        header { background: #003366; color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         header h1 { font-size: 1.6rem; }
         header p  { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+        .header-links { display: flex; gap: 8px; flex-wrap: wrap; }
+        .header-link {
+            display: inline-block; padding: 6px 12px; font-size: 0.8rem;
+            background: rgba(255,255,255,0.15); color: white; text-decoration: none;
+            border-radius: 4px; border: 1px solid rgba(255,255,255,0.3); white-space: nowrap;
+        }
+        .header-link:hover { background: rgba(255,255,255,0.3); }
 
         .container { max-width: 960px; margin: 30px auto; padding: 0 20px; }
 
@@ -67,8 +74,13 @@
 <body>
 
 <header>
-    <h1>DFS Flughafen-Katalog</h1>
-    <p>Aktuelle Karten aus AIP DFS BasicVFR — wird automatisch alle 6 Stunden aktualisiert</p>
+    <div>
+        <h1>DFS Flughafen-Katalog</h1>
+        <p>Aktuelle Karten aus AIP DFS BasicVFR — wird automatisch alle 6 Stunden aktualisiert</p>
+    </div>
+    <div class="header-links">
+        <a class="header-link" href="https://www.airservicesaustralia.com/community/environment/aircraft-noise/webtrak/" target="_blank">🛩 WebTrak Australien</a>
+    </div>
 </header>
 
 <div class="container">
