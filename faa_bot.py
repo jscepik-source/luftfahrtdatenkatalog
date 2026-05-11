@@ -82,7 +82,8 @@ def main():
         json.dump(katalog, f, indent=2, ensure_ascii=False)
     print("  JSON gespeichert.")
 
-    git = r"C:\Program Files\Git\cmd\git.exe"
+    _win_git = r"C:\Program Files\Git\cmd\git.exe"
+    git = _win_git if os.path.isfile(_win_git) else "git"
     subprocess.run([git, "-C", REPO_DIR, "add", "faa_katalog_export.json"], check=True)
     result = subprocess.run([git, "-C", REPO_DIR, "commit", "-m", f"FAA-Karten aktualisiert (Zyklus {cycle})"])
     if result.returncode == 0:

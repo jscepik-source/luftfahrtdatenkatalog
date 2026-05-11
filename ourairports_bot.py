@@ -1,6 +1,7 @@
 import csv
 import json
 import io
+import os
 import urllib.request
 import subprocess
 import time
@@ -155,7 +156,8 @@ def durchlauf():
 
     print("JSON geschrieben.")
 
-    git = r"C:\Program Files\Git\cmd\git.exe"
+    _win_git = r"C:\Program Files\Git\cmd\git.exe"
+    git = _win_git if os.path.isfile(_win_git) else "git"
     subprocess.run([git, "add", "ourairports_export.json"], check=True)
     result = subprocess.run([git, "commit", "-m", "Automatische Aktualisierung OurAirports"])
     if result.returncode == 0:

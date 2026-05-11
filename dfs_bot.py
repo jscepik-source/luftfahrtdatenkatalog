@@ -1,3 +1,4 @@
+import re
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -42,6 +43,8 @@ def ist_karte(text, href, fh_url):
     if '»' in text:
         return False
     if len(text) < 3:
+        return False
+    if re.match(r'^[A-Z](-[A-Z])?$', text.strip()):
         return False
     return True
 
@@ -105,7 +108,8 @@ def durchlauf():
 
         print(f"\nFertig! {len(katalog)} Flughäfen gespeichert.")
 
-        git = r"C:\Program Files\Git\cmd\git.exe"
+        _win_git = r"C:\Program Files\Git\cmd\git.exe"
+        git = _win_git if os.path.isfile(_win_git) else "git"
         subprocess.run([git, "add", "dfs_katalog_export.json"], check=True)
         subprocess.run([git, "commit", "-m", "Automatische Aktualisierung"], check=True)
         subprocess.run([git, "push"], check=True)

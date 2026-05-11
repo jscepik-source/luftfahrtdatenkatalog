@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import json
+import os
 import subprocess
 
 BASIS_URL = "https://www.eurocontrol.int"
@@ -47,19 +48,26 @@ def durchlauf():
         for name, pub_url in publikationen.items():
             print(f"  {name[:60]} ...", end=" ", flush=True)
 
-            browser.get(pub_url)
-            warte(browser)
-
             karten = {}
-            for text, href in alle_links(browser):
-                if href and '/archive_download/' in href:
-                    if not href.startswith('http'):
-                        href = BASIS_URL + href
-                    label = text if text else "Download"
-                    karten[label] = href
+            try:
+                browser.get(pub_url)
+                warte(browser)
 
+                for text, href in alle_links(browser):
+                    if not href:
+                        continue
+                    # Direkte PDF-Links sammeln (keine archive_download – die brauchen Auth)
+                    if href.lower().endswith('.pdf'):
+                        label = text if text else href.split('/')[-1]
+                        if not href.startswith('http'):
+                            href = BASIS_URL + href
+                        karten[label] = href
+            except Exception:
+                pass
+
+            # Fallback: Publikationsseite selbst
             if not karten:
-                karten["Publikationsseite"] = pub_url
+                karten["Auf EUROCONTROL öffnen"] = pub_url
 
             print(f"({len(karten)} Downloads)")
             katalog[name] = {
@@ -72,11 +80,15 @@ def durchlauf():
 
         print(f"\nFertig! {len(katalog)} Publikationen gespeichert.")
 
-        git = r"C:\Program Files\Git\cmd\git.exe"
+        _win_git = r"C:\Program Files\Git\cmd\git.exe"
+        git = _win_git if os.path.isfile(_win_git) else "git"
         subprocess.run([git, "add", "eurocontrol_katalog_export.json"], check=True)
-        subprocess.run([git, "commit", "-m", "Automatische Aktualisierung Eurocontrol"], check=True)
-        subprocess.run([git, "push"], check=True)
-        print("GitHub aktualisiert.")
+        result = subprocess.run([git, "commit", "-m", "Automatische Aktualisierung Eurocontrol"])
+        if result.returncode == 0:
+            subprocess.run([git, "push"], check=True)
+            print("GitHub aktualisiert.")
+        else:
+            print("Keine Änderungen – kein Push nötig.")
 
     except Exception as e:
         import traceback
