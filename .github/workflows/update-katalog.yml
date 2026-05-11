@@ -71,6 +71,10 @@ jobs:
         run: python china_flyisfp_bot.py
         continue-on-error: true
 
+      - name: Russland-AIP-Bot ausführen (CAICA)
+        run: python russia_bot.py
+        continue-on-error: true
+
       - name: Dateien committen und pushen
         run: |
           git config user.name "github-actions[bot]"
@@ -104,6 +108,7 @@ jobs:
                   sc_katalog_export.json se_katalog_export.json sk_katalog_export.json \
                   mu_katalog_export.json mm_katalog_export.json sp_katalog_export.json \
                   su_katalog_export.json sv_katalog_export.json \
-                  y_katalog_export.json nz_katalog_export.json 2>/dev/null || true
+                  y_katalog_export.json nz_katalog_export.json \
+                  u_katalog_export.json 2>/dev/null || true
           git diff --staged --quiet || git commit -m "Kataloge, NOTAM, NfL und eAIP-Karten aktualisiert"
           git push
