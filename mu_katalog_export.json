@@ -1,0 +1,68 @@
+{
+  "MUBA": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUBA.pdf"
+    }
+  },
+  "MUBR": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUBR.pdf"
+    }
+  },
+  "MUBY": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUBY.pdf"
+    }
+  },
+  "MUGT": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUGT.pdf"
+    }
+  },
+  "MUMO": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUMO.pdf"
+    }
+  },
+  "MUNG": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUNG.pdf"
+    }
+  },
+  "MUPB": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUPB.pdf"
+    }
+  },
+  "MUSC": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUSC.pdf"
+    }
+  },
+  "MUTD": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUTD.pdf"
+    }
+  },
+  "MUVR": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUVR.pdf"
+    }
+  },
+  "MUVT": {
+    "_url": "https://aismet.avianet.cu/html/aip.html",
+    "karten": {
+      "AIP Cuba – AD 2 (Aerodrome)": "https://aismet.avianet.cu/assets/data/pdf/AIP/MUVT.pdf"
+    }
+  }
+}
