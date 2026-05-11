@@ -75,6 +75,10 @@ jobs:
         run: python russia_bot.py
         continue-on-error: true
 
+      - name: Thailand-AIP-Bot ausführen (CAAT)
+        run: python thailand_bot.py
+        continue-on-error: true
+
       - name: Dateien committen und pushen
         run: |
           git config user.name "github-actions[bot]"
