@@ -78,7 +78,7 @@
         <h1>DFS Flughafen-Katalog</h1>
         <p>Aktuelle Karten aus AIP DFS BasicVFR — wird automatisch alle 6 Stunden aktualisiert</p>
     </div>
-    <div class="header-links">
+    <div class="header-links" id="webtrak-box" style="display:none">
         <a class="header-link" href="https://www.airservicesaustralia.com/community/environment/aircraft-noise/webtrak/" target="_blank">🛩 WebTrak Australien</a>
     </div>
 </header>
@@ -103,6 +103,8 @@
     function zeige(data) {
         const liste = document.getElementById('liste');
         const eintraege = Object.entries(data);
+        const hatAustralien = eintraege.some(([n]) => n.toUpperCase().startsWith('Y'));
+        document.getElementById('webtrak-box').style.display = hatAustralien ? '' : 'none';
         document.getElementById('zaehler').textContent = `${eintraege.length} Flughäfen`;
 
         if (eintraege.length === 0) {
