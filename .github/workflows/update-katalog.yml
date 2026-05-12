@@ -123,6 +123,18 @@ jobs:
         run: python cayman_bot.py
         continue-on-error: true
 
+      - name: PANSA-eAIP-IFR-Bot ausführen
+        run: python pansa_ifr_bot.py
+        continue-on-error: true
+
+      - name: PANSA-eAIP-VFR-Bot ausführen
+        run: python pansa_vfr_bot.py
+        continue-on-error: true
+
+      - name: PANSA-NOTAM-Bot ausführen
+        run: python pansa_notam_bot.py
+        continue-on-error: true
+
       - name: Dateien committen und pushen
         run: |
           git config user.name "github-actions[bot]"
@@ -159,6 +171,7 @@ jobs:
                   ok_katalog_export.json vq_katalog_export.json vn_katalog_export.json \
                   hl_katalog_export.json mw_katalog_export.json \
                   y_katalog_export.json nz_katalog_export.json \
+                  ep_ifr_katalog_export.json ep_vfr_katalog_export.json pansa_notam_export.json \
                   u_katalog_export.json 2>/dev/null || true
           git diff --staged --quiet || git commit -m "Kataloge, NOTAM, NfL und eAIP-Karten aktualisiert"
           git push
