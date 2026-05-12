@@ -1,0 +1,86 @@
+{
+  "HLGD": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLGD": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLGD.pdf"
+    }
+  },
+  "HLKF": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLKF": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLKF.pdf"
+    }
+  },
+  "HLLB": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLLB": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLLB.pdf"
+    }
+  },
+  "HLLM": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLLM": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLLM.pdf"
+    }
+  },
+  "HLLQ": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLLQ": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLLQ.pdf"
+    }
+  },
+  "HLLS": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLLS": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLLS.pdf"
+    }
+  },
+  "HLLT": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLLT": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLLT.pdf"
+    }
+  },
+  "HLMS": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLMS": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLMS.pdf"
+    }
+  },
+  "HLGT": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLGT": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLGT.pdf"
+    }
+  },
+  "HLBK": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLBK": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLBK.pdf"
+    }
+  },
+  "HLTD": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLTD": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLTD.pdf"
+    }
+  },
+  "HLTQ": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLTQ": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLTQ.pdf"
+    }
+  },
+  "HLUB": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLUB": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLUB.pdf"
+    }
+  },
+  "HLZW": {
+    "_url": "https://caa.gov.ly/ais/ad/",
+    "karten": {
+      "HLZW": "http://caa.gov.ly/ais/wp-content/uploads/2017/AIP/AD/HLZW.pdf"
+    }
+  }
+}
