@@ -446,13 +446,7 @@ LAND_KONFIGS = [
     },
     # ── Amerika ─────────────────────────────────────────────────────────────
     # USA → faa_bot.py
-    {
-        'prefix':   'C',
-        'name':     'NAV CANADA AIP',
-        'start_url':'https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx',
-        'mode':     'selenium',
-        'output':   'c_katalog_export.json',
-    },
+    # Kanada → canada_bot.py (CrownPeak API, kein Selenium nötig)
     {
         'prefix':   'SA',
         'name':     'EANA AIP (Argentinien)',
