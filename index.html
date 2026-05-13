@@ -103,7 +103,8 @@
         'lu_katalog_export.json', 'ly_katalog_export.json', 'lc_katalog_export.json',
         'eg_katalog_export.json', 'ei_katalog_export.json', 'ek_katalog_export.json',
         'ef_katalog_export.json', 'es_katalog_export.json', 'en_katalog_export.json',
-        'eb_katalog_export.json', 'eh_katalog_export.json', 'ep_katalog_export.json',
+        'eb_katalog_export.json', 'eh_katalog_export.json',
+        'ep_katalog_export.json', 'ep_ifr_katalog_export.json', 'ep_vfr_katalog_export.json',
         'ee_katalog_export.json', 'ev_katalog_export.json', 'ey_katalog_export.json',
         'bi_katalog_export.json',
         'om_katalog_export.json', 'oj_katalog_export.json', 'ob_katalog_export.json',
@@ -129,13 +130,25 @@
 
     let katalogDaten = {};
 
+    function mergeKatalog(ziel, quelle) {
+        for (const [key, val] of Object.entries(quelle)) {
+            if (!val || typeof val !== 'object') continue;
+            if (ziel[key]) {
+                ziel[key].karten = Object.assign(ziel[key].karten || {}, val.karten || {});
+                if (!ziel[key]._url && val._url) ziel[key]._url = val._url;
+            } else {
+                ziel[key] = val;
+            }
+        }
+    }
+
     Promise.allSettled(
         KATALOG_FILES.map(f =>
             fetch(BASE + f).then(r => r.ok ? r.json() : {}).catch(() => ({}))
         )
     ).then(results => {
         results.forEach(r => {
-            if (r.status === 'fulfilled') Object.assign(katalogDaten, r.value);
+            if (r.status === 'fulfilled') mergeKatalog(katalogDaten, r.value);
         });
         zeige(katalogDaten);
     });
@@ -169,7 +182,7 @@
                     <span class="fh-badge">${liste_k.length} Karten</span>
                 </button>
                 <div class="fh-inhalt">
-                    <a class="dfs-btn" href="${url}" target="_blank">Aktuelle Karten auf DFS öffnen ↗</a>
+                    <a class="dfs-btn" href="${url}" target="_blank">Karten auf AIP-Seite öffnen ↗</a>
                     ${kartenHTML}
                 </div>
             </div>`;
