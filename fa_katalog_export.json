@@ -1,182 +1,22 @@
 {
-  "FABL": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FABL%20RNP-01%20RWY%2002.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FABL%20RNP-01A%20RWY%2002%20TABULATION.pdf"
-    }
+  "FAAG": {
+    "_url": "https://caasanwebsitestorage.blob.core.windows.net/aerodrone-and-helicompter-directory/FAAG.pdf",
+    "karten": {}
   },
-  "FACT": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20AD-03%2015%20JUN%202023.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20ARR-12A%20GETEN%201C%20RWY%2001_Tab_v2.0.pdf",
-      "Download (3)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20ARR-12%20GETEN%201C%20RWY%2001_v2.0.pdf",
-      "Download (4)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20ARR-10A%20ERDAS%201C%20RWY%2001_Tab_v2.0.pdf",
-      "Download (5)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20ARR-10%20ERDAS%201C%20RWY%2001_v2.1.pdf",
-      "Download (6)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20ARR-11%20ASPIK%201C%20RWY%2001_v2.2.pdf",
-      "Download (7)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20ARR-11A%20ASPIK%201C%20RWY%2001_Tab_v2.0.pdf",
-      "Download (8)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT ILS 01.pdf",
-      "Download (9)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT ILS-02A.pdf",
-      "Download (10)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20ILS-01A.pdf",
-      "Download (11)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20ILS-02.pdf",
-      "Download (12)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20PATC-01.pdf",
-      "Download (13)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20PATC-02.pdf",
-      "Download (14)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20RAD-01.pdf",
-      "Download (15)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT%20AD-02%2015%20JUN%202023.pdf",
-      "Download (16)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT Aerodrome Obstacle Chart Type A RWY_01-19_17 OCT 2013.pdf",
-      "Download (17)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACT Aerodrome Obstacle Chart Type A RWY_16-34_17 OCT 2013.pdf"
-    }
+  "FAKD": {
+    "_url": "https://caasanwebsitestorage.blob.core.windows.net/aerodrone-and-helicompter-directory/FAKD%20AD2.pdf",
+    "karten": {}
   },
-  "FAPE": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE PRECISION APCH TERRAIN CHART_RWY 26.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE PRECISION APCH TERRAIN CHART_RWY 08_21 JUN 2018.pdf",
-      "Download (3)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE OBSTACLE CHART TYPE A_AD OBST TYPE A-01.pdf",
-      "Download (4)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE VOR RWY 08_VOR-01.pdf",
-      "Download (5)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE%20ILS-01A%20RWY%2008_Tab_v1.5.pdf",
-      "Download (6)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE%20ILS-01%20RWY%2008_v1.7.pdf",
-      "Download (7)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE%20ILS-02%20RWY%2026.pdf",
-      "Download (8)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE%20ILS-02A%20RWY%2026%20Tabulation.pdf",
-      "Download (9)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE%20RAD-01%20ATC%20Surveillance%20Minimum%20Altitude%20v4.0.pdf",
-      "Download (10)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPE VOR RWY 26_VOR-02 07 JAN 2016 ver1.0.pdf"
-    }
+  "FAMS": {
+    "_url": "https://caasanwebsitestorage.blob.core.windows.net/aerodrone-and-helicompter-directory/FAMS%20-%20Millvale.pdf",
+    "karten": {}
+  },
+  "FATA": {
+    "_url": "https://caasanwebsitestorage.blob.core.windows.net/aerodrone-and-helicompter-directory/FATA%20AD.pdf",
+    "karten": {}
   },
   "FAGG": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAGG Precision Approach Terrain-01 RWY 11.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAGG AD Obstacle Type A-01.pdf",
-      "Download (3)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAGG Precision Approach Terrain-_202_RWY9.pdf",
-      "Download (4)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAGG RNAV RNP RWY29 RNAV-02.pdf",
-      "Download (5)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAGG%20ILS-01A.pdf"
-    }
-  },
-  "FAMM": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAMM BREAKCLOUD VOR-DME RWY 04_VOR-01.pdf"
-    }
-  },
-  "FAKM": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAKM EVESI 1A RWY 02_ARR-01.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAKM IBKEL 1B RWY 20_ARR-03.pdf",
-      "Download (3)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAKM IBKEL 1A RWY 02_ARR-02.pdf",
-      "Download (4)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAKM AD-03.pdf",
-      "Download (5)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAKM%20RNP-01%20RWY%2002.pdf",
-      "Download (6)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAKM%20RNP-01A%20APCH%20RWY%2002.pdf"
-    }
-  },
-  "FAEL": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAEL RAD_01.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAEL%20ILS-03A%20RWY%2029%20Tab_v2.2.pdf"
-    }
-  },
-  "FALE": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE GETOK 1C RNAV RWY 06 TABULATION_ARR-03A.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE%20ILS-02A%20RWY%2006%20Tab%20v2.0.pdf",
-      "Download (3)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE%20ILS-04A%20RWY%2024%20Tab%20v2.0.pdf",
-      "Download (4)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE%20PATC-01.pdf",
-      "Download (5)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE%20PATC-02.pdf",
-      "Download (6)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE DUNSA 1B RNAV RWY 24 TABULATION_ARR-06A_07 MAR 2012.pdf",
-      "Download (7)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE DUNSA 1A RNAV RWY 06 TABULATION_ARR-02A_02 MAY 2013.pdf",
-      "Download (8)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE OBSTACLE CHART TYPE A_AD OBST TYPE A-01_13 NOV 2014.pdf",
-      "Download (9)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALE%20AD-02%2015%20JUNE%202023.pdf"
-    }
-  },
-  "FAKN": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAKN%20ILS-01%20ILS%20Z%20RWY%2005.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAKN%20ILS-01A%20ILS%20Z%20RWY%2005.pdf"
-    }
-  },
-  "FALA": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALA ACFT PRKG - DOCKING CHART_AD-02.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FALA RNAV RWY07 TABULATION_RNAV-01A.pdf"
-    }
-  },
-  "FANC": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FANC%20RNP%20RNP-01%20RWY%2011.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FANC%20RNP-01A%20RNP%20RWY%2011%20TABULATION.pdf"
-    }
-  },
-  "FAOR": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ILS-10A%20RWY%2021R_v5.0.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20AD-03%2015%20JUN%202023.pdf",
-      "Download (3)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR AD OBST Chart RWY03L-21R.pdf",
-      "Download (4)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20AD-01%20Chart.pdf",
-      "Download (5)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ARR-25.pdf",
-      "Download (6)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ARR-22A.pdf",
-      "Download (7)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ARR-22.pdf",
-      "Download (8)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ARR-21A.pdf",
-      "Download (9)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ARR-21.pdf",
-      "Download (10)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ARR-25A.pdf",
-      "Download (11)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ARR-23A.pdf",
-      "Download (12)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ARR-23.pdf",
-      "Download (13)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20RAGUL%201D%20DEP-24%20RWY%2021R.pdf",
-      "Download (14)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20RAGUL%201D%20DEP-24A%20RWY%2021R%20Tab.pdf",
-      "Download (15)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ILS-03A%20RWY%2003R%20Tabulation_v3.0.pdf",
-      "Download (16)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20ILS-07A%20RWY%2021L%20Tabulation%20v3.0.pdf",
-      "Download (17)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20APDAK%201B%20RNAV%20RWY%2003%20TABULATION_DEP-11A.pdf",
-      "Download (18)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR APDAK 1D RNAV RWY 21 TABULATION_DEP-22A_10 JAN 2013.pdf",
-      "Download (19)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR EGMEN 1C RNAV RWY 03 TABULATION_DEP-10A_10 JAN 2013.pdf",
-      "Download (20)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR GEROX 1C RNAV RWY 21 TABULATION_DEP-23A_10 JAN 2013.pdf",
-      "Download (21)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR RNAV RWY03R TABULATION_RNAV-01A_09 JAN 2014.pdf",
-      "Download (22)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR RNAV RWY21L TABULATION_RNAV-02A_01 MAY 2014.pdf",
-      "Download (23)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20AD-06%2015%20JUN%202023.pdf",
-      "Download (24)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAOR%20AD-02%2015%20JUN%202023.pdf"
-    }
-  },
-  "FAPM": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPM%20RNP-01A.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPM%20RNP-01.pdf"
-    }
-  },
-  "FAPP": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPP%20RNP-01%20RWY05_%20v3.2.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FAPP%20RNP-01A%20RWY%2005%20Tabulation_v3.0.pdf"
-    }
-  },
-  "FARB": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FARB%20BREAKCLOUD%20VOR-DME%20RWY%2005_VOR-01%2008JUL2004.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FARB AERODROME CHART_AD-01 08JUL2004.pdf",
-      "Download (3)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FARB%20VOR-03%20VOR%20Z%20RWY%2023%20v3.1.pdf",
-      "Download (4)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FARB PRKG-DOCKING CHART_AD-02 08JUL2004.pdf"
-    }
-  },
-  "FASS": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FASS Visual Arrival Chart_VFR ARR-01.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FASS Visual Departure Chart_VFR DEP-01.pdf"
-    }
-  },
-  "FACF": {
-    "_url": "https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/",
-    "karten": {
-      "Download": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACF RNAV GNSS RWY28 RNAV-02.pdf",
-      "Download (2)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACF RNAV GNSS RWY10 RNAV-01.pdf",
-      "Download (3)": "https://caasanwebsitestorage.blob.core.windows.net/aeronautical-charts/FACF AERODROME CHART.pdf"
-    }
+    "_url": "https://caasanwebsitestorage.blob.core.windows.net/aerodrone-and-helicompter-directory/FAGG%20Heli%20Square.pdf",
+    "karten": {}
   }
 }
