@@ -1340,11 +1340,10 @@
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
 
-// ── FAA External NOTAM API ───────────────────────────────────────────────────
-// Kostenlose Registrierung: https://api.faa.gov/s/
-// Danach Client-ID und Client-Secret hier eintragen:
-const FAA_CLIENT_ID     = '';
-const FAA_CLIENT_SECRET = '';
+// ── CheckWX NOTAM API ────────────────────────────────────────────────────────
+// Kostenlose Registrierung (international): https://api.checkwx.com/
+// API-Key hier eintragen:
+const CHECKWX_API_KEY = '';
 let katalog = {};
 let aktiverTyp = '';
 let aktivSched = false;
@@ -2527,18 +2526,19 @@ async function ladeWetter(icao, lat, lon) {
 }
 
 async function fetchNotamDaten(icao) {
-    if (!FAA_CLIENT_ID || !FAA_CLIENT_SECRET) return null;
-    const url = `https://external-api.faa.gov/notamapi/v1/notams?icaoLocation=${icao}&pageSize=50&sortBy=startDate&sortOrder=Desc`;
+    if (!CHECKWX_API_KEY) return null;
+    const url = `https://api.checkwx.com/notam/${icao}`;
+    const headers = { 'X-API-Key': CHECKWX_API_KEY };
     const versuche = [
-        { label: 'FAA External API (direkt)', u: url, headers: { 'client_id': FAA_CLIENT_ID, 'client_secret': FAA_CLIENT_SECRET } },
-        { label: 'FAA External API (corsproxy)', u: `https://corsproxy.io/?url=${encodeURIComponent(url)}`, headers: { 'client_id': FAA_CLIENT_ID, 'client_secret': FAA_CLIENT_SECRET } },
+        { label: 'CheckWX',              u: url },
+        { label: 'CheckWX (corsproxy)',  u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
     ];
-    for (const { label, u, headers } of versuche) {
+    for (const { label, u } of versuche) {
         try {
             const res = await fetch(u, { headers });
             if (!res.ok) continue;
-            const data = await res.json();
-            const items = data.items || data.notams || (Array.isArray(data) ? data : []);
+            const json = await res.json();
+            const items = json.data || (Array.isArray(json) ? json : []);
             return { data: items, quelle: label };
         } catch(e) { console.warn('NOTAM Versuch fehlgeschlagen:', u, e.message); }
     }
@@ -2551,13 +2551,12 @@ async function ladeNotams(icao) {
     el.dataset.geladen = '1';
     if (notamcache[icao]) { el.innerHTML = notamcache[icao]; return; }
 
-    if (!FAA_CLIENT_ID || !FAA_CLIENT_SECRET) {
+    if (!CHECKWX_API_KEY) {
         el.innerHTML = `<div class="notam-setup">
-            <strong>API-Key erforderlich</strong><br>
-            Für Live-NOTAMs direkt auf der Seite bitte einmalig kostenlos registrieren:<br>
-            1. <a href="https://api.faa.gov/s/" target="_blank" rel="noopener" style="color:var(--color-primary)">api.faa.gov/s/</a> aufrufen → "Request API Access"<br>
-            2. <em>Client-ID</em> und <em>Client-Secret</em> in die Datei <code>ourairports.html</code> eintragen<br>
-            (Zeilen: <code>FAA_CLIENT_ID</code> und <code>FAA_CLIENT_SECRET</code>)
+            <strong>NOTAM API-Key einrichten (einmalig, kostenlos)</strong><br>
+            1. <a href="https://api.checkwx.com/" target="_blank" rel="noopener" style="color:var(--color-primary)">api.checkwx.com</a> → kostenlosen Account erstellen<br>
+            2. API-Key kopieren<br>
+            3. In <code>ourairports.html</code> bei <code>CHECKWX_API_KEY</code> eintragen
         </div>`;
         return;
     }
@@ -2567,21 +2566,17 @@ async function ladeNotams(icao) {
         const data = result?.data || [];
         let html = '';
         if (!data.length) {
-            html = `<span class="status-loading">Keine aktiven NOTAMs für ${icao}.</span>`;
+            html = `<p class="status-loading">Keine aktiven NOTAMs für ${icao}.</p>`;
         } else {
             html = `<div class="notam-list">${data.slice(0, 20).map(n => {
-                const props = n.properties || n;
-                const text = props.coreNOTAMData?.notam?.text
-                    || props.notamRaw || props.icaoMessage || props.traditionalMessage || props.text || '–';
-                const nr   = props.coreNOTAMData?.notam?.id || props.notamNumber || '';
-                const von  = props.coreNOTAMData?.notam?.effectiveStart || props.startDate || '';
-                const bis  = props.coreNOTAMData?.notam?.effectiveEnd   || props.endDate   || '';
-                const vonFmt = von ? new Date(von).toUTCString().slice(5,22) : '';
-                const bisFmt = bis ? new Date(bis).toUTCString().slice(5,22) : '';
-                return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${vonFmt ? `<span class="notam-zeit">${vonFmt} – ${bisFmt} UTC</span>\n` : ''}${text}</div>`;
+                const text = n.raw || n.text || '–';
+                const nr   = n.id   || '';
+                const von  = n.startDate ? new Date(n.startDate).toUTCString().slice(5,22) : '';
+                const bis  = n.endDate   ? new Date(n.endDate).toUTCString().slice(5,22)   : '';
+                return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis} UTC</span>\n` : ''}${text}</div>`;
             }).join('')}${data.length > 20 ? `<p class="status-loading">… und ${data.length - 20} weitere NOTAMs</p>` : ''}</div>`;
         }
-        html += `<p class="wx-quelle">Quelle: ${result.quelle} · ${data.length} NOTAM${data.length !== 1 ? 's' : ''}</p>`;
+        html += `<p class="wx-quelle">CheckWX · ${data.length} NOTAM${data.length !== 1 ? 's' : ''}</p>`;
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
