@@ -1340,10 +1340,10 @@
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
 
-// ── CheckWX NOTAM API ────────────────────────────────────────────────────────
-// Kostenlose Registrierung (international): https://api.checkwx.com/
-// API-Key hier eintragen:
-const CHECKWX_API_KEY = '';
+// ── SkyLink NOTAM API (via RapidAPI) ─────────────────────────────────────────
+// Kostenlose Registrierung: https://rapidapi.com → SkyLink API abonnieren
+// RapidAPI-Key hier eintragen:
+const RAPIDAPI_KEY = '';
 let katalog = {};
 let aktiverTyp = '';
 let aktivSched = false;
@@ -2526,20 +2526,23 @@ async function ladeWetter(icao, lat, lon) {
 }
 
 async function fetchNotamDaten(icao) {
-    if (!CHECKWX_API_KEY) return null;
-    const url = `https://api.checkwx.com/notam/${icao}`;
-    const headers = { 'X-API-Key': CHECKWX_API_KEY };
+    if (!RAPIDAPI_KEY) return null;
+    const url = `https://skylink-api.p.rapidapi.com/v3/notams/${icao}`;
+    const headers = {
+        'x-rapidapi-key':  RAPIDAPI_KEY,
+        'x-rapidapi-host': 'skylink-api.p.rapidapi.com'
+    };
     const versuche = [
-        { label: 'CheckWX',              u: url },
-        { label: 'CheckWX (corsproxy)',  u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
+        { label: 'SkyLink API',             u: url },
+        { label: 'SkyLink (corsproxy.io)',   u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
     ];
     for (const { label, u } of versuche) {
         try {
             const res = await fetch(u, { headers });
             if (!res.ok) continue;
             const json = await res.json();
-            const items = json.data || (Array.isArray(json) ? json : []);
-            return { data: items, quelle: label };
+            const items = json.notams || json.data || (Array.isArray(json) ? json : []);
+            return { data: items, total: json.total_count ?? items.length, quelle: label };
         } catch(e) { console.warn('NOTAM Versuch fehlgeschlagen:', u, e.message); }
     }
     return null;
@@ -2551,12 +2554,12 @@ async function ladeNotams(icao) {
     el.dataset.geladen = '1';
     if (notamcache[icao]) { el.innerHTML = notamcache[icao]; return; }
 
-    if (!CHECKWX_API_KEY) {
+    if (!RAPIDAPI_KEY) {
         el.innerHTML = `<div class="notam-setup">
             <strong>NOTAM API-Key einrichten (einmalig, kostenlos)</strong><br>
-            1. <a href="https://api.checkwx.com/" target="_blank" rel="noopener" style="color:var(--color-primary)">api.checkwx.com</a> → kostenlosen Account erstellen<br>
-            2. API-Key kopieren<br>
-            3. In <code>ourairports.html</code> bei <code>CHECKWX_API_KEY</code> eintragen
+            1. <a href="https://rapidapi.com" target="_blank" rel="noopener" style="color:var(--color-primary)">rapidapi.com</a> → kostenlosen Account erstellen<br>
+            2. <a href="https://rapidapi.com/skylink-api-skylink-api-default/api/skylink-api" target="_blank" rel="noopener" style="color:var(--color-primary)">SkyLink API</a> abonnieren (Free Plan)<br>
+            3. RapidAPI-Key kopieren und in <code>ourairports.html</code> bei <code>RAPIDAPI_KEY</code> eintragen
         </div>`;
         return;
     }
@@ -2569,14 +2572,14 @@ async function ladeNotams(icao) {
             html = `<p class="status-loading">Keine aktiven NOTAMs für ${icao}.</p>`;
         } else {
             html = `<div class="notam-list">${data.slice(0, 20).map(n => {
-                const text = n.raw || n.text || '–';
-                const nr   = n.id   || '';
-                const von  = n.startDate ? new Date(n.startDate).toUTCString().slice(5,22) : '';
-                const bis  = n.endDate   ? new Date(n.endDate).toUTCString().slice(5,22)   : '';
+                const text = n.raw  || n.body || n.text || '–';
+                const nr   = n.notam_id || n.id || '';
+                const von  = n.effective  ? new Date(n.effective).toUTCString().slice(5,22)  : '';
+                const bis  = n.expiration ? new Date(n.expiration).toUTCString().slice(5,22) : '';
                 return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis} UTC</span>\n` : ''}${text}</div>`;
-            }).join('')}${data.length > 20 ? `<p class="status-loading">… und ${data.length - 20} weitere NOTAMs</p>` : ''}</div>`;
+            }).join('')}${result.total > 20 ? `<p class="status-loading">… und ${result.total - 20} weitere NOTAMs</p>` : ''}</div>`;
         }
-        html += `<p class="wx-quelle">CheckWX · ${data.length} NOTAM${data.length !== 1 ? 's' : ''}</p>`;
+        html += `<p class="wx-quelle">SkyLink API · ${result.total} NOTAM${result.total !== 1 ? 's' : ''}</p>`;
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
