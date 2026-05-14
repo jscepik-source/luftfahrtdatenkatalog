@@ -2512,20 +2512,20 @@ async function ladeWetter(icao, lat, lon) {
 }
 
 async function fetchNotamDaten(icao) {
-    const url = `https://aviationweather.gov/api/data/notam?format=json&location=${icao}`;
+    const encoded = encodeURIComponent(JSON.stringify([icao]));
+    const url = `https://api.autorouter.aero/v1.0/notam?itemas=${encoded}&limit=50`;
     const versuche = [
-        { label: 'Aviation Weather Center (direkt)', u: url },
+        { label: 'autorouter.aero', u: url },
+        { label: 'via corsproxy.io',  u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
         { label: 'via allorigins.win', u: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
-        { label: 'via corsproxy.io',   u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
-        { label: 'via codetabs.com',   u: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}` },
     ];
     for (const { label, u } of versuche) {
         try {
             const res = await fetch(u);
             if (!res.ok) continue;
-            const text = await res.text();
-            const data = JSON.parse(text);
-            return { data: Array.isArray(data) ? data : [], quelle: label };
+            const data = await res.json();
+            const rows = Array.isArray(data) ? data : (data.rows || []);
+            return { data: rows, quelle: label };
         } catch(e) { console.warn('NOTAM Versuch fehlgeschlagen:', u, e.message); }
     }
     throw new Error('Alle Quellen fehlgeschlagen');
@@ -2539,21 +2539,19 @@ async function ladeNotams(icao) {
     try {
         const { data, quelle } = await fetchNotamDaten(icao);
         let html = '';
-        const isEurope = icao.match(/^(E[BDGHIKLMNOPSTU]|L[BEFGHIKLMORSTU]|U[BDEGHIKLM])/);
         if (!data || data.length === 0) {
-            html = `<span class="status-loading">
-                Keine NOTAMs in Aviation Weather Center (US-System)${isEurope ? ' — für europäische Flughäfen bitte EAD oder ICAO iStars verwenden' : ''}.
-            </span>`;
+            html = `<span class="status-loading">Keine aktiven NOTAMs für ${icao}.</span>`;
         } else {
-            html = `<div class="notam-list">${data.slice(0, 15).map(n => {
-                const text = n.notamText || n.text || JSON.stringify(n);
-                const nr   = n.notamNumber || n.number || '';
-                const von  = n.startTime ? new Date(n.startTime).toUTCString().slice(5,22) : '';
-                const bis  = n.endTime   ? new Date(n.endTime).toUTCString().slice(5,22)   : '';
-                return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis}</span>\n` : ''}${text}</div>`;
-            }).join('')}${data.length > 15 ? `<p class="status-loading">… und ${data.length - 15} weitere NOTAMs</p>` : ''}</div>`;
+            html = `<div class="notam-list">${data.slice(0, 20).map(n => {
+                const text = n.iteme || n.notamText || n.text || '–';
+                const nr   = n.itemc || n.notamNumber || '';
+                const von  = n.startvalidity ? new Date(n.startvalidity * 1000).toUTCString().slice(5,22) : '';
+                const bis  = n.endvalidity   ? new Date(n.endvalidity   * 1000).toUTCString().slice(5,22) : '';
+                const subj = n.code23 && n.code45 ? ` [Q/${n.code23}${n.code45}]` : '';
+                return `<div class="notam-item">${nr ? `<strong>${nr}</strong>${subj} ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis} UTC</span>\n` : ''}${text}</div>`;
+            }).join('')}${data.length > 20 ? `<p class="status-loading">… und ${data.length - 20} weitere NOTAMs</p>` : ''}</div>`;
         }
-        html += `<p class="wx-quelle">Quelle: ${quelle}</p>`;
+        html += `<p class="wx-quelle">Quelle: ${quelle} · ${data.length} NOTAM${data.length !== 1 ? 's' : ''}</p>`;
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
