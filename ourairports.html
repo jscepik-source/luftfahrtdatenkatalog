@@ -2303,7 +2303,7 @@ out skel qt;`;
             <!-- NOTAM Panel -->
             <div class="card-tab-panel" data-panel="notam">
                 <div id="notam-${icao}"><span class="status-loading">wird geladen…</span></div>
-                <a class="notam-map-btn" href="${ap.lat && ap.lon ? `https://www.notammap.org/?lat=${ap.lat}&lng=${ap.lon}&zoom=9` : 'https://www.notammap.org/'}" target="_blank" rel="noopener">
+                <a class="notam-map-btn" href="${ap.lat && ap.lon ? `https://www.notammap.org/#9/${Number(ap.lat).toFixed(4)}/${Number(ap.lon).toFixed(4)}` : 'https://www.notammap.org/'}" target="_blank" rel="noopener">
                     <span class="notam-map-btn-icon">🗺</span>
                     <span>
                         <strong>NOTAM Map öffnen</strong>
