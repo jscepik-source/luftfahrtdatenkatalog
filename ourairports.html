@@ -963,6 +963,73 @@
             transform: none;
         }
 
+        /* ── Flüge-Tab ── */
+        .fluege-header {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .fluege-live-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .fluege-hinweis {
+            font-size: 0.7rem;
+            color: var(--color-text-dim);
+            margin-bottom: var(--space-md);
+            padding: 7px 12px;
+            background: var(--color-surface-2);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--color-border);
+        }
+        .fluege-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+        }
+        @media (max-width: 640px) { .fluege-cols { grid-template-columns: 1fr; } }
+        .fluege-col-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-dim);
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .fluege-list { display: flex; flex-direction: column; gap: 4px; }
+        .flug-item {
+            display: grid;
+            grid-template-columns: 70px 1fr auto;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            transition: border-color var(--transition);
+        }
+        .flug-item:hover { border-color: var(--color-primary); }
+        .flug-callsign {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--color-primary);
+            letter-spacing: 0.04em;
+        }
+        .flug-route { color: var(--color-text-sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .flug-route strong { color: var(--color-text); font-weight: 600; }
+        .flug-zeit {
+            font-size: 0.72rem;
+            color: var(--color-text-dim);
+            white-space: nowrap;
+            text-align: right;
+        }
+        .flug-empty { font-size: 0.82rem; color: var(--color-text-dim); padding: var(--space-sm) 0; }
+
         /* ── Card Tabs ── */
         .card-tabs {
             display: flex;
@@ -2115,6 +2182,7 @@ out skel qt;`;
             <div class="card-tabs">
                 <button class="card-tab active" onclick="switchTab(this,'info')">Info</button>
                 <button class="card-tab" onclick="switchTab(this,'karten')">Karten</button>
+                <button class="card-tab" onclick="switchTab(this,'fluege','${icao}')">Flüge</button>
                 <button class="card-tab" onclick="switchTab(this,'wetter')">Wetter</button>
                 <button class="card-tab" onclick="switchTab(this,'notam')">NOTAMs</button>
                 ${hasCoords ? `<button class="card-tab" onclick="switchTab(this,'karte','${icao}')">Karte</button>` : ''}
@@ -2173,6 +2241,13 @@ out skel qt;`;
             <!-- Karten Panel -->
             <div class="card-tab-panel" data-panel="karten">
                 <div id="dfs-${icao}"></div>
+            </div>
+
+            <!-- Flüge Panel -->
+            <div class="card-tab-panel" data-panel="fluege">
+                <div id="fluege-${icao}">
+                    <span class="status-loading">wird geladen…</span>
+                </div>
             </div>
 
             <!-- Wetter Panel -->
@@ -2469,9 +2544,82 @@ function switchTab(btn, panel, icao) {
     const body = btn.closest('.card-body');
     body.querySelectorAll('.card-tab').forEach(t => t.classList.toggle('active', t === btn));
     body.querySelectorAll('.card-tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === panel));
-    // Leaflet-Karte nach Tab-Wechsel neu rendern
-    if (panel === 'karte' && icao && karteInstanzen[icao]) {
+    if (panel === 'karte'   && icao && karteInstanzen[icao]) {
         setTimeout(() => karteInstanzen[icao].invalidateSize(), 60);
+    }
+    if (panel === 'fluege'  && icao) ladeFluege(icao);
+}
+
+// ── Flüge (OpenSky Network) ───────────────────────────────────────────────────
+async function ladeFluege(icao) {
+    const el = document.getElementById(`fluege-${icao}`);
+    if (!el || el.dataset.geladen) return;
+    el.dataset.geladen = '1';
+
+    const now   = Math.floor(Date.now() / 1000);
+    const begin = now - 5 * 3600;   // letzte 5 Stunden
+    const url   = n => `https://opensky-network.org/api/flights/${n}?airport=${icao}&begin=${begin}&end=${now}`;
+
+    const fr24url = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
+    const faurl   = `https://www.flightaware.com/live/airport/${icao}/arrivals`;
+
+    try {
+        const [rArr, rDep] = await Promise.all([
+            fetch(url('arrival')).catch(() => null),
+            fetch(url('departure')).catch(() => null)
+        ]);
+
+        const arrivals   = (rArr?.ok   ? await rArr.json().catch(()=>[])   : []) || [];
+        const departures = (rDep?.ok   ? await rDep.json().catch(()=>[])   : []) || [];
+
+        function fmt(unix) {
+            if (!unix) return '–';
+            return new Date(unix * 1000).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+        }
+        function fmtIcao(code) {
+            return code && code !== 'null' ? `<strong>${code}</strong>` : '<span style="opacity:.4">–</span>';
+        }
+        function renderList(flights, isArr) {
+            const sorted = [...flights]
+                .sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0))
+                .slice(0, 10);
+            if (!sorted.length) return `<p class="flug-empty">Keine Daten für diesen Zeitraum</p>`;
+            return sorted.map(f => {
+                const cs    = (f.callsign || '').trim() || '–';
+                const from  = isArr  ? fmtIcao(f.estDepartureAirport) : fmtIcao(f.estArrivalAirport);
+                const label = isArr  ? 'von' : 'nach';
+                const zeit  = isArr  ? fmt(f.lastSeen) : fmt(f.firstSeen);
+                return `<div class="flug-item">
+                    <span class="flug-callsign">${cs}</span>
+                    <span class="flug-route">${label} ${from}</span>
+                    <span class="flug-zeit">${zeit}</span>
+                </div>`;
+            }).join('');
+        }
+
+        el.innerHTML = `
+            <p class="fluege-hinweis">
+                Daten der letzten 5 Stunden via <strong>OpenSky Network</strong> (kostenlos, ~1h Verzögerung möglich).
+                Für Echtzeit-Radar:
+                <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
+                <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>
+            </p>
+            <div class="fluege-cols">
+                <div>
+                    <div class="fluege-col-title">🛬 Ankünfte (letzte 5h)</div>
+                    <div class="fluege-list">${renderList(arrivals, true)}</div>
+                </div>
+                <div>
+                    <div class="fluege-col-title">🛫 Abflüge (letzte 5h)</div>
+                    <div class="fluege-list">${renderList(departures, false)}</div>
+                </div>
+            </div>`;
+    } catch(e) {
+        el.innerHTML = `<p class="status-error">Daten nicht verfügbar (OpenSky Network nicht erreichbar)</p>
+            <div class="fluege-live-links" style="margin-top:8px">
+                <a class="btn-ext" href="https://www.flightradar24.com/airport/${icao.toLowerCase()}" target="_blank" rel="noopener">📡 FlightRadar24</a>
+                <a class="btn-ext" href="https://www.flightaware.com/live/airport/${icao}" target="_blank" rel="noopener">🛫 FlightAware</a>
+            </div>`;
     }
 }
 
