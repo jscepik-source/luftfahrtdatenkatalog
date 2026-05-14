@@ -2245,7 +2245,7 @@ out skel qt;`;
 
             <!-- Flüge Panel -->
             <div class="card-tab-panel" data-panel="fluege">
-                <div id="fluege-${icao}">
+                <div id="fluege-${icao}" data-lat="${ap.lat||''}" data-lon="${ap.lon||''}">
                     <span class="status-loading">wird geladen…</span>
                 </div>
             </div>
@@ -2550,76 +2550,77 @@ function switchTab(btn, panel, icao) {
     if (panel === 'fluege'  && icao) ladeFluege(icao);
 }
 
-// ── Flüge (OpenSky Network) ───────────────────────────────────────────────────
+// ── Flüge (adsb.fi Live ADS-B) ───────────────────────────────────────────────
 async function ladeFluege(icao) {
     const el = document.getElementById(`fluege-${icao}`);
     if (!el || el.dataset.geladen) return;
     el.dataset.geladen = '1';
 
-    const now   = Math.floor(Date.now() / 1000);
-    const begin = now - 5 * 3600;   // letzte 5 Stunden
-    const url   = n => `https://opensky-network.org/api/flights/${n}?airport=${icao}&begin=${begin}&end=${now}`;
-
+    const lat    = parseFloat(el.dataset.lat);
+    const lon    = parseFloat(el.dataset.lon);
     const fr24url = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
-    const faurl   = `https://www.flightaware.com/live/airport/${icao}/arrivals`;
+    const faurl   = `https://www.flightaware.com/live/airport/${icao}`;
+
+    function links() {
+        return `<p class="fluege-hinweis">Vollständige Flugpläne:
+            <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
+            <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a></p>`;
+    }
+
+    if (!lat || !lon || isNaN(lat) || isNaN(lon)) {
+        el.innerHTML = `<p class="flug-empty">Keine Koordinaten für diesen Flughafen.</p>${links()}`;
+        return;
+    }
+
+    el.innerHTML = '<p style="color:var(--color-text-dim);font-size:0.8rem;padding:8px 0">Lade Live ADS-B Daten…</p>';
 
     try {
-        const [rArr, rDep] = await Promise.all([
-            fetch(url('arrival')).catch(() => null),
-            fetch(url('departure')).catch(() => null)
-        ]);
+        const r = await fetch(`https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`);
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const data = await r.json();
 
-        const arrivals   = (rArr?.ok   ? await rArr.json().catch(()=>[])   : []) || [];
-        const departures = (rDep?.ok   ? await rDep.json().catch(()=>[])   : []) || [];
+        const aircraft = (data.aircraft || [])
+            .filter(a => (a.flight || '').trim())
+            .sort((a, b) => (a.dst ?? 999) - (b.dst ?? 999))
+            .slice(0, 20);
 
-        function fmt(unix) {
-            if (!unix) return '–';
-            return new Date(unix * 1000).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+        if (!aircraft.length) {
+            el.innerHTML = `<p class="flug-empty">Aktuell keine Flugzeuge im Umkreis von 20 nm erfasst.</p>${links()}`;
+            return;
         }
-        function fmtIcao(code) {
-            return code && code !== 'null' ? `<strong>${code}</strong>` : '<span style="opacity:.4">–</span>';
+
+        function phase(a) {
+            const gs  = a.gs ?? 0;
+            const alt = a.alt_baro ?? a.alt_geom ?? 0;
+            const vr  = a.baro_rate ?? 0;
+            if (gs < 30)   return { icon: '🅿', label: 'am Boden' };
+            if (vr < -200) return { icon: '🛬', label: 'Ankunft' };
+            if (vr >  200) return { icon: '🛫', label: 'Abflug' };
+            return { icon: '✈', label: 'im Flug' };
         }
-        function renderList(flights, isArr) {
-            const sorted = [...flights]
-                .sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0))
-                .slice(0, 10);
-            if (!sorted.length) return `<p class="flug-empty">Keine Daten für diesen Zeitraum</p>`;
-            return sorted.map(f => {
-                const cs    = (f.callsign || '').trim() || '–';
-                const from  = isArr  ? fmtIcao(f.estDepartureAirport) : fmtIcao(f.estArrivalAirport);
-                const label = isArr  ? 'von' : 'nach';
-                const zeit  = isArr  ? fmt(f.lastSeen) : fmt(f.firstSeen);
-                return `<div class="flug-item">
-                    <span class="flug-callsign">${cs}</span>
-                    <span class="flug-route">${label} ${from}</span>
-                    <span class="flug-zeit">${zeit}</span>
-                </div>`;
-            }).join('');
-        }
+
+        const rows = aircraft.map(a => {
+            const cs     = (a.flight || '').trim();
+            const type   = a.t   || '–';
+            const sq     = a.squawk ? `▣ ${a.squawk}` : '';
+            const dist   = a.dst  != null ? `${a.dst.toFixed(1)} nm` : '';
+            const alt    = a.alt_baro != null ? `${Math.round(a.alt_baro * 0.3048)} m` : '';
+            const ph     = phase(a);
+            const info   = [ph.label, type, alt, dist].filter(Boolean).join(' · ');
+            return `<div class="flug-item">
+                <a class="flug-callsign" href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener">${ph.icon} ${cs}</a>
+                <span class="flug-route">${info}</span>
+                <span class="flug-zeit">${sq}</span>
+            </div>`;
+        }).join('');
 
         el.innerHTML = `
-            <p class="fluege-hinweis">
-                Daten der letzten 5 Stunden via <strong>OpenSky Network</strong> (kostenlos, ~1h Verzögerung möglich).
-                Für Echtzeit-Radar:
-                <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
-                <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>
-            </p>
-            <div class="fluege-cols">
-                <div>
-                    <div class="fluege-col-title">🛬 Ankünfte (letzte 5h)</div>
-                    <div class="fluege-list">${renderList(arrivals, true)}</div>
-                </div>
-                <div>
-                    <div class="fluege-col-title">🛫 Abflüge (letzte 5h)</div>
-                    <div class="fluege-list">${renderList(departures, false)}</div>
-                </div>
-            </div>`;
+            <p class="fluege-hinweis">Live ADS-B via <strong>adsb.fi</strong> · ${aircraft.length} Flugzeug${aircraft.length !== 1 ? 'e' : ''} im Umkreis von 20 nm ·
+                <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FR24</a> ·
+                <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a></p>
+            <div class="fluege-list">${rows}</div>`;
     } catch(e) {
-        el.innerHTML = `<p class="status-error">Daten nicht verfügbar (OpenSky Network nicht erreichbar)</p>
-            <div class="fluege-live-links" style="margin-top:8px">
-                <a class="btn-ext" href="https://www.flightradar24.com/airport/${icao.toLowerCase()}" target="_blank" rel="noopener">📡 FlightRadar24</a>
-                <a class="btn-ext" href="https://www.flightaware.com/live/airport/${icao}" target="_blank" rel="noopener">🛫 FlightAware</a>
-            </div>`;
+        el.innerHTML = `<p class="flug-empty">Live-Daten nicht verfügbar.</p>${links()}`;
     }
 }
 
