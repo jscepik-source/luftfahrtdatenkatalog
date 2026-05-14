@@ -4,89 +4,372 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIP Welt-Katalog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body { font-family: Arial, sans-serif; background: #f4f4f4; color: #333; }
-
-        header { background: #003366; color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        header h1 { font-size: 1.6rem; }
-        header p  { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
-        .header-links { display: flex; gap: 8px; flex-wrap: wrap; }
-        .header-link {
-            display: inline-block; padding: 6px 12px; font-size: 0.8rem;
-            background: rgba(255,255,255,0.15); color: white; text-decoration: none;
-            border-radius: 4px; border: 1px solid rgba(255,255,255,0.3); white-space: nowrap;
+        :root {
+            --blue:       #1a56db;
+            --blue-dark:  #0f3a8a;
+            --blue-light: #e8f0fe;
+            --bg:         #f0f2f7;
+            --surface:    #ffffff;
+            --border:     #e2e5ef;
+            --text:       #1e2340;
+            --muted:      #6b7280;
+            --accent:     #0ea5e9;
+            --green:      #10b981;
+            --yellow:     #f59e0b;
+            --red:        #ef4444;
+            --radius:     10px;
+            --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md:  0 4px 16px rgba(0,0,0,0.10);
         }
-        .header-link:hover { background: rgba(255,255,255,0.3); }
 
-        .container { max-width: 960px; margin: 30px auto; padding: 0 20px; }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, #0d2a6e 0%, #1a3a8c 60%, #1e4fa8 100%);
+            color: white;
+            padding: 22px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            box-shadow: 0 4px 20px rgba(13,42,110,0.4);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        .header-links { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .header-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 13px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: rgba(255,255,255,0.12);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.22);
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+        .header-link:hover { background: rgba(255,255,255,0.25); }
+
+        /* ── Layout ── */
+        .container { max-width: 980px; margin: 32px auto; padding: 0 20px; }
+
+        /* ── Search ── */
+        .search-wrap {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            pointer-events: none;
+            display: flex;
+        }
 
         #suche {
-            width: 100%; padding: 12px 16px; font-size: 1rem;
-            border: 1px solid #ccc; border-radius: 6px; margin-bottom: 16px;
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            box-shadow: var(--shadow-sm);
+        }
+        #suche:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(26,86,219,0.12);
+        }
+        #suche::placeholder { color: var(--muted); }
+
+        /* ── Toolbar row ── */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        #zaehler { font-size: 0.85rem; color: #666; margin-bottom: 16px; }
+        #zaehler {
+            font-size: 0.82rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
 
+        /* ── Airport card ── */
         .flughafen {
-            background: white; border-radius: 8px; margin-bottom: 10px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1); overflow: hidden;
+            background: var(--surface);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
+            box-shadow: var(--shadow-sm);
+            border: 1.5px solid var(--border);
+            overflow: hidden;
+            transition: box-shadow 0.15s, border-color 0.15s;
+        }
+        .flughafen:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #c5cfe8;
         }
 
         .fh-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 18px; cursor: pointer; background: white;
-            border: none; width: 100%; text-align: left; gap: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            gap: 12px;
+            transition: background 0.12s;
         }
-        .fh-header:hover { background: #f0f4ff; }
+        .fh-header:hover { background: var(--blue-light); }
+        .fh-header.aktiv  { background: var(--blue-light); }
 
-        .fh-name { font-weight: bold; font-size: 1rem; flex: 1; }
+        .fh-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .fh-icao {
+            font-family: 'Inter', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--blue);
+            background: var(--blue-light);
+            padding: 3px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .fh-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .fh-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
 
         .fh-badge {
-            font-size: 0.78rem; background: #003366; color: white;
-            padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
         }
+        .badge-many  { background: #d1fae5; color: #065f46; }
+        .badge-some  { background: #dbeafe; color: #1e40af; }
+        .badge-none  { background: #f3f4f6; color: #6b7280; }
 
-        .fh-inhalt { display: none; border-top: 1px solid #eee; padding: 14px 18px; }
+        .fh-chevron {
+            color: var(--muted);
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        .fh-header.aktiv .fh-chevron { transform: rotate(180deg); }
+
+        /* ── Card content ── */
+        .fh-inhalt {
+            display: none;
+            border-top: 1.5px solid var(--border);
+            padding: 16px 18px;
+            animation: slideDown 0.18s ease;
+        }
         .fh-inhalt.offen { display: block; }
 
-        .dfs-btn {
-            display: inline-block; margin-bottom: 12px; padding: 8px 14px;
-            background: #003366; color: white; text-decoration: none;
-            border-radius: 5px; font-size: 0.85rem;
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        .dfs-btn:hover { background: #0055aa; }
 
-        .karten-liste a {
-            display: block; padding: 7px 0; color: #003366;
-            text-decoration: none; font-size: 0.9rem;
-            border-bottom: 1px solid #f0f0f0;
+        .aip-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 14px;
+            padding: 8px 15px;
+            background: var(--blue);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            transition: background 0.15s, transform 0.1s;
         }
-        .karten-liste a:last-child { border-bottom: none; }
-        .karten-liste a:hover { text-decoration: underline; }
+        .aip-btn:hover {
+            background: var(--blue-dark);
+            transform: translateY(-1px);
+        }
 
-        .keine-karten { font-size: 0.85rem; color: #999; }
+        .karten-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
 
-        #laden { text-align: center; padding: 40px; color: #666; }
+        .karte-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 11px;
+            background: #f8f9ff;
+            border: 1.5px solid #d4daf5;
+            border-radius: 20px;
+            color: var(--blue-dark);
+            font-size: 0.78rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.12s, border-color 0.12s, transform 0.1s;
+            white-space: nowrap;
+        }
+        .karte-tag:hover {
+            background: var(--blue-light);
+            border-color: var(--blue);
+            transform: translateY(-1px);
+        }
+        .karte-tag svg { flex-shrink: 0; }
+
+        .keine-karten {
+            font-size: 0.82rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ── Loading spinner ── */
+        #laden {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            header { padding: 16px 18px; }
+            header h1 { font-size: 1.15rem; }
+            .container { margin: 20px auto; }
+            .fh-name { font-size: 0.88rem; }
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <div>
-        <h1>AIP Welt-Katalog</h1>
-        <p>Aktuelle Karten aus über 70 nationalen AIP-Quellen — wird automatisch alle 6 Stunden aktualisiert</p>
+    <div class="header-brand">
+        <div class="header-icon">✈</div>
+        <div>
+            <h1>AIP Welt-Katalog</h1>
+            <p>Aktuelle Karten aus über 70 nationalen AIP-Quellen &mdash; wird automatisch alle 6 Stunden aktualisiert</p>
+        </div>
     </div>
     <div class="header-links" id="webtrak-box" style="display:none">
-        <a class="header-link" href="https://www.airservicesaustralia.com/community/environment/aircraft-noise/webtrak/" target="_blank">🛩 WebTrak Australien</a>
+        <a class="header-link" href="https://www.airservicesaustralia.com/community/environment/aircraft-noise/webtrak/" target="_blank">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+            WebTrak Australien
+        </a>
     </div>
 </header>
 
 <div class="container">
-    <input type="text" id="suche" placeholder="Flughafen suchen (z.B. EDDF, HCMM, LATI, VTBS ...)">
-    <div id="zaehler"></div>
-    <div id="liste"><div id="laden">Daten werden geladen...</div></div>
+    <div class="search-wrap">
+        <span class="search-icon">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+        </span>
+        <input type="text" id="suche" placeholder="Flughafen suchen (z.B. EDDF, HCMM, LATI, VTBS ...)">
+    </div>
+
+    <div class="toolbar">
+        <div id="zaehler"></div>
+    </div>
+
+    <div id="liste">
+        <div id="laden">
+            <div class="spinner"></div>
+            Daten werden geladen&hellip;
+        </div>
+    </div>
 </div>
 
 <script>
@@ -153,15 +436,32 @@
         zeige(katalogDaten);
     });
 
+    const pdfIcon = `<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+
+    function badgeClass(n) {
+        if (n >= 10) return 'badge-many';
+        if (n > 0)   return 'badge-some';
+        return 'badge-none';
+    }
+
+    function icaoCode(name) {
+        const m = name.match(/\b([A-Z]{4})\b/);
+        return m ? m[1] : name.slice(0, 4).toUpperCase();
+    }
+
     function zeige(data) {
         const liste = document.getElementById('liste');
         const eintraege = Object.entries(data);
         const hatAustralien = eintraege.some(([n]) => n.toUpperCase().startsWith('Y'));
         document.getElementById('webtrak-box').style.display = hatAustralien ? '' : 'none';
-        document.getElementById('zaehler').textContent = `${eintraege.length} Flughäfen`;
+
+        const z = document.getElementById('zaehler');
+        z.textContent = eintraege.length
+            ? `${eintraege.length.toLocaleString('de-DE')} Flughafen${eintraege.length !== 1 ? 'hafen' : ''} gefunden`
+            : '';
 
         if (eintraege.length === 0) {
-            liste.innerHTML = '<p style="color:#999;padding:20px">Keine Ergebnisse.</p>';
+            liste.innerHTML = '<p style="color:var(--muted);padding:30px 0;text-align:center">Keine Ergebnisse gefunden.</p>';
             return;
         }
 
@@ -169,20 +469,30 @@
             const url     = inhalt._url   || inhalt;
             const karten  = inhalt.karten || {};
             const liste_k = Object.entries(karten);
+            const icao    = icaoCode(name);
 
             const kartenHTML = liste_k.length > 0
-                ? `<div class="karten-liste">${liste_k.map(([k, u]) =>
-                    `<a href="${u}" target="_blank">${k}</a>`).join('')}</div>`
-                : '<span class="keine-karten">Keine Einzelkarten gefunden</span>';
+                ? `<div class="karten-grid">${liste_k.map(([k, u]) =>
+                    `<a class="karte-tag" href="${u}" target="_blank">${pdfIcon}${k}</a>`).join('')}</div>`
+                : '<span class="keine-karten"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Keine Einzelkarten gefunden</span>';
 
             return `
             <div class="flughafen">
                 <button class="fh-header" onclick="toggle(this)">
-                    <span class="fh-name">${name}</span>
-                    <span class="fh-badge">${liste_k.length} Karten</span>
+                    <span class="fh-left">
+                        <span class="fh-icao">${icao}</span>
+                        <span class="fh-name">${name}</span>
+                    </span>
+                    <span class="fh-right">
+                        <span class="fh-badge ${badgeClass(liste_k.length)}">${liste_k.length} Karten</span>
+                        <svg class="fh-chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                    </span>
                 </button>
                 <div class="fh-inhalt">
-                    <a class="dfs-btn" href="${url}" target="_blank">Karten auf AIP-Seite öffnen ↗</a>
+                    <a class="aip-btn" href="${url}" target="_blank">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        Karten auf AIP-Seite öffnen
+                    </a>
                     ${kartenHTML}
                 </div>
             </div>`;
@@ -190,6 +500,7 @@
     }
 
     function toggle(btn) {
+        btn.classList.toggle('aktiv');
         btn.nextElementSibling.classList.toggle('offen');
     }
 
