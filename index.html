@@ -973,6 +973,32 @@
             justify-content: space-between;
         }
         .fluege-live-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .fluege-globe-wrap {
+            margin-top: var(--space-sm);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            position: relative;
+        }
+        .fluege-globe-wrap iframe {
+            width: 100%;
+            height: 380px;
+            border: none;
+            display: block;
+        }
+        .fluege-globe-open {
+            position: absolute;
+            top: 8px; right: 8px;
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 4px 9px;
+            border-radius: 4px;
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+        }
+        .fluege-globe-open:hover { background: rgba(0,0,0,0.8); }
         .fluege-hinweis {
             font-size: 0.7rem;
             color: var(--color-text-dim);
@@ -2561,6 +2587,17 @@ async function ladeFluege(icao) {
     const fr24url = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
     const faurl   = `https://www.flightaware.com/live/airport/${icao}`;
 
+    const globeUrl = (lat && lon && !isNaN(lat) && !isNaN(lon))
+        ? `https://globe.adsbexchange.com/?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&zoom=11`
+        : `https://globe.adsbexchange.com/`;
+
+    function globe() {
+        return `<div class="fluege-globe-wrap">
+            <iframe src="${globeUrl}" loading="lazy" allowfullscreen referrerpolicy="no-referrer"></iframe>
+            <a class="fluege-globe-open" href="${globeUrl}" target="_blank" rel="noopener">Vollbild ↗</a>
+        </div>`;
+    }
+
     function links() {
         return `<p class="fluege-hinweis">Vollständige Flugpläne:
             <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
@@ -2568,7 +2605,7 @@ async function ladeFluege(icao) {
     }
 
     if (!lat || !lon || isNaN(lat) || isNaN(lon)) {
-        el.innerHTML = `<p class="flug-empty">Keine Koordinaten für diesen Flughafen.</p>${links()}`;
+        el.innerHTML = `<p class="flug-empty">Keine Koordinaten – Radar trotzdem verfügbar:</p>${globe()}${links()}`;
         return;
     }
 
@@ -2584,14 +2621,8 @@ async function ladeFluege(icao) {
             .sort((a, b) => (a.dst ?? 999) - (b.dst ?? 999))
             .slice(0, 20);
 
-        if (!aircraft.length) {
-            el.innerHTML = `<p class="flug-empty">Aktuell keine Flugzeuge im Umkreis von 20 nm erfasst.</p>${links()}`;
-            return;
-        }
-
         function phase(a) {
             const gs  = a.gs ?? 0;
-            const alt = a.alt_baro ?? a.alt_geom ?? 0;
             const vr  = a.baro_rate ?? 0;
             if (gs < 30)   return { icon: '🅿', label: 'am Boden' };
             if (vr < -200) return { icon: '🛬', label: 'Ankunft' };
@@ -2599,28 +2630,31 @@ async function ladeFluege(icao) {
             return { icon: '✈', label: 'im Flug' };
         }
 
-        const rows = aircraft.map(a => {
-            const cs     = (a.flight || '').trim();
-            const type   = a.t   || '–';
-            const sq     = a.squawk ? `▣ ${a.squawk}` : '';
-            const dist   = a.dst  != null ? `${a.dst.toFixed(1)} nm` : '';
-            const alt    = a.alt_baro != null ? `${Math.round(a.alt_baro * 0.3048)} m` : '';
-            const ph     = phase(a);
-            const info   = [ph.label, type, alt, dist].filter(Boolean).join(' · ');
-            return `<div class="flug-item">
-                <a class="flug-callsign" href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener">${ph.icon} ${cs}</a>
-                <span class="flug-route">${info}</span>
-                <span class="flug-zeit">${sq}</span>
-            </div>`;
-        }).join('');
+        const rows = aircraft.length
+            ? aircraft.map(a => {
+                const cs   = (a.flight || '').trim();
+                const type = a.t   || '–';
+                const sq   = a.squawk ? `▣ ${a.squawk}` : '';
+                const dist = a.dst  != null ? `${a.dst.toFixed(1)} nm` : '';
+                const alt  = a.alt_baro != null ? `${Math.round(a.alt_baro * 0.3048)} m` : '';
+                const ph   = phase(a);
+                const info = [ph.label, type, alt, dist].filter(Boolean).join(' · ');
+                return `<div class="flug-item">
+                    <a class="flug-callsign" href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener">${ph.icon} ${cs}</a>
+                    <span class="flug-route">${info}</span>
+                    <span class="flug-zeit">${sq}</span>
+                </div>`;
+            }).join('')
+            : `<p class="flug-empty">Aktuell keine Flugzeuge im Umkreis von 20 nm erfasst.</p>`;
 
         el.innerHTML = `
             <p class="fluege-hinweis">Live ADS-B via <strong>adsb.fi</strong> · ${aircraft.length} Flugzeug${aircraft.length !== 1 ? 'e' : ''} im Umkreis von 20 nm ·
                 <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FR24</a> ·
                 <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a></p>
-            <div class="fluege-list">${rows}</div>`;
+            <div class="fluege-list">${rows}</div>
+            ${globe()}`;
     } catch(e) {
-        el.innerHTML = `<p class="flug-empty">Live-Daten nicht verfügbar.</p>${links()}`;
+        el.innerHTML = `<p class="flug-empty">Live-Daten nicht verfügbar.</p>${globe()}${links()}`;
     }
 }
 
