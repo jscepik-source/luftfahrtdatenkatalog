@@ -1219,9 +1219,9 @@ const KATALOG_DATEI = {
     'OJ': 'oj', 'OI': 'oi', 'OO': 'oo', 'OK': 'ok', 'OB': 'ob',
     'OT': 'ot', 'OM': 'om', 'OY': 'oy', 'OS': 'os', 'OR': 'or',
     'OL': 'ol', 'OP': 'op', 'OA': 'oa', 'OE': 'oe', 'LL': 'll',
-    // Ägypten, Kenia, Marokko, Südafrika
+    // Afrika Ost / Nordafrika
     'HE': 'he', 'HK': 'hk', 'GM': 'gm', 'FA': 'fa',
-    'HA': 'ha', 'HT': 'ht',
+    'HA': 'ha', 'HT': 'ht', 'HC': 'hc', 'HL': 'hl',
     // ASECNA – 17 afrikanische Staaten
     'DB': 'asecna', 'DF': 'asecna', 'DI': 'asecna', 'DR': 'asecna', 'DX': 'asecna',
     'FC': 'asecna', 'FE': 'asecna', 'FG': 'asecna', 'FI': 'asecna', 'FK': 'asecna',
@@ -1231,18 +1231,24 @@ const KATALOG_DATEI = {
     'VT': 'vt', 'VH': 'vh',              // VH = Hongkong
     'VV': 'vv', 'VM': 'vm',              // Vietnam, Macau
     'VE': 'vi', 'VI': 'vi', 'VO': 'vi', 'VA': 'vi',  // Indien teilen
+    'VQ': 'vq', 'VN': 'vn',              // Bhutan, Nepal
     'WM': 'wm', 'WI': 'wi', 'WS': 'ws',
     'RP': 'rp', 'VC': 'vc',              // Philippinen, Sri Lanka
     'RJ': 'rj', 'RO': 'rj', 'RK': 'rk', 'RC': 'rc',
     'ZB': 'zb', 'ZG': 'zb', 'ZH': 'zb', 'ZJ': 'zb',  // China
     'ZK': 'zb', 'ZL': 'zb', 'ZP': 'zb', 'ZS': 'zb',
     'ZU': 'zb', 'ZW': 'zb', 'ZY': 'zb',
-    'UP': 'up', 'UT': 'ut', 'UB': 'ub', 'UG': 'ug',
+    'UP': 'up', 'UT': 'ut', 'UB': 'ub', 'UG': 'ug',  // Pakistan, Zentralasien, Aserbaidschan, Georgien
+    'UU': 'u',  'UL': 'u',  'UR': 'u',  'US': 'u',   // Russland
+    'UW': 'u',  'UN': 'u',  'UO': 'u',  'UH': 'u',
+    'UE': 'u',  'UI': 'u',  'UX': 'u',  'UY': 'u',
+    'UA': 'u',  'UK': 'u',  'UM': 'u',               // Kasachstan, Ukraine, Belarus
     // Amerika (nicht-USA)
     'C':  'c',  // Canada (single letter)
     'SA': 'sa', 'SB': 'sb', 'SC': 'sc', 'SE': 'se',
     'SK': 'sk', 'SP': 'sp', 'SU': 'su', 'SV': 'sv',
     'MM': 'mm', 'MU': 'mu', 'MP': 'mp', 'MR': 'mr',
+    'MW': 'mw',                           // Cayman Islands
     // Ozeanien
     'Y':  'y',  // Australia (single letter)
     'NZ': 'nz',
@@ -1402,6 +1408,18 @@ async function ladeDfsKarten(icao) {
         html += chartSection('🛩 DFS VFR-Karten', vfrKatalog && vfrKatalog[icao], navRe, null);
         html += chartSection('✈ DFS IFR-Karten', ifrKatalog && ifrKatalog[icao], navRe, IFR_GRUPPEN_DEF);
         if (html) { el.innerHTML = html; return; }
+    }
+
+    // ── PANSA Polen – IFR + VFR getrennt laden ────────────────────
+    if (prefix === 'EP') {
+        const [ifrKat, vfrKat] = await Promise.all([
+            ladeKatalogDatei('ep_ifr'),
+            ladeKatalogDatei('ep_vfr'),
+        ]);
+        html += chartSection('🛩 PANSA VFR-Karten', vfrKat && vfrKat[icao], null, null);
+        html += chartSection('✈ PANSA IFR-Karten', ifrKat && ifrKat[icao], null, GENERIC_GRUPPEN_DEF);
+        if (html) { el.innerHTML = html; return; }
+        // kein IFR/VFR → Fallthrough zum generischen ep_katalog_export.json
     }
 
     // ── FAA USA / Pazifik / Karibik ────────────────────────────────
