@@ -139,7 +139,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ourairports.html \
+          cp ourairports.html index.html
+          git add ourairports.html index.html \
                   dfs_katalog_export.json notam_info.json nfl_katalog.json nfl_notams_export.json \
                   faa_katalog_export.json \
                   lo_katalog_export.json ls_katalog_export.json lk_katalog_export.json \
