@@ -963,6 +963,47 @@
             transform: none;
         }
 
+        /* ── Card Tabs ── */
+        .card-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: var(--space-md);
+            overflow-x: auto;
+            scrollbar-width: none;
+            gap: 0;
+        }
+        .card-tabs::-webkit-scrollbar { display: none; }
+        .card-tab {
+            padding: 9px 16px;
+            font-family: var(--font);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--color-text-dim);
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color var(--transition), border-color var(--transition);
+        }
+        .card-tab:hover { color: var(--color-text); }
+        .card-tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+        .card-tab-panel { display: none; }
+        .card-tab-panel.active {
+            display: block;
+            animation: tabSlideIn 0.22s ease;
+        }
+        @keyframes tabSlideIn {
+            from { opacity: 0; transform: translateX(12px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
         /* ── Card entrance animation ── */
         @keyframes cardSlideIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -1019,12 +1060,12 @@
                     <div class="hero-vdivider"></div>
                     <div class="hero-stat">
                         <div class="hero-stat-num">70+</div>
-                        <div class="hero-stat-label">AIP-Quellen</div>
+                        <div class="hero-stat-label">AIP-Länder</div>
                     </div>
                     <div class="hero-vdivider"></div>
                     <div class="hero-stat">
                         <div class="hero-stat-num">6h</div>
-                        <div class="hero-stat-label">Update-Zyklus</div>
+                        <div class="hero-stat-label">Updates</div>
                     </div>
                     <div class="hero-vdivider"></div>
                     <div class="hero-stat">
@@ -1036,10 +1077,6 @@
 
             <!-- Slide 2: Wetter -->
             <div class="hero-slide">
-                <div class="hero-text-block">
-                    <h2>Live-Wetterdaten für jeden Flughafen</h2>
-                    <p>METAR & TAF direkt vom <span class="hero-accent">Aviation Weather Center (NOAA)</span> — aktuell, präzise, weltweit verfügbar.</p>
-                </div>
                 <div class="hero-stat-group">
                     <div class="hero-stat">
                         <div class="hero-stat-num">METAR</div>
@@ -1048,7 +1085,7 @@
                     <div class="hero-vdivider"></div>
                     <div class="hero-stat">
                         <div class="hero-stat-num">TAF</div>
-                        <div class="hero-stat-label">Vorhersage 24–30h</div>
+                        <div class="hero-stat-label">Vorhersage</div>
                     </div>
                     <div class="hero-vdivider"></div>
                     <div class="hero-stat">
@@ -1060,10 +1097,6 @@
 
             <!-- Slide 3: AIP-Karten -->
             <div class="hero-slide">
-                <div class="hero-text-block">
-                    <h2>AIP-Karten aus über 70 Ländern</h2>
-                    <p>VFR-, IFR- und eAIP-Karten von <span class="hero-accent">nationalen Luftfahrtbehörden</span> weltweit — automatisch alle 6 Stunden aktualisiert.</p>
-                </div>
                 <div class="hero-stat-group">
                     <div class="hero-stat">
                         <div class="hero-stat-num">VFR</div>
@@ -1079,6 +1112,19 @@
                         <div class="hero-stat-num">eAIP</div>
                         <div class="hero-stat-label">Digital</div>
                     </div>
+                    <div class="hero-vdivider"></div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-num">70+</div>
+                        <div class="hero-stat-label">AIP-Quellen</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: HS RheinMain -->
+            <div class="hero-slide">
+                <div class="hero-stat-group" style="flex-direction:column;gap:10px;text-align:center">
+                    <div class="hero-stat-num" style="font-size:clamp(1.1rem,3vw,1.6rem);letter-spacing:0.02em;font-weight:700">Hochschule RheinMain</div>
+                    <div class="hero-stat-label" style="font-size:0.75rem;letter-spacing:0.08em">Studentisches Projekt &mdash; Fachbereich Ingenieurwissenschaften</div>
                 </div>
             </div>
 
@@ -1088,6 +1134,7 @@
         <button class="hero-dot active" onclick="heroGoto(0)" aria-label="Slide 1"></button>
         <button class="hero-dot" onclick="heroGoto(1)" aria-label="Slide 2"></button>
         <button class="hero-dot" onclick="heroGoto(2)" aria-label="Slide 3"></button>
+        <button class="hero-dot" onclick="heroGoto(3)" aria-label="Slide 4"></button>
     </div>
 </section>
 
@@ -2064,66 +2111,94 @@ out skel qt;`;
 
         <div class="card-body" role="region" aria-label="${ap.name || icao}">
 
-            <dl class="detail-grid">
-                <div class="detail-item"><dt>ICAO</dt><dd>${icao}</dd></div>
-                ${ap.iata  ? `<div class="detail-item"><dt>IATA</dt><dd>${ap.iata}</dd></div>` : ''}
-                ${ap.local ? `<div class="detail-item"><dt>Lokal</dt><dd>${ap.local}</dd></div>` : ''}
-                <div class="detail-item"><dt>Land</dt><dd>${ap.country_name || ap.country || '–'}</dd></div>
-                <div class="detail-item"><dt>Region</dt><dd>${ap.region || '–'}</dd></div>
-                <div class="detail-item"><dt>Stadt</dt><dd>${ap.city || '–'}</dd></div>
-                <div class="detail-item"><dt>Kontinent</dt><dd>${kontinent || '–'}</dd></div>
-                <div class="detail-item"><dt>Höhe</dt><dd>${elev}</dd></div>
-                ${coords ? `<div class="detail-item"><dt>Koordinaten</dt><dd>${coords}</dd></div>` : ''}
-            </dl>
-
-            <div class="action-links">
-                <a class="btn-sv" href="${svUrl}" target="_blank" rel="noopener">✈ SkyVector</a>
-                ${aip ? `<a class="btn-aip"${_isDFS ? ` data-dfsicao="${icao}"` : ''} href="${aip.url}" target="_blank" rel="noopener">📚 ${aip.name}</a>` : ''}
-                <a class="btn-ext" href="${chartfoxUrl}" target="_blank" rel="noopener">📋 ChartFox</a>
-                <a class="btn-ext" href="${flightawareUrl}" target="_blank" rel="noopener">🛫 FlightAware</a>
-                <a class="btn-ext" href="${fr24Url}" target="_blank" rel="noopener">📡 Flightradar24</a>
-                ${mapsUrl ? `<a class="btn-ext" href="${mapsUrl}" target="_blank" rel="noopener">🗺 Google Maps</a>` : ''}
-                ${ap.web  ? `<a class="btn-ext" href="${ap.web}"  target="_blank" rel="noopener">🌐 Website</a>` : ''}
-                ${ap.wiki ? `<a class="btn-ext" href="${ap.wiki}" target="_blank" rel="noopener">📖 Wikipedia</a>` : ''}
+            <!-- Tabs -->
+            <div class="card-tabs">
+                <button class="card-tab active" onclick="switchTab(this,'info')">Info</button>
+                <button class="card-tab" onclick="switchTab(this,'karten')">Karten</button>
+                <button class="card-tab" onclick="switchTab(this,'wetter')">Wetter</button>
+                <button class="card-tab" onclick="switchTab(this,'notam')">NOTAMs</button>
+                ${hasCoords ? `<button class="card-tab" onclick="switchTab(this,'karte','${icao}')">Karte</button>` : ''}
             </div>
 
-            ${rwyRows ? `<section class="card-section">
-                <h3 class="section-title">🛬 Runways ${zeichneRunwaySVG(ap.runways)}</h3>
-                <table class="data-table">
-                    <thead><tr><th>Kennung</th><th>Länge (ft)</th><th>Breite (ft)</th><th>Kurs LE / HE</th><th>Belag</th><th>Bel.</th></tr></thead>
-                    <tbody>${rwyRows}</tbody>
-                </table>
-            </section>` : ''}
+            <!-- Info Panel -->
+            <div class="card-tab-panel active" data-panel="info">
+                <dl class="detail-grid">
+                    <div class="detail-item"><dt>ICAO</dt><dd>${icao}</dd></div>
+                    ${ap.iata  ? `<div class="detail-item"><dt>IATA</dt><dd>${ap.iata}</dd></div>` : ''}
+                    ${ap.local ? `<div class="detail-item"><dt>Lokal</dt><dd>${ap.local}</dd></div>` : ''}
+                    <div class="detail-item"><dt>Land</dt><dd>${ap.country_name || ap.country || '–'}</dd></div>
+                    <div class="detail-item"><dt>Region</dt><dd>${ap.region || '–'}</dd></div>
+                    <div class="detail-item"><dt>Stadt</dt><dd>${ap.city || '–'}</dd></div>
+                    <div class="detail-item"><dt>Kontinent</dt><dd>${kontinent || '–'}</dd></div>
+                    <div class="detail-item"><dt>Höhe</dt><dd>${elev}</dd></div>
+                    ${coords ? `<div class="detail-item"><dt>Koordinaten</dt><dd>${coords}</dd></div>` : ''}
+                </dl>
+                <div class="action-links">
+                    <a class="btn-sv" href="${svUrl}" target="_blank" rel="noopener">✈ SkyVector</a>
+                    ${aip ? `<a class="btn-aip"${_isDFS ? ` data-dfsicao="${icao}"` : ''} href="${aip.url}" target="_blank" rel="noopener">📚 ${aip.name}</a>` : ''}
+                    <a class="btn-ext" href="${chartfoxUrl}" target="_blank" rel="noopener">📋 ChartFox</a>
+                    <a class="btn-ext" href="${flightawareUrl}" target="_blank" rel="noopener">🛫 FlightAware</a>
+                    <a class="btn-ext" href="${fr24Url}" target="_blank" rel="noopener">📡 Flightradar24</a>
+                    ${mapsUrl ? `<a class="btn-ext" href="${mapsUrl}" target="_blank" rel="noopener">🗺 Google Maps</a>` : ''}
+                    ${ap.web  ? `<a class="btn-ext" href="${ap.web}"  target="_blank" rel="noopener">🌐 Website</a>` : ''}
+                    ${ap.wiki ? `<a class="btn-ext" href="${ap.wiki}" target="_blank" rel="noopener">📖 Wikipedia</a>` : ''}
+                </div>
+                ${rwyRows ? `<section class="card-section">
+                    <h3 class="section-title">🛬 Runways ${zeichneRunwaySVG(ap.runways)}</h3>
+                    <table class="data-table">
+                        <thead><tr><th>Kennung</th><th>Länge (ft)</th><th>Breite (ft)</th><th>Kurs LE / HE</th><th>Belag</th><th>Bel.</th></tr></thead>
+                        <tbody>${rwyRows}</tbody>
+                    </table>
+                </section>` : ''}
+                ${frqRows ? `<section class="card-section">
+                    <h3 class="section-title">📻 Frequenzen</h3>
+                    <table class="data-table">
+                        <thead><tr><th>Typ</th><th>MHz</th><th>Bezeichnung</th></tr></thead>
+                        <tbody>${frqRows}</tbody>
+                    </table>
+                </section>` : ''}
+                ${navRows ? `<section class="card-section">
+                    <h3 class="section-title">📡 Nav-Aids</h3>
+                    <table class="data-table">
+                        <thead><tr><th>Kennung</th><th>Name</th><th>Typ</th><th>Freq (kHz)</th><th>DME</th><th>Leistung</th><th>Nutzung</th></tr></thead>
+                        <tbody>${navRows}</tbody>
+                    </table>
+                </section>` : ''}
+                ${hasCoords ? `<section class="card-section">
+                    <h3 class="section-title">🌅 Sonnenauf-/-untergang (UTC, heute)</h3>
+                    <dl class="sun-grid" id="sonne-${icao}"><span class="status-loading">wird berechnet…</span></dl>
+                </section>` : ''}
+            </div>
 
-            ${frqRows ? `<section class="card-section">
-                <h3 class="section-title">📻 Frequenzen</h3>
-                <table class="data-table">
-                    <thead><tr><th>Typ</th><th>MHz</th><th>Bezeichnung</th></tr></thead>
-                    <tbody>${frqRows}</tbody>
-                </table>
-            </section>` : ''}
+            <!-- Karten Panel -->
+            <div class="card-tab-panel" data-panel="karten">
+                <div id="dfs-${icao}"></div>
+            </div>
 
-            ${navRows ? `<section class="card-section">
-                <h3 class="section-title">📡 Nav-Aids</h3>
-                <table class="data-table">
-                    <thead><tr><th>Kennung</th><th>Name</th><th>Typ</th><th>Freq (kHz)</th><th>DME</th><th>Leistung</th><th>Nutzung</th></tr></thead>
-                    <tbody>${navRows}</tbody>
-                </table>
-            </section>` : ''}
+            <!-- Wetter Panel -->
+            <div class="card-tab-panel" data-panel="wetter">
+                <div id="wetter-${icao}"><span class="status-loading">wird geladen…</span></div>
+            </div>
 
-            ${hasCoords ? `<section class="card-section">
-                <h3 class="section-title">🌅 Sonnenauf-/-untergang (UTC, heute)</h3>
-                <dl class="sun-grid" id="sonne-${icao}"><span class="status-loading">wird berechnet…</span></dl>
-            </section>` : ''}
+            <!-- NOTAM Panel -->
+            <div class="card-tab-panel" data-panel="notam">
+                <div id="notam-${icao}"><span class="status-loading">wird geladen…</span></div>
+                <div class="notam-extern">
+                    <span class="notam-extern-label">Weitere Quellen:</span>
+                    <a class="btn-ext" href="https://www.icao.int/safety/iStars/Pages/NOTAM-Search.aspx" target="_blank" rel="noopener">🌐 ICAO NOTAMSearch</a>
+                    <a class="btn-ext" href="https://notams.aim.faa.gov/notamSearch/nsapp.html#/" target="_blank" rel="noopener">✈ FAA NOTAM System</a>
+                    <a class="btn-ext" href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">🇪🇺 EAD Basic</a>
+                </div>
+            </div>
 
-            ${hasCoords ? `<section class="card-section">
-                <h3 class="section-title">🗺 Karte & Luftraum</h3>
+            <!-- Karte Panel -->
+            ${hasCoords ? `<div class="card-tab-panel" data-panel="karte">
                 <div class="map-links">
-                    ${hasCoords ? `<a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy Luftraum</a>` : ''}
+                    <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy Luftraum</a>
                     <a class="btn-ext" href="${openAipUrl}" target="_blank" rel="noopener">✈ OpenAIP</a>
-                    ${hasCoords ? `<a class="btn-ext" href="https://skyvector.com/?ll=${ap.lat},${ap.lon}&chart=301&zoom=4" target="_blank" rel="noopener">📋 SkyVector Luftraum</a>` : ''}
+                    <a class="btn-ext" href="https://skyvector.com/?ll=${ap.lat},${ap.lon}&chart=301&zoom=4" target="_blank" rel="noopener">📋 SkyVector</a>
                     <a class="btn-ext" href="${overpUrl}" target="_blank" rel="noopener">🔍 OSM Overpass</a>
-                    ${mapsUrl ? `<a class="btn-ext" href="${mapsUrl}&t=k" target="_blank" rel="noopener">🛰 Google Satellit</a>` : ''}
+                    ${mapsUrl ? `<a class="btn-ext" href="${mapsUrl}&t=k" target="_blank" rel="noopener">🛰 Satellit</a>` : ''}
                 </div>
                 <div id="karte-${icao}" class="map-container"></div>
                 <div class="rwy-legend">
@@ -2131,27 +2206,9 @@ out skel qt;`;
                     <span><i style="background:#f59e0b"></i>Taxiway</span>
                     <span><i style="background:#8b5cf6"></i>Terminal</span>
                     <span><i style="background:#94a3b8"></i>Apron</span>
-                    <small>Quelle: OpenStreetMap Overpass · Luftraumdaten: OpenAIP</small>
+                    <small>Quelle: OpenStreetMap · Luftraumdaten: OpenAIP</small>
                 </div>
-            </section>` : ''}
-
-            <section class="card-section">
-                <h3 class="section-title">🌤 Wetter — METAR / TAF</h3>
-                <div id="wetter-${icao}"><span class="status-loading">wird geladen…</span></div>
-            </section>
-
-            <section class="card-section">
-                <h3 class="section-title">⚠️ NOTAMs <small style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.65rem;color:var(--color-text-dim)">(Aviation Weather Center)</small></h3>
-                <div id="notam-${icao}"><span class="status-loading">wird geladen…</span></div>
-                <div class="notam-extern">
-                    <span class="notam-extern-label">Weitere Quellen:</span>
-                    <a class="btn-ext" href="https://www.icao.int/safety/iStars/Pages/NOTAM-Search.aspx" target="_blank" rel="noopener">🌐 ICAO NOTAMSearch</a>
-                    <a class="btn-ext" href="https://notams.aim.faa.gov/notamSearch/nsapp.html#/" target="_blank" rel="noopener">✈ FAA NOTAM System</a>
-                    <a class="btn-ext" href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">🇪🇺 EAD Basic / DFS AIM</a>
-                </div>
-            </section>
-
-            <div id="dfs-${icao}"></div>
+            </div>` : ''}
 
         </div>`;
     return article;
@@ -2407,9 +2464,20 @@ document.getElementById('kontinent-sel').addEventListener('change', e => {
 document.getElementById('dist-a').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('dist-b').focus(); });
 document.getElementById('dist-b').addEventListener('keydown', e => { if (e.key === 'Enter') berechneDistanz(); });
 
+// ── Card Tabs ────────────────────────────────────────────────────────────────
+function switchTab(btn, panel, icao) {
+    const body = btn.closest('.card-body');
+    body.querySelectorAll('.card-tab').forEach(t => t.classList.toggle('active', t === btn));
+    body.querySelectorAll('.card-tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === panel));
+    // Leaflet-Karte nach Tab-Wechsel neu rendern
+    if (panel === 'karte' && icao && karteInstanzen[icao]) {
+        setTimeout(() => karteInstanzen[icao].invalidateSize(), 60);
+    }
+}
+
 // ── Hero Slides ──────────────────────────────────────────────────────────────
 (function() {
-    const TOTAL = 3;
+    const TOTAL = 4;
     let idx = 0;
     let timer = null;
 
