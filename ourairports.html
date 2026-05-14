@@ -609,6 +609,15 @@
 
         .wx-quelle { font-size: 0.7rem; color: var(--color-text-dim); margin-top: var(--space-xs); }
         .notam-zeit { font-size: 0.7rem; color: var(--color-text-dim); display: block; margin-bottom: 2px; }
+        .notam-setup {
+            font-size: 0.78rem;
+            line-height: 1.7;
+            padding: var(--space-sm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-notam-bg);
+        }
+        .notam-setup code { font-size: 0.75rem; background: var(--color-bg); padding: 1px 5px; border-radius: 3px; }
 
         /* ── NOTAMs ── */
         .notam-list { display: flex; flex-direction: column; gap: var(--space-xs); }
@@ -1330,6 +1339,12 @@
 
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
+
+// ── FAA External NOTAM API ───────────────────────────────────────────────────
+// Kostenlose Registrierung: https://api.faa.gov/s/
+// Danach Client-ID und Client-Secret hier eintragen:
+const FAA_CLIENT_ID     = '';
+const FAA_CLIENT_SECRET = '';
 let katalog = {};
 let aktiverTyp = '';
 let aktivSched = false;
@@ -2512,23 +2527,22 @@ async function ladeWetter(icao, lat, lon) {
 }
 
 async function fetchNotamDaten(icao) {
-    const encoded = encodeURIComponent(JSON.stringify([icao]));
-    const url = `https://api.autorouter.aero/v1.0/notam?itemas=${encoded}&limit=50`;
+    if (!FAA_CLIENT_ID || !FAA_CLIENT_SECRET) return null;
+    const url = `https://external-api.faa.gov/notamapi/v1/notams?icaoLocation=${icao}&pageSize=50&sortBy=startDate&sortOrder=Desc`;
     const versuche = [
-        { label: 'autorouter.aero', u: url },
-        { label: 'via corsproxy.io',  u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
-        { label: 'via allorigins.win', u: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
+        { label: 'FAA External API (direkt)', u: url, headers: { 'client_id': FAA_CLIENT_ID, 'client_secret': FAA_CLIENT_SECRET } },
+        { label: 'FAA External API (corsproxy)', u: `https://corsproxy.io/?url=${encodeURIComponent(url)}`, headers: { 'client_id': FAA_CLIENT_ID, 'client_secret': FAA_CLIENT_SECRET } },
     ];
-    for (const { label, u } of versuche) {
+    for (const { label, u, headers } of versuche) {
         try {
-            const res = await fetch(u);
+            const res = await fetch(u, { headers });
             if (!res.ok) continue;
             const data = await res.json();
-            const rows = Array.isArray(data) ? data : (data.rows || []);
-            return { data: rows, quelle: label };
+            const items = data.items || data.notams || (Array.isArray(data) ? data : []);
+            return { data: items, quelle: label };
         } catch(e) { console.warn('NOTAM Versuch fehlgeschlagen:', u, e.message); }
     }
-    throw new Error('Alle Quellen fehlgeschlagen');
+    return null;
 }
 
 async function ladeNotams(icao) {
@@ -2536,27 +2550,42 @@ async function ladeNotams(icao) {
     if (!el || el.dataset.geladen) return;
     el.dataset.geladen = '1';
     if (notamcache[icao]) { el.innerHTML = notamcache[icao]; return; }
+
+    if (!FAA_CLIENT_ID || !FAA_CLIENT_SECRET) {
+        el.innerHTML = `<div class="notam-setup">
+            <strong>API-Key erforderlich</strong><br>
+            Für Live-NOTAMs direkt auf der Seite bitte einmalig kostenlos registrieren:<br>
+            1. <a href="https://api.faa.gov/s/" target="_blank" rel="noopener" style="color:var(--color-primary)">api.faa.gov/s/</a> aufrufen → "Request API Access"<br>
+            2. <em>Client-ID</em> und <em>Client-Secret</em> in die Datei <code>ourairports.html</code> eintragen<br>
+            (Zeilen: <code>FAA_CLIENT_ID</code> und <code>FAA_CLIENT_SECRET</code>)
+        </div>`;
+        return;
+    }
+
     try {
-        const { data, quelle } = await fetchNotamDaten(icao);
+        const result = await fetchNotamDaten(icao);
+        const data = result?.data || [];
         let html = '';
-        if (!data || data.length === 0) {
+        if (!data.length) {
             html = `<span class="status-loading">Keine aktiven NOTAMs für ${icao}.</span>`;
         } else {
             html = `<div class="notam-list">${data.slice(0, 20).map(n => {
-                const text = n.iteme || n.notamText || n.text || '–';
-                const nr   = n.itemc || n.notamNumber || '';
-                const von  = n.startvalidity ? new Date(n.startvalidity * 1000).toUTCString().slice(5,22) : '';
-                const bis  = n.endvalidity   ? new Date(n.endvalidity   * 1000).toUTCString().slice(5,22) : '';
-                const subj = n.code23 && n.code45 ? ` [Q/${n.code23}${n.code45}]` : '';
-                return `<div class="notam-item">${nr ? `<strong>${nr}</strong>${subj} ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis} UTC</span>\n` : ''}${text}</div>`;
+                const props = n.properties || n;
+                const text = props.coreNOTAMData?.notam?.text
+                    || props.notamRaw || props.icaoMessage || props.traditionalMessage || props.text || '–';
+                const nr   = props.coreNOTAMData?.notam?.id || props.notamNumber || '';
+                const von  = props.coreNOTAMData?.notam?.effectiveStart || props.startDate || '';
+                const bis  = props.coreNOTAMData?.notam?.effectiveEnd   || props.endDate   || '';
+                const vonFmt = von ? new Date(von).toUTCString().slice(5,22) : '';
+                const bisFmt = bis ? new Date(bis).toUTCString().slice(5,22) : '';
+                return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${vonFmt ? `<span class="notam-zeit">${vonFmt} – ${bisFmt} UTC</span>\n` : ''}${text}</div>`;
             }).join('')}${data.length > 20 ? `<p class="status-loading">… und ${data.length - 20} weitere NOTAMs</p>` : ''}</div>`;
         }
-        html += `<p class="wx-quelle">Quelle: ${quelle} · ${data.length} NOTAM${data.length !== 1 ? 's' : ''}</p>`;
+        html += `<p class="wx-quelle">Quelle: ${result.quelle} · ${data.length} NOTAM${data.length !== 1 ? 's' : ''}</p>`;
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
-        el.innerHTML = `<span class="status-error">NOTAMs nicht verfügbar</span>`;
-        console.error('NOTAM Fehler:', icao, e);
+        el.innerHTML = `<span class="status-error">NOTAMs nicht verfügbar (${e.message})</span>`;
     }
 }
 
