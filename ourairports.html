@@ -3308,6 +3308,7 @@ document.addEventListener('keydown', e => {
 let _globeInst      = null;
 let _globeLibLoaded = false;
 let _globeZoomTimer = null;
+let _pendingZoom    = null;   // speichert Zoom-Anfrage falls Globe noch lädt
 
 function initWeltkugel() {
     if (_globeInst || !_globeLibLoaded || Object.keys(katalog).length === 0) return;
@@ -3349,32 +3350,39 @@ function initWeltkugel() {
         .ringPropagationSpeed(1.5)
         .ringRepeatPeriod(1100);
 
-    _globeInst.pointOfView({ lat: 20, lng: 10, altitude: 5.2 });
+    _globeInst.pointOfView({ lat: 20, lng: 10, altitude: 3.2 });
 
     const ctrl = _globeInst.controls();
     ctrl.autoRotate      = true;
     ctrl.autoRotateSpeed = 0.55;
     ctrl.enableZoom      = false;
     ctrl.enablePan       = false;
+
+    // Falls Airport schon ausgewählt bevor Globe fertig war
+    if (_pendingZoom) {
+        const { lat, lon, icao } = _pendingZoom;
+        _pendingZoom = null;
+        setTimeout(() => globusZoomAuf(lat, lon, icao), 600);
+    }
 }
 
 function globusZoomAuf(lat, lon, icao) {
-    if (!_globeInst) return;
-    const lbl = document.getElementById('globus-label');
+    // Globe noch nicht bereit → Anfrage merken, wird nach Init ausgeführt
+    if (!_globeInst) { _pendingZoom = { lat, lon, icao }; return; }
+
+    const lbl  = document.getElementById('globus-label');
+    const name = (katalog[icao] && katalog[icao].name) || icao;
 
     clearTimeout(_globeZoomTimer);
     _globeInst.controls().autoRotate = false;
 
-    // Pulsierender Ring am Flughafen
     _globeInst.ringsData([{ lat: parseFloat(lat), lon: parseFloat(lon) }]);
-
-    // Sanft heranfliegen (Altitude 0 = Erdoberfläche, 1 = Abstand = 1 Erdradius)
     _globeInst.pointOfView({ lat: parseFloat(lat), lng: parseFloat(lon), altitude: 0.6 }, 1800);
 
-    // ICAO-Label einblenden
-    if (lbl) { lbl.textContent = icao; lbl.classList.add('sichtbar'); }
+    // Flughafen-Namen anzeigen
+    if (lbl) { lbl.textContent = name; lbl.classList.add('sichtbar'); }
 
-    // Nach 12 Sekunden: Ring löschen, rauszoomen, Rotation fortsetzen
+    // Nach 12 s: Ring weg, rauszoomen, Rotation wieder an
     _globeZoomTimer = setTimeout(() => {
         _globeInst.ringsData([]);
         if (lbl) lbl.classList.remove('sichtbar');
