@@ -1351,21 +1351,31 @@
         }
         /* ── Hero + Weltkugel (unified) ── */
         .hero-section { display: flex; align-items: stretch; }
-        .hero-left { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; z-index: 2; }
-        .hero-left::after {
-            content: '';
-            position: absolute;
-            top: 0; right: -120px; bottom: 0;
-            width: 180px;
-            background: linear-gradient(to right, #07111f 0%, transparent 100%);
-            pointer-events: none;
-            z-index: 3;
-        }
+        .hero-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
         .hero-right {
             position: relative;
             width: 360px;
             flex-shrink: 0;
             overflow: hidden;
+        }
+        /* Gradient blend straddling hero-left / hero-right boundary — lives on section level */
+        .hero-globe-blend {
+            position: absolute;
+            top: 0; bottom: 0;
+            right: 180px;
+            width: 420px;
+            background: linear-gradient(to right,
+                #07111f 0%,
+                #07111f 18%,
+                rgba(7,17,31,0.93) 30%,
+                rgba(7,17,31,0.76) 43%,
+                rgba(7,17,31,0.50) 57%,
+                rgba(7,17,31,0.22) 72%,
+                rgba(7,17,31,0.06) 86%,
+                transparent 100%
+            );
+            pointer-events: none;
+            z-index: 5;
         }
         #globus-container {
             position: absolute;
@@ -1391,20 +1401,7 @@
         .hero-right .gf {
             position: absolute; z-index: 3; pointer-events: none;
         }
-        .hero-right .gf-l {
-            top:0; bottom:0; left:0; width:230px;
-            background: linear-gradient(to right,
-                #07111f 0%,
-                rgba(7,17,31,0.96) 10%,
-                rgba(7,17,31,0.84) 24%,
-                rgba(7,17,31,0.64) 40%,
-                rgba(7,17,31,0.38) 57%,
-                rgba(7,17,31,0.15) 74%,
-                rgba(7,17,31,0.04) 88%,
-                transparent 100%
-            );
-        }
-        .hero-right .gf-r { top:0; bottom:0; right:0; width:80px;  background: linear-gradient(to left, #07111f, rgba(7,17,31,0.0)); }
+        .hero-right .gf-r { top:0; bottom:0; right:0; width:80px;  background: linear-gradient(to left, #07111f, transparent); }
         .hero-right .gf-t { top:0; left:0;  right:0;  height:70px; background: linear-gradient(to bottom, #07111f 0%, rgba(7,17,31,0.5) 60%, transparent 100%); }
         .hero-right .gf-b { bottom:0; left:0; right:0; height:80px; background: linear-gradient(to top, #07111f 0%, rgba(7,17,31,0.5) 60%, transparent 100%); }
         .globus-loader {
@@ -1481,13 +1478,15 @@
 
     <!-- Weltkugel (rechts) -->
     <div class="hero-right" aria-hidden="true">
-        <div class="gf gf-l"></div>
         <div class="gf gf-r"></div>
         <div class="gf gf-t"></div>
         <div class="gf gf-b"></div>
         <div id="globus-container"><span class="globus-loader">🌍</span></div>
         <div id="globus-label"></div>
     </div>
+
+    <!-- Überblendung hero-left → Weltkugel, auf Section-Ebene damit overflow:hidden nicht stört -->
+    <div class="hero-globe-blend" aria-hidden="true"></div>
 
     <div class="hero-bottom-fade"></div>
 </section>
