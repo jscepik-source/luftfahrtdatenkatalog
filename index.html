@@ -2778,8 +2778,11 @@ async function ladeFluege(icao) {
 
     const lat    = parseFloat(el.dataset.lat);
     const lon    = parseFloat(el.dataset.lon);
-    const fr24url = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
-    const faurl   = `https://www.flightaware.com/live/airport/${icao}`;
+    const fr24url    = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
+    const faurl      = `https://de.flightaware.com/live/airport/${icao}`;
+    const airnavUrl  = (lat && lon && !isNaN(lat) && !isNaN(lon))
+        ? `https://de.airnavradar.com/@${lat.toFixed(5)},${lon.toFixed(5)},z11`
+        : null;
 
     const globeUrl = (lat && lon && !isNaN(lat) && !isNaN(lon))
         ? `https://globe.adsbexchange.com/?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&zoom=11`
@@ -2793,9 +2796,12 @@ async function ladeFluege(icao) {
     }
 
     function links() {
+        const airnavLink = airnavUrl
+            ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav RadarBox</a>`
+            : '';
         return `<p class="fluege-hinweis">Vollständige Flugpläne:
             <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
-            <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a></p>`;
+            <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${airnavLink}</p>`;
     }
 
     if (!lat || !lon || isNaN(lat) || isNaN(lon)) {
@@ -2841,10 +2847,13 @@ async function ladeFluege(icao) {
             }).join('')
             : `<p class="flug-empty">Aktuell keine Flugzeuge im Umkreis von 20 nm erfasst.</p>`;
 
+        const airnavLiveLink = airnavUrl
+            ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav RadarBox</a>`
+            : '';
         el.innerHTML = `
             <p class="fluege-hinweis">Live ADS-B via <strong>adsb.fi</strong> · ${aircraft.length} Flugzeug${aircraft.length !== 1 ? 'e' : ''} im Umkreis von 20 nm ·
                 <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FR24</a> ·
-                <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a></p>
+                <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${airnavLiveLink}</p>
             <div class="fluege-list">${rows}</div>
             ${globe()}`;
     } catch(e) {
