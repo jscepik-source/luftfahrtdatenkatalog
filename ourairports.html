@@ -921,11 +921,11 @@
             position: relative;
             border-bottom: none;
         }
-        /* Bottom fade so hero bleeds smoothly into page */
+        /* Bottom fade hero → page background */
         .hero-section .hero-bottom-fade {
             position: absolute;
-            bottom: 0; left: 0; right: 0; height: 56px;
-            background: linear-gradient(to top, var(--color-bg), transparent);
+            bottom: 0; left: 0; right: 0; height: 48px;
+            background: linear-gradient(to top, var(--color-bg) 0%, transparent 100%);
             z-index: 4; pointer-events: none;
         }
         .hero-section::before {
@@ -1352,11 +1352,14 @@
             opacity: 0; transition: opacity 0.5s;
         }
         #globus-label.sichtbar { opacity: 1; }
-        .globus-fade-side {
-            position: absolute; top: 0; bottom: 0; left: 0; width: 48px;
-            background: linear-gradient(to right, var(--color-header-from), transparent);
-            z-index: 3; pointer-events: none;
+        /* Masking fades to hide globe atmosphere clipping on all edges */
+        .hero-right .gf {
+            position: absolute; z-index: 3; pointer-events: none;
         }
+        .hero-right .gf-l { top:0; bottom:0; left:0;  width:72px;  background: linear-gradient(to right, #07111f, transparent); }
+        .hero-right .gf-r { top:0; bottom:0; right:0; width:72px;  background: linear-gradient(to left,  #07111f, transparent); }
+        .hero-right .gf-t { top:0; left:0;  right:0;  height:60px; background: linear-gradient(to bottom, #07111f, transparent); }
+        .hero-right .gf-b { bottom:0; left:0; right:0; height:70px; background: linear-gradient(to top, #07111f, transparent); }
         .globus-loader {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -1431,7 +1434,10 @@
 
     <!-- Weltkugel (rechts) -->
     <div class="hero-right" aria-hidden="true">
-        <div class="globus-fade-side"></div>
+        <div class="gf gf-l"></div>
+        <div class="gf gf-r"></div>
+        <div class="gf gf-t"></div>
+        <div class="gf gf-b"></div>
         <div id="globus-container"><span class="globus-loader">🌍</span></div>
         <div id="globus-label"></div>
     </div>
@@ -3343,6 +3349,8 @@ function initWeltkugel() {
         .ringPropagationSpeed(1.5)
         .ringRepeatPeriod(1100);
 
+    _globeInst.pointOfView({ lat: 20, lng: 10, altitude: 3.2 });
+
     const ctrl = _globeInst.controls();
     ctrl.autoRotate      = true;
     ctrl.autoRotateSpeed = 0.55;
@@ -3370,7 +3378,7 @@ function globusZoomAuf(lat, lon, icao) {
     _globeZoomTimer = setTimeout(() => {
         _globeInst.ringsData([]);
         if (lbl) lbl.classList.remove('sichtbar');
-        _globeInst.pointOfView({ lat: 20, lng: 10, altitude: 2.2 }, 2000);
+        _globeInst.pointOfView({ lat: 20, lng: 10, altitude: 3.2 }, 2000);
         setTimeout(() => { _globeInst.controls().autoRotate = true; }, 2100);
     }, 12000);
 }
