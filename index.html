@@ -629,8 +629,15 @@
             line-height: 1.6;
         }
 
-        /* ── VFR-Kartenlinks ── */
-        .vfr-links-section { margin-bottom: var(--space-md); }
+        /* ── Karten Externe Quellen ── */
+        .karten-extern { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; margin-bottom: var(--space-md); }
+        .karten-extern-kopf { padding: 7px 14px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-dim); border-bottom: 1px solid var(--color-border); }
+        .karten-extern-zeile { display: grid; grid-template-columns: 90px 1fr; align-items: start; padding: 7px 14px; gap: 10px; }
+        .karten-extern-zeile + .karten-extern-zeile { border-top: 1px solid var(--color-border); }
+        .karten-extern-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-sub); white-space: nowrap; padding-top: 4px; }
+        .karten-extern-btns { display: flex; flex-wrap: wrap; gap: 5px; }
+
+        /* ── VFR-Kartenlinks (legacy, kept for NfL-Titel Reuse) ── */
         .vfr-links-titel { font-size: 0.75rem; font-weight: 600; color: var(--color-text-dim); margin-bottom: var(--space-xs); letter-spacing: 0.03em; text-transform: uppercase; }
         .vfr-links-row { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -909,18 +916,25 @@
 
         /* ── Hero / Slides ── */
         .hero-section {
-            background: var(--color-header-from);
+            background: linear-gradient(135deg, #07111f 0%, #0d1f38 60%, #081425 100%);
             overflow: hidden;
             position: relative;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: none;
+        }
+        /* Bottom fade hero → page background */
+        .hero-section .hero-bottom-fade {
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 48px;
+            background: linear-gradient(to top, var(--color-bg) 0%, transparent 100%);
+            z-index: 4; pointer-events: none;
         }
         .hero-section::before {
             content: '';
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(ellipse 60% 80% at 20% 50%, rgba(37,99,235,0.18) 0%, transparent 70%),
-                radial-gradient(ellipse 50% 80% at 80% 50%, rgba(245,158,11,0.10) 0%, transparent 70%);
+                radial-gradient(ellipse 55% 90% at 30% 50%, rgba(37,99,235,0.20) 0%, transparent 65%),
+                radial-gradient(ellipse 40% 70% at 75% 40%, rgba(245,158,11,0.09) 0%, transparent 60%);
             animation: heroPulse 6s ease-in-out infinite alternate;
             pointer-events: none;
         }
@@ -934,9 +948,9 @@
             position: absolute;
             inset: 0;
             background-image:
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 48px 48px;
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 52px 52px;
             pointer-events: none;
         }
         .hero-track-wrap {
@@ -1254,9 +1268,13 @@
             .card-tabs { margin-bottom: var(--space-sm); }
             .card-tab { padding: 8px 10px; font-size: 0.67rem; }
 
+            /* Karten extern */
+            .karten-extern-zeile { grid-template-columns: 72px 1fr; gap: 8px; padding: 6px 12px; }
+            .karten-extern-kopf { padding: 6px 12px; }
+            .karten-extern-label { font-size: 0.64rem; }
+
             /* VFR links */
             .vfr-links-row { gap: 5px; }
-            .vfr-links-section { margin-bottom: var(--space-sm); }
 
             /* NOTAM */
             .notam-map-btn { padding: 10px 12px; gap: 9px; }
@@ -1291,6 +1309,8 @@
 
         /* Very small phones (≤ 400px) */
         @media (max-width: 400px) {
+            .karten-extern-zeile { grid-template-columns: 1fr; gap: 4px; }
+            .karten-extern-label { padding-top: 0; }
             .card-tab { padding: 7px 7px; font-size: 0.62rem; letter-spacing: 0.02em; }
             .action-links .btn-ext { width: 100%; justify-content: center; }
             .flug-item { grid-template-columns: 58px 1fr; }
@@ -1303,6 +1323,49 @@
             .detail-grid { gap: 5px; }
             .detail-item dd { font-size: 0.82rem; }
         }
+        /* ── Hero + Weltkugel (unified) ── */
+        .hero-section { display: flex; align-items: stretch; }
+        .hero-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .hero-right {
+            position: relative;
+            width: 360px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        #globus-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 460px; height: 460px;
+            z-index: 1;
+        }
+        #globus-label {
+            position: absolute;
+            bottom: 18px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem; font-weight: 700;
+            color: #f59e0b;
+            text-align: center; white-space: nowrap;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            text-shadow: 0 1px 10px rgba(0,0,0,1);
+            z-index: 5; pointer-events: none;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        #globus-label.sichtbar { opacity: 1; }
+        /* Masking fades to hide globe atmosphere clipping on all edges */
+        .hero-right .gf {
+            position: absolute; z-index: 3; pointer-events: none;
+        }
+        .hero-right .gf-l { top:0; bottom:0; left:0;  width:72px;  background: linear-gradient(to right, #07111f, transparent); }
+        .hero-right .gf-r { top:0; bottom:0; right:0; width:72px;  background: linear-gradient(to left,  #07111f, transparent); }
+        .hero-right .gf-t { top:0; left:0;  right:0;  height:60px; background: linear-gradient(to bottom, #07111f, transparent); }
+        .hero-right .gf-b { bottom:0; left:0; right:0; height:70px; background: linear-gradient(to top, #07111f, transparent); }
+        .globus-loader {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.4rem; opacity: 0.25; z-index: 2;
+        }
+        @media (max-width: 900px) { .hero-right { display: none; } }
     </style>
 </head>
 <body>
@@ -1320,97 +1383,66 @@
     </div>
 </header>
 
-<!-- ── Hero Slides ── -->
+<!-- ── Hero + Weltkugel ── -->
 <section class="hero-section" aria-label="Übersicht">
-    <div class="hero-track-wrap">
-        <div class="hero-track" id="heroTrack">
 
-            <!-- Slide 1: Zahlen -->
-            <div class="hero-slide">
-                <div class="hero-stat-group">
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">72.000</div>
-                        <div class="hero-stat-label">Flughäfen</div>
-                    </div>
-                    <div class="hero-vdivider"></div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">70+</div>
-                        <div class="hero-stat-label">AIP-Länder</div>
-                    </div>
-                    <div class="hero-vdivider"></div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">6h</div>
-                        <div class="hero-stat-label">Updates</div>
-                    </div>
-                    <div class="hero-vdivider"></div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">Live</div>
-                        <div class="hero-stat-label">METAR / TAF</div>
+    <!-- Slides (links) -->
+    <div class="hero-left">
+        <div class="hero-track-wrap">
+            <div class="hero-track" id="heroTrack">
+
+                <!-- Slide 1: Kennzahlen -->
+                <div class="hero-slide">
+                    <div class="hero-stat-group">
+                        <div class="hero-stat">
+                            <div class="hero-stat-num">72.000</div>
+                            <div class="hero-stat-label">Flughäfen weltweit</div>
+                        </div>
+                        <div class="hero-vdivider"></div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-num">6h</div>
+                            <div class="hero-stat-label">Aktualisierung</div>
+                        </div>
+                        <div class="hero-vdivider"></div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-num">Live</div>
+                            <div class="hero-stat-label">METAR &amp; TAF</div>
+                        </div>
+                        <div class="hero-vdivider"></div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-num">Live</div>
+                            <div class="hero-stat-label">ADS-B Radar</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Slide 2: Wetter -->
-            <div class="hero-slide">
-                <div class="hero-stat-group">
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">METAR</div>
-                        <div class="hero-stat-label">Aktuelles Wetter</div>
-                    </div>
-                    <div class="hero-vdivider"></div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">TAF</div>
-                        <div class="hero-stat-label">Vorhersage</div>
-                    </div>
-                    <div class="hero-vdivider"></div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">NOTAM</div>
-                        <div class="hero-stat-label">Luftfahrtmitteilungen</div>
+                <!-- Slide 2: HS RheinMain -->
+                <div class="hero-slide">
+                    <div class="hero-stat-group" style="flex-direction:column;gap:10px;text-align:center">
+                        <div class="hero-stat-num" style="font-size:clamp(1.1rem,3vw,1.6rem);letter-spacing:0.02em;font-weight:700">Hochschule RheinMain</div>
+                        <div class="hero-stat-label" style="font-size:0.75rem;letter-spacing:0.08em">Studentisches Projekt &mdash; Fachbereich Ingenieurwissenschaften</div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Slide 3: AIP-Karten -->
-            <div class="hero-slide">
-                <div class="hero-stat-group">
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">VFR</div>
-                        <div class="hero-stat-label">Sichtflug</div>
-                    </div>
-                    <div class="hero-vdivider"></div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">IFR</div>
-                        <div class="hero-stat-label">Instrumentenflug</div>
-                    </div>
-                    <div class="hero-vdivider"></div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">eAIP</div>
-                        <div class="hero-stat-label">Digital</div>
-                    </div>
-                    <div class="hero-vdivider"></div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-num">70+</div>
-                        <div class="hero-stat-label">AIP-Quellen</div>
-                    </div>
-                </div>
             </div>
-
-            <!-- Slide 4: HS RheinMain -->
-            <div class="hero-slide">
-                <div class="hero-stat-group" style="flex-direction:column;gap:10px;text-align:center">
-                    <div class="hero-stat-num" style="font-size:clamp(1.1rem,3vw,1.6rem);letter-spacing:0.02em;font-weight:700">Hochschule RheinMain</div>
-                    <div class="hero-stat-label" style="font-size:0.75rem;letter-spacing:0.08em">Studentisches Projekt &mdash; Fachbereich Ingenieurwissenschaften</div>
-                </div>
-            </div>
-
+        </div>
+        <div class="hero-dots" role="tablist">
+            <button class="hero-dot active" onclick="heroGoto(0)" aria-label="Slide 1"></button>
+            <button class="hero-dot" onclick="heroGoto(1)" aria-label="Slide 2"></button>
         </div>
     </div>
-    <div class="hero-dots" role="tablist">
-        <button class="hero-dot active" onclick="heroGoto(0)" aria-label="Slide 1"></button>
-        <button class="hero-dot" onclick="heroGoto(1)" aria-label="Slide 2"></button>
-        <button class="hero-dot" onclick="heroGoto(2)" aria-label="Slide 3"></button>
-        <button class="hero-dot" onclick="heroGoto(3)" aria-label="Slide 4"></button>
+
+    <!-- Weltkugel (rechts) -->
+    <div class="hero-right" aria-hidden="true">
+        <div class="gf gf-l"></div>
+        <div class="gf gf-r"></div>
+        <div class="gf gf-t"></div>
+        <div class="gf gf-b"></div>
+        <div id="globus-container"><span class="globus-loader">🌍</span></div>
+        <div id="globus-label"></div>
     </div>
+
+    <div class="hero-bottom-fade"></div>
 </section>
 
 <!-- ── Toolbar / Search ── -->
@@ -1634,6 +1666,7 @@ fetch(JSON_URL)
         katalog = data;
         document.getElementById('laden').style.display = 'none';
         zeigeHinweis();
+        initWeltkugel();
     })
     .catch(() => { document.getElementById('laden').innerHTML = '<p class="status-error">Fehler beim Laden der Daten.</p>'; });
 
@@ -2545,12 +2578,10 @@ function vfrLinksHtml(icao, lat, lon) {
     const latF = hasCoords ? parseFloat(lat).toFixed(4) : '';
     const lonF = hasCoords ? parseFloat(lon).toFixed(4) : '';
 
-    // ICAO-Karte (1:500.000) – WAC-Chart (chart=301) in SkyVector
     const svIcaoUrl = hasCoords
         ? `https://skyvector.com/?ll=${latF},${lonF}&chart=301&zoom=2`
         : `https://skyvector.com/airport/${icao}`;
 
-    // Luftraum – Windy mit Airspace-Layer
     const windyUrl = hasCoords
         ? `https://www.windy.com/${latF}/${lonF}/12?airspace`
         : `https://www.windy.com/?airspace`;
@@ -2559,22 +2590,40 @@ function vfrLinksHtml(icao, lat, lon) {
         `<a class="btn-ext" href="${q.url}" target="_blank" rel="noopener">${q.icon} ${q.name}</a>`
     ).join('');
 
-    return `<div class="vfr-links-section">
-        <p class="vfr-links-titel">ICAO-Karte (1:500.000)</p>
-        <div class="vfr-links-row">${icaoBtns}
-            <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector WAC</a>
+    const isEuropean = 'ELB'.includes((icao || '')[0]);
+    const euroRow = isEuropean ? `
+        <div class="karten-extern-zeile">
+            <span class="karten-extern-label">EUROCONTROL</span>
+            <div class="karten-extern-btns" id="eurocontrol-${icao}">
+                <span class="status-loading" style="font-size:0.75rem">wird geladen…</span>
+            </div>
+        </div>` : '';
+
+    return `<div class="karten-extern">
+        <div class="karten-extern-kopf">Externe Quellen</div>
+        <div class="karten-extern-zeile">
+            <span class="karten-extern-label">ICAO-Karte</span>
+            <div class="karten-extern-btns">
+                ${icaoBtns}
+                <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector WAC</a>
+            </div>
         </div>
-        <p class="vfr-links-titel" style="margin-top:0.6rem">Luftraum</p>
-        <div class="vfr-links-row">
-            <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy Airspace</a>
-            <a class="btn-ext" href="https://www.openaip.net/" target="_blank" rel="noopener">📡 OpenAIP</a>
-            <a class="btn-ext" href="https://www.autorouter.aero/" target="_blank" rel="noopener">✈ Autorouter</a>
-            <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector</a>
+        <div class="karten-extern-zeile">
+            <span class="karten-extern-label">Luftraum</span>
+            <div class="karten-extern-btns">
+                <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy</a>
+                <a class="btn-ext" href="https://www.openaip.net/" target="_blank" rel="noopener">📡 OpenAIP</a>
+                <a class="btn-ext" href="https://www.autorouter.aero/" target="_blank" rel="noopener">✈ Autorouter</a>
+                <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector</a>
+            </div>
         </div>
-        <p class="vfr-links-titel" style="margin-top:0.6rem">Papier-Karten kaufen</p>
-        <div class="vfr-links-row">
-            <a class="btn-ext" href="https://www.eisenschmidt.aero/karten-manuals" target="_blank" rel="noopener">🛒 Eisenschmidt</a>
-            <a class="btn-ext" href="https://www.flightplanner.de/cms/ICAO_Karten" target="_blank" rel="noopener">🛒 FlightPlanner.de</a>
+        ${euroRow}
+        <div class="karten-extern-zeile">
+            <span class="karten-extern-label">Shop</span>
+            <div class="karten-extern-btns">
+                <a class="btn-ext" href="https://www.eisenschmidt.aero/karten-manuals" target="_blank" rel="noopener">🛒 Eisenschmidt</a>
+                <a class="btn-ext" href="https://www.flightplanner.de/cms/ICAO_Karten" target="_blank" rel="noopener">🛒 FlightPlanner</a>
+            </div>
         </div>
     </div>`;
 }
@@ -2598,7 +2647,7 @@ function baueKarte(icao, ap) {
     article.className = 'airport-card';
     const typLabel = TYP_LABEL[ap.type] || ap.type || '';
     const typClass = 'type-' + (ap.type || '');
-    const elev = ap.elev !== undefined ? `${ap.elev} ft` : '–';
+    const elev = ap.elev !== undefined ? `${ap.elev} ft / ${Math.round(ap.elev * 0.3048)} m` : '–';
     const hasCoords = ap.lat !== undefined && ap.lon !== undefined;
     const coords = hasCoords ? `${ap.lat}, ${ap.lon}` : null;
     const kontinent = KONTINENT[ap.continent] || ap.continent || '';
@@ -2631,8 +2680,8 @@ out skel qt;`;
     const rwyRows = ap.runways && ap.runways.length
         ? ap.runways.map(r => `<tr class="${r.closed ? 'rwy-closed' : ''}">
             <td>${r.le||''}${r.he ? ' / '+r.he : ''}</td>
-            <td>${r.length !== undefined ? r.length.toLocaleString() : '–'}</td>
-            <td>${r.width !== undefined ? r.width : '–'}</td>
+            <td>${r.length !== undefined ? `${r.length.toLocaleString()} ft / ${Math.round(r.length * 0.3048)} m` : '–'}</td>
+            <td>${r.width !== undefined ? `${r.width} ft / ${Math.round(r.width * 0.3048)} m` : '–'}</td>
             <td>${r.le_hdg !== undefined ? r.le_hdg+'°' : '–'} / ${r.he_hdg !== undefined ? r.he_hdg+'°' : '–'}</td>
             <td>${r.surface || '–'}</td>
             <td>${r.lighted ? '💡' : '–'}</td>
@@ -2707,7 +2756,7 @@ out skel qt;`;
                 ${rwyRows ? `<section class="card-section">
                     <h3 class="section-title">🛬 Runways ${zeichneRunwaySVG(ap.runways)}</h3>
                     <table class="data-table">
-                        <thead><tr><th>Kennung</th><th>Länge (ft)</th><th>Breite (ft)</th><th>Kurs LE / HE</th><th>Belag</th><th>Bel.</th></tr></thead>
+                        <thead><tr><th>Kennung</th><th>Länge</th><th>Breite</th><th>Kurs LE / HE</th><th>Belag</th><th>Bel.</th></tr></thead>
                         <tbody>${rwyRows}</tbody>
                     </table>
                 </section>` : ''}
@@ -2734,7 +2783,6 @@ out skel qt;`;
             <!-- Karten Panel -->
             <div class="card-tab-panel" data-panel="karten">
                 ${vfrLinksHtml(icao, ap.lat, ap.lon)}
-                ${'ELB'.includes(icao[0]) ? `<div id="eurocontrol-${icao}"><span class="status-loading">EUROCONTROL-Karten werden geladen…</span></div>` : ''}
                 <div id="dfs-${icao}"></div>
             </div>
 
@@ -2822,6 +2870,7 @@ function toggle(btn, icao, lat, lon) {
         if (lat && lon) {
             ladeErst(icao, lat, lon);
             ladeKarte(icao, lat, lon);
+            globusZoomAuf(lat, lon, icao);
         }
         ladeWetter(icao, lat, lon);
         ladeDfsKarten(icao);
@@ -2848,14 +2897,14 @@ const PROXY_NAMEN = {
 
 async function fetchProxy(url) {
     const versuche = [
-        { key: 'direct',    u: url },
+        { key: 'direct',     u: url },
         { key: 'allorigins', u: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
         { key: 'corsproxy',  u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
         { key: 'codetabs',   u: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}` },
     ];
     for (const { key, u } of versuche) {
         try {
-            const res = await fetch(u);
+            const res = await fetch(u, { signal: AbortSignal.timeout(8000) });
             if (!res.ok) continue;
             const data = await res.json();
             return { data, quelle: PROXY_NAMEN[key] };
@@ -2922,64 +2971,68 @@ async function ladeWetter(icao, lat, lon) {
     if (!el || el.dataset.geladen) return;
     el.dataset.geladen = '1';
     if (wettercache[icao]) { el.innerHTML = wettercache[icao]; return; }
+
+    const isGerman = icao.startsWith('ED') || icao.startsWith('ET');
+    let html = '';
+
+    // METAR – eigener try/catch, damit TAF-/BrightSky-Fallback immer greift
+    let mData = [], mQuelle = '';
     try {
-        const [mResult, tResult] = await Promise.all([
-            fetchProxy(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=json&hours=2`),
-            fetchProxy(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`)
-        ]);
-        const mRes = mResult.data;
-        const tRes = tResult.data;
-        const quelle = mResult.quelle;
-        let html = '';
-        if (mRes && mRes.length > 0) {
-            const m = mRes[0];
-            const cat = m.fltCat || '';
-            const wind = m.wdir !== undefined ? `${m.wdir}° / ${m.wspd} kt${m.wgst ? ' (Böen '+m.wgst+' kt)' : ''}` : '–';
-            const vis   = m.visib  !== undefined ? `${m.visib} SM` : '–';
-            const temp  = m.temp   !== undefined ? `${m.temp} °C` : '–';
-            const dew   = m.dewp   !== undefined ? `${m.dewp} °C` : '–';
-            const qnh   = m.altim  !== undefined ? `${m.altim} hPa` : '–';
-            const clouds = Array.isArray(m.clouds) && m.clouds.length
-                ? m.clouds.map(c => `${c.cover} ${c.base}ft`).join(', ')
-                : (m.cover || '–');
-            html += `<div class="metar-box">
-                <p class="metar-raw">${m.rawOb || ''} ${cat ? `<span class="badge-fltcat ${fltcatClass(cat)}">${cat}</span>` : ''}</p>
-                <dl class="wx-grid">
-                    <div class="wx-item"><dt>Wind</dt><dd>${wind}</dd></div>
-                    <div class="wx-item"><dt>Sicht</dt><dd>${vis}</dd></div>
-                    <div class="wx-item"><dt>Temp / TP</dt><dd>${temp} / ${dew}</dd></div>
-                    <div class="wx-item"><dt>QNH</dt><dd>${qnh}</dd></div>
-                    <div class="wx-item"><dt>Wolken</dt><dd>${clouds}</dd></div>
-                    ${m.wxString ? `<div class="wx-item"><dt>Phänomene</dt><dd>${m.wxString}</dd></div>` : ''}
-                </dl>
-            </div>`;
-            html += `<p class="wx-quelle">Quelle: ${quelle}</p>`;
+        const r = await fetchProxy(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=json&hours=2`);
+        mData   = Array.isArray(r.data) ? r.data : [];
+        mQuelle = r.quelle;
+    } catch(e) { /* Proxy nicht erreichbar → Fallback */ }
+
+    if (mData.length > 0) {
+        const m = mData[0];
+        const cat    = m.fltCat || '';
+        const wind   = m.wdir !== undefined ? `${m.wdir}° / ${m.wspd} kt${m.wgst ? ' (Böen '+m.wgst+' kt)' : ''}` : '–';
+        const vis    = m.visib  !== undefined ? `${m.visib} SM` : '–';
+        const temp   = m.temp   !== undefined ? `${m.temp} °C` : '–';
+        const dew    = m.dewp   !== undefined ? `${m.dewp} °C` : '–';
+        const qnh    = m.altim  !== undefined ? `${m.altim} hPa` : '–';
+        const clouds = Array.isArray(m.clouds) && m.clouds.length
+            ? m.clouds.map(c => `${c.cover} ${c.base}ft`).join(', ')
+            : (m.cover || '–');
+        html += `<div class="metar-box">
+            <p class="metar-raw">${m.rawOb || ''} ${cat ? `<span class="badge-fltcat ${fltcatClass(cat)}">${cat}</span>` : ''}</p>
+            <dl class="wx-grid">
+                <div class="wx-item"><dt>Wind</dt><dd>${wind}</dd></div>
+                <div class="wx-item"><dt>Sicht</dt><dd>${vis}</dd></div>
+                <div class="wx-item"><dt>Temp / TP</dt><dd>${temp} / ${dew}</dd></div>
+                <div class="wx-item"><dt>QNH</dt><dd>${qnh}</dd></div>
+                <div class="wx-item"><dt>Wolken</dt><dd>${clouds}</dd></div>
+                ${m.wxString ? `<div class="wx-item"><dt>Phänomene</dt><dd>${m.wxString}</dd></div>` : ''}
+            </dl>
+        </div>`;
+        html += `<p class="wx-quelle">Quelle: ${mQuelle}</p>`;
+    } else if (isGerman && lat && lon) {
+        // Kein METAR (Flugfeld ohne Meldung oder Proxy ausgefallen) → DWD/BrightSky
+        const bsData = await ladeBrightSky(lat, lon);
+        if (bsData) {
+            html += renderBrightSky(bsData, null);
         } else {
-            const isGerman = icao.startsWith('ED') || icao.startsWith('ET');
-            if (isGerman && lat && lon) {
-                const bsData = await ladeBrightSky(lat, lon);
-                if (bsData) {
-                    html += renderBrightSky(bsData, null);
-                } else {
-                    html += '<p class="status-error">Kein METAR für dieses Flugfeld — kein Wetterbericht verfügbar</p>';
-                }
-            } else {
-                html += '<p style="color:var(--color-text-dim);font-size:0.85rem">Dieses Flugfeld meldet keine METAR-Wetterdaten.</p>';
-            }
-            html += wetterExternLinks(icao, lat, lon);
+            html += '<p class="status-error">Kein METAR für dieses Flugfeld — kein Wetterbericht verfügbar</p>';
         }
-        if (tRes && tRes.length > 0 && tRes[0].rawTAF) {
+        html += wetterExternLinks(icao, lat, lon);
+    } else {
+        html += '<p style="color:var(--color-text-dim);font-size:0.85rem">Dieses Flugfeld meldet keine METAR-Wetterdaten.</p>';
+        html += wetterExternLinks(icao, lat, lon);
+    }
+
+    // TAF – optional, Fehler still ignorieren
+    try {
+        const tRes = await fetchProxy(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`);
+        if (Array.isArray(tRes.data) && tRes.data.length > 0 && tRes.data[0].rawTAF) {
             html += `<section class="card-section">
                 <h3 class="section-title">TAF</h3>
-                <pre class="taf-pre">${tRes[0].rawTAF}</pre>
+                <pre class="taf-pre">${tRes.data[0].rawTAF}</pre>
             </section>`;
         }
-        wettercache[icao] = html;
-        el.innerHTML = html;
-    } catch(e) {
-        console.error('Wetter Fehler:', e);
-        el.innerHTML = `<span class="status-error">Wetterdaten nicht verfügbar (${e.message})</span>${wetterExternLinks(icao, lat, lon)}`;
-    }
+    } catch(e) {}
+
+    wettercache[icao] = html;
+    el.innerHTML = html;
 }
 
 
@@ -3072,16 +3125,11 @@ async function ladeEurocontrol(icao) {
     el.dataset.geladen = '1';
     try {
         const json = await ladeEurocontrolJson();
-
-        // Nur die 4 relevanten Kartentypen anzeigen
         const FILTER = ['ERC', 'ERN', 'FIR', 'UIR'];
         const pubs = Object.entries(json)
             .filter(([name]) => FILTER.some(kw => name.toUpperCase().includes(kw)))
             .slice(0, 4);
-
-        if (!pubs.length) { el.innerHTML = ''; return; }
-
-        // Kurznamen extrahieren
+        if (!pubs.length) { el.innerHTML = '<span style="font-size:0.75rem;color:var(--color-text-dim)">–</span>'; return; }
         const kurzname = name => {
             if (/upper/i.test(name))  return '🗺 ERC Upper';
             if (/lower/i.test(name))  return '🗺 ERC Lower';
@@ -3089,17 +3137,11 @@ async function ladeEurocontrol(icao) {
             if (/FIR|UIR/i.test(name)) return '🗺 FIR/UIR';
             return '🗺 ' + name.replace(/EUROCONTROL\s*/i, '').replace(/\s*[-–].*$/, '').trim();
         };
-
-        const btns = pubs.map(([name, pub]) =>
+        el.innerHTML = pubs.map(([name, pub]) =>
             `<a class="btn-ext" href="${pub._url}" target="_blank" rel="noopener">${kurzname(name)}</a>`
         ).join('');
-
-        el.innerHTML = `<div style="margin-top:0.8rem">
-            <p class="vfr-links-titel">EUROCONTROL Luftraumkarten</p>
-            <div class="vfr-links-row">${btns}</div>
-        </div>`;
     } catch(e) {
-        el.innerHTML = `<p class="flug-empty" style="font-size:0.75rem">EUROCONTROL-Daten nicht verfügbar.</p>`;
+        el.innerHTML = '<span style="font-size:0.75rem;color:var(--color-text-dim)">nicht verfügbar</span>';
     }
 }
 
@@ -3227,7 +3269,7 @@ document.addEventListener('keydown', e => {
 
 // ── Hero Slides ──────────────────────────────────────────────────────────────
 (function() {
-    const TOTAL = 4;
+    const TOTAL = 2;
     let idx = 0;
     let timer = null;
 
@@ -3249,6 +3291,7 @@ document.addEventListener('keydown', e => {
 
     // pause on hover / touch
     const section = document.querySelector('.hero-section');
+
     section.addEventListener('mouseenter', stopAuto);
     section.addEventListener('mouseleave', startAuto);
     section.addEventListener('touchstart', stopAuto, { passive: true });
@@ -3264,6 +3307,102 @@ document.addEventListener('keydown', e => {
         touchX = null;
     }, { passive: true });
 })();
+
+// ── Weltkugel (globe.gl) ──────────────────────────────────────────────────
+let _globeInst      = null;
+let _globeLibLoaded = false;
+let _globeZoomTimer = null;
+let _pendingZoom    = null;   // speichert Zoom-Anfrage falls Globe noch lädt
+
+function initWeltkugel() {
+    if (_globeInst || !_globeLibLoaded || Object.keys(katalog).length === 0) return;
+    const el = document.getElementById('globus-container');
+    if (!el) return;
+
+    el.innerHTML = '';
+
+    const punkte = Object.entries(katalog)
+        .filter(([, ap]) => ap.lat != null && ap.lon != null &&
+            (ap.type === 'large_airport' || ap.type === 'medium_airport'))
+        .map(([, ap]) => ({
+            lat:   ap.lat,
+            lon:   ap.lon,
+            size:  ap.type === 'large_airport' ? 0.42 : 0.2,
+            color: ap.type === 'large_airport' ? '#f59e0b' : '#3b82f6'
+        }));
+
+    _globeInst = Globe()
+        (el)
+        .width(460).height(460)
+        .backgroundColor('rgba(0,0,0,0)')
+        .showAtmosphere(true)
+        .atmosphereColor('#1e3a8a')
+        .atmosphereAltitude(0.18)
+        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+        .pointsData(punkte)
+        .pointLat('lat')
+        .pointLng('lon')
+        .pointAltitude(0.007)
+        .pointRadius('size')
+        .pointColor('color')
+        .pointsMerge(true)
+        .ringsData([])
+        .ringLat('lat')
+        .ringLng('lon')
+        .ringColor(() => '#f59e0b')
+        .ringMaxRadius(4)
+        .ringPropagationSpeed(1.5)
+        .ringRepeatPeriod(1100);
+
+    _globeInst.pointOfView({ lat: 20, lng: 10, altitude: 5.2 });
+
+    const ctrl = _globeInst.controls();
+    ctrl.autoRotate      = true;
+    ctrl.autoRotateSpeed = 0.55;
+    ctrl.enableZoom      = false;
+    ctrl.enablePan       = false;
+
+    // Falls Airport schon ausgewählt bevor Globe fertig war
+    if (_pendingZoom) {
+        const { lat, lon, icao } = _pendingZoom;
+        _pendingZoom = null;
+        setTimeout(() => globusZoomAuf(lat, lon, icao), 600);
+    }
+}
+
+function globusZoomAuf(lat, lon, icao) {
+    // Globe noch nicht bereit → Anfrage merken, wird nach Init ausgeführt
+    if (!_globeInst) { _pendingZoom = { lat, lon, icao }; return; }
+
+    const lbl  = document.getElementById('globus-label');
+    const name = (katalog[icao] && katalog[icao].name) || icao;
+
+    clearTimeout(_globeZoomTimer);
+    _globeInst.controls().autoRotate = false;
+
+    _globeInst.ringsData([{ lat: parseFloat(lat), lon: parseFloat(lon) }]);
+    _globeInst.pointOfView({ lat: parseFloat(lat), lng: parseFloat(lon), altitude: 0.6 }, 1800);
+
+    // Flughafen-Namen anzeigen
+    if (lbl) { lbl.textContent = name; lbl.classList.add('sichtbar'); }
+
+    // Nach 12 s: Ring weg, rauszoomen, Rotation wieder an
+    _globeZoomTimer = setTimeout(() => {
+        _globeInst.ringsData([]);
+        if (lbl) lbl.classList.remove('sichtbar');
+        _globeInst.pointOfView({ lat: 20, lng: 10, altitude: 5.2 }, 2000);
+        setTimeout(() => { _globeInst.controls().autoRotate = true; }, 2100);
+    }, 12000);
+}
+
+// Globe.gl lazy-load
+(function () {
+    const s = document.createElement('script');
+    s.src   = 'https://unpkg.com/globe.gl@2/dist/globe.gl.min.js';
+    s.async = true;
+    s.onload = () => { _globeLibLoaded = true; initWeltkugel(); };
+    document.head.appendChild(s);
+}());
 </script>
 </body>
 </html>
