@@ -2985,25 +2985,22 @@ async function ladeEurocontrol(icao) {
 
         if (!pubs.length) { el.innerHTML = ''; return; }
 
-        const items = pubs.map(([name, pub]) => {
-            // Kurztitel: alles vor dem ersten " - " oder Datum abschneiden
-            const kurz = name.replace(/\s*[-–]\s*\d{1,2}\s+\w+\s+\d{4}.*$/, '').trim();
-            // Max. 3 PDFs pro Publikation
-            const pdfs = Object.entries(pub.karten || {}).slice(0, 3);
-            const links = pdfs.length
-                ? pdfs.map(([label, url]) =>
-                    `<a class="btn-ext" href="${url}" target="_blank" rel="noopener" style="font-size:0.72rem;padding:4px 8px">⬇ ${label || 'PDF'}</a>`
-                  ).join('')
-                : `<a class="btn-ext" href="${pub._url}" target="_blank" rel="noopener" style="font-size:0.72rem;padding:4px 8px">↗ Öffnen</a>`;
-            return `<div class="nfl-item">
-                <div class="nfl-betreff" style="font-size:0.8rem">${kurz}</div>
-                <div class="vfr-links-row" style="margin-top:4px">${links}</div>
-            </div>`;
-        }).join('');
+        // Kurznamen extrahieren
+        const kurzname = name => {
+            if (/upper/i.test(name))  return '🗺 ERC Upper';
+            if (/lower/i.test(name))  return '🗺 ERC Lower';
+            if (/ERN|route network/i.test(name)) return '🗺 ERN';
+            if (/FIR|UIR/i.test(name)) return '🗺 FIR/UIR';
+            return '🗺 ' + name.replace(/EUROCONTROL\s*/i, '').replace(/\s*[-–].*$/, '').trim();
+        };
 
-        el.innerHTML = `<div class="nfl-section" style="margin-top:0.8rem">
+        const btns = pubs.map(([name, pub]) =>
+            `<a class="btn-ext" href="${pub._url}" target="_blank" rel="noopener">${kurzname(name)}</a>`
+        ).join('');
+
+        el.innerHTML = `<div style="margin-top:0.8rem">
             <p class="vfr-links-titel">EUROCONTROL Luftraumkarten</p>
-            ${items}
+            <div class="vfr-links-row">${btns}</div>
         </div>`;
     } catch(e) {
         el.innerHTML = `<p class="flug-empty" style="font-size:0.75rem">EUROCONTROL-Daten nicht verfügbar.</p>`;

@@ -59,10 +59,13 @@ def durchlauf():
                 browser.get(pub_url)
                 warte(browser)
 
+                SKIP = ('privacy', 'contact', 'statement', 'cookie', 'legal', 'gdpr')
                 for text, href in alle_links(browser):
                     if not href:
                         continue
                     if href.lower().endswith('.pdf'):
+                        if any(s in href.lower() for s in SKIP):
+                            continue
                         label = text if text else href.split('/')[-1]
                         if not href.startswith('http'):
                             href = BASIS_URL + href
