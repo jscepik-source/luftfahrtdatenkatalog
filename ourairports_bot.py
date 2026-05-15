@@ -21,6 +21,13 @@ def lade_csv(url, bezeichnung):
     return daten
 
 
+def berechne_wichtigkeit(ap):
+    score = {'large_airport': 3, 'medium_airport': 2, 'small_airport': 1}.get(ap.get('type'), 0)
+    if ap.get('scheduled_service') == 'yes':
+        score += 1
+    return score
+
+
 def durchlauf():
     airports  = lade_csv(AIRPORTS_CSV,  "Flughäfen")
     runways   = lade_csv(RUNWAYS_CSV,   "Runways")
@@ -28,7 +35,6 @@ def durchlauf():
     navaids   = lade_csv(NAVAIDS_CSV,   "Nav-Aids")
     countries = lade_csv(COUNTRIES_CSV, "Länder")
 
-    # Ländername + Kontinent
     country_map = {}
     for c in countries:
         code = c.get('code', '').strip()
@@ -38,7 +44,6 @@ def durchlauf():
                 'continent': c.get('continent', '')
             }
 
-    # Runways nach ICAO gruppieren (beide Enden)
     runway_map = {}
     for r in runways:
         ident = r.get('airport_ident', '')
@@ -63,12 +68,11 @@ def durchlauf():
         except (ValueError, KeyError): pass
         try: entry['he_thr']   = int(r['he_displaced_threshold_ft']) if r.get('he_displaced_threshold_ft') else 0
         except (ValueError, KeyError): pass
-        if r.get('surface'):    entry['surface']  = r['surface']
+        if r.get('surface'):        entry['surface'] = r['surface']
         if r.get('lighted') == '1': entry['lighted'] = True
         if r.get('closed')  == '1': entry['closed']  = True
         runway_map.setdefault(ident, []).append(entry)
 
-    # Frequenzen nach ICAO gruppieren
     freq_map = {}
     for f in freqs:
         ident = f.get('airport_ident', '')
@@ -80,7 +84,6 @@ def durchlauf():
             'desc': f.get('description', '')
         })
 
-    # Nav-Aids nach Flughafen gruppieren
     navaid_map = {}
     for n in navaids:
         airport = n.get('associated_airport', '').strip()
@@ -92,10 +95,10 @@ def durchlauf():
             'type':  n.get('type', ''),
             'freq':  n.get('frequency_khz', '')
         }
-        if n.get('dme_channel'):            entry['dme_ch']  = n['dme_channel']
-        if n.get('dme_frequency_khz'):      entry['dme_freq'] = n['dme_frequency_khz']
-        if n.get('power'):                  entry['power']   = n['power']
-        if n.get('usageType'):              entry['usage']   = n['usageType']
+        if n.get('dme_channel'):       entry['dme_ch']   = n['dme_channel']
+        if n.get('dme_frequency_khz'): entry['dme_freq'] = n['dme_frequency_khz']
+        if n.get('power'):             entry['power']    = n['power']
+        if n.get('usageType'):         entry['usage']    = n['usageType']
         try:
             mv = round(float(n['magnetic_variation_deg']), 1)
             if mv != 0: entry['mag_var'] = mv
@@ -111,18 +114,19 @@ def durchlauf():
         if not ident:
             continue
 
-        iso = ap.get('iso_country', '')
+        iso   = ap.get('iso_country', '')
         cinfo = country_map.get(iso, {})
 
         entry = {
-            'name':       ap.get('name', ''),
-            'type':       ap.get('type', ''),
-            'country':    iso,
+            'name':         ap.get('name', ''),
+            'type':         ap.get('type', ''),
+            'country':      iso,
             'country_name': cinfo.get('name', ''),
-            'continent':  cinfo.get('continent', ap.get('continent', '')),
-            'region':     ap.get('iso_region', ''),
-            'city':       ap.get('municipality', ''),
-            'scheduled':  ap.get('scheduled_service', '') == 'yes'
+            'continent':    cinfo.get('continent', ap.get('continent', '')),
+            'region':       ap.get('iso_region', ''),
+            'city':         ap.get('municipality', ''),
+            'scheduled':    ap.get('scheduled_service', '') == 'yes',
+            'rank':         berechne_wichtigkeit(ap),
         }
 
         try: entry['lat'] = round(float(ap['latitude_deg']), 4)
