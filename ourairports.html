@@ -625,6 +625,11 @@
             line-height: 1.6;
         }
 
+        /* ── VFR-Kartenlinks ── */
+        .vfr-links-section { margin-bottom: var(--space-md); }
+        .vfr-links-titel { font-size: 0.75rem; font-weight: 600; color: var(--color-text-dim); margin-bottom: var(--space-xs); letter-spacing: 0.03em; text-transform: uppercase; }
+        .vfr-links-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
         /* ── NfL-Einträge ── */
         .nfl-section { margin-top: var(--space-sm); }
         .nfl-section-titel { font-size: 0.75rem; font-weight: 600; color: var(--color-text-dim); margin-bottom: var(--space-xs); letter-spacing: 0.03em; text-transform: uppercase; }
@@ -2282,6 +2287,59 @@ const NOTAM_PORTALE_SINGLE = {
     'N': { name: 'Airways NZ AIS',              url: 'https://www.aip.net.nz',                                           flag: '🇳🇿' },
 };
 
+// ── VFR-Kartenquellen (landesspezifisch) ─────────────────────────────────────
+const VFR_QUELLEN = {
+    'ED': [{ name: 'Open-Flightmaps Deutschland',    url: 'https://www.openflightmaps.org/ed-germany/',   icon: '🗺' },
+           { name: 'DFS AIP',                         url: 'https://aip.dfs.de/basicAIP/',                 icon: '📋' }],
+    'ET': [{ name: 'Open-Flightmaps Deutschland',    url: 'https://www.openflightmaps.org/ed-germany/',   icon: '🗺' }],
+    'LO': [{ name: 'Open-Flightmaps Österreich',     url: 'https://www.openflightmaps.org/lo-austria/',   icon: '🗺' },
+           { name: 'AustroControl Online VFR',        url: 'https://www.austrocontrol.at/piloten/vor_dem_flug/aim_produkte/onlinekarte_vfr_austria', icon: '🇦🇹' }],
+    'LI': [{ name: 'Open-Flightmaps Italien',        url: 'https://www.openflightmaps.org/li-italy/',     icon: '🗺' }],
+    'EB': [{ name: 'Open-Flightmaps Belgien',        url: 'https://www.openflightmaps.org/eb-belgium/',   icon: '🗺' }],
+    'EH': [{ name: 'Open-Flightmaps Niederlande',    url: 'https://www.openflightmaps.org/eh-netherlands/', icon: '🗺' }],
+    'EP': [{ name: 'Open-Flightmaps Polen',          url: 'https://www.openflightmaps.org/ep-poland/',    icon: '🗺' }],
+    'LK': [{ name: 'Open-Flightmaps Tschechien',     url: 'https://www.openflightmaps.org/lk-czech-republic/', icon: '🗺' }],
+    'LZ': [{ name: 'Open-Flightmaps Slowakei',       url: 'https://www.openflightmaps.org/lz-slovakia/',  icon: '🗺' }],
+    'LH': [{ name: 'Open-Flightmaps Ungarn',         url: 'https://www.openflightmaps.org/lh-hungary/',   icon: '🗺' }],
+    'LJ': [{ name: 'Open-Flightmaps Slowenien',      url: 'https://www.openflightmaps.org/lj-slovenia/',  icon: '🗺' }],
+    'LD': [{ name: 'Open-Flightmaps Kroatien',       url: 'https://www.openflightmaps.org/ld-croatia/',   icon: '🗺' }],
+    'LF': [{ name: 'Géoportail OACI-VFR',            url: 'https://www.geoportail.gouv.fr/donnees/carte-oaci-vfr', icon: '🇫🇷' }],
+    'LS': [{ name: 'geo.admin.ch ICAO-Karte',        url: 'https://map.geo.admin.ch/?lang=de&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.bazl.luftfahrtkarte-icao', icon: '🇨🇭' }],
+    'EG': [{ name: 'NATS AeroHub Charts',            url: 'https://aerohub.nats.aero/charts',             icon: '🇬🇧' }],
+    'EI': [{ name: 'IAA Charts',                     url: 'https://www.iaa.ie/general-aviation/aeronautical-charts', icon: '🇮🇪' }],
+    'EF': [{ name: 'Finavia AIP',                    url: 'https://ais.fi/ais/eaip/',                     icon: '🇫🇮' }],
+    'EN': [{ name: 'Avinor eAIP',                    url: 'https://ais.avinor.no/no/AIP/',                icon: '🇳🇴' }],
+    'ES': [{ name: 'LFV eAIP',                       url: 'https://aro.lfv.se/Editorial/View/IAIP',       icon: '🇸🇪' }],
+    'EK': [{ name: 'Naviair eAIP',                   url: 'https://eaip.naviair.dk/',                     icon: '🇩🇰' }],
+    'EV': [{ name: 'LGS eAIP',                       url: 'https://www.lgs.lv/en/ais/eaip/',              icon: '🇱🇻' }],
+    'EY': [{ name: 'Oro Navigacija eAIP',            url: 'https://www.ans.lt/en/eaip/',                  icon: '🇱🇹' }],
+    'EE': [{ name: 'EANS eAIP',                      url: 'https://ais.eans.ee/aip/',                     icon: '🇪🇪' }],
+    'LE': [{ name: 'ENAIRE AIS',                     url: 'https://aip.enaire.es/',                       icon: '🇪🇸' }],
+    'LP': [{ name: 'NAV Portugal eAIP',              url: 'https://www.nav.pt/en/aeronautical-information/eaip', icon: '🇵🇹' }],
+    'LG': [{ name: 'HCAA eAIP',                      url: 'https://www.hcaa.gr/en/eaip/',                 icon: '🇬🇷' }],
+};
+
+function vfrLinksHtml(icao, lat, lon) {
+    const prefix2 = (icao || '').slice(0, 2).toUpperCase();
+    const quellen  = VFR_QUELLEN[prefix2] || [];
+    const hasCoords = lat !== undefined && lon !== undefined && !isNaN(lat) && !isNaN(lon);
+    const svUrl = hasCoords
+        ? `https://skyvector.com/?ll=${parseFloat(lat).toFixed(4)},${parseFloat(lon).toFixed(4)}&chart=301&zoom=2`
+        : `https://skyvector.com/airport/${icao}`;
+
+    const btns = quellen.map(q =>
+        `<a class="btn-ext" href="${q.url}" target="_blank" rel="noopener">${q.icon} ${q.name}</a>`
+    ).join('');
+
+    return `<div class="vfr-links-section">
+        <p class="vfr-links-titel">VFR-Karten</p>
+        <div class="vfr-links-row">${btns}
+            <a class="btn-ext" href="${svUrl}" target="_blank" rel="noopener">🌐 SkyVector</a>
+            <a class="btn-ext" href="https://www.openaip.net/" target="_blank" rel="noopener">📡 OpenAIP</a>
+        </div>
+    </div>`;
+}
+
 function nationalNotamQuelle(icao) {
     if (!icao || icao.length < 2) return null;
     const p2 = icao.slice(0, 2).toUpperCase();
@@ -2436,6 +2494,7 @@ out skel qt;`;
 
             <!-- Karten Panel -->
             <div class="card-tab-panel" data-panel="karten">
+                ${vfrLinksHtml(icao, ap.lat, ap.lon)}
                 <div id="dfs-${icao}"></div>
             </div>
 
