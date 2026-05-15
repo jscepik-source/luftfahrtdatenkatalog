@@ -609,15 +609,6 @@
 
         .wx-quelle { font-size: 0.7rem; color: var(--color-text-dim); margin-top: var(--space-xs); }
         .notam-zeit { font-size: 0.7rem; color: var(--color-text-dim); display: block; margin-bottom: 2px; }
-        .notam-setup {
-            font-size: 0.78rem;
-            line-height: 1.7;
-            padding: var(--space-sm);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-sm);
-            background: var(--color-notam-bg);
-        }
-        .notam-setup code { font-size: 0.75rem; background: var(--color-bg); padding: 1px 5px; border-radius: 3px; }
 
         /* ── NOTAMs ── */
         .notam-list { display: flex; flex-direction: column; gap: var(--space-xs); }
@@ -1340,9 +1331,6 @@
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
 
-// ── AVWX NOTAM API ───────────────────────────────────────────────────────────
-// Kostenlose Registrierung: https://account.avwx.rest → Token generieren
-const AVWX_TOKEN = '6mauXYV6M7xYkPMyAjXZl67y1ZZ06uRiHkZzGsx0O3g';
 let katalog = {};
 let aktiverTyp = '';
 let aktivSched = false;
@@ -1351,7 +1339,6 @@ const SEITE = 50;
 let aktuelleEintraege = [];
 let angezeigtBis = 0;
 const wettercache = {};
-const notamcache = {};
 let nflDaten = [];
 let aktivIata = false;
 let aktivKontinent = '';
@@ -2315,7 +2302,22 @@ out skel qt;`;
 
             <!-- NOTAM Panel -->
             <div class="card-tab-panel" data-panel="notam">
-                <div id="notam-${icao}"><span class="status-loading">wird geladen…</span></div>
+                <a class="notam-map-btn" href="https://www.icao.int/notams-0" target="_blank" rel="noopener">
+                    <span class="notam-map-btn-icon">🌐</span>
+                    <span>
+                        <strong>ICAO NOTAM Search</strong>
+                        <small>icao.int &rarr; nach <code style="font-size:0.75rem;color:var(--color-primary)">${icao}</code> suchen</small>
+                    </span>
+                    <span class="notam-map-btn-arrow">↗</span>
+                </a>
+                <a class="notam-map-btn" href="https://notams.aim.faa.gov/notamSearch/nsapp.html?METHOD=DISPLAYBYICAOS&REPORTTYPE=RAW&FORMATTYPE=DOMESTIC&RETRIEVELOCID=${icao}&ACTIONTYPE=NOTAMRETRIEVALBYICAOS#/" target="_blank" rel="noopener">
+                    <span class="notam-map-btn-icon">✈</span>
+                    <span>
+                        <strong>FAA NOTAM Search</strong>
+                        <small>notams.aim.faa.gov &rarr; <code style="font-size:0.75rem;color:var(--color-primary)">${icao}</code> vorausgefüllt</small>
+                    </span>
+                    <span class="notam-map-btn-arrow">↗</span>
+                </a>
                 <a class="notam-map-btn" href="https://www.notammap.org/" target="_blank" rel="noopener">
                     <span class="notam-map-btn-icon">🗺</span>
                     <span>
@@ -2325,10 +2327,8 @@ out skel qt;`;
                     <span class="notam-map-btn-arrow">↗</span>
                 </a>
                 <div class="notam-extern">
-                    <span class="notam-extern-label">Weitere Quellen:</span>
-                    <a class="btn-ext" href="https://www.icao.int/safety/iStars/Pages/NOTAM-Search.aspx" target="_blank" rel="noopener">🌐 ICAO NOTAMSearch</a>
-                    <a class="btn-ext" href="https://notams.aim.faa.gov/notamSearch/nsapp.html?METHOD=DISPLAYBYICAOS&REPORTTYPE=RAW&FORMATTYPE=DOMESTIC&RETRIEVELOCID=${icao}&ACTIONTYPE=NOTAMRETRIEVALBYICAOS#/" target="_blank" rel="noopener">✈ FAA NOTAM Search</a>
-                    <a class="btn-ext" href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">🇪🇺 EAD Basic</a>
+                    <span class="notam-extern-label">Weitere:</span>
+                    <a class="btn-ext" href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">🇪🇺 EAD Basic (Europa)</a>
                 </div>
             </div>
 
@@ -2365,7 +2365,6 @@ function toggle(btn, icao, lat, lon) {
             ladeKarte(icao, lat, lon);
         }
         ladeWetter(icao, lat, lon);
-        ladeNotams(icao);
         ladeDfsKarten(icao);
     }
 }
@@ -2524,113 +2523,6 @@ async function ladeWetter(icao, lat, lon) {
     }
 }
 
-// ── SkyLink Anfrage-Schutz ───────────────────────────────────────────────────
-const NOTAM_CACHE_TTL   = 60 * 60 * 1000;   // 1 Stunde
-const NOTAM_WARN_LIMIT  = 800;               // Warnung ab 800 / 1000
-
-function notamMonatKey() {
-    const d = new Date();
-    return `notam_count_${d.getFullYear()}_${d.getMonth()}`;
-}
-function notamAnfragenDiesenMonat() {
-    return parseInt(localStorage.getItem(notamMonatKey()) || '0', 10);
-}
-function notamAnfrageZaehlen() {
-    const k = notamMonatKey();
-    const n = notamAnfragenDiesenMonat() + 1;
-    localStorage.setItem(k, n);
-    return n;
-}
-function notamCacheGet(icao) {
-    try {
-        const raw = localStorage.getItem(`notam_cache_${icao}`);
-        if (!raw) return null;
-        const { ts, data } = JSON.parse(raw);
-        if (Date.now() - ts > NOTAM_CACHE_TTL) return null;
-        return data;
-    } catch { return null; }
-}
-function notamCacheSet(icao, data) {
-    try { localStorage.setItem(`notam_cache_${icao}`, JSON.stringify({ ts: Date.now(), data })); } catch {}
-}
-function notamEndpointGet() {
-    return localStorage.getItem('notam_endpoint') || null;
-}
-function notamEndpointSet(url) {
-    localStorage.setItem('notam_endpoint', url);
-}
-
-async function fetchNotamDaten(icao) {
-    if (!AVWX_TOKEN) return null;
-    const url = `https://avwx.rest/api/notam/${icao}?token=${AVWX_TOKEN}`;
-    const res = await fetch(url);
-    if (!res.ok) {
-        const txt = await res.text().catch(() => '');
-        throw new Error(`HTTP ${res.status}: ${txt.slice(0, 120)}`);
-    }
-    const json = await res.json();
-    const items = Array.isArray(json) ? json : (json.data || []);
-    return { data: items, total: items.length };
-}
-
-async function ladeNotams(icao) {
-    const el = document.getElementById(`notam-${icao}`);
-    if (!el || el.dataset.geladen) return;
-    el.dataset.geladen = '1';
-    if (notamcache[icao]) { el.innerHTML = notamcache[icao]; return; }
-
-    if (!AVWX_TOKEN) {
-        el.innerHTML = `<div class="notam-setup">
-            <strong>NOTAM API-Token einrichten (einmalig, kostenlos)</strong><br>
-            1. <a href="https://account.avwx.rest" target="_blank" rel="noopener" style="color:var(--color-primary)">account.avwx.rest</a> → kostenlosen Account erstellen<br>
-            2. Token generieren (unter "Tokens")<br>
-            3. Token in <code>ourairports.html</code> bei <code>AVWX_TOKEN</code> eintragen
-        </div>`;
-        return;
-    }
-
-    // localStorage-Cache prüfen (1h TTL)
-    const cached = notamCacheGet(icao);
-    if (cached) { el.innerHTML = cached; notamcache[icao] = cached; return; }
-
-    // Anfrage-Limit prüfen
-    const anzahl = notamAnfragenDiesenMonat();
-    if (anzahl >= 1000) {
-        el.innerHTML = `<span class="status-error">Monatslimit erreicht (1.000 Anfragen). Nächsten Monat wieder verfügbar.</span>`;
-        return;
-    }
-    if (anzahl >= NOTAM_WARN_LIMIT) {
-        el.innerHTML = `<div class="notam-setup" style="border-color:orange">
-            ⚠ Noch ${1000 - anzahl} kostenlose Anfragen diesen Monat. NOTAMs werden trotzdem geladen.
-        </div>`;
-    }
-
-    try {
-        notamAnfrageZaehlen();
-        const result = await fetchNotamDaten(icao);
-        const data   = result?.data  || [];
-        const total  = result?.total ?? 0;
-        let html = '';
-        if (!data.length) {
-            html = `<p class="status-loading">Keine aktiven NOTAMs für ${icao}.</p>`;
-        } else {
-            html = `<div class="notam-list">${data.slice(0, 20).map(n => {
-                const text = n.body || n.raw || '–';
-                const nr   = n.number || '';
-                const von  = n.start_time?.dt ? new Date(n.start_time.dt).toUTCString().slice(5,22) : '';
-                const bis  = n.end_time?.dt   ? new Date(n.end_time.dt).toUTCString().slice(5,22)   : '';
-                return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis} UTC</span>\n` : ''}${text}</div>`;
-            }).join('')}${total > 20 ? `<p class="status-loading">… und ${total - 20} weitere NOTAMs</p>` : ''}</div>`;
-        }
-        const used = notamAnfragenDiesenMonat();
-        html += `<p class="wx-quelle">AVWX · ${total} NOTAM${total !== 1 ? 's' : ''} · ${used}/1.000 Anfragen diesen Monat (Cache: 1h)</p>`;
-        notamCacheSet(icao, html);
-        notamcache[icao] = html;
-        el.innerHTML = html;
-    } catch(e) {
-        el.innerHTML = `<span class="status-error">NOTAMs nicht verfügbar: ${e.message}</span>`;
-    }
-}
 
 document.getElementById('suche').addEventListener('input', () => {
     clearTimeout(sucheTimeout);
