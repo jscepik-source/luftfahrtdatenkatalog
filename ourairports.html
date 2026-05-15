@@ -3228,21 +3228,50 @@ async function ladeFluege(icao) {
 
     try {
         let rawAircraft, source;
-        try {
-            const r = await fetch(`https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`,
-                { signal: AbortSignal.timeout(7000) });
-            if (!r.ok) throw new Error();
-            const d = await r.json();
-            rawAircraft = d.aircraft || d.ac || [];
-            source = 'adsb.fi';
-        } catch {
-            const r = await fetch(`https://globe.adsbexchange.com/re-api/?lat=${lat}&lon=${lon}&dist=20`,
-                { signal: AbortSignal.timeout(7000) });
-            if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            const d = await r.json();
-            rawAircraft = d.ac || d.aircraft || [];
-            source = 'ADS-B Exchange';
+        const versuche = [
+            async () => {
+                const r = await fetch(`https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`,
+                    { signal: AbortSignal.timeout(7000) });
+                if (!r.ok) throw new Error();
+                const d = await r.json();
+                return { ac: d.aircraft || d.ac || [], src: 'adsb.fi' };
+            },
+            async () => {
+                const r = await fetch(`https://globe.adsbexchange.com/re-api/?lat=${lat}&lon=${lon}&dist=20`,
+                    { signal: AbortSignal.timeout(7000) });
+                if (!r.ok) throw new Error();
+                const d = await r.json();
+                return { ac: d.ac || d.aircraft || [], src: 'ADS-B Exchange' };
+            },
+            async () => {
+                const pad = 0.4;
+                const r = await fetch(
+                    `https://opensky-network.org/api/states/all?lamin=${lat-pad}&lamax=${lat+pad}&lomin=${lon-pad}&lomax=${lon+pad}`,
+                    { signal: AbortSignal.timeout(10000) });
+                if (!r.ok) throw new Error();
+                const d = await r.json();
+                const ac = (d.states || [])
+                    .filter(s => s[1] && s[5] != null && s[6] != null)
+                    .map(s => ({
+                        flight:    (s[1] || '').trim(),
+                        t:         '',
+                        squawk:    s[14] || '',
+                        dst:       haversine(lat, lon, s[6], s[5]) / 1.852,
+                        gs:        s[9]  != null ? s[9]  * 1.944  : 0,
+                        baro_rate: s[11] != null ? s[11] * 196.85 : 0,
+                        alt_baro:  s[7]  != null ? s[7]  / 0.3048 : null,
+                    }))
+                    .filter(a => a.dst <= 20);
+                return { ac, src: 'OpenSky Network' };
+            },
+        ];
+        let result = null;
+        for (const versuch of versuche) {
+            try { result = await versuch(); break; } catch {}
         }
+        if (!result) throw new Error('Keine Quelle verfügbar');
+        rawAircraft = result.ac;
+        source      = result.src;
 
         const aircraft = rawAircraft
             .filter(a => (a.flight || '').trim())
