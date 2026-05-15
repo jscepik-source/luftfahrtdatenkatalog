@@ -686,6 +686,49 @@
         }
         .btn-more:hover { background: var(--color-surface-2); border-color: var(--color-primary); color: var(--color-primary); }
 
+        /* ── Modals (Impressum / Datenschutz) ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 9000;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-md);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: var(--space-lg);
+            position: relative;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+        }
+        .modal-close {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--color-text-dim);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            line-height: 1;
+        }
+        .modal-close:hover { color: var(--color-text); background: var(--color-surface-2); }
+        .modal-box h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--color-text); }
+        .modal-box h3 { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-dim); margin: var(--space-md) 0 var(--space-xs); }
+        .modal-box p  { font-size: 0.85rem; color: var(--color-text-sub); line-height: 1.65; margin-bottom: var(--space-sm); }
+        .modal-box a  { color: var(--color-primary); }
+
         /* ── Footer ── */
         footer {
             border-top: 1px solid var(--color-border);
@@ -1446,7 +1489,60 @@
         <span class="sep">·</span>
         <a href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">EAD Basic / DFS AIM (EUROCONTROL)</a>
     </p>
+    <p style="margin-top:var(--space-sm)">
+        <button onclick="document.getElementById('modal-impressum').classList.add('open')" style="background:none;border:none;cursor:pointer;font-family:var(--font);font-size:0.72rem;color:var(--color-text-sub);text-decoration:underline;padding:0">Impressum</button>
+        <span class="sep">·</span>
+        <button onclick="document.getElementById('modal-datenschutz').classList.add('open')" style="background:none;border:none;cursor:pointer;font-family:var(--font);font-size:0.72rem;color:var(--color-text-sub);text-decoration:underline;padding:0">Datenschutzerklärung</button>
+    </p>
 </footer>
+
+<!-- ── Modal: Impressum ── -->
+<div class="modal-overlay" id="modal-impressum" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-label="Impressum">
+        <button class="modal-close" onclick="document.getElementById('modal-impressum').classList.remove('open')" aria-label="Schließen">✕</button>
+        <h2>Impressum</h2>
+        <h3>Angaben gemäß § 5 TMG</h3>
+        <p>
+            Jan Scepik<br>
+            Am Brückweg 26<br>
+            65428 Rüsselsheim am Main
+        </p>
+        <h3>Kontakt</h3>
+        <p>E-Mail: <a href="mailto:jan.scepik@student.hs-rm.de">jan.scepik@student.hs-rm.de</a></p>
+        <h3>Hinweis</h3>
+        <p>Diese Website ist ein privates Hochschulprojekt im Rahmen des Studiums Avionik an der Hochschule RheinMain. Es besteht kein kommerzieller Zweck. Angaben zu Handelsregister, USt-IdNr. oder Aufsichtsbehörden entfallen.</p>
+        <h3>Haftungsausschluss</h3>
+        <p>Die angezeigten Luftfahrtdaten (NOTAMs, METAR, TAF, Kartenmaterial) stammen aus öffentlichen Quellen und dienen ausschließlich der Informationsdarstellung. Sie ersetzen keine offizielle Flugvorbereitung. Für die Richtigkeit und Vollständigkeit wird keine Haftung übernommen.</p>
+    </div>
+</div>
+
+<!-- ── Modal: Datenschutzerklärung ── -->
+<div class="modal-overlay" id="modal-datenschutz" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-label="Datenschutzerklärung">
+        <button class="modal-close" onclick="document.getElementById('modal-datenschutz').classList.remove('open')" aria-label="Schließen">✕</button>
+        <h2>Datenschutzerklärung</h2>
+        <h3>Verantwortlicher</h3>
+        <p>Jan Scepik, Am Brückweg 26, 65428 Rüsselsheim am Main<br>
+        E-Mail: <a href="mailto:jan.scepik@student.hs-rm.de">jan.scepik@student.hs-rm.de</a></p>
+        <h3>Hosting</h3>
+        <p>Diese Website wird über <strong>GitHub Pages</strong> (GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA) bereitgestellt. GitHub kann dabei Zugriffsdaten (insbesondere IP-Adressen) in Server-Logs speichern. Weitere Informationen finden Sie in der <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>.</p>
+        <h3>Datenerhebung durch diese Website</h3>
+        <p>Diese Website erhebt selbst <strong>keine personenbezogenen Daten</strong>. Es werden keine Cookies gesetzt, kein Tracking durchgeführt und keine Analyse-Tools (z. B. Google Analytics) eingesetzt.</p>
+        <h3>Externe Dienste (API-Anfragen)</h3>
+        <p>Beim Abrufen von Live-Daten werden automatisch Anfragen an folgende externe Dienste gesendet, die dabei Ihre IP-Adresse empfangen können:</p>
+        <p>
+            <strong>Aviation Weather Center (NOAA)</strong> – METAR/TAF: <a href="https://aviationweather.gov" target="_blank" rel="noopener">aviationweather.gov</a><br>
+            <strong>adsb.fi / ADS-B Exchange</strong> – Live-Flugdaten: <a href="https://adsb.fi" target="_blank" rel="noopener">adsb.fi</a><br>
+            <strong>GitHub</strong> – Kartendaten/JSON: <a href="https://raw.githubusercontent.com" target="_blank" rel="noopener">raw.githubusercontent.com</a><br>
+            <strong>ADS-B Exchange Globe</strong> – Radar-Karte (iframe): <a href="https://globe.adsbexchange.com" target="_blank" rel="noopener">globe.adsbexchange.com</a>
+        </p>
+        <p>Diese Anfragen erfolgen nur bei aktiver Nutzung der jeweiligen Funktion (Wetter-, Flug- oder Karten-Tab).</p>
+        <h3>Ihre Rechte</h3>
+        <p>Sie haben gemäß DSGVO das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer Daten sowie das Recht auf Datenübertragbarkeit. Wenden Sie sich hierzu an die oben genannte E-Mail-Adresse.</p>
+        <h3>Beschwerderecht</h3>
+        <p>Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Zuständig ist der <a href="https://www.bfdi.bund.de" target="_blank" rel="noopener">Bundesbeauftragte für den Datenschutz und die Informationsfreiheit (BfDI)</a>.</p>
+    </div>
+</div>
 
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
@@ -3123,6 +3219,11 @@ async function ladeFluege(icao) {
         el.innerHTML = `<p class="flug-empty">Live-Daten nicht verfügbar.</p>${globe()}${links()}`;
     }
 }
+
+// ── Modals: Escape-Taste ────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+});
 
 // ── Hero Slides ──────────────────────────────────────────────────────────────
 (function() {
