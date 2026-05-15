@@ -1357,25 +1357,22 @@
             width: 360px;
             flex-shrink: 0;
             overflow: hidden;
-        }
-        /* Gradient blend straddling hero-left / hero-right boundary — lives on section level */
-        .hero-globe-blend {
-            position: absolute;
-            top: 0; bottom: 0;
-            right: 180px;
-            width: 420px;
-            background: linear-gradient(to right,
-                #07111f 0%,
-                #07111f 18%,
-                rgba(7,17,31,0.93) 30%,
-                rgba(7,17,31,0.76) 43%,
-                rgba(7,17,31,0.50) 57%,
-                rgba(7,17,31,0.22) 72%,
-                rgba(7,17,31,0.06) 86%,
-                transparent 100%
+            -webkit-mask-image: linear-gradient(to right,
+                transparent 0%,
+                rgba(0,0,0,0.08) 12%,
+                rgba(0,0,0,0.30) 24%,
+                rgba(0,0,0,0.60) 37%,
+                rgba(0,0,0,0.85) 50%,
+                black 62%
             );
-            pointer-events: none;
-            z-index: 5;
+            mask-image: linear-gradient(to right,
+                transparent 0%,
+                rgba(0,0,0,0.08) 12%,
+                rgba(0,0,0,0.30) 24%,
+                rgba(0,0,0,0.60) 37%,
+                rgba(0,0,0,0.85) 50%,
+                black 62%
+            );
         }
         #globus-container {
             position: absolute;
@@ -1484,9 +1481,6 @@
         <div id="globus-container"><span class="globus-loader">🌍</span></div>
         <div id="globus-label"></div>
     </div>
-
-    <!-- Überblendung hero-left → Weltkugel, auf Section-Ebene damit overflow:hidden nicht stört -->
-    <div class="hero-globe-blend" aria-hidden="true"></div>
 
     <div class="hero-bottom-fade"></div>
 </section>
