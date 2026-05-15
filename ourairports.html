@@ -916,18 +916,25 @@
 
         /* ── Hero / Slides ── */
         .hero-section {
-            background: var(--color-header-from);
+            background: linear-gradient(135deg, #07111f 0%, #0d1f38 60%, #081425 100%);
             overflow: hidden;
             position: relative;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: none;
+        }
+        /* Bottom fade so hero bleeds smoothly into page */
+        .hero-section .hero-bottom-fade {
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 56px;
+            background: linear-gradient(to top, var(--color-bg), transparent);
+            z-index: 4; pointer-events: none;
         }
         .hero-section::before {
             content: '';
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(ellipse 60% 80% at 20% 50%, rgba(37,99,235,0.18) 0%, transparent 70%),
-                radial-gradient(ellipse 50% 80% at 80% 50%, rgba(245,158,11,0.10) 0%, transparent 70%);
+                radial-gradient(ellipse 55% 90% at 30% 50%, rgba(37,99,235,0.20) 0%, transparent 65%),
+                radial-gradient(ellipse 40% 70% at 75% 40%, rgba(245,158,11,0.09) 0%, transparent 60%);
             animation: heroPulse 6s ease-in-out infinite alternate;
             pointer-events: none;
         }
@@ -941,9 +948,9 @@
             position: absolute;
             inset: 0;
             background-image:
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 48px 48px;
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 52px 52px;
             pointer-events: none;
         }
         .hero-track-wrap {
@@ -1381,77 +1388,32 @@
         <div class="hero-track-wrap">
             <div class="hero-track" id="heroTrack">
 
-                <!-- Slide 1: Zahlen -->
+                <!-- Slide 1: Kennzahlen -->
                 <div class="hero-slide">
                     <div class="hero-stat-group">
                         <div class="hero-stat">
                             <div class="hero-stat-num">72.000</div>
-                            <div class="hero-stat-label">Flughäfen</div>
-                        </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">70+</div>
-                            <div class="hero-stat-label">AIP-Länder</div>
+                            <div class="hero-stat-label">Flughäfen weltweit</div>
                         </div>
                         <div class="hero-vdivider"></div>
                         <div class="hero-stat">
                             <div class="hero-stat-num">6h</div>
-                            <div class="hero-stat-label">Updates</div>
+                            <div class="hero-stat-label">Aktualisierung</div>
                         </div>
                         <div class="hero-vdivider"></div>
                         <div class="hero-stat">
                             <div class="hero-stat-num">Live</div>
-                            <div class="hero-stat-label">METAR / TAF</div>
+                            <div class="hero-stat-label">METAR &amp; TAF</div>
+                        </div>
+                        <div class="hero-vdivider"></div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-num">Live</div>
+                            <div class="hero-stat-label">ADS-B Radar</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Slide 2: Wetter -->
-                <div class="hero-slide">
-                    <div class="hero-stat-group">
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">METAR</div>
-                            <div class="hero-stat-label">Aktuelles Wetter</div>
-                        </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">TAF</div>
-                            <div class="hero-stat-label">Vorhersage</div>
-                        </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">NOTAM</div>
-                            <div class="hero-stat-label">Luftfahrtmitteilungen</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 3: AIP-Karten -->
-                <div class="hero-slide">
-                    <div class="hero-stat-group">
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">VFR</div>
-                            <div class="hero-stat-label">Sichtflug</div>
-                        </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">IFR</div>
-                            <div class="hero-stat-label">Instrumentenflug</div>
-                        </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">eAIP</div>
-                            <div class="hero-stat-label">Digital</div>
-                        </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">70+</div>
-                            <div class="hero-stat-label">AIP-Quellen</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 4: HS RheinMain -->
+                <!-- Slide 2: HS RheinMain -->
                 <div class="hero-slide">
                     <div class="hero-stat-group" style="flex-direction:column;gap:10px;text-align:center">
                         <div class="hero-stat-num" style="font-size:clamp(1.1rem,3vw,1.6rem);letter-spacing:0.02em;font-weight:700">Hochschule RheinMain</div>
@@ -1464,8 +1426,6 @@
         <div class="hero-dots" role="tablist">
             <button class="hero-dot active" onclick="heroGoto(0)" aria-label="Slide 1"></button>
             <button class="hero-dot" onclick="heroGoto(1)" aria-label="Slide 2"></button>
-            <button class="hero-dot" onclick="heroGoto(2)" aria-label="Slide 3"></button>
-            <button class="hero-dot" onclick="heroGoto(3)" aria-label="Slide 4"></button>
         </div>
     </div>
 
@@ -1476,6 +1436,7 @@
         <div id="globus-label"></div>
     </div>
 
+    <div class="hero-bottom-fade"></div>
 </section>
 
 <!-- ── Toolbar / Search ── -->
@@ -3298,7 +3259,7 @@ document.addEventListener('keydown', e => {
 
 // ── Hero Slides ──────────────────────────────────────────────────────────────
 (function() {
-    const TOTAL = 4;
+    const TOTAL = 2;
     let idx = 0;
     let timer = null;
 
@@ -3405,11 +3366,12 @@ function globusZoomAuf(lat, lon, icao) {
     // ICAO-Label einblenden
     if (lbl) { lbl.textContent = icao; lbl.classList.add('sichtbar'); }
 
-    // Nach 12 Sekunden wieder zurückdrehen und Ring löschen
+    // Nach 12 Sekunden: Ring löschen, rauszoomen, Rotation fortsetzen
     _globeZoomTimer = setTimeout(() => {
         _globeInst.ringsData([]);
-        _globeInst.controls().autoRotate = true;
         if (lbl) lbl.classList.remove('sichtbar');
+        _globeInst.pointOfView({ lat: 20, lng: 10, altitude: 2.2 }, 2000);
+        setTimeout(() => { _globeInst.controls().autoRotate = true; }, 2100);
     }, 12000);
 }
 
