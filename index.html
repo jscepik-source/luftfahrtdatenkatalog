@@ -2532,20 +2532,18 @@ async function fetchNotamDaten(icao) {
         'x-rapidapi-key':  RAPIDAPI_KEY,
         'x-rapidapi-host': 'skylink-api.p.rapidapi.com'
     };
-    const versuche = [
-        { label: 'SkyLink API',             u: url },
-        { label: 'SkyLink (corsproxy.io)',   u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
-    ];
-    for (const { label, u } of versuche) {
-        try {
-            const res = await fetch(u, { headers });
-            if (!res.ok) continue;
-            const json = await res.json();
-            const items = json.notams || json.data || (Array.isArray(json) ? json : []);
-            return { data: items, total: json.total_count ?? items.length, quelle: label };
-        } catch(e) { console.warn('NOTAM Versuch fehlgeschlagen:', u, e.message); }
+    try {
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+            const txt = await res.text().catch(() => '');
+            throw new Error(`HTTP ${res.status}${txt ? ': ' + txt.slice(0,120) : ''}`);
+        }
+        const json = await res.json();
+        const items = json.notams || json.data || (Array.isArray(json) ? json : []);
+        return { data: items, total: json.total_count ?? items.length, quelle: 'SkyLink API' };
+    } catch(e) {
+        throw e;
     }
-    return null;
 }
 
 async function ladeNotams(icao) {
@@ -2566,7 +2564,8 @@ async function ladeNotams(icao) {
 
     try {
         const result = await fetchNotamDaten(icao);
-        const data = result?.data || [];
+        const data   = result?.data  || [];
+        const total  = result?.total ?? 0;
         let html = '';
         if (!data.length) {
             html = `<p class="status-loading">Keine aktiven NOTAMs für ${icao}.</p>`;
@@ -2577,13 +2576,13 @@ async function ladeNotams(icao) {
                 const von  = n.effective  ? new Date(n.effective).toUTCString().slice(5,22)  : '';
                 const bis  = n.expiration ? new Date(n.expiration).toUTCString().slice(5,22) : '';
                 return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis} UTC</span>\n` : ''}${text}</div>`;
-            }).join('')}${result.total > 20 ? `<p class="status-loading">… und ${result.total - 20} weitere NOTAMs</p>` : ''}</div>`;
+            }).join('')}${total > 20 ? `<p class="status-loading">… und ${total - 20} weitere NOTAMs</p>` : ''}</div>`;
         }
-        html += `<p class="wx-quelle">SkyLink API · ${result.total} NOTAM${result.total !== 1 ? 's' : ''}</p>`;
+        html += `<p class="wx-quelle">SkyLink API · ${total} NOTAM${total !== 1 ? 's' : ''}</p>`;
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
-        el.innerHTML = `<span class="status-error">NOTAMs nicht verfügbar (${e.message})</span>`;
+        el.innerHTML = `<span class="status-error">NOTAMs nicht verfügbar: ${e.message}</span>`;
     }
 }
 
