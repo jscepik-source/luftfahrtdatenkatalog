@@ -2627,7 +2627,7 @@ function baueKarte(icao, ap) {
     article.className = 'airport-card';
     const typLabel = TYP_LABEL[ap.type] || ap.type || '';
     const typClass = 'type-' + (ap.type || '');
-    const elev = ap.elev !== undefined ? `${ap.elev} ft` : '–';
+    const elev = ap.elev !== undefined ? `${ap.elev} ft / ${Math.round(ap.elev * 0.3048)} m` : '–';
     const hasCoords = ap.lat !== undefined && ap.lon !== undefined;
     const coords = hasCoords ? `${ap.lat}, ${ap.lon}` : null;
     const kontinent = KONTINENT[ap.continent] || ap.continent || '';
@@ -2660,8 +2660,8 @@ out skel qt;`;
     const rwyRows = ap.runways && ap.runways.length
         ? ap.runways.map(r => `<tr class="${r.closed ? 'rwy-closed' : ''}">
             <td>${r.le||''}${r.he ? ' / '+r.he : ''}</td>
-            <td>${r.length !== undefined ? r.length.toLocaleString() : '–'}</td>
-            <td>${r.width !== undefined ? r.width : '–'}</td>
+            <td>${r.length !== undefined ? `${r.length.toLocaleString()} ft / ${Math.round(r.length * 0.3048)} m` : '–'}</td>
+            <td>${r.width !== undefined ? `${r.width} ft / ${Math.round(r.width * 0.3048)} m` : '–'}</td>
             <td>${r.le_hdg !== undefined ? r.le_hdg+'°' : '–'} / ${r.he_hdg !== undefined ? r.he_hdg+'°' : '–'}</td>
             <td>${r.surface || '–'}</td>
             <td>${r.lighted ? '💡' : '–'}</td>
@@ -2736,7 +2736,7 @@ out skel qt;`;
                 ${rwyRows ? `<section class="card-section">
                     <h3 class="section-title">🛬 Runways ${zeichneRunwaySVG(ap.runways)}</h3>
                     <table class="data-table">
-                        <thead><tr><th>Kennung</th><th>Länge (ft)</th><th>Breite (ft)</th><th>Kurs LE / HE</th><th>Belag</th><th>Bel.</th></tr></thead>
+                        <thead><tr><th>Kennung</th><th>Länge</th><th>Breite</th><th>Kurs LE / HE</th><th>Belag</th><th>Bel.</th></tr></thead>
                         <tbody>${rwyRows}</tbody>
                     </table>
                 </section>` : ''}
