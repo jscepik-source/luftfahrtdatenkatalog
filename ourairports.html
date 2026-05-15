@@ -2291,11 +2291,14 @@ const NOTAM_PORTALE_SINGLE = {
 const VFR_QUELLEN = {
     'ED': [{ name: 'Open-Flightmaps Deutschland',    url: 'https://www.openflightmaps.org/ed-germany/',   icon: '🗺' },
            { name: 'DFS AIP',                         url: 'https://aip.dfs.de/basicAIP/',                 icon: '📋' },
-           { name: 'DFS AIP VFR Online 💳',           url: 'https://www.eisenschmidt.aero/aip-vfr-online-version-zugang-fuer-12-monate/S2102001', icon: '🗂' }],
+           { name: 'DFS AIP VFR Online 💳',           url: 'https://www.eisenschmidt.aero/aip-vfr-online-version-zugang-fuer-12-monate/S2102001', icon: '🗂' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Deutschland', icon: '🛒' }],
     'ET': [{ name: 'Open-Flightmaps Deutschland',    url: 'https://www.openflightmaps.org/ed-germany/',   icon: '🗺' },
-           { name: 'DFS AIP VFR Online 💳',           url: 'https://www.eisenschmidt.aero/aip-vfr-online-version-zugang-fuer-12-monate/S2102001', icon: '🗂' }],
+           { name: 'DFS AIP VFR Online 💳',           url: 'https://www.eisenschmidt.aero/aip-vfr-online-version-zugang-fuer-12-monate/S2102001', icon: '🗂' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Deutschland', icon: '🛒' }],
     'LO': [{ name: 'Open-Flightmaps Österreich',     url: 'https://www.openflightmaps.org/lo-austria/',   icon: '🗺' },
-           { name: 'AustroControl Online VFR',        url: 'https://www.austrocontrol.at/piloten/vor_dem_flug/aim_produkte/onlinekarte_vfr_austria', icon: '🇦🇹' }],
+           { name: 'AustroControl Online VFR',        url: 'https://www.austrocontrol.at/piloten/vor_dem_flug/aim_produkte/onlinekarte_vfr_austria', icon: '🇦🇹' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Oesterreich', icon: '🛒' }],
     'LI': [{ name: 'Open-Flightmaps Italien',        url: 'https://www.openflightmaps.org/li-italy/',     icon: '🗺' }],
     'EB': [{ name: 'Open-Flightmaps Belgien',        url: 'https://www.openflightmaps.org/eb-belgium/',   icon: '🗺' }],
     'EH': [{ name: 'Open-Flightmaps Niederlande',    url: 'https://www.openflightmaps.org/eh-netherlands/', icon: '🗺' }],
@@ -2305,20 +2308,30 @@ const VFR_QUELLEN = {
     'LH': [{ name: 'Open-Flightmaps Ungarn',         url: 'https://www.openflightmaps.org/lh-hungary/',   icon: '🗺' }],
     'LJ': [{ name: 'Open-Flightmaps Slowenien',      url: 'https://www.openflightmaps.org/lj-slovenia/',  icon: '🗺' }],
     'LD': [{ name: 'Open-Flightmaps Kroatien',       url: 'https://www.openflightmaps.org/ld-croatia/',   icon: '🗺' }],
-    'LF': [{ name: 'Géoportail OACI-VFR',            url: 'https://www.geoportail.gouv.fr/donnees/carte-oaci-vfr', icon: '🇫🇷' }],
-    'LS': [{ name: 'geo.admin.ch ICAO-Karte',        url: 'https://map.geo.admin.ch/?lang=de&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.bazl.luftfahrtkarte-icao', icon: '🇨🇭' }],
-    'EG': [{ name: 'NATS AeroHub Charts',            url: 'https://aerohub.nats.aero/charts',             icon: '🇬🇧' }],
+    'LF': [{ name: 'Géoportail OACI-VFR',            url: 'https://www.geoportail.gouv.fr/donnees/carte-oaci-vfr', icon: '🇫🇷' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Frankreich', icon: '🛒' }],
+    'LS': [{ name: 'geo.admin.ch ICAO-Karte',        url: 'https://map.geo.admin.ch/?lang=de&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.bazl.luftfahrtkarte-icao', icon: '🇨🇭' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Schweiz', icon: '🛒' }],
+    'EG': [{ name: 'NATS AeroHub Charts',            url: 'https://aerohub.nats.aero/charts',             icon: '🇬🇧' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_UK',     icon: '🛒' }],
     'EI': [{ name: 'IAA Charts',                     url: 'https://www.iaa.ie/general-aviation/aeronautical-charts', icon: '🇮🇪' }],
-    'EF': [{ name: 'Finavia AIP',                    url: 'https://ais.fi/ais/eaip/',                     icon: '🇫🇮' }],
-    'EN': [{ name: 'Avinor eAIP',                    url: 'https://ais.avinor.no/no/AIP/',                icon: '🇳🇴' }],
-    'ES': [{ name: 'LFV eAIP',                       url: 'https://aro.lfv.se/Editorial/View/IAIP',       icon: '🇸🇪' }],
+    'EF': [{ name: 'Finavia AIP',                    url: 'https://ais.fi/ais/eaip/',                     icon: '🇫🇮' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Finnland', icon: '🛒' }],
+    'EN': [{ name: 'Avinor eAIP',                    url: 'https://ais.avinor.no/no/AIP/',                icon: '🇳🇴' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Norwegen', icon: '🛒' }],
+    'ES': [{ name: 'LFV eAIP',                       url: 'https://aro.lfv.se/Editorial/View/IAIP',       icon: '🇸🇪' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Schweden', icon: '🛒' }],
     'EK': [{ name: 'Naviair eAIP',                   url: 'https://eaip.naviair.dk/',                     icon: '🇩🇰' }],
-    'EV': [{ name: 'LGS eAIP',                       url: 'https://www.lgs.lv/en/ais/eaip/',              icon: '🇱🇻' }],
-    'EY': [{ name: 'Oro Navigacija eAIP',            url: 'https://www.ans.lt/en/eaip/',                  icon: '🇱🇹' }],
-    'EE': [{ name: 'EANS eAIP',                      url: 'https://ais.eans.ee/aip/',                     icon: '🇪🇪' }],
+    'EV': [{ name: 'LGS eAIP',                       url: 'https://www.lgs.lv/en/ais/eaip/',              icon: '🇱🇻' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Baltikum', icon: '🛒' }],
+    'EY': [{ name: 'Oro Navigacija eAIP',            url: 'https://www.ans.lt/en/eaip/',                  icon: '🇱🇹' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Baltikum', icon: '🛒' }],
+    'EE': [{ name: 'EANS eAIP',                      url: 'https://ais.eans.ee/aip/',                     icon: '🇪🇪' },
+           { name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Baltikum', icon: '🛒' }],
     'LE': [{ name: 'ENAIRE AIS',                     url: 'https://aip.enaire.es/',                       icon: '🇪🇸' }],
     'LP': [{ name: 'NAV Portugal eAIP',              url: 'https://www.nav.pt/en/aeronautical-information/eaip', icon: '🇵🇹' }],
     'LG': [{ name: 'HCAA eAIP',                      url: 'https://www.hcaa.gr/en/eaip/',                 icon: '🇬🇷' }],
+    'GM': [{ name: 'ICAO-Karte bestellen 💳',         url: 'https://www.flightplanner.de/cms/ICAO_Marokko', icon: '🛒' }],
 };
 
 function vfrLinksHtml(icao, lat, lon) {
@@ -2357,6 +2370,7 @@ function vfrLinksHtml(icao, lat, lon) {
         <p class="vfr-links-titel" style="margin-top:0.6rem">Papier-Karten kaufen</p>
         <div class="vfr-links-row">
             <a class="btn-ext" href="https://www.eisenschmidt.aero/karten-manuals" target="_blank" rel="noopener">🛒 Eisenschmidt</a>
+            <a class="btn-ext" href="https://www.flightplanner.de/cms/ICAO_Karten" target="_blank" rel="noopener">🛒 FlightPlanner.de</a>
         </div>
     </div>`;
 }
