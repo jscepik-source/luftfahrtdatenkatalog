@@ -2,7 +2,10 @@
 <html lang="de" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Weltweiter Flughafen-Katalog</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +15,7 @@
     <style>
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        button, a, input, select { touch-action: manipulation; }
 
         :root {
             --font:        'Inter', system-ui, sans-serif;
@@ -1140,19 +1144,121 @@
         }
 
         /* ── Responsive ── */
+
+        /* Tablets */
+        @media (max-width: 768px) {
+            .hero-slide { gap: 32px; padding: 28px var(--space-md) 20px; }
+            .hero-stat-group { gap: 28px; }
+            .dist-panel { padding: var(--space-sm) var(--space-md); }
+            .search-wrap { max-width: 300px; }
+        }
+
+        /* Phones (landscape + portrait) */
         @media (max-width: 640px) {
-            header { padding: var(--space-sm) var(--space-md); }
+            /* Touch-friendly tap targets */
+            button, a, .chip, .card-tab { -webkit-tap-highlight-color: transparent; }
+
+            /* Header */
+            header { padding: var(--space-xs) var(--space-sm); }
+            .header-inner { gap: var(--space-sm); }
             .header-wordmark { display: none; }
             .header-divider { display: none; }
-            nav.toolbar { padding: var(--space-xs) var(--space-md); }
-            main.catalog { margin: var(--space-md) auto; padding: 0 var(--space-sm); }
-            .card-header { padding: var(--space-sm); gap: var(--space-xs); }
-            .card-body { padding: var(--space-sm); }
-            .detail-grid { grid-template-columns: repeat(2, 1fr); }
+            .header-text h1 { font-size: 0.98rem; }
+            .header-text p { display: none; }
+            .btn-theme { padding: 5px 8px; font-size: 0.85rem; }
+
+            /* Toolbar */
+            nav.toolbar { padding: var(--space-xs) var(--space-sm); }
+            .toolbar-inner { gap: 6px; }
+            .search-wrap { flex: 1 1 100%; max-width: 100%; order: -1; }
+            #zaehler { margin-left: 0; font-size: 0.68rem; }
+            .filter-group { gap: 4px; }
+            .filter-select { max-width: 120px; font-size: 0.7rem; }
+            .chip { font-size: 0.68rem; padding: 4px 8px; }
+
+            /* Distance calculator */
+            .dist-panel { padding: var(--space-xs) var(--space-sm); }
+            .dist-inner { gap: 5px; }
+            .dist-input { width: 62px; font-size: 0.8rem; }
+            .dist-label { font-size: 0.72rem; }
+
+            /* Main */
+            main.catalog { margin: var(--space-xs) auto var(--space-sm); padding: 0 var(--space-xs); }
+
+            /* Airport card */
+            .card-header { padding: 10px var(--space-sm); gap: 7px; }
+            .badge-icao { font-size: 0.75rem; padding: 3px 7px; min-width: 44px; }
+            .card-name { font-size: 0.84rem; }
+            .card-meta { font-size: 0.7rem; }
             .badge-type { display: none; }
-            .hero-slide { gap: 24px; padding: 24px var(--space-md) 16px; }
-            .hero-stat-group { gap: 24px; }
+            .badge-sched { font-size: 0.6rem; padding: 2px 6px; }
+            .card-body { padding: var(--space-sm); }
+
+            /* Detail grid */
+            .detail-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-xs); }
+
+            /* Tables: horizontal scroll */
+            .card-section { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .data-table { font-size: 0.74rem; min-width: 400px; }
+            .data-table th, .data-table td { padding: 6px 8px; }
+
+            /* Action buttons */
+            .action-links { flex-direction: column; gap: 6px; }
+            .btn-sv, .btn-aip { width: 100%; justify-content: center; padding: 10px 16px; }
+            .btn-ext { font-size: 0.76rem; padding: 7px 10px; }
+
+            /* Card tabs */
+            .card-tabs { margin-bottom: var(--space-sm); }
+            .card-tab { padding: 8px 10px; font-size: 0.67rem; }
+
+            /* VFR links */
+            .vfr-links-row { gap: 5px; }
+            .vfr-links-section { margin-bottom: var(--space-sm); }
+
+            /* NOTAM */
+            .notam-map-btn { padding: 10px 12px; gap: 9px; }
+            .notam-map-btn-icon { font-size: 1.2rem; }
+            .notam-map-btn strong { font-size: 0.78rem; }
+
+            /* Weather */
+            .wx-grid { grid-template-columns: repeat(2, 1fr); }
+            .metar-raw { font-size: 0.74rem; }
+
+            /* Flüge */
+            .fluege-cols { grid-template-columns: 1fr; }
+            .fluege-globe-wrap iframe { height: 240px; }
+            .flug-item { grid-template-columns: 62px 1fr auto; gap: 6px; padding: 7px 8px; }
+
+            /* Hero */
+            .hero-slide { gap: 20px; padding: 20px var(--space-sm) 12px; flex-direction: column; align-items: center; }
+            .hero-stat-group { gap: 20px; justify-content: center; }
+            .hero-vdivider { height: 32px; }
             .hero-text-block { display: none; }
+            .hero-stat-num { font-size: clamp(1.5rem, 6vw, 2rem); }
+            .hero-stat-label { font-size: 0.6rem; }
+
+            /* Map */
+            .map-container { height: 230px; }
+            .map-links { flex-wrap: wrap; }
+
+            /* Footer */
+            footer { padding: var(--space-lg) var(--space-sm); }
+            footer p { font-size: 0.68rem; line-height: 2; }
+        }
+
+        /* Very small phones (≤ 400px) */
+        @media (max-width: 400px) {
+            .card-tab { padding: 7px 7px; font-size: 0.62rem; letter-spacing: 0.02em; }
+            .action-links .btn-ext { width: 100%; justify-content: center; }
+            .flug-item { grid-template-columns: 58px 1fr; }
+            .flug-zeit { display: none; }
+            .hero-stat-group { gap: 12px; }
+            .hero-vdivider { display: none; }
+            .hero-stat-num { font-size: 1.5rem; }
+            .badge-iata { display: none; }
+            .dist-arrow { display: none; }
+            .detail-grid { gap: 5px; }
+            .detail-item dd { font-size: 0.82rem; }
         }
     </style>
 </head>
