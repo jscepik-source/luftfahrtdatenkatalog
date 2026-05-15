@@ -2322,22 +2322,37 @@ const VFR_QUELLEN = {
 };
 
 function vfrLinksHtml(icao, lat, lon) {
-    const prefix2 = (icao || '').slice(0, 2).toUpperCase();
-    const quellen  = VFR_QUELLEN[prefix2] || [];
-    const hasCoords = lat !== undefined && lon !== undefined && !isNaN(lat) && !isNaN(lon);
-    const svUrl = hasCoords
-        ? `https://skyvector.com/?ll=${parseFloat(lat).toFixed(4)},${parseFloat(lon).toFixed(4)}&chart=301&zoom=2`
+    const prefix2   = (icao || '').slice(0, 2).toUpperCase();
+    const quellen   = VFR_QUELLEN[prefix2] || [];
+    const hasCoords = lat !== undefined && lon !== undefined && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon));
+    const latF = hasCoords ? parseFloat(lat).toFixed(4) : '';
+    const lonF = hasCoords ? parseFloat(lon).toFixed(4) : '';
+
+    // ICAO-Karte (1:500.000) – WAC-Chart (chart=301) in SkyVector
+    const svIcaoUrl = hasCoords
+        ? `https://skyvector.com/?ll=${latF},${lonF}&chart=301&zoom=2`
         : `https://skyvector.com/airport/${icao}`;
 
-    const btns = quellen.map(q =>
+    // Luftraum – Windy mit Airspace-Layer
+    const windyUrl = hasCoords
+        ? `https://www.windy.com/${latF}/${lonF}/12?airspace`
+        : `https://www.windy.com/?airspace`;
+
+    const icaoBtns = quellen.map(q =>
         `<a class="btn-ext" href="${q.url}" target="_blank" rel="noopener">${q.icon} ${q.name}</a>`
     ).join('');
 
     return `<div class="vfr-links-section">
-        <p class="vfr-links-titel">VFR-Karten</p>
-        <div class="vfr-links-row">${btns}
-            <a class="btn-ext" href="${svUrl}" target="_blank" rel="noopener">🌐 SkyVector</a>
+        <p class="vfr-links-titel">ICAO-Karte (1:500.000)</p>
+        <div class="vfr-links-row">${icaoBtns}
+            <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector WAC</a>
+        </div>
+        <p class="vfr-links-titel" style="margin-top:0.6rem">Luftraum</p>
+        <div class="vfr-links-row">
+            <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy Airspace</a>
             <a class="btn-ext" href="https://www.openaip.net/" target="_blank" rel="noopener">📡 OpenAIP</a>
+            <a class="btn-ext" href="https://app.easyvfr.com/" target="_blank" rel="noopener">✈ EasyVFR</a>
+            <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector</a>
         </div>
         <p class="vfr-links-titel" style="margin-top:0.6rem">Papier-Karten kaufen</p>
         <div class="vfr-links-row">
