@@ -625,6 +625,15 @@
             line-height: 1.6;
         }
 
+        /* ── NfL-Einträge ── */
+        .nfl-section { margin-top: var(--space-sm); }
+        .nfl-section-titel { font-size: 0.75rem; font-weight: 600; color: var(--color-text-dim); margin-bottom: var(--space-xs); letter-spacing: 0.03em; text-transform: uppercase; }
+        .nfl-item { padding: 7px 0; border-bottom: 1px solid var(--color-border); font-size: 0.82rem; line-height: 1.5; }
+        .nfl-item:last-child { border-bottom: none; }
+        .nfl-datum  { font-size: 0.7rem; color: var(--color-text-dim); }
+        .nfl-nummer { font-weight: 600; font-size: 0.78rem; margin: 0 6px; }
+        .nfl-betreff { display: block; margin-top: 2px; }
+
         /* ── NOTAM external links ── */
         .notam-extern {
             display: flex;
@@ -1330,6 +1339,9 @@
 
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
+
+const NFL_JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
+let nflJsonCache = null;
 
 let katalog = {};
 let aktiverTyp = '';
@@ -2368,7 +2380,7 @@ out skel qt;`;
                 <button class="card-tab" onclick="switchTab(this,'karten')">Karten</button>
                 <button class="card-tab" onclick="switchTab(this,'fluege','${icao}')">Flüge</button>
                 <button class="card-tab" onclick="switchTab(this,'wetter')">Wetter</button>
-                <button class="card-tab" onclick="switchTab(this,'notam')">NOTAMs</button>
+                <button class="card-tab" onclick="switchTab(this,'notam','${icao}')">NOTAMs</button>
                 ${hasCoords ? `<button class="card-tab" onclick="switchTab(this,'karte','${icao}')">Karte</button>` : ''}
             </div>
 
@@ -2477,6 +2489,7 @@ out skel qt;`;
                     <span class="notam-extern-label">Weitere:</span>
                     <a class="btn-ext" href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">🇪🇺 EAD Basic (Europa)</a>
                 </div>
+                ${_isDFS ? `<div id="nfl-${icao}"><span class="status-loading">NfL werden geladen…</span></div>` : ''}
             </div>
 
             <!-- Karte Panel -->
@@ -2701,6 +2714,50 @@ document.getElementById('kontinent-sel').addEventListener('change', e => {
 document.getElementById('dist-a').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('dist-b').focus(); });
 document.getElementById('dist-b').addEventListener('keydown', e => { if (e.key === 'Enter') berechneDistanz(); });
 
+// ── NfL (Nachrichten für Luftfahrer) ─────────────────────────────────────────
+async function ladeNflJson() {
+    if (nflJsonCache) return nflJsonCache;
+    const r = await fetch(NFL_JSON_URL);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    nflJsonCache = await r.json();
+    return nflJsonCache;
+}
+
+function nflNummerFormatieren(e) {
+    const parts = (e.nummer || '').split('-');
+    const jahr  = parts[0] || '';
+    const lfd   = parts[2] || '';
+    const rom   = e.teil === '1' ? 'I' : 'II';
+    return `NfL ${rom}-${lfd}/${jahr}`;
+}
+
+async function ladeNfl(icao) {
+    const el = document.getElementById(`nfl-${icao}`);
+    if (!el || el.dataset.geladen) return;
+    el.dataset.geladen = '1';
+    try {
+        const json     = await ladeNflJson();
+        const eintraege = (json.icao_index || {})[icao] || [];
+        if (!eintraege.length) {
+            el.innerHTML = '<p style="font-size:0.78rem;color:var(--color-text-dim);margin-top:var(--space-xs)">Keine NfL-Einträge für diesen Flughafen.</p>';
+            return;
+        }
+        const zeige = eintraege.slice(0, 15);
+        el.innerHTML = `<div class="nfl-section">
+            <p class="nfl-section-titel">🇩🇪 DFS NfL-Einträge (${eintraege.length})</p>
+            ${zeige.map(e => `<div class="nfl-item">
+                <span class="nfl-datum">${e.datum}</span>
+                <span class="nfl-nummer">${nflNummerFormatieren(e)}</span>
+                <span class="nfl-betreff">${e.betreff}</span>
+            </div>`).join('')}
+            ${eintraege.length > 15 ? `<p style="font-size:0.72rem;color:var(--color-text-dim);margin-top:4px">… und ${eintraege.length - 15} weitere Einträge</p>` : ''}
+        </div>
+        <p class="wx-quelle">Quelle: DFS NfL via aip.dfs.de</p>`;
+    } catch(e) {
+        el.innerHTML = `<span class="status-error">NfL nicht ladbar: ${e.message}</span>`;
+    }
+}
+
 // ── Card Tabs ────────────────────────────────────────────────────────────────
 function switchTab(btn, panel, icao) {
     const body = btn.closest('.card-body');
@@ -2710,6 +2767,7 @@ function switchTab(btn, panel, icao) {
         setTimeout(() => karteInstanzen[icao].invalidateSize(), 60);
     }
     if (panel === 'fluege'  && icao) ladeFluege(icao);
+    if (panel === 'notam'   && icao) ladeNfl(icao);
 }
 
 // ── Flüge (adsb.fi Live ADS-B) ───────────────────────────────────────────────
