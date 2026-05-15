@@ -2897,14 +2897,14 @@ const PROXY_NAMEN = {
 
 async function fetchProxy(url) {
     const versuche = [
-        { key: 'direct',    u: url },
+        { key: 'direct',     u: url },
         { key: 'allorigins', u: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
         { key: 'corsproxy',  u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
         { key: 'codetabs',   u: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}` },
     ];
     for (const { key, u } of versuche) {
         try {
-            const res = await fetch(u);
+            const res = await fetch(u, { signal: AbortSignal.timeout(8000) });
             if (!res.ok) continue;
             const data = await res.json();
             return { data, quelle: PROXY_NAMEN[key] };
@@ -2971,64 +2971,68 @@ async function ladeWetter(icao, lat, lon) {
     if (!el || el.dataset.geladen) return;
     el.dataset.geladen = '1';
     if (wettercache[icao]) { el.innerHTML = wettercache[icao]; return; }
+
+    const isGerman = icao.startsWith('ED') || icao.startsWith('ET');
+    let html = '';
+
+    // METAR – eigener try/catch, damit TAF-/BrightSky-Fallback immer greift
+    let mData = [], mQuelle = '';
     try {
-        const [mResult, tResult] = await Promise.all([
-            fetchProxy(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=json&hours=2`),
-            fetchProxy(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`)
-        ]);
-        const mRes = mResult.data;
-        const tRes = tResult.data;
-        const quelle = mResult.quelle;
-        let html = '';
-        if (mRes && mRes.length > 0) {
-            const m = mRes[0];
-            const cat = m.fltCat || '';
-            const wind = m.wdir !== undefined ? `${m.wdir}° / ${m.wspd} kt${m.wgst ? ' (Böen '+m.wgst+' kt)' : ''}` : '–';
-            const vis   = m.visib  !== undefined ? `${m.visib} SM` : '–';
-            const temp  = m.temp   !== undefined ? `${m.temp} °C` : '–';
-            const dew   = m.dewp   !== undefined ? `${m.dewp} °C` : '–';
-            const qnh   = m.altim  !== undefined ? `${m.altim} hPa` : '–';
-            const clouds = Array.isArray(m.clouds) && m.clouds.length
-                ? m.clouds.map(c => `${c.cover} ${c.base}ft`).join(', ')
-                : (m.cover || '–');
-            html += `<div class="metar-box">
-                <p class="metar-raw">${m.rawOb || ''} ${cat ? `<span class="badge-fltcat ${fltcatClass(cat)}">${cat}</span>` : ''}</p>
-                <dl class="wx-grid">
-                    <div class="wx-item"><dt>Wind</dt><dd>${wind}</dd></div>
-                    <div class="wx-item"><dt>Sicht</dt><dd>${vis}</dd></div>
-                    <div class="wx-item"><dt>Temp / TP</dt><dd>${temp} / ${dew}</dd></div>
-                    <div class="wx-item"><dt>QNH</dt><dd>${qnh}</dd></div>
-                    <div class="wx-item"><dt>Wolken</dt><dd>${clouds}</dd></div>
-                    ${m.wxString ? `<div class="wx-item"><dt>Phänomene</dt><dd>${m.wxString}</dd></div>` : ''}
-                </dl>
-            </div>`;
-            html += `<p class="wx-quelle">Quelle: ${quelle}</p>`;
+        const r = await fetchProxy(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=json&hours=2`);
+        mData   = Array.isArray(r.data) ? r.data : [];
+        mQuelle = r.quelle;
+    } catch(e) { /* Proxy nicht erreichbar → Fallback */ }
+
+    if (mData.length > 0) {
+        const m = mData[0];
+        const cat    = m.fltCat || '';
+        const wind   = m.wdir !== undefined ? `${m.wdir}° / ${m.wspd} kt${m.wgst ? ' (Böen '+m.wgst+' kt)' : ''}` : '–';
+        const vis    = m.visib  !== undefined ? `${m.visib} SM` : '–';
+        const temp   = m.temp   !== undefined ? `${m.temp} °C` : '–';
+        const dew    = m.dewp   !== undefined ? `${m.dewp} °C` : '–';
+        const qnh    = m.altim  !== undefined ? `${m.altim} hPa` : '–';
+        const clouds = Array.isArray(m.clouds) && m.clouds.length
+            ? m.clouds.map(c => `${c.cover} ${c.base}ft`).join(', ')
+            : (m.cover || '–');
+        html += `<div class="metar-box">
+            <p class="metar-raw">${m.rawOb || ''} ${cat ? `<span class="badge-fltcat ${fltcatClass(cat)}">${cat}</span>` : ''}</p>
+            <dl class="wx-grid">
+                <div class="wx-item"><dt>Wind</dt><dd>${wind}</dd></div>
+                <div class="wx-item"><dt>Sicht</dt><dd>${vis}</dd></div>
+                <div class="wx-item"><dt>Temp / TP</dt><dd>${temp} / ${dew}</dd></div>
+                <div class="wx-item"><dt>QNH</dt><dd>${qnh}</dd></div>
+                <div class="wx-item"><dt>Wolken</dt><dd>${clouds}</dd></div>
+                ${m.wxString ? `<div class="wx-item"><dt>Phänomene</dt><dd>${m.wxString}</dd></div>` : ''}
+            </dl>
+        </div>`;
+        html += `<p class="wx-quelle">Quelle: ${mQuelle}</p>`;
+    } else if (isGerman && lat && lon) {
+        // Kein METAR (Flugfeld ohne Meldung oder Proxy ausgefallen) → DWD/BrightSky
+        const bsData = await ladeBrightSky(lat, lon);
+        if (bsData) {
+            html += renderBrightSky(bsData, null);
         } else {
-            const isGerman = icao.startsWith('ED') || icao.startsWith('ET');
-            if (isGerman && lat && lon) {
-                const bsData = await ladeBrightSky(lat, lon);
-                if (bsData) {
-                    html += renderBrightSky(bsData, null);
-                } else {
-                    html += '<p class="status-error">Kein METAR für dieses Flugfeld — kein Wetterbericht verfügbar</p>';
-                }
-            } else {
-                html += '<p style="color:var(--color-text-dim);font-size:0.85rem">Dieses Flugfeld meldet keine METAR-Wetterdaten.</p>';
-            }
-            html += wetterExternLinks(icao, lat, lon);
+            html += '<p class="status-error">Kein METAR für dieses Flugfeld — kein Wetterbericht verfügbar</p>';
         }
-        if (tRes && tRes.length > 0 && tRes[0].rawTAF) {
+        html += wetterExternLinks(icao, lat, lon);
+    } else {
+        html += '<p style="color:var(--color-text-dim);font-size:0.85rem">Dieses Flugfeld meldet keine METAR-Wetterdaten.</p>';
+        html += wetterExternLinks(icao, lat, lon);
+    }
+
+    // TAF – optional, Fehler still ignorieren
+    try {
+        const tRes = await fetchProxy(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`);
+        if (Array.isArray(tRes.data) && tRes.data.length > 0 && tRes.data[0].rawTAF) {
             html += `<section class="card-section">
                 <h3 class="section-title">TAF</h3>
-                <pre class="taf-pre">${tRes[0].rawTAF}</pre>
+                <pre class="taf-pre">${tRes.data[0].rawTAF}</pre>
             </section>`;
         }
-        wettercache[icao] = html;
-        el.innerHTML = html;
-    } catch(e) {
-        console.error('Wetter Fehler:', e);
-        el.innerHTML = `<span class="status-error">Wetterdaten nicht verfügbar (${e.message})</span>${wetterExternLinks(icao, lat, lon)}`;
-    }
+    } catch(e) {}
+
+    wettercache[icao] = html;
+    el.innerHTML = html;
 }
 
 
