@@ -1345,8 +1345,10 @@
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
 
-const NFL_JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
-let nflJsonCache = null;
+const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
+const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
+let nflJsonCache         = null;
+let eurocontrolCache     = null;
 
 let katalog = {};
 let aktiverTyp = '';
@@ -2470,7 +2472,7 @@ out skel qt;`;
             <!-- Tabs -->
             <div class="card-tabs">
                 <button class="card-tab active" onclick="switchTab(this,'info')">Info</button>
-                <button class="card-tab" onclick="switchTab(this,'karten')">Karten</button>
+                <button class="card-tab" onclick="switchTab(this,'karten','${icao}')">Karten</button>
                 <button class="card-tab" onclick="switchTab(this,'fluege','${icao}')">Flüge</button>
                 <button class="card-tab" onclick="switchTab(this,'wetter')">Wetter</button>
                 <button class="card-tab" onclick="switchTab(this,'notam','${icao}')">NOTAMs</button>
@@ -2530,6 +2532,7 @@ out skel qt;`;
             <!-- Karten Panel -->
             <div class="card-tab-panel" data-panel="karten">
                 ${vfrLinksHtml(icao, ap.lat, ap.lon)}
+                ${'ELB'.includes(icao[0]) ? `<div id="eurocontrol-${icao}"><span class="status-loading">EUROCONTROL-Karten werden geladen…</span></div>` : ''}
                 <div id="dfs-${icao}"></div>
             </div>
 
@@ -2852,6 +2855,46 @@ async function ladeNfl(icao) {
     }
 }
 
+// ── EUROCONTROL Luftraumkarten ────────────────────────────────────────────────
+async function ladeEurocontrolJson() {
+    if (eurocontrolCache) return eurocontrolCache;
+    const r = await fetch(EUROCONTROL_JSON_URL);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    eurocontrolCache = await r.json();
+    return eurocontrolCache;
+}
+
+async function ladeEurocontrol(icao) {
+    const el = document.getElementById(`eurocontrol-${icao}`);
+    if (!el || el.dataset.geladen) return;
+    el.dataset.geladen = '1';
+    try {
+        const json = await ladeEurocontrolJson();
+        const pubs = Object.entries(json);
+        if (!pubs.length) { el.innerHTML = ''; return; }
+
+        const items = pubs.map(([name, pub]) => {
+            const pdfs = Object.entries(pub.karten || {});
+            const links = pdfs.length
+                ? pdfs.map(([label, url]) =>
+                    `<a class="btn-ext" href="${url}" target="_blank" rel="noopener" style="font-size:0.72rem;padding:4px 8px">⬇ ${label || 'PDF'}</a>`
+                  ).join('')
+                : `<a class="btn-ext" href="${pub._url}" target="_blank" rel="noopener" style="font-size:0.72rem;padding:4px 8px">↗ Öffnen</a>`;
+            return `<div class="nfl-item">
+                <div class="nfl-betreff">${name}</div>
+                <div class="vfr-links-row" style="margin-top:4px">${links}</div>
+            </div>`;
+        }).join('');
+
+        el.innerHTML = `<div class="nfl-section" style="margin-top:0.8rem">
+            <p class="vfr-links-titel">EUROCONTROL Luftraumkarten</p>
+            ${items}
+        </div>`;
+    } catch(e) {
+        el.innerHTML = `<p class="flug-empty" style="font-size:0.75rem">EUROCONTROL-Daten nicht verfügbar.</p>`;
+    }
+}
+
 // ── Card Tabs ────────────────────────────────────────────────────────────────
 function switchTab(btn, panel, icao) {
     const body = btn.closest('.card-body');
@@ -2862,6 +2905,7 @@ function switchTab(btn, panel, icao) {
     }
     if (panel === 'fluege'  && icao) ladeFluege(icao);
     if (panel === 'notam'   && icao) ladeNfl(icao);
+    if (panel === 'karten'  && icao) ladeEurocontrol(icao);
 }
 
 // ── Flüge (adsb.fi Live ADS-B) ───────────────────────────────────────────────

@@ -1,22 +1,25 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import json
 import os
 import subprocess
 
-BASIS_URL = "https://www.eurocontrol.int"
+REPO_DIR   = os.path.dirname(os.path.abspath(__file__))
+BASIS_URL  = "https://www.eurocontrol.int"
 KARTEN_URL = BASIS_URL + "/service/cartography"
 
 
-def warte(browser):
-    WebDriverWait(browser, 5).until(
+def warte(browser, timeout=10):
+    WebDriverWait(browser, timeout).until(
         EC.presence_of_element_located((By.TAG_NAME, 'a'))
     )
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 def alle_links(browser):
@@ -26,18 +29,21 @@ def alle_links(browser):
 
 def durchlauf():
     options = Options()
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
 
-    browser = webdriver.Chrome(options=options)
+    service = Service(ChromeDriverManager().install())
+    browser = webdriver.Chrome(service=service, options=options)
     katalog = {}
 
     try:
+        print("1. EUROCONTROL Cartography laden...")
         browser.get(KARTEN_URL)
         warte(browser)
 
-        # Alle Publikations-Links sammeln
         publikationen = {}
         for text, href in alle_links(browser):
             if href and '/publication/' in href and text and len(text) > 5:
@@ -46,7 +52,7 @@ def durchlauf():
         print(f"{len(publikationen)} Publikationen gefunden")
 
         for name, pub_url in publikationen.items():
-            print(f"  {name[:60]} ...", end=" ", flush=True)
+            print(f"  {name[:70]} ...", end=" ", flush=True)
 
             karten = {}
             try:
@@ -56,7 +62,6 @@ def durchlauf():
                 for text, href in alle_links(browser):
                     if not href:
                         continue
-                    # Direkte PDF-Links sammeln (keine archive_download – die brauchen Auth)
                     if href.lower().endswith('.pdf'):
                         label = text if text else href.split('/')[-1]
                         if not href.startswith('http'):
@@ -65,7 +70,6 @@ def durchlauf():
             except Exception:
                 pass
 
-            # Fallback: Publikationsseite selbst
             if not karten:
                 karten["Auf EUROCONTROL öffnen"] = pub_url
 
@@ -75,17 +79,18 @@ def durchlauf():
                 "karten": karten
             }
 
-        with open("eurocontrol_katalog_export.json", "w", encoding="utf-8") as f:
-            json.dump(katalog, f, indent=4, ensure_ascii=False)
+        out_path = os.path.join(REPO_DIR, "eurocontrol_katalog_export.json")
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(katalog, f, indent=2, ensure_ascii=False)
 
         print(f"\nFertig! {len(katalog)} Publikationen gespeichert.")
 
         _win_git = r"C:\Program Files\Git\cmd\git.exe"
         git = _win_git if os.path.isfile(_win_git) else "git"
-        subprocess.run([git, "add", "eurocontrol_katalog_export.json"], check=True)
-        result = subprocess.run([git, "commit", "-m", "Automatische Aktualisierung Eurocontrol"])
+        subprocess.run([git, "-C", REPO_DIR, "add", "eurocontrol_katalog_export.json"], check=True)
+        result = subprocess.run([git, "-C", REPO_DIR, "commit", "-m", "EUROCONTROL-Karten aktualisiert"])
         if result.returncode == 0:
-            subprocess.run([git, "push"], check=True)
+            subprocess.run([git, "-C", REPO_DIR, "push"], check=True)
             print("GitHub aktualisiert.")
         else:
             print("Keine Änderungen – kein Push nötig.")
@@ -94,7 +99,6 @@ def durchlauf():
         import traceback
         print(f"Fehler: {e}")
         traceback.print_exc()
-
     finally:
         browser.quit()
 
