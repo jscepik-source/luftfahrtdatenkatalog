@@ -2976,18 +2976,27 @@ async function ladeEurocontrol(icao) {
     el.dataset.geladen = '1';
     try {
         const json = await ladeEurocontrolJson();
-        const pubs = Object.entries(json);
+
+        // Nur die 4 relevanten Kartentypen anzeigen
+        const FILTER = ['ERC', 'ERN', 'FIR', 'UIR'];
+        const pubs = Object.entries(json)
+            .filter(([name]) => FILTER.some(kw => name.toUpperCase().includes(kw)))
+            .slice(0, 4);
+
         if (!pubs.length) { el.innerHTML = ''; return; }
 
         const items = pubs.map(([name, pub]) => {
-            const pdfs = Object.entries(pub.karten || {});
+            // Kurztitel: alles vor dem ersten " - " oder Datum abschneiden
+            const kurz = name.replace(/\s*[-–]\s*\d{1,2}\s+\w+\s+\d{4}.*$/, '').trim();
+            // Max. 3 PDFs pro Publikation
+            const pdfs = Object.entries(pub.karten || {}).slice(0, 3);
             const links = pdfs.length
                 ? pdfs.map(([label, url]) =>
                     `<a class="btn-ext" href="${url}" target="_blank" rel="noopener" style="font-size:0.72rem;padding:4px 8px">⬇ ${label || 'PDF'}</a>`
                   ).join('')
                 : `<a class="btn-ext" href="${pub._url}" target="_blank" rel="noopener" style="font-size:0.72rem;padding:4px 8px">↗ Öffnen</a>`;
             return `<div class="nfl-item">
-                <div class="nfl-betreff">${name}</div>
+                <div class="nfl-betreff" style="font-size:0.8rem">${kurz}</div>
                 <div class="vfr-links-row" style="margin-top:4px">${links}</div>
             </div>`;
         }).join('');
