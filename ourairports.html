@@ -2146,6 +2146,144 @@ function getAipLink(icao) {
     return AIP_PREFIXES[icao.slice(0, 2)] || null;
 }
 
+// ── Dedizierte NOTAM-Portale (landesspezifisch) ──────────────────────────────
+const NOTAM_PORTALE = {
+    // Europa
+    'ED': { name: 'DFS Briefing',          url: 'https://briefing.dfs.de',                                          flag: '🇩🇪' },
+    'ET': { name: 'DFS Briefing',          url: 'https://briefing.dfs.de',                                          flag: '🇩🇪' },
+    'EG': { name: 'NATS AIS',              url: 'https://www.nats-uk.ead-it.com',                                   flag: '🇬🇧' },
+    'EI': { name: 'IAA AIS',              url: 'https://www.iaa.ie/general-aviation/aeronautical-information',      flag: '🇮🇪' },
+    'EK': { name: 'Naviair AIS',           url: 'https://www.naviair.dk/en/services/ais',                          flag: '🇩🇰' },
+    'EB': { name: 'skeyes AIS',            url: 'https://www.skeyes.be/en/services/aeronautical-information-services', flag: '🇧🇪' },
+    'EH': { name: 'LVNL eAIP',            url: 'https://eaip.lvnl.nl',                                             flag: '🇳🇱' },
+    'EL': { name: 'ANA AIS',              url: 'https://www.ana.lu/en/ais',                                        flag: '🇱🇺' },
+    'EN': { name: 'Avinor AIS',            url: 'https://avinor.no/en/for-the-industry/ais',                       flag: '🇳🇴' },
+    'ES': { name: 'LFV AIS',              url: 'https://ais.lfv.se',                                               flag: '🇸🇪' },
+    'EF': { name: 'Finavia AIS',           url: 'https://ais.fi',                                                  flag: '🇫🇮' },
+    'EE': { name: 'EANS AIS',             url: 'https://www.eans.ee/en/ais',                                       flag: '🇪🇪' },
+    'EV': { name: 'LGS AIS',              url: 'https://ais.lgs.lv',                                               flag: '🇱🇻' },
+    'EY': { name: 'Oro Navigacija AIS',    url: 'https://www.ans.lt/en/ais',                                       flag: '🇱🇹' },
+    'BI': { name: 'Isavia AIS',            url: 'https://www.isavia.is/en/aviation/ais',                           flag: '🇮🇸' },
+    'LF': { name: 'SIA DGAC',             url: 'https://www.sia.aviation-civile.gouv.fr',                          flag: '🇫🇷' },
+    'LE': { name: 'ENAIRE AIP',            url: 'https://aip.enaire.es',                                           flag: '🇪🇸' },
+    'GC': { name: 'ENAIRE AIP',            url: 'https://aip.enaire.es',                                           flag: '🇪🇸' },
+    'LP': { name: 'NAV Portugal AIS',      url: 'https://www.nav.pt/en/ais',                                       flag: '🇵🇹' },
+    'LO': { name: 'Austrocontrol AIS',     url: 'https://www.ais.austrocontrol.at',                                flag: '🇦🇹' },
+    'LS': { name: 'skyguide Briefing',     url: 'https://www.skybriefing.com',                                     flag: '🇨🇭' },
+    'LI': { name: 'ENAV AIS',             url: 'https://www.enav.it/en/ais',                                       flag: '🇮🇹' },
+    'LG': { name: 'HCAA AIS',             url: 'https://www.hcaa.gr/en/ais',                                       flag: '🇬🇷' },
+    'LM': { name: 'MATS AIS',             url: 'https://www.maltairport.com/ais',                                  flag: '🇲🇹' },
+    'LC': { name: 'DCAC AIS',             url: 'https://www.dcac.gov.cy/dcac/web.nsf/page43_en',                   flag: '🇨🇾' },
+    'LT': { name: 'DHMİ AIS',             url: 'https://www.dhmi.gov.tr/ais',                                      flag: '🇹🇷' },
+    'EP': { name: 'PANSA NOTAM',           url: 'https://www.ais.pansa.pl/notam/',                                 flag: '🇵🇱' },
+    'LK': { name: 'ANS Czech LIS',         url: 'https://lis.rlp.cz',                                             flag: '🇨🇿' },
+    'LZ': { name: 'LPS SR LIS',            url: 'https://lis.lps.sk',                                             flag: '🇸🇰' },
+    'LH': { name: 'HungaroControl AIS',    url: 'https://ais.hungarocontrol.hu',                                   flag: '🇭🇺' },
+    'LR': { name: 'ROMATSA AIS',           url: 'https://www.romatsa.ro/index.php/ais',                            flag: '🇷🇴' },
+    'LB': { name: 'BULATSA AIS',           url: 'https://www.bulatsa.com/en/ais',                                  flag: '🇧🇬' },
+    'LD': { name: 'Croatia Control AIS',   url: 'https://www.crocontrol.hr/default.aspx?id=34',                    flag: '🇭🇷' },
+    'LY': { name: 'SMATSA AIS',            url: 'https://www.smatsa.rs/en/ais',                                   flag: '🇷🇸' },
+    'LJ': { name: 'Slovenia Control AIS',  url: 'https://www.sloveniacontrol.si/en/AIS',                           flag: '🇸🇮' },
+    'LW': { name: 'M-NAV AIS',             url: 'https://www.m-nav.mk/ais',                                       flag: '🇲🇰' },
+    'LA': { name: 'ALBCONTROL AIS',        url: 'https://www.albcontrol.al/ais',                                   flag: '🇦🇱' },
+    'LQ': { name: 'BHANSA AIS',            url: 'https://www.bhansa.gov.ba/ais',                                   flag: '🇧🇦' },
+    'UG': { name: 'Sakaeronavigatsia AIS', url: 'https://ais.sakaeronavigatsia.ge',                                flag: '🇬🇪' },
+    'UD': { name: 'Armats AIS',            url: 'https://armats.com/en/ais',                                       flag: '🇦🇲' },
+    'UB': { name: 'AzANS AIS',             url: 'https://www.azans.az/en/ais',                                    flag: '🇦🇿' },
+    'UK': { name: 'UkSATSE AIS',           url: 'https://ais.uksatse.ua',                                         flag: '🇺🇦' },
+    'UM': { name: 'BelAeronavigation AIS', url: 'https://ais.belaeronavigatsia.by',                                flag: '🇧🇾' },
+    'LL': { name: 'CAAI AIS Israel',       url: 'https://www.caa.gov.il/ais',                                      flag: '🇮🇱' },
+    // Naher Osten
+    'OM': { name: 'GCAA AIS UAE',          url: 'https://www.gcaa.gov.ae/en/ais',                                  flag: '🇦🇪' },
+    'OE': { name: 'GACA AIS',             url: 'https://www.gaca.gov.sa/web/en-gb/ais',                            flag: '🇸🇦' },
+    'OJ': { name: 'CARC AIS Jordan',       url: 'https://www.carc.gov.jo/ais',                                    flag: '🇯🇴' },
+    'OO': { name: 'CAAM Oman AIS',         url: 'https://www.caa.gov.om/ais',                                     flag: '🇴🇲' },
+    'OT': { name: 'QCAA AIS',             url: 'https://www.caa.gov.qa/ais',                                      flag: '🇶🇦' },
+    'OK': { name: 'DGCA Kuwait AIS',       url: 'https://www.dgca.gov.kw/ais',                                    flag: '🇰🇼' },
+    'OB': { name: 'CAA Bahrain AIS',       url: 'https://www.caa.gov.bh/ais',                                     flag: '🇧🇭' },
+    'OR': { name: 'IACA AIS Iraq',         url: 'https://www.iaca.gov.iq/ais',                                    flag: '🇮🇶' },
+    'OI': { name: 'CAO Iran AIS',          url: 'https://www.cao.ir/en/ais',                                      flag: '🇮🇷' },
+    // Asien-Pazifik
+    'RJ': { name: 'JCAB AIS Japan',        url: 'https://aisjapan.mlit.go.jp',                                   flag: '🇯🇵' },
+    'RO': { name: 'JCAB AIS Japan',        url: 'https://aisjapan.mlit.go.jp',                                   flag: '🇯🇵' },
+    'RK': { name: 'MOLIT AIS Korea',       url: 'https://ais.casa.go.kr',                                         flag: '🇰🇷' },
+    'RC': { name: 'CAA Taiwan AIS',        url: 'https://www.caa.gov.tw',                                         flag: '🇹🇼' },
+    'VH': { name: 'CAD Hong Kong AIS',     url: 'https://www.cad.gov.hk/english/ais.html',                        flag: '🇭🇰' },
+    'VT': { name: 'AEROTHAI AIS',          url: 'https://www.aerothai.co.th/en/ais',                              flag: '🇹🇭' },
+    'WS': { name: 'CAA Singapore AIS',     url: 'https://www.caas.gov.sg',                                        flag: '🇸🇬' },
+    'WM': { name: 'CAAM AIS Malaysia',     url: 'https://www.caam.gov.my/en/ais',                                 flag: '🇲🇾' },
+    'WB': { name: 'CAAM AIS Malaysia',     url: 'https://www.caam.gov.my/en/ais',                                 flag: '🇲🇾' },
+    'WI': { name: 'AirNav Indonesia',      url: 'https://www.airnavindonesia.co.id',                              flag: '🇮🇩' },
+    'WA': { name: 'AirNav Indonesia',      url: 'https://www.airnavindonesia.co.id',                              flag: '🇮🇩' },
+    'RP': { name: 'CAAP AIS Philippines',  url: 'https://www.caap.gov.ph',                                        flag: '🇵🇭' },
+    'VV': { name: 'VATM AIS Vietnam',      url: 'https://www.vatm.vn/en/ais',                                    flag: '🇻🇳' },
+    'VN': { name: 'CAAN AIS Nepal',        url: 'https://www.caan.gov.np/pages/ais',                              flag: '🇳🇵' },
+    'VC': { name: 'AASL AIS Sri Lanka',    url: 'https://www.airport.lk/ais',                                    flag: '🇱🇰' },
+    'VG': { name: 'CAAB AIS Bangladesh',   url: 'https://www.caab.gov.bd',                                        flag: '🇧🇩' },
+    'VQ': { name: 'DCAB AIS Bhutan',       url: 'https://www.dcab.gov.bt',                                        flag: '🇧🇹' },
+    'OP': { name: 'CAA Pakistan AIS',      url: 'https://www.caapakistan.com.pk/ais',                             flag: '🇵🇰' },
+    'VI': { name: 'DGCA NOTAM Indien',     url: 'https://dgca.gov.in/digigov-portal/?page=notam',                flag: '🇮🇳' },
+    'VA': { name: 'DGCA NOTAM Indien',     url: 'https://dgca.gov.in/digigov-portal/?page=notam',                flag: '🇮🇳' },
+    'VE': { name: 'DGCA NOTAM Indien',     url: 'https://dgca.gov.in/digigov-portal/?page=notam',                flag: '🇮🇳' },
+    'VO': { name: 'DGCA NOTAM Indien',     url: 'https://dgca.gov.in/digigov-portal/?page=notam',                flag: '🇮🇳' },
+    'ZB': { name: 'CAAC AIS China',        url: 'https://www.caac.gov.cn',                                        flag: '🇨🇳' },
+    'ZS': { name: 'CAAC AIS China',        url: 'https://www.caac.gov.cn',                                        flag: '🇨🇳' },
+    'ZG': { name: 'CAAC AIS China',        url: 'https://www.caac.gov.cn',                                        flag: '🇨🇳' },
+    'ZL': { name: 'CAAC AIS China',        url: 'https://www.caac.gov.cn',                                        flag: '🇨🇳' },
+    'ZU': { name: 'CAAC AIS China',        url: 'https://www.caac.gov.cn',                                        flag: '🇨🇳' },
+    'ZW': { name: 'CAAC AIS China',        url: 'https://www.caac.gov.cn',                                        flag: '🇨🇳' },
+    'ZY': { name: 'CAAC AIS China',        url: 'https://www.caac.gov.cn',                                        flag: '🇨🇳' },
+    // Afrika
+    'FA': { name: 'ATNS AIS Südafrika',    url: 'https://www.atns.co.za/ais',                                    flag: '🇿🇦' },
+    'HE': { name: 'ECAA AIS Ägypten',      url: 'https://www.ecaa.gov.eg',                                        flag: '🇪🇬' },
+    'GM': { name: 'ONDA AIS Marokko',      url: 'https://ais.onda.ma',                                            flag: '🇲🇦' },
+    'DN': { name: 'NCAA AIS Nigeria',      url: 'https://www.ncaa.gov.ng/ais',                                    flag: '🇳🇬' },
+    'HK': { name: 'KCAA AIS Kenia',        url: 'https://www.kcaa.or.ke/ais',                                    flag: '🇰🇪' },
+    'HA': { name: 'ECAA AIS Äthiopien',    url: 'https://www.ecaa.gov.et/ais',                                   flag: '🇪🇹' },
+    'HT': { name: 'TCAA AIS Tansania',     url: 'https://www.tcaa.go.tz/ais',                                    flag: '🇹🇿' },
+    'DG': { name: 'GCAA AIS Ghana',        url: 'https://www.gcaa.com.gh',                                        flag: '🇬🇭' },
+    // Lateinamerika
+    'MU': { name: 'IACC AIS Kuba',         url: 'https://www.iacc.cu/ais',                                        flag: '🇨🇺' },
+    'MP': { name: 'AAC AIS Panama',        url: 'https://www.aeronautica.gob.pa/ais',                             flag: '🇵🇦' },
+    'MR': { name: 'DGAC AIS Costa Rica',   url: 'https://www.dgac.go.cr/ais',                                    flag: '🇨🇷' },
+    'MM': { name: 'SENEAM NOTAM Mexiko',   url: 'https://www.seneam.gob.mx/notam/',                              flag: '🇲🇽' },
+    'MX': { name: 'SENEAM NOTAM Mexiko',   url: 'https://www.seneam.gob.mx/notam/',                              flag: '🇲🇽' },
+    'SA': { name: 'ANAC AIS Argentinien',  url: 'https://www.anac.gov.ar/anac/web/index.php/1/12/ais',           flag: '🇦🇷' },
+    'SB': { name: 'DECEA NOTAMweb',        url: 'https://notamweb.decea.mil.br',                                  flag: '🇧🇷' },
+    'SN': { name: 'DECEA NOTAMweb',        url: 'https://notamweb.decea.mil.br',                                  flag: '🇧🇷' },
+    'SW': { name: 'DECEA NOTAMweb',        url: 'https://notamweb.decea.mil.br',                                  flag: '🇧🇷' },
+    'SS': { name: 'DECEA NOTAMweb',        url: 'https://notamweb.decea.mil.br',                                  flag: '🇧🇷' },
+    'SD': { name: 'DECEA NOTAMweb',        url: 'https://notamweb.decea.mil.br',                                  flag: '🇧🇷' },
+    'SI': { name: 'DECEA NOTAMweb',        url: 'https://notamweb.decea.mil.br',                                  flag: '🇧🇷' },
+    'SC': { name: 'DGAC AIS Chile',        url: 'https://www.dgac.gob.cl/portalweb/ais',                         flag: '🇨🇱' },
+    'SK': { name: 'Aerocivil AIS Kolumbien', url: 'https://www.aerocivil.gov.co/ais',                            flag: '🇨🇴' },
+    'SP': { name: 'CORPAC AIS Peru',       url: 'https://www.corpac.gob.pe/ais',                                  flag: '🇵🇪' },
+    'SV': { name: 'INAC AIS Venezuela',    url: 'https://www.inac.gob.ve/ais',                                   flag: '🇻🇪' },
+    'SE': { name: 'DGAC AIS Ecuador',      url: 'https://www.aviacioncivil.gob.ec/ais',                          flag: '🇪🇨' },
+    'SU': { name: 'DINACIA AIS Uruguay',   url: 'https://www.dinacia.gub.uy/ais',                                 flag: '🇺🇾' },
+    'SG': { name: 'DINAC AIS Paraguay',    url: 'https://www.dinac.gov.py/ais',                                   flag: '🇵🇾' },
+    'SL': { name: 'DGAC AIS Bolivien',     url: 'https://www.dgac.gob.bo/ais',                                   flag: '🇧🇴' },
+};
+const NOTAM_PORTALE_SINGLE = {
+    'C': { name: 'Nav Canada CFPS',             url: 'https://www.navcanada.ca/en/flight-planning/flight-briefing.aspx', flag: '🇨🇦' },
+    'Y': { name: 'Airservices Australia NAIPS', url: 'https://www.airservicesaustralia.com/naips',                       flag: '🇦🇺' },
+    'N': { name: 'Airways NZ AIS',              url: 'https://www.aip.net.nz',                                           flag: '🇳🇿' },
+};
+
+function nationalNotamQuelle(icao) {
+    if (!icao || icao.length < 2) return null;
+    const p2 = icao.slice(0, 2).toUpperCase();
+    const p1 = icao.slice(0, 1).toUpperCase();
+    // USA (K/P) haben FAA bereits als eigenen Button im NOTAM-Tab
+    if (p1 === 'K' || p1 === 'P') return null;
+    const portal = NOTAM_PORTALE[p2] || NOTAM_PORTALE_SINGLE[p1];
+    if (portal) return { ...portal, isPortal: true };
+    // Fallback: AIP-Link des Landes
+    const aip = AIP_PREFIXES[p2] || AIP_SINGLE_LETTER[p1];
+    if (aip) return { name: aip.name, url: aip.url, flag: '📋', isPortal: false };
+    return null;
+}
+
 function baueKarte(icao, ap) {
     const article = document.createElement('article');
     article.className = 'airport-card';
@@ -2207,6 +2345,7 @@ out skel qt;`;
     const _isDFS = _prefix === 'ED' || _prefix === 'ET';
     const _catEntry = _isDFS && ((vfrKatalog && vfrKatalog[icao]) || (ifrKatalog && ifrKatalog[icao]));
     const aip = _catEntry ? { name: _aipBase ? _aipBase.name : 'DFS AIP', url: _catEntry._url } : _aipBase;
+    const natNotam = nationalNotamQuelle(icao);
 
     article.innerHTML = `
         <button class="card-header" onclick="toggle(this,'${icao}',${ap.lat||'null'},${ap.lon||'null'})" aria-expanded="false">
@@ -2302,6 +2441,14 @@ out skel qt;`;
 
             <!-- NOTAM Panel -->
             <div class="card-tab-panel" data-panel="notam">
+                ${natNotam ? `<a class="notam-map-btn" href="${natNotam.url}" target="_blank" rel="noopener">
+                    <span class="notam-map-btn-icon">${natNotam.flag}</span>
+                    <span>
+                        <strong>${natNotam.name}</strong>
+                        <small>${natNotam.isPortal ? 'Nationales NOTAM-Portal' : 'Nationale AIP-Quelle'} &middot; ${icao}</small>
+                    </span>
+                    <span class="notam-map-btn-arrow">↗</span>
+                </a>` : ''}
                 <a class="notam-map-btn" href="https://www.icao.int/notams-0" target="_blank" rel="noopener">
                     <span class="notam-map-btn-icon">🌐</span>
                     <span>
