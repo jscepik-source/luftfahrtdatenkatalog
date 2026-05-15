@@ -2527,23 +2527,34 @@ async function ladeWetter(icao, lat, lon) {
 
 async function fetchNotamDaten(icao) {
     if (!RAPIDAPI_KEY) return null;
-    const url = `https://skylink-api.p.rapidapi.com/v3/notams/${icao}`;
     const headers = {
         'x-rapidapi-key':  RAPIDAPI_KEY,
         'x-rapidapi-host': 'skylink-api.p.rapidapi.com'
     };
-    try {
-        const res = await fetch(url, { headers });
-        if (!res.ok) {
-            const txt = await res.text().catch(() => '');
-            throw new Error(`HTTP ${res.status}${txt ? ': ' + txt.slice(0,120) : ''}`);
+    const kandidaten = [
+        `https://skylink-api.p.rapidapi.com/notams/${icao}`,
+        `https://skylink-api.p.rapidapi.com/v3/notams/${icao}`,
+        `https://skylink-api.p.rapidapi.com/notam/${icao}`,
+        `https://skylink-api.p.rapidapi.com/v3/notam/${icao}`,
+    ];
+    let lastErr = '';
+    for (const url of kandidaten) {
+        try {
+            const res = await fetch(url, { headers });
+            if (res.status === 404) { lastErr = `404 ${url}`; continue; }
+            if (!res.ok) {
+                const txt = await res.text().catch(() => '');
+                throw new Error(`HTTP ${res.status}: ${txt.slice(0,120)}`);
+            }
+            const json = await res.json();
+            const items = json.notams || json.data || (Array.isArray(json) ? json : []);
+            return { data: items, total: json.total_count ?? items.length, quelle: url.split('.com')[1] };
+        } catch(e) {
+            if (e.message.startsWith('HTTP')) throw e;
+            lastErr = e.message;
         }
-        const json = await res.json();
-        const items = json.notams || json.data || (Array.isArray(json) ? json : []);
-        return { data: items, total: json.total_count ?? items.length, quelle: 'SkyLink API' };
-    } catch(e) {
-        throw e;
     }
+    throw new Error(`Kein gültiger Endpoint gefunden (${lastErr})`);
 }
 
 async function ladeNotams(icao) {
