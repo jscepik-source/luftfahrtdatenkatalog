@@ -3062,11 +3062,24 @@ async function ladeFluege(icao) {
     el.innerHTML = '<p style="color:var(--color-text-dim);font-size:0.8rem;padding:8px 0">Lade Live ADS-B Daten…</p>';
 
     try {
-        const r = await fetch(`https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`);
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const data = await r.json();
+        let rawAircraft, source;
+        try {
+            const r = await fetch(`https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`,
+                { signal: AbortSignal.timeout(7000) });
+            if (!r.ok) throw new Error();
+            const d = await r.json();
+            rawAircraft = d.aircraft || d.ac || [];
+            source = 'adsb.fi';
+        } catch {
+            const r = await fetch(`https://globe.adsbexchange.com/re-api/?lat=${lat}&lon=${lon}&dist=20`,
+                { signal: AbortSignal.timeout(7000) });
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            const d = await r.json();
+            rawAircraft = d.ac || d.aircraft || [];
+            source = 'ADS-B Exchange';
+        }
 
-        const aircraft = (data.aircraft || [])
+        const aircraft = rawAircraft
             .filter(a => (a.flight || '').trim())
             .sort((a, b) => (a.dst ?? 999) - (b.dst ?? 999))
             .slice(0, 20);
@@ -3101,7 +3114,7 @@ async function ladeFluege(icao) {
             ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav RadarBox</a>`
             : '';
         el.innerHTML = `
-            <p class="fluege-hinweis">Live ADS-B via <strong>adsb.fi</strong> · ${aircraft.length} Flugzeug${aircraft.length !== 1 ? 'e' : ''} im Umkreis von 20 nm ·
+            <p class="fluege-hinweis">Live ADS-B via <strong>${source}</strong> · ${aircraft.length} Flugzeug${aircraft.length !== 1 ? 'e' : ''} im Umkreis von 20 nm ·
                 <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FR24</a> ·
                 <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${airnavLiveLink}</p>
             <div class="fluege-list">${rows}</div>
