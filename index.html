@@ -2525,36 +2525,78 @@ async function ladeWetter(icao, lat, lon) {
     }
 }
 
+// ── SkyLink Anfrage-Schutz ───────────────────────────────────────────────────
+const NOTAM_CACHE_TTL   = 60 * 60 * 1000;   // 1 Stunde
+const NOTAM_WARN_LIMIT  = 800;               // Warnung ab 800 / 1000
+
+function notamMonatKey() {
+    const d = new Date();
+    return `notam_count_${d.getFullYear()}_${d.getMonth()}`;
+}
+function notamAnfragenDiesenMonat() {
+    return parseInt(localStorage.getItem(notamMonatKey()) || '0', 10);
+}
+function notamAnfrageZaehlen() {
+    const k = notamMonatKey();
+    const n = notamAnfragenDiesenMonat() + 1;
+    localStorage.setItem(k, n);
+    return n;
+}
+function notamCacheGet(icao) {
+    try {
+        const raw = localStorage.getItem(`notam_cache_${icao}`);
+        if (!raw) return null;
+        const { ts, data } = JSON.parse(raw);
+        if (Date.now() - ts > NOTAM_CACHE_TTL) return null;
+        return data;
+    } catch { return null; }
+}
+function notamCacheSet(icao, data) {
+    try { localStorage.setItem(`notam_cache_${icao}`, JSON.stringify({ ts: Date.now(), data })); } catch {}
+}
+function notamEndpointGet() {
+    return localStorage.getItem('notam_endpoint') || null;
+}
+function notamEndpointSet(url) {
+    localStorage.setItem('notam_endpoint', url);
+}
+
 async function fetchNotamDaten(icao) {
     if (!RAPIDAPI_KEY) return null;
     const headers = {
         'x-rapidapi-key':  RAPIDAPI_KEY,
         'x-rapidapi-host': 'skylink-api.p.rapidapi.com'
     };
-    const kandidaten = [
-        `https://skylink-api.p.rapidapi.com/notams/${icao}`,
-        `https://skylink-api.p.rapidapi.com/v3/notams/${icao}`,
-        `https://skylink-api.p.rapidapi.com/notam/${icao}`,
-        `https://skylink-api.p.rapidapi.com/v3/notam/${icao}`,
-    ];
+
+    // Bekannten Endpoint direkt nutzen
+    const bekannt = notamEndpointGet();
+    const kandidaten = bekannt
+        ? [bekannt.replace('{icao}', icao)]
+        : [
+            `https://skylink-api.p.rapidapi.com/notams/${icao}`,
+            `https://skylink-api.p.rapidapi.com/v3/notams/${icao}`,
+          ];
+
     let lastErr = '';
     for (const url of kandidaten) {
         try {
             const res = await fetch(url, { headers });
-            if (res.status === 404) { lastErr = `404 ${url}`; continue; }
+            if (res.status === 404) { lastErr = `404`; continue; }
             if (!res.ok) {
                 const txt = await res.text().catch(() => '');
-                throw new Error(`HTTP ${res.status}: ${txt.slice(0,120)}`);
+                throw new Error(`HTTP ${res.status}: ${txt.slice(0, 120)}`);
             }
             const json = await res.json();
+            // Endpoint merken (Template mit Platzhalter)
+            if (!bekannt) notamEndpointSet(url.replace(icao, '{icao}'));
             const items = json.notams || json.data || (Array.isArray(json) ? json : []);
-            return { data: items, total: json.total_count ?? items.length, quelle: url.split('.com')[1] };
+            return { data: items, total: json.total_count ?? items.length };
         } catch(e) {
             if (e.message.startsWith('HTTP')) throw e;
             lastErr = e.message;
         }
     }
-    throw new Error(`Kein gültiger Endpoint gefunden (${lastErr})`);
+    throw new Error(`Kein gültiger Endpoint (${lastErr})`);
 }
 
 async function ladeNotams(icao) {
@@ -2573,7 +2615,24 @@ async function ladeNotams(icao) {
         return;
     }
 
+    // localStorage-Cache prüfen (1h TTL)
+    const cached = notamCacheGet(icao);
+    if (cached) { el.innerHTML = cached; notamcache[icao] = cached; return; }
+
+    // Anfrage-Limit prüfen
+    const anzahl = notamAnfragenDiesenMonat();
+    if (anzahl >= 1000) {
+        el.innerHTML = `<span class="status-error">Monatslimit erreicht (1.000 Anfragen). Nächsten Monat wieder verfügbar.</span>`;
+        return;
+    }
+    if (anzahl >= NOTAM_WARN_LIMIT) {
+        el.innerHTML = `<div class="notam-setup" style="border-color:orange">
+            ⚠ Noch ${1000 - anzahl} kostenlose Anfragen diesen Monat. NOTAMs werden trotzdem geladen.
+        </div>`;
+    }
+
     try {
+        notamAnfrageZaehlen();
         const result = await fetchNotamDaten(icao);
         const data   = result?.data  || [];
         const total  = result?.total ?? 0;
@@ -2589,7 +2648,9 @@ async function ladeNotams(icao) {
                 return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis} UTC</span>\n` : ''}${text}</div>`;
             }).join('')}${total > 20 ? `<p class="status-loading">… und ${total - 20} weitere NOTAMs</p>` : ''}</div>`;
         }
-        html += `<p class="wx-quelle">SkyLink API · ${total} NOTAM${total !== 1 ? 's' : ''}</p>`;
+        const used = notamAnfragenDiesenMonat();
+        html += `<p class="wx-quelle">SkyLink API · ${total} NOTAM${total !== 1 ? 's' : ''} · ${used}/1.000 Anfragen diesen Monat (Cache: 1h)</p>`;
+        notamCacheSet(icao, html);
         notamcache[icao] = html;
         el.innerHTML = html;
     } catch(e) {
