@@ -629,8 +629,15 @@
             line-height: 1.6;
         }
 
-        /* ── VFR-Kartenlinks ── */
-        .vfr-links-section { margin-bottom: var(--space-md); }
+        /* ── Karten Externe Quellen ── */
+        .karten-extern { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; margin-bottom: var(--space-md); }
+        .karten-extern-kopf { padding: 7px 14px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-dim); border-bottom: 1px solid var(--color-border); }
+        .karten-extern-zeile { display: grid; grid-template-columns: 90px 1fr; align-items: start; padding: 7px 14px; gap: 10px; }
+        .karten-extern-zeile + .karten-extern-zeile { border-top: 1px solid var(--color-border); }
+        .karten-extern-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-sub); white-space: nowrap; padding-top: 4px; }
+        .karten-extern-btns { display: flex; flex-wrap: wrap; gap: 5px; }
+
+        /* ── VFR-Kartenlinks (legacy, kept for NfL-Titel Reuse) ── */
         .vfr-links-titel { font-size: 0.75rem; font-weight: 600; color: var(--color-text-dim); margin-bottom: var(--space-xs); letter-spacing: 0.03em; text-transform: uppercase; }
         .vfr-links-row { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -1254,9 +1261,13 @@
             .card-tabs { margin-bottom: var(--space-sm); }
             .card-tab { padding: 8px 10px; font-size: 0.67rem; }
 
+            /* Karten extern */
+            .karten-extern-zeile { grid-template-columns: 72px 1fr; gap: 8px; padding: 6px 12px; }
+            .karten-extern-kopf { padding: 6px 12px; }
+            .karten-extern-label { font-size: 0.64rem; }
+
             /* VFR links */
             .vfr-links-row { gap: 5px; }
-            .vfr-links-section { margin-bottom: var(--space-sm); }
 
             /* NOTAM */
             .notam-map-btn { padding: 10px 12px; gap: 9px; }
@@ -1291,6 +1302,8 @@
 
         /* Very small phones (≤ 400px) */
         @media (max-width: 400px) {
+            .karten-extern-zeile { grid-template-columns: 1fr; gap: 4px; }
+            .karten-extern-label { padding-top: 0; }
             .card-tab { padding: 7px 7px; font-size: 0.62rem; letter-spacing: 0.02em; }
             .action-links .btn-ext { width: 100%; justify-content: center; }
             .flug-item { grid-template-columns: 58px 1fr; }
@@ -2545,12 +2558,10 @@ function vfrLinksHtml(icao, lat, lon) {
     const latF = hasCoords ? parseFloat(lat).toFixed(4) : '';
     const lonF = hasCoords ? parseFloat(lon).toFixed(4) : '';
 
-    // ICAO-Karte (1:500.000) – WAC-Chart (chart=301) in SkyVector
     const svIcaoUrl = hasCoords
         ? `https://skyvector.com/?ll=${latF},${lonF}&chart=301&zoom=2`
         : `https://skyvector.com/airport/${icao}`;
 
-    // Luftraum – Windy mit Airspace-Layer
     const windyUrl = hasCoords
         ? `https://www.windy.com/${latF}/${lonF}/12?airspace`
         : `https://www.windy.com/?airspace`;
@@ -2559,22 +2570,40 @@ function vfrLinksHtml(icao, lat, lon) {
         `<a class="btn-ext" href="${q.url}" target="_blank" rel="noopener">${q.icon} ${q.name}</a>`
     ).join('');
 
-    return `<div class="vfr-links-section">
-        <p class="vfr-links-titel">ICAO-Karte (1:500.000)</p>
-        <div class="vfr-links-row">${icaoBtns}
-            <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector WAC</a>
+    const isEuropean = 'ELB'.includes((icao || '')[0]);
+    const euroRow = isEuropean ? `
+        <div class="karten-extern-zeile">
+            <span class="karten-extern-label">EUROCONTROL</span>
+            <div class="karten-extern-btns" id="eurocontrol-${icao}">
+                <span class="status-loading" style="font-size:0.75rem">wird geladen…</span>
+            </div>
+        </div>` : '';
+
+    return `<div class="karten-extern">
+        <div class="karten-extern-kopf">Externe Quellen</div>
+        <div class="karten-extern-zeile">
+            <span class="karten-extern-label">ICAO-Karte</span>
+            <div class="karten-extern-btns">
+                ${icaoBtns}
+                <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector WAC</a>
+            </div>
         </div>
-        <p class="vfr-links-titel" style="margin-top:0.6rem">Luftraum</p>
-        <div class="vfr-links-row">
-            <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy Airspace</a>
-            <a class="btn-ext" href="https://www.openaip.net/" target="_blank" rel="noopener">📡 OpenAIP</a>
-            <a class="btn-ext" href="https://www.autorouter.aero/" target="_blank" rel="noopener">✈ Autorouter</a>
-            <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector</a>
+        <div class="karten-extern-zeile">
+            <span class="karten-extern-label">Luftraum</span>
+            <div class="karten-extern-btns">
+                <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy</a>
+                <a class="btn-ext" href="https://www.openaip.net/" target="_blank" rel="noopener">📡 OpenAIP</a>
+                <a class="btn-ext" href="https://www.autorouter.aero/" target="_blank" rel="noopener">✈ Autorouter</a>
+                <a class="btn-ext" href="${svIcaoUrl}" target="_blank" rel="noopener">🌐 SkyVector</a>
+            </div>
         </div>
-        <p class="vfr-links-titel" style="margin-top:0.6rem">Papier-Karten kaufen</p>
-        <div class="vfr-links-row">
-            <a class="btn-ext" href="https://www.eisenschmidt.aero/karten-manuals" target="_blank" rel="noopener">🛒 Eisenschmidt</a>
-            <a class="btn-ext" href="https://www.flightplanner.de/cms/ICAO_Karten" target="_blank" rel="noopener">🛒 FlightPlanner.de</a>
+        ${euroRow}
+        <div class="karten-extern-zeile">
+            <span class="karten-extern-label">Shop</span>
+            <div class="karten-extern-btns">
+                <a class="btn-ext" href="https://www.eisenschmidt.aero/karten-manuals" target="_blank" rel="noopener">🛒 Eisenschmidt</a>
+                <a class="btn-ext" href="https://www.flightplanner.de/cms/ICAO_Karten" target="_blank" rel="noopener">🛒 FlightPlanner</a>
+            </div>
         </div>
     </div>`;
 }
@@ -2734,7 +2763,6 @@ out skel qt;`;
             <!-- Karten Panel -->
             <div class="card-tab-panel" data-panel="karten">
                 ${vfrLinksHtml(icao, ap.lat, ap.lon)}
-                ${'ELB'.includes(icao[0]) ? `<div id="eurocontrol-${icao}"><span class="status-loading">EUROCONTROL-Karten werden geladen…</span></div>` : ''}
                 <div id="dfs-${icao}"></div>
             </div>
 
@@ -3072,16 +3100,11 @@ async function ladeEurocontrol(icao) {
     el.dataset.geladen = '1';
     try {
         const json = await ladeEurocontrolJson();
-
-        // Nur die 4 relevanten Kartentypen anzeigen
         const FILTER = ['ERC', 'ERN', 'FIR', 'UIR'];
         const pubs = Object.entries(json)
             .filter(([name]) => FILTER.some(kw => name.toUpperCase().includes(kw)))
             .slice(0, 4);
-
-        if (!pubs.length) { el.innerHTML = ''; return; }
-
-        // Kurznamen extrahieren
+        if (!pubs.length) { el.innerHTML = '<span style="font-size:0.75rem;color:var(--color-text-dim)">–</span>'; return; }
         const kurzname = name => {
             if (/upper/i.test(name))  return '🗺 ERC Upper';
             if (/lower/i.test(name))  return '🗺 ERC Lower';
@@ -3089,17 +3112,11 @@ async function ladeEurocontrol(icao) {
             if (/FIR|UIR/i.test(name)) return '🗺 FIR/UIR';
             return '🗺 ' + name.replace(/EUROCONTROL\s*/i, '').replace(/\s*[-–].*$/, '').trim();
         };
-
-        const btns = pubs.map(([name, pub]) =>
+        el.innerHTML = pubs.map(([name, pub]) =>
             `<a class="btn-ext" href="${pub._url}" target="_blank" rel="noopener">${kurzname(name)}</a>`
         ).join('');
-
-        el.innerHTML = `<div style="margin-top:0.8rem">
-            <p class="vfr-links-titel">EUROCONTROL Luftraumkarten</p>
-            <div class="vfr-links-row">${btns}</div>
-        </div>`;
     } catch(e) {
-        el.innerHTML = `<p class="flug-empty" style="font-size:0.75rem">EUROCONTROL-Daten nicht verfügbar.</p>`;
+        el.innerHTML = '<span style="font-size:0.75rem;color:var(--color-text-dim)">nicht verfügbar</span>';
     }
 }
 
