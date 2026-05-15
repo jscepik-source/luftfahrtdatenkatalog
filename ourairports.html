@@ -1340,10 +1340,9 @@
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
 
-// ── SkyLink NOTAM API (via RapidAPI) ─────────────────────────────────────────
-// Kostenlose Registrierung: https://rapidapi.com → SkyLink API abonnieren
-// RapidAPI-Key hier eintragen:
-const RAPIDAPI_KEY = 'e747454851msh9f9d093c1b86359p174df8jsnd3e1d813335c';
+// ── AVWX NOTAM API ───────────────────────────────────────────────────────────
+// Kostenlose Registrierung: https://account.avwx.rest → Token generieren
+const AVWX_TOKEN = '';
 let katalog = {};
 let aktiverTyp = '';
 let aktivSched = false;
@@ -2562,41 +2561,16 @@ function notamEndpointSet(url) {
 }
 
 async function fetchNotamDaten(icao) {
-    if (!RAPIDAPI_KEY) return null;
-    const headers = {
-        'x-rapidapi-key':  RAPIDAPI_KEY,
-        'x-rapidapi-host': 'skylink-api.p.rapidapi.com'
-    };
-
-    // Bekannten Endpoint direkt nutzen
-    const bekannt = notamEndpointGet();
-    const kandidaten = bekannt
-        ? [bekannt.replace('{icao}', icao)]
-        : [
-            `https://skylink-api.p.rapidapi.com/notams/${icao}`,
-            `https://skylink-api.p.rapidapi.com/v3/notams/${icao}`,
-          ];
-
-    let lastErr = '';
-    for (const url of kandidaten) {
-        try {
-            const res = await fetch(url, { headers });
-            if (res.status === 404) { lastErr = `404`; continue; }
-            if (!res.ok) {
-                const txt = await res.text().catch(() => '');
-                throw new Error(`HTTP ${res.status}: ${txt.slice(0, 120)}`);
-            }
-            const json = await res.json();
-            // Endpoint merken (Template mit Platzhalter)
-            if (!bekannt) notamEndpointSet(url.replace(icao, '{icao}'));
-            const items = json.notams || json.data || (Array.isArray(json) ? json : []);
-            return { data: items, total: json.total_count ?? items.length };
-        } catch(e) {
-            if (e.message.startsWith('HTTP')) throw e;
-            lastErr = e.message;
-        }
+    if (!AVWX_TOKEN) return null;
+    const url = `https://avwx.rest/api/notam/${icao}?token=${AVWX_TOKEN}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        throw new Error(`HTTP ${res.status}: ${txt.slice(0, 120)}`);
     }
-    throw new Error(`Kein gültiger Endpoint (${lastErr})`);
+    const json = await res.json();
+    const items = Array.isArray(json) ? json : (json.data || []);
+    return { data: items, total: items.length };
 }
 
 async function ladeNotams(icao) {
@@ -2605,12 +2579,12 @@ async function ladeNotams(icao) {
     el.dataset.geladen = '1';
     if (notamcache[icao]) { el.innerHTML = notamcache[icao]; return; }
 
-    if (!RAPIDAPI_KEY) {
+    if (!AVWX_TOKEN) {
         el.innerHTML = `<div class="notam-setup">
-            <strong>NOTAM API-Key einrichten (einmalig, kostenlos)</strong><br>
-            1. <a href="https://rapidapi.com" target="_blank" rel="noopener" style="color:var(--color-primary)">rapidapi.com</a> → kostenlosen Account erstellen<br>
-            2. <a href="https://rapidapi.com/skylink-api-skylink-api-default/api/skylink-api" target="_blank" rel="noopener" style="color:var(--color-primary)">SkyLink API</a> abonnieren (Free Plan)<br>
-            3. RapidAPI-Key kopieren und in <code>ourairports.html</code> bei <code>RAPIDAPI_KEY</code> eintragen
+            <strong>NOTAM API-Token einrichten (einmalig, kostenlos)</strong><br>
+            1. <a href="https://account.avwx.rest" target="_blank" rel="noopener" style="color:var(--color-primary)">account.avwx.rest</a> → kostenlosen Account erstellen<br>
+            2. Token generieren (unter "Tokens")<br>
+            3. Token in <code>ourairports.html</code> bei <code>AVWX_TOKEN</code> eintragen
         </div>`;
         return;
     }
@@ -2641,15 +2615,15 @@ async function ladeNotams(icao) {
             html = `<p class="status-loading">Keine aktiven NOTAMs für ${icao}.</p>`;
         } else {
             html = `<div class="notam-list">${data.slice(0, 20).map(n => {
-                const text = n.raw  || n.body || n.text || '–';
-                const nr   = n.notam_id || n.id || '';
-                const von  = n.effective  ? new Date(n.effective).toUTCString().slice(5,22)  : '';
-                const bis  = n.expiration ? new Date(n.expiration).toUTCString().slice(5,22) : '';
+                const text = n.body || n.raw || '–';
+                const nr   = n.number || '';
+                const von  = n.start_time?.dt ? new Date(n.start_time.dt).toUTCString().slice(5,22) : '';
+                const bis  = n.end_time?.dt   ? new Date(n.end_time.dt).toUTCString().slice(5,22)   : '';
                 return `<div class="notam-item">${nr ? `<strong>${nr}</strong> ` : ''}${von ? `<span class="notam-zeit">${von} – ${bis} UTC</span>\n` : ''}${text}</div>`;
             }).join('')}${total > 20 ? `<p class="status-loading">… und ${total - 20} weitere NOTAMs</p>` : ''}</div>`;
         }
         const used = notamAnfragenDiesenMonat();
-        html += `<p class="wx-quelle">SkyLink API · ${total} NOTAM${total !== 1 ? 's' : ''} · ${used}/1.000 Anfragen diesen Monat (Cache: 1h)</p>`;
+        html += `<p class="wx-quelle">AVWX · ${total} NOTAM${total !== 1 ? 's' : ''} · ${used}/1.000 Anfragen diesen Monat (Cache: 1h)</p>`;
         notamCacheSet(icao, html);
         notamcache[icao] = html;
         el.innerHTML = html;
