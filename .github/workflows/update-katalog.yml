@@ -180,5 +180,5 @@ jobs:
                   u_katalog_export.json \
                   eurocontrol_katalog_export.json 2>/dev/null || true
           git diff --staged --quiet || git commit -m "Kataloge, NOTAM, NfL und eAIP-Karten aktualisiert"
-          git pull --rebase origin main
+          git pull --rebase --autostash origin main
           git push
