@@ -1,3 +1,6 @@
 selenium
 requests
 beautifulsoup4
+# Market Scanner
+yfinance>=0.2.40
+pandas>=2.0.0
