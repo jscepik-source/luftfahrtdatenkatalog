@@ -3474,7 +3474,8 @@ async function ladeFluege(icao, forceRefresh = false) {
     const hasPos = lat && lon && !isNaN(lat) && !isNaN(lon);
 
     const fr24url   = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
-    const faurl     = `https://de.flightaware.com/live/airport/${icao}/arrivals`;
+    const faArrUrl  = `https://de.flightaware.com/live/airport/${icao}/arrivals`;
+    const faDepUrl  = `https://de.flightaware.com/live/airport/${icao}/departures`;
     const airnavUrl = hasPos ? `https://de.airnavradar.com/@${lat.toFixed(5)},${lon.toFixed(5)},z11` : null;
     const globeUrl  = hasPos
         ? `https://globe.adsbexchange.com/?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&zoom=11`
@@ -3489,8 +3490,9 @@ async function ladeFluege(icao, forceRefresh = false) {
     function extLinks() {
         const an = airnavUrl ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav</a>` : '';
         return `<p class="fluege-hinweis">Vollständige Flugpläne:
-            <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
-            <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${an}</p>`;
+            <a href="${fr24url}"   target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
+            <a href="${faArrUrl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware Ankünfte</a> ·
+            <a href="${faDepUrl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">Abflüge</a>${an}</p>`;
     }
 
     if (!hasPos) {
@@ -3633,7 +3635,8 @@ async function ladeFluege(icao, forceRefresh = false) {
             <div class="fluege-list">${rows}</div>
             <p class="fluege-hinweis" style="margin-top:6px">Flugpläne:
                 <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
-                <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${an}</p>
+                <a href="${faArrUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware Ankünfte</a> ·
+                <a href="${faDepUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">Abflüge</a>${an}</p>
             ${globe()}`;
 
         // Auto-refresh every 60 s
