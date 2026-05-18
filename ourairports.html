@@ -994,6 +994,7 @@
             background: linear-gradient(135deg, #07111f 0%, #0d1f38 60%, #081425 100%);
             overflow: hidden;
             position: relative;
+            position: relative;
             border-bottom: none;
         }
         /* Bottom fade hero → page background */
@@ -1439,17 +1440,28 @@
         }
         #globus-label {
             position: absolute;
-            bottom: 18px; left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.7rem; font-weight: 700;
+            bottom: 18px;
+            /* Desktop: zentriert im 360px Globe-Panel (rechts) */
+            right: 180px; left: auto;
+            transform: translateX(50%);
+            font-size: 0.78rem; font-weight: 700;
             color: #f59e0b;
             text-align: center; white-space: nowrap;
             letter-spacing: 0.06em; text-transform: uppercase;
-            text-shadow: 0 1px 10px rgba(0,0,0,1);
-            z-index: 5; pointer-events: none;
+            text-shadow: 0 1px 12px rgba(0,0,0,1), 0 0 24px rgba(0,0,0,0.8);
+            z-index: 10; pointer-events: none;
             opacity: 0; transition: opacity 0.5s;
         }
         #globus-label.sichtbar { opacity: 1; }
+        @media (max-width: 640px) {
+            #globus-label {
+                /* Mobile: unter der Globus-Position (zentriert bei 68%) */
+                left: 68%; right: auto;
+                transform: translateX(-50%);
+                bottom: 12px;
+                font-size: 0.72rem;
+            }
+        }
         /* Masking fades to hide globe atmosphere clipping on all edges */
         .hero-right .gf {
             position: absolute; z-index: 3; pointer-events: none;
@@ -1636,8 +1648,10 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
         <div class="gf gf-t"></div>
         <div class="gf gf-b"></div>
         <div id="globus-container"><span class="globus-loader">🌍</span></div>
-        <div id="globus-label"></div>
     </div>
+
+    <!-- Label außerhalb hero-right damit es auf Mobile über hero-left liegt -->
+    <div id="globus-label"></div>
 
     <div class="hero-bottom-fade"></div>
 </section>
