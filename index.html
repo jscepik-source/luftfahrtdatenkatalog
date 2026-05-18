@@ -3564,10 +3564,12 @@ document.addEventListener('keydown', e => {
     window.heroGoto = heroGoto;
 
     function startAuto() {
+        clearInterval(timer);
         timer = setInterval(() => heroGoto(idx + 1), 7500);
     }
     function stopAuto() {
         clearInterval(timer);
+        timer = null;
     }
 
     startAuto();
