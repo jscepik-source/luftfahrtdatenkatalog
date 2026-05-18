@@ -2241,27 +2241,27 @@ function ladeFaaDaten() {
 let _kcId = 0;
 
 const IFR_GRUPPEN_DEF = [
-    { label: '🏗 Platz & Hindernis',   re: /\s2-\d/,   offen: true },
-    { label: '🔽 Anflüge – STAR',      re: /\s3-\d/,   offen: true },
-    { label: '🎯 Instrumentenanflüge', re: /\s4-\d/,   offen: true },
-    { label: '🛫 Abflüge – SID',       re: /\s5-\d/,   offen: true },
-    { label: '📍 Wegpunkte',           re: /\s6-\d/,   offen: true },
-    { label: '📋 Sonstiges',           re: null,        offen: true },
+    { label: '🏗 Platz & Hindernis',   re: /\s2-\d/,   offen: false },
+    { label: '🔽 Anflüge – STAR',      re: /\s3-\d/,   offen: false },
+    { label: '🎯 Instrumentenanflüge', re: /\s4-\d/,   offen: false },
+    { label: '🛫 Abflüge – SID',       re: /\s5-\d/,   offen: false },
+    { label: '📍 Wegpunkte',           re: /\s6-\d/,   offen: false },
+    { label: '📋 Sonstiges',           re: null,        offen: false },
 ];
 const FAA_GRUPPEN_DEF = [
-    { label: '🏗 Platz',       re: /DIAGRAM|HOT.?SPOT|GROUND/i,                           offen: true },
-    { label: '🎯 Anflüge',    re: /ILS|RNAV|GPS|NDB|VOR|LOC|LDA|APPROACH|RNP/i,         offen: true },
-    { label: '🛫 Abflüge',    re: /DEPARTURE|SID/i,                                        offen: true },
-    { label: '🗺 Übersicht',  re: /AREA|ENROUTE|FLYWAY|CHART/i,                           offen: true },
-    { label: '📋 Sonstiges',  re: null,                                                     offen: true },
+    { label: '🏗 Platz',       re: /DIAGRAM|HOT.?SPOT|GROUND/i,                           offen: false },
+    { label: '🎯 Anflüge',    re: /ILS|RNAV|GPS|NDB|VOR|LOC|LDA|APPROACH|RNP/i,         offen: false },
+    { label: '🛫 Abflüge',    re: /DEPARTURE|SID/i,                                        offen: false },
+    { label: '🗺 Übersicht',  re: /AREA|ENROUTE|FLYWAY|CHART/i,                           offen: false },
+    { label: '📋 Sonstiges',  re: null,                                                     offen: false },
 ];
 const GENERIC_GRUPPEN_DEF = [
-    { label: '🏗 Platz & Rollwege',    re: /^(ADC|GMC|APDC|AOC|PATC|PDC|GC|GND|GRD|SMAC|ATCS|Aerodrome|Ground|Parking|Docking|Obstacle|Terrain)/i, offen: true  },
-    { label: '🔽 Anflüge – STAR',      re: /^STAR|arrival/i,                                                                                           offen: true  },
-    { label: '🎯 Instrumentenanflüge', re: /^(IAC|ILS|RNAV|RNP|VOR|NDB|LOC|LDA|GPS|APP|Instrument|Approach)/i,                                        offen: true  },
-    { label: '🛫 Abflüge – SID',       re: /^(SID|DEP|Departure)/i,                                                                                    offen: true  },
-    { label: '🗺 Sichtanflug',         re: /^(VAC|VFR|Visual|Sicht)/i,                                                                                 offen: true  },
-    { label: '📋 Sonstiges',           re: null,                                                                                                         offen: true  },
+    { label: '🏗 Platz & Rollwege',    re: /^(ADC|GMC|APDC|AOC|PATC|PDC|GC|GND|GRD|SMAC|ATCS|Aerodrome|Ground|Parking|Docking|Obstacle|Terrain)/i, offen: false  },
+    { label: '🔽 Anflüge – STAR',      re: /^STAR|arrival/i,                                                                                           offen: false  },
+    { label: '🎯 Instrumentenanflüge', re: /^(IAC|ILS|RNAV|RNP|VOR|NDB|LOC|LDA|GPS|APP|Instrument|Approach)/i,                                        offen: false  },
+    { label: '🛫 Abflüge – SID',       re: /^(SID|DEP|Departure)/i,                                                                                    offen: false  },
+    { label: '🗺 Sichtanflug',         re: /^(VAC|VFR|Visual|Sicht)/i,                                                                                 offen: false  },
+    { label: '📋 Sonstiges',           re: null,                                                                                                         offen: false  },
 ];
 
 function verteileGruppen(eintraege, defs) {
