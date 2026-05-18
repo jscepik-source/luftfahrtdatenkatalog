@@ -3593,7 +3593,7 @@ async function ladeFluege(icao, forceRefresh = false) {
         const aircraft = result.ac
             .filter(a => (a.flight || '').trim())
             .sort((a, b) => (a.dst ?? 999) - (b.dst ?? 999))
-            .slice(0, 25);
+            .slice(0, 40);
 
         function trackArrow(deg) {
             if (deg == null) return '';
@@ -3601,20 +3601,19 @@ async function ladeFluege(icao, forceRefresh = false) {
             return arrows[Math.round(deg / 45) % 8];
         }
 
-        const rows = aircraft.length ? aircraft.map(a => {
+        function renderFlugzeug(a) {
             const cs   = (a.flight || '').trim();
             const ph   = phase(a);
-            const reg  = a.r  ? `<span class="flug-reg">${a.r}</span>` : '';
-            const type = a.t  || '';
+            const reg  = a.r ? `<span class="flug-reg">${a.r}</span>` : '';
+            const type = a.t || '';
             const alt  = a.alt_baro != null ? `${Math.round(a.alt_baro).toLocaleString()} ft` : '';
             const spd  = a.gs ? `${Math.round(a.gs)} kt` : '';
-            const dist = a.dst  != null ? `${a.dst.toFixed(1)} nm` : '';
+            const dist = a.dst != null ? `${a.dst.toFixed(1)} nm` : '';
             const arr  = trackArrow(a.track);
-            // adsb.fi sometimes includes origin/destination
             const route = (a.orig_iata && a.dest_iata)
-                ? `<strong>${a.orig_iata} → ${a.dest_iata}</strong> · `
+                ? `<strong>${a.orig_iata}→${a.dest_iata}</strong> · `
                 : (a.from_icao && a.to_icao)
-                ? `<strong>${a.from_icao} → ${a.to_icao}</strong> · `
+                ? `<strong>${a.from_icao}→${a.to_icao}</strong> · `
                 : '';
             const info = [type, alt, spd, dist].filter(Boolean).join(' · ');
             return `<div class="flug-item">
@@ -3622,18 +3621,40 @@ async function ladeFluege(icao, forceRefresh = false) {
                 <span class="flug-route">${route}${info}${arr ? ' ' + arr : ''}</span>
                 <span class="flug-zeit flug-phase-label">${ph.label}</span>
             </div>`;
-        }).join('') : `<p class="flug-empty">Aktuell keine Flugzeuge im 20-nm-Umkreis erfasst.</p>`;
+        }
+
+        const ankuenfte = aircraft.filter(a => phase(a).cls === 'flug-ph-land');
+        const abfluege  = aircraft.filter(a => phase(a).cls === 'flug-ph-dep');
+        const sonstige  = aircraft.filter(a => phase(a).cls !== 'flug-ph-land' && phase(a).cls !== 'flug-ph-dep');
+
+        const renderSpalte = (list, leer) =>
+            list.length ? `<div class="fluege-list">${list.map(renderFlugzeug).join('')}</div>`
+                        : `<p class="flug-empty">${leer}</p>`;
 
         const zeit = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
         const an   = airnavUrl ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav</a>` : '';
 
         el.innerHTML = `
             <div class="fluege-refresh-row">
-                <span class="fluege-ts">ADS-B via <strong>${result.src}</strong> · ${aircraft.length} Flugzeug${aircraft.length !== 1 ? 'e' : ''} · Stand ${zeit}</span>
+                <span class="fluege-ts">Live ADS-B via <strong>${result.src}</strong> · Stand ${zeit}</span>
                 <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)">↺ Aktualisieren</button>
             </div>
-            <div class="fluege-list">${rows}</div>
-            <p class="fluege-hinweis" style="margin-top:6px">Flugpläne:
+            <div class="fluege-cols">
+                <div>
+                    <div class="fluege-col-title" style="color:#22c55e">🛬 Ankünfte <span style="font-weight:400;opacity:.7">(${ankuenfte.length})</span></div>
+                    ${renderSpalte(ankuenfte, 'Keine ankommenden Flugzeuge')}
+                </div>
+                <div>
+                    <div class="fluege-col-title" style="color:#f59e0b">🛫 Abflüge <span style="font-weight:400;opacity:.7">(${abfluege.length})</span></div>
+                    ${renderSpalte(abfluege, 'Keine abfliegenden Flugzeuge')}
+                </div>
+            </div>
+            ${sonstige.length ? `
+            <div class="fluege-sonstige">
+                <div class="fluege-col-title" style="margin-top:10px">✈ Weitere im Umkreis <span style="font-weight:400;opacity:.7">(${sonstige.length})</span></div>
+                <div class="fluege-list">${sonstige.map(renderFlugzeug).join('')}</div>
+            </div>` : ''}
+            <p class="fluege-hinweis" style="margin-top:8px">Vollständige Flugpläne:
                 <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
                 <a href="${faArrUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware Ankünfte</a> ·
                 <a href="${faDepUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">Abflüge</a>${an}</p>
