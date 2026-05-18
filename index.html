@@ -1115,6 +1115,30 @@
         }
 
         /* ── Flüge-Tab ── */
+        .fluege-refresh-row {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 6px; gap: 8px; flex-wrap: wrap;
+        }
+        .fluege-ts { font-size: 0.7rem; color: var(--color-text-dim); }
+        .fluege-refresh-btn {
+            background: none; border: 1px solid var(--color-border);
+            border-radius: var(--radius-pill); padding: 3px 10px;
+            font-size: 0.72rem; color: var(--color-primary);
+            cursor: pointer; font-family: var(--font);
+            transition: background var(--transition), border-color var(--transition);
+        }
+        .fluege-refresh-btn:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .fluege-refresh-btn:disabled { opacity: 0.5; cursor: default; }
+        .flug-ph-land   { color: #22c55e; }
+        .flug-ph-dep    { color: #f59e0b; }
+        .flug-ph-cruise { color: #60a5fa; }
+        .flug-ph-gnd    { color: var(--color-text-dim); }
+        .flug-reg { font-size: 0.68rem; color: var(--color-text-dim); margin-left: 4px; font-weight: 400; font-family: var(--font); }
+        .flug-phase-label {
+            font-size: 0.65rem; font-weight: 600; letter-spacing: 0.03em;
+            padding: 2px 6px; border-radius: var(--radius-pill); white-space: nowrap;
+            background: var(--color-surface-2);
+        }
         .fluege-header {
             display: flex;
             gap: var(--space-sm);
@@ -1198,7 +1222,7 @@
         .fluege-list { display: flex; flex-direction: column; gap: 4px; }
         .flug-item {
             display: grid;
-            grid-template-columns: 70px 1fr auto;
+            grid-template-columns: 90px 1fr auto;
             align-items: center;
             gap: 8px;
             padding: 7px 10px;
@@ -3432,21 +3456,27 @@ function switchTab(btn, panel, icao) {
     if (panel === 'karten'  && icao) ladeEurocontrol(icao);
 }
 
-// ── Flüge (adsb.fi Live ADS-B) ───────────────────────────────────────────────
-async function ladeFluege(icao) {
+// ── Flüge (ADS-B Live) ────────────────────────────────────────────────────────
+const _flugTimer = {};
+
+async function ladeFluege(icao, forceRefresh = false) {
     const el = document.getElementById(`fluege-${icao}`);
-    if (!el || el.dataset.geladen) return;
+    if (!el) return;
+    if (el.dataset.geladen && !forceRefresh) return;
     el.dataset.geladen = '1';
 
-    const lat    = parseFloat(el.dataset.lat);
-    const lon    = parseFloat(el.dataset.lon);
-    const fr24url    = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
-    const faurl      = `https://de.flightaware.com/live/airport/${icao}`;
-    const airnavUrl  = (lat && lon && !isNaN(lat) && !isNaN(lon))
-        ? `https://de.airnavradar.com/@${lat.toFixed(5)},${lon.toFixed(5)},z11`
-        : null;
+    // Cancel pending auto-refresh
+    clearTimeout(_flugTimer[icao]);
+    delete _flugTimer[icao];
 
-    const globeUrl = (lat && lon && !isNaN(lat) && !isNaN(lon))
+    const lat = parseFloat(el.dataset.lat);
+    const lon = parseFloat(el.dataset.lon);
+    const hasPos = lat && lon && !isNaN(lat) && !isNaN(lon);
+
+    const fr24url   = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
+    const faurl     = `https://de.flightaware.com/live/airport/${icao}`;
+    const airnavUrl = hasPos ? `https://de.airnavradar.com/@${lat.toFixed(5)},${lon.toFixed(5)},z11` : null;
+    const globeUrl  = hasPos
         ? `https://globe.adsbexchange.com/?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&zoom=11`
         : `https://globe.adsbexchange.com/`;
 
@@ -3456,37 +3486,47 @@ async function ladeFluege(icao) {
             <a class="fluege-globe-open" href="${globeUrl}" target="_blank" rel="noopener">Vollbild ↗</a>
         </div>`;
     }
-
-    function links() {
-        const airnavLink = airnavUrl
-            ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav RadarBox</a>`
-            : '';
+    function extLinks() {
+        const an = airnavUrl ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav</a>` : '';
         return `<p class="fluege-hinweis">Vollständige Flugpläne:
             <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
-            <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${airnavLink}</p>`;
+            <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${an}</p>`;
     }
 
-    if (!lat || !lon || isNaN(lat) || isNaN(lon)) {
-        el.innerHTML = `<p class="flug-empty">Keine Koordinaten – Radar trotzdem verfügbar:</p>${globe()}${links()}`;
+    if (!hasPos) {
+        el.innerHTML = `<p class="flug-empty">Keine Koordinaten – Radar trotzdem verfügbar:</p>${globe()}${extLinks()}`;
         return;
     }
 
-    el.innerHTML = '<p style="color:var(--color-text-dim);font-size:0.8rem;padding:8px 0">Lade Live ADS-B Daten…</p>';
+    // Show spinner only on first load, keep old content on refresh
+    if (!forceRefresh) {
+        el.innerHTML = '<p style="color:var(--color-text-dim);font-size:0.8rem;padding:8px 0">⏳ Lade Live ADS-B…</p>';
+    } else {
+        const btn = el.querySelector('.fluege-refresh-btn');
+        if (btn) { btn.disabled = true; btn.textContent = '↺ …'; }
+    }
+
+    function phase(a) {
+        const gs = a.gs ?? 0, vr = a.baro_rate ?? 0;
+        if (gs < 30)   return { icon: '🅿', cls: 'flug-ph-gnd',    label: 'Boden' };
+        if (vr < -200) return { icon: '🛬', cls: 'flug-ph-land',   label: 'Ankunft' };
+        if (vr >  200) return { icon: '🛫', cls: 'flug-ph-dep',    label: 'Abflug' };
+        return             { icon: '✈',  cls: 'flug-ph-cruise', label: 'Reiseflug' };
+    }
 
     try {
-        let rawAircraft, source;
         const versuche = [
             async () => {
                 const r = await fetch(`https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`,
                     { signal: AbortSignal.timeout(7000) });
-                if (!r.ok) throw new Error();
+                if (!r.ok) throw new Error(r.status);
                 const d = await r.json();
                 return { ac: d.aircraft || d.ac || [], src: 'adsb.fi' };
             },
             async () => {
                 const r = await fetch(`https://globe.adsbexchange.com/re-api/?lat=${lat}&lon=${lon}&dist=20`,
                     { signal: AbortSignal.timeout(7000) });
-                if (!r.ok) throw new Error();
+                if (!r.ok) throw new Error(r.status);
                 const d = await r.json();
                 return { ac: d.ac || d.aircraft || [], src: 'ADS-B Exchange' };
             },
@@ -3495,73 +3535,92 @@ async function ladeFluege(icao) {
                 const r = await fetch(
                     `https://opensky-network.org/api/states/all?lamin=${lat-pad}&lamax=${lat+pad}&lomin=${lon-pad}&lomax=${lon+pad}`,
                     { signal: AbortSignal.timeout(10000) });
-                if (!r.ok) throw new Error();
+                if (!r.ok) throw new Error(r.status);
                 const d = await r.json();
                 const ac = (d.states || [])
                     .filter(s => s[1] && s[5] != null && s[6] != null)
                     .map(s => ({
                         flight:    (s[1] || '').trim(),
-                        t:         '',
+                        t: '', r: '',
                         squawk:    s[14] || '',
                         dst:       haversine(lat, lon, s[6], s[5]) / 1.852,
                         gs:        s[9]  != null ? s[9]  * 1.944  : 0,
                         baro_rate: s[11] != null ? s[11] * 196.85 : 0,
-                        alt_baro:  s[7]  != null ? s[7]  / 0.3048 : null,
+                        alt_baro:  s[7]  != null ? s[7]  * 3.281  : null,
+                        track:     s[10] ?? null,
                     }))
                     .filter(a => a.dst <= 20);
                 return { ac, src: 'OpenSky Network' };
             },
         ];
-        let result = null;
-        for (const versuch of versuche) {
-            try { result = await versuch(); break; } catch {}
-        }
-        if (!result) throw new Error('Keine Quelle verfügbar');
-        rawAircraft = result.ac;
-        source      = result.src;
 
-        const aircraft = rawAircraft
+        let result = null;
+        for (const v of versuche) {
+            try { result = await v(); break; } catch {}
+        }
+        if (!result) throw new Error('all_failed');
+
+        const aircraft = result.ac
             .filter(a => (a.flight || '').trim())
             .sort((a, b) => (a.dst ?? 999) - (b.dst ?? 999))
-            .slice(0, 20);
+            .slice(0, 25);
 
-        function phase(a) {
-            const gs  = a.gs ?? 0;
-            const vr  = a.baro_rate ?? 0;
-            if (gs < 30)   return { icon: '🅿', label: 'am Boden' };
-            if (vr < -200) return { icon: '🛬', label: 'Ankunft' };
-            if (vr >  200) return { icon: '🛫', label: 'Abflug' };
-            return { icon: '✈', label: 'im Flug' };
+        function trackArrow(deg) {
+            if (deg == null) return '';
+            const arrows = ['↑','↗','→','↘','↓','↙','←','↖'];
+            return arrows[Math.round(deg / 45) % 8];
         }
 
-        const rows = aircraft.length
-            ? aircraft.map(a => {
-                const cs   = (a.flight || '').trim();
-                const type = a.t   || '–';
-                const sq   = a.squawk ? `▣ ${a.squawk}` : '';
-                const dist = a.dst  != null ? `${a.dst.toFixed(1)} nm` : '';
-                const alt  = a.alt_baro != null ? `${Math.round(a.alt_baro * 0.3048)} m` : '';
-                const ph   = phase(a);
-                const info = [ph.label, type, alt, dist].filter(Boolean).join(' · ');
-                return `<div class="flug-item">
-                    <a class="flug-callsign" href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener">${ph.icon} ${cs}</a>
-                    <span class="flug-route">${info}</span>
-                    <span class="flug-zeit">${sq}</span>
-                </div>`;
-            }).join('')
-            : `<p class="flug-empty">Aktuell keine Flugzeuge im Umkreis von 20 nm erfasst.</p>`;
+        const rows = aircraft.length ? aircraft.map(a => {
+            const cs   = (a.flight || '').trim();
+            const ph   = phase(a);
+            const reg  = a.r  ? `<span class="flug-reg">${a.r}</span>` : '';
+            const type = a.t  || '';
+            const alt  = a.alt_baro != null ? `${Math.round(a.alt_baro).toLocaleString()} ft` : '';
+            const spd  = a.gs ? `${Math.round(a.gs)} kt` : '';
+            const dist = a.dst  != null ? `${a.dst.toFixed(1)} nm` : '';
+            const arr  = trackArrow(a.track);
+            // adsb.fi sometimes includes origin/destination
+            const route = (a.orig_iata && a.dest_iata)
+                ? `<strong>${a.orig_iata} → ${a.dest_iata}</strong> · `
+                : (a.from_icao && a.to_icao)
+                ? `<strong>${a.from_icao} → ${a.to_icao}</strong> · `
+                : '';
+            const info = [type, alt, spd, dist].filter(Boolean).join(' · ');
+            return `<div class="flug-item">
+                <a class="flug-callsign ${ph.cls}" href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener">${ph.icon} ${cs}${reg}</a>
+                <span class="flug-route">${route}${info}${arr ? ' ' + arr : ''}</span>
+                <span class="flug-zeit flug-phase-label">${ph.label}</span>
+            </div>`;
+        }).join('') : `<p class="flug-empty">Aktuell keine Flugzeuge im 20-nm-Umkreis erfasst.</p>`;
 
-        const airnavLiveLink = airnavUrl
-            ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav RadarBox</a>`
-            : '';
+        const zeit = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        const an   = airnavUrl ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav</a>` : '';
+
         el.innerHTML = `
-            <p class="fluege-hinweis">Live ADS-B via <strong>${source}</strong> · ${aircraft.length} Flugzeug${aircraft.length !== 1 ? 'e' : ''} im Umkreis von 20 nm ·
-                <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FR24</a> ·
-                <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${airnavLiveLink}</p>
+            <div class="fluege-refresh-row">
+                <span class="fluege-ts">ADS-B via <strong>${result.src}</strong> · ${aircraft.length} Flugzeug${aircraft.length !== 1 ? 'e' : ''} · Stand ${zeit}</span>
+                <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)">↺ Aktualisieren</button>
+            </div>
             <div class="fluege-list">${rows}</div>
+            <p class="fluege-hinweis" style="margin-top:6px">Flugpläne:
+                <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
+                <a href="${faurl}"  target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware</a>${an}</p>
             ${globe()}`;
+
+        // Auto-refresh every 60 s
+        _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 60000);
+
     } catch(e) {
-        el.innerHTML = `<p class="flug-empty">Live-Daten nicht verfügbar.</p>${globe()}${links()}`;
+        const msg = e.message === 'all_failed'
+            ? 'Alle drei Quellen (adsb.fi, ADS-B Exchange, OpenSky) nicht erreichbar – bitte Verbindung prüfen.'
+            : 'Live-Daten konnten nicht geladen werden.';
+        el.innerHTML = `
+            <div class="fluege-refresh-row">
+                <span class="fluege-ts" style="color:var(--color-text-dim)">${msg}</span>
+                <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)">↺ Erneut versuchen</button>
+            </div>
+            ${globe()}${extLinks()}`;
     }
 }
 
