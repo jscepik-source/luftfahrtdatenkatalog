@@ -1,4 +1,4 @@
-const CACHE = 'luftfahrt-v2';
+const CACHE = 'luftfahrt-v3';
 
 const SHELL = [
   './',
@@ -63,9 +63,9 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Same-Origin (Shell): Cache-First mit Netzwerk-Fallback
+  // Same-Origin (Shell): Stale-While-Revalidate – sofort aus Cache, im Hintergrund aktualisieren
   if (url.origin === self.location.origin) {
-    e.respondWith(cacheFirst(e.request));
+    e.respondWith(staleWhileRevalidate(e.request));
   }
 });
 
