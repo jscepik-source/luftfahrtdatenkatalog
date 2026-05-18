@@ -18,6 +18,8 @@
     <style>
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { overflow-x: hidden; }
+        body { overflow-x: hidden; max-width: 100%; }
         button, a, input, select { touch-action: manipulation; }
 
         :root {
@@ -1245,7 +1247,7 @@
             button, a, .chip, .card-tab { -webkit-tap-highlight-color: transparent; }
 
             /* Header */
-            header { padding: var(--space-xs) var(--space-sm); }
+            header { padding-bottom: var(--space-xs); }
             .header-inner { gap: var(--space-sm); }
             .header-wordmark { display: none; }
             .header-divider { display: none; }
@@ -1409,72 +1411,80 @@
             transform: translate(-50%, -50%);
             font-size: 1.4rem; opacity: 0.25; z-index: 2;
         }
-        @media (max-width: 900px) { .hero-right { display: none; } }
+        /* Tablet (iPad mini / Air portrait, 641–900px): Globe in Zeile, schmaler */
+        @media (max-width: 900px) and (min-width: 641px) {
+            .hero-right { width: 260px; }
+            #globus-container { width: 360px; height: 360px; }
+        }
+        /* Phones (≤640px): Hero wird zur Spalte, Globe darunter */
+        @media (max-width: 640px) {
+            .hero-section { flex-direction: column; }
+            .hero-right {
+                display: block;
+                width: 100%;
+                height: 190px;
+                flex-shrink: 0;
+                -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 55%, black 30%, transparent 100%);
+                mask-image:         radial-gradient(ellipse 85% 75% at 50% 55%, black 30%, transparent 100%);
+            }
+            #globus-container { width: 280px; height: 280px; }
+        }
 
         /* ═══════════════════════════════════════════════════════════════
-           iOS / iPhone PWA – Safe Area + Touch-Optimierungen
-           Getestet für iPhone 16 Pro (Dynamic Island, 393×852 CSS-px)
+           Alle Geräte: Touch, Safe Area, Font, Scroll
+           Phones (iPhone SE → iPhone 16 Pro Max), Tablets (iPad mini → iPad Pro)
         ═══════════════════════════════════════════════════════════════ */
 
-        /* Globales Tap-Highlight + Font-Smoothing */
+        /* Globales Touch / Rendering */
         * { -webkit-tap-highlight-color: transparent; }
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            overscroll-behavior-y: none; /* kein Bounce beim oberen Rand */
         }
+        main.catalog, .card-section, .card-body { -webkit-overflow-scrolling: touch; }
 
-        /* ── Dynamic Island: Header bekommt Safe-Area-Padding oben ── */
-        @supports (padding-top: env(safe-area-inset-top)) {
+        /* ── Dynamic Island / Notch: Header schieben mit env() + Fallback 0px ── */
+        header {
+            padding-top: max(28px, calc(10px + env(safe-area-inset-top, 0px)));
+            padding-left:  max(var(--space-lg), env(safe-area-inset-left, 0px));
+            padding-right: max(var(--space-lg), env(safe-area-inset-right, 0px));
+        }
+        @media (max-width: 900px) {
             header {
-                padding-top: calc(28px + env(safe-area-inset-top));
-                padding-left:  max(var(--space-lg), calc(var(--space-lg) + env(safe-area-inset-left)));
-                padding-right: max(var(--space-lg), calc(var(--space-lg) + env(safe-area-inset-right)));
-            }
-            @media (max-width: 640px) {
-                header {
-                    padding-top: calc(var(--space-xs) + env(safe-area-inset-top));
-                    padding-left:  max(var(--space-sm), calc(var(--space-sm) + env(safe-area-inset-left)));
-                    padding-right: max(var(--space-sm), calc(var(--space-sm) + env(safe-area-inset-right)));
-                }
+                padding-top: max(14px, calc(6px + env(safe-area-inset-top, 0px)));
+                padding-left:  max(var(--space-sm), env(safe-area-inset-left, 0px));
+                padding-right: max(var(--space-sm), env(safe-area-inset-right, 0px));
             }
         }
 
-        /* ── Home-Indicator: Footer + Main bekommen Padding unten ── */
-        @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            footer {
-                padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
-            }
-            main.catalog {
-                padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom));
-            }
+        /* ── Home-Indicator: Abstand unten ── */
+        footer      { padding-bottom: max(var(--space-lg), calc(16px + env(safe-area-inset-bottom, 0px))); }
+        main.catalog { padding-bottom: max(var(--space-sm), calc(8px  + env(safe-area-inset-bottom, 0px))); }
+
+        /* ── iOS-Zoom-Fix: Input font-size ≥ 16px verhindert Auto-Zoom ── */
+        @media (max-width: 900px) {
+            #suche, .dist-input, select { font-size: 16px !important; }
         }
 
-        /* ── iOS-Zoom-Fix: Inputs müssen ≥ 16px sein ── */
-        @media (max-width: 768px) {
-            #suche     { font-size: 16px !important; }
-            .dist-input { font-size: 16px !important; }
-            select      { font-size: 16px !important; }
+        /* ── iPad Breakpoints ── */
+        /* iPad mini / Air portrait (768px) */
+        @media (min-width: 641px) and (max-width: 900px) {
+            .header-wordmark { font-size: 0.88rem; }
+            .toolbar-inner { flex-wrap: wrap; gap: 8px; }
+            .search-wrap { flex: 1 1 100%; max-width: 100%; }
+            main.catalog { max-width: 100%; padding: 0 var(--space-sm); }
+            .detail-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        /* iPad Pro / Air landscape (≥1024px) — bereits Desktop-Layout */
+        @media (min-width: 1024px) {
+            main.catalog { max-width: 1080px; }
         }
 
-        /* ── PWA Standalone Mode (data-pwa="true" via JS gesetzt) ── */
-        [data-pwa="true"] header {
-            /* Kein doppelter Schatten / border — sieht in der App cleaner aus */
-            box-shadow: none;
-        }
-        [data-pwa="true"] nav.toolbar {
-            /* Toolbar klebt direkt unter dem Header — kein Gap */
-            border-top: none;
-        }
-        /* Mindest-Tipp-Zielgröße 44pt (Apple HIG) im App-Modus durchsetzen */
-        [data-pwa="true"] .card-header { min-height: 56px; }
+        /* ── PWA Standalone Mode ── */
+        [data-pwa="true"] nav.toolbar { border-top: none; }
+        [data-pwa="true"] .card-header { min-height: 52px; }
         [data-pwa="true"] .chip        { min-height: 36px; }
         [data-pwa="true"] .card-tab    { min-height: 40px; }
-
-        /* ── Momentum-Scrolling für lange Listen ── */
-        main.catalog, .card-section, .card-body {
-            -webkit-overflow-scrolling: touch;
-        }
     </style>
 </head>
 <body>
