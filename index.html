@@ -3474,7 +3474,7 @@ async function ladeFluege(icao, forceRefresh = false) {
     const hasPos = lat && lon && !isNaN(lat) && !isNaN(lon);
 
     const fr24url   = `https://www.flightradar24.com/airport/${icao.toLowerCase()}/arrivals`;
-    const faurl     = `https://de.flightaware.com/live/airport/${icao}`;
+    const faurl     = `https://de.flightaware.com/live/airport/${icao}/arrivals`;
     const airnavUrl = hasPos ? `https://de.airnavradar.com/@${lat.toFixed(5)},${lon.toFixed(5)},z11` : null;
     const globeUrl  = hasPos
         ? `https://globe.adsbexchange.com/?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&zoom=11`
