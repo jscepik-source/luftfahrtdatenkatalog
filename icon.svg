@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#07111f"/>
+  <!-- Globe rings -->
+  <circle cx="256" cy="256" r="172" fill="none" stroke="#1e40af" stroke-width="7"/>
+  <ellipse cx="256" cy="256" rx="86" ry="172" fill="none" stroke="#1e40af" stroke-width="5"/>
+  <line x1="84" y1="256" x2="428" y2="256" stroke="#1e40af" stroke-width="5"/>
+  <line x1="108" y1="178" x2="404" y2="178" stroke="#1e40af" stroke-width="3" opacity="0.65"/>
+  <line x1="108" y1="334" x2="404" y2="334" stroke="#1e40af" stroke-width="3" opacity="0.65"/>
+  <!-- Airplane (Unicode ✈ rendered as text — works on all platforms) -->
+  <text x="256" y="310" text-anchor="middle" font-size="180" font-family="Arial,Helvetica,sans-serif" fill="#f59e0b">✈</text>
+</svg>
