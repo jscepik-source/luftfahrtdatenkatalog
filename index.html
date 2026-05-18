@@ -297,11 +297,55 @@
         /* ── Hint / Loading ── */
         .hint {
             text-align: center;
-            padding: var(--space-xl) var(--space-md);
+            padding: var(--space-xl) var(--space-md) calc(var(--space-xl) * 1.5);
             color: var(--color-text-dim);
+            max-width: 580px;
+            margin: 0 auto;
         }
-        .hint-icon { font-size: 2.8rem; display: block; margin-bottom: var(--space-sm); }
-        .hint p    { font-size: 1rem; }
+        .hint-icon { font-size: 3rem; display: block; margin-bottom: var(--space-sm); }
+        .hint-title { font-size: 1.3rem; font-weight: 700; color: var(--color-text); margin-bottom: 6px; }
+        .hint-sub   { font-size: 0.88rem; color: var(--color-text-sub); margin-bottom: var(--space-md); }
+        .hint-how   { font-size: 0.82rem; color: var(--color-text-dim); margin-bottom: 10px; }
+        .hint-examples {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+            margin-bottom: var(--space-md);
+        }
+        .hint-ex {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 8px 14px; border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            cursor: pointer; transition: border-color var(--transition), box-shadow var(--transition), transform 0.1s;
+            min-width: 70px;
+            font-family: var(--font);
+        }
+        .hint-ex:hover  { border-color: var(--color-primary); box-shadow: 0 2px 10px rgba(37,99,235,0.12); transform: translateY(-1px); }
+        .hint-ex:active { transform: translateY(0); }
+        .hint-ex-code   { font-size: 0.95rem; font-weight: 700; color: var(--color-primary); letter-spacing: 0.04em; }
+        .hint-ex-name   { font-size: 0.72rem; color: var(--color-text-dim); margin-top: 2px; }
+        .hint-filter-info {
+            font-size: 0.78rem; color: var(--color-text-dim);
+            background: var(--color-surface-2); border-radius: var(--radius-md);
+            padding: 10px 14px; text-align: left; line-height: 1.5;
+        }
+        .hint-filter-info strong { color: var(--color-text-sub); }
+
+        .no-results-wrap {
+            text-align: center;
+            padding: var(--space-xl) var(--space-md);
+            max-width: 480px; margin: 0 auto;
+        }
+        .no-results-icon  { font-size: 2.4rem; margin-bottom: var(--space-sm); }
+        .no-results-title { font-size: 1.05rem; font-weight: 600; color: var(--color-text); margin-bottom: 6px; }
+        .no-results-sub   { font-size: 0.84rem; color: var(--color-text-sub); margin-bottom: var(--space-md); line-height: 1.55; }
+        .no-results-reset {
+            padding: 9px 20px; border-radius: var(--radius-pill);
+            background: var(--color-primary); color: #fff;
+            border: none; cursor: pointer; font-family: var(--font);
+            font-size: 0.84rem; font-weight: 600;
+            transition: background var(--transition);
+        }
+        .no-results-reset:hover { background: var(--color-primary-hov); }
 
         .loading { text-align: center; padding: var(--space-xl); color: var(--color-text-sub); }
         .loading-bar {
@@ -1597,14 +1641,14 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
         </div>
 
         <div class="filter-group" role="group" aria-label="Nach Typ filtern" id="filter">
-            <button class="chip active" data-typ="">Alle</button>
-            <button class="chip" data-typ="large_airport">Groß</button>
-            <button class="chip" data-typ="medium_airport">Regional</button>
-            <button class="chip" data-typ="small_airport">Klein</button>
-            <button class="chip" data-typ="heliport">Heliport</button>
-            <button class="chip" data-typ="seaplane_base">Wasserflugzeug</button>
-            <button class="chip" data-sched="yes">✈ Linienflug</button>
-            <button class="chip" data-iata="yes">IATA</button>
+            <button class="chip active" data-typ="" title="Alle Flughafentypen anzeigen">Alle</button>
+            <button class="chip" data-typ="large_airport" title="Internationale Großflughäfen (z. B. EDDF, JFK, EGLL)">✈ International</button>
+            <button class="chip" data-typ="medium_airport" title="Regionale Flughäfen mit regulärem Betrieb">🛫 Regional</button>
+            <button class="chip" data-typ="small_airport" title="Kleine Flugplätze, oft ohne kommerziellen Betrieb">🛬 Klein</button>
+            <button class="chip" data-typ="heliport" title="Hubschrauberlandeplätze">🚁 Heliport</button>
+            <button class="chip" data-typ="seaplane_base" title="Wasserflugzeugbasen und Seenflugplätze">🚤 Wasserflugzeug</button>
+            <button class="chip" data-sched="yes" title="Nur Flughäfen mit planmäßigem Linienverkehr">✈ Linienflug</button>
+            <button class="chip" data-iata="yes" title="Nur Flughäfen mit offiziellem IATA-Code (z. B. FRA, JFK)">IATA-Code</button>
             <select class="filter-select" id="kontinent-sel" aria-label="Kontinent filtern">
                 <option value="">🌍 Alle Kontinente</option>
                 <option value="EU">🇪🇺 Europa</option>
@@ -1615,7 +1659,7 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
                 <option value="OC">🌏 Ozeanien</option>
                 <option value="AN">🧊 Antarktis</option>
             </select>
-            <button class="chip" id="dist-toggle-btn" onclick="toggleDistPanel()">📏 Entfernung</button>
+            <button class="chip" id="dist-toggle-btn" onclick="toggleDistPanel()" title="Flughäfen nach Entfernung von einem Startpunkt filtern">📏 Entfernung</button>
         </div>
 
         <p id="zaehler" aria-live="polite" aria-atomic="true"></p>
@@ -1809,13 +1853,73 @@ fetch(JSON_URL)
         document.getElementById('laden').style.display = 'none';
         zeigeHinweis();
         initWeltkugel();
+        startAnimiertePlatzhalter();
     })
     .catch(() => { document.getElementById('laden').innerHTML = '<p class="status-error">Fehler beim Laden der Daten.</p>'; });
 
+function startAnimiertePlatzhalter() {
+    const el = document.getElementById('suche');
+    if (!el) return;
+    const texte = [
+        'ICAO, IATA, Name, Stadt, Land…',
+        'z. B. EDDF — Frankfurt',
+        'z. B. JFK — New York',
+        'z. B. EGLL — London Heathrow',
+        'z. B. LEMD — Madrid',
+        'z. B. YSSY — Sydney',
+        'z. B. Deutschland, Österreich…',
+        'z. B. RJTT — Tokyo',
+    ];
+    let idx = 0;
+    setInterval(() => {
+        if (document.activeElement !== el && !el.value) {
+            idx = (idx + 1) % texte.length;
+            el.placeholder = texte[idx];
+        }
+    }, 2800);
+}
+
 function zeigeHinweis() {
-    document.getElementById('liste').innerHTML =
-        '<div class="hint"><span class="hint-icon">✈️</span><p>ICAO, IATA, Name, Stadt oder Land eingeben</p></div>';
+    const examples = [
+        ['EDDF','Frankfurt'],['JFK','New York'],['EGLL','London'],
+        ['LEMD','Madrid'],['RJTT','Tokyo'],['YSSY','Sydney'],
+    ];
+    document.getElementById('liste').innerHTML = `
+        <div class="hint">
+            <span class="hint-icon">✈️</span>
+            <h2 class="hint-title">Flughafen suchen</h2>
+            <p class="hint-sub">72.000+ Flughäfen weltweit &mdash; METAR, NOTAMs, Runways, Live ADS-B</p>
+            <p class="hint-how">Gib oben ICAO-Code, IATA-Code, Name, Stadt oder Land ein &mdash; oder tippe auf ein Beispiel:</p>
+            <div class="hint-examples">
+                ${examples.map(([code,name]) =>
+                    `<button class="hint-ex" onclick="sucheBeispiel('${code}')"><span class="hint-ex-code">${code}</span><span class="hint-ex-name">${name}</span></button>`
+                ).join('')}
+            </div>
+            <div class="hint-filter-info">
+                <strong>Tipp:</strong> Mit den Filter-Chips oben kannst du nach Flughafentyp (International, Regional, Klein, Heliport), Kontinent oder Linienflugstatus filtern. &bdquo;📏 Entfernung&ldquo; zeigt Flughäfen in einem Umkreis.
+            </div>
+        </div>`;
     document.getElementById('zaehler').textContent = `${Object.keys(katalog).length.toLocaleString()} Flughäfen geladen`;
+}
+
+function sucheBeispiel(q) {
+    document.getElementById('suche').value = q;
+    suche();
+    document.getElementById('suche').focus();
+}
+
+function resetSuche() {
+    document.getElementById('suche').value = '';
+    document.querySelectorAll('#filter .chip[data-typ]').forEach(b => b.classList.remove('active'));
+    const alleChip = document.querySelector('#filter .chip[data-typ=""]');
+    if (alleChip) alleChip.classList.add('active');
+    aktiverTyp = '';
+    aktivSched = false;
+    aktivIata = false;
+    document.querySelectorAll('#filter .chip[data-sched], #filter .chip[data-iata]').forEach(b => b.classList.remove('active'));
+    const kSel = document.getElementById('kontinent-sel');
+    if (kSel) { kSel.value = ''; aktivKontinent = ''; }
+    zeigeHinweis();
 }
 
 const LAND_ALIASES = {
@@ -1875,7 +1979,14 @@ function suche() {
     liste.innerHTML = '';
     document.getElementById('zaehler').textContent = `${aktuelleEintraege.length.toLocaleString()} Ergebnisse`;
     if (aktuelleEintraege.length === 0) {
-        liste.innerHTML = '<p class="no-results">Keine Ergebnisse gefunden.</p>';
+        const qDisplay = q ? `„${q}"` : 'diese Filter-Kombination';
+        liste.innerHTML = `
+            <div class="no-results-wrap">
+                <div class="no-results-icon">🔍</div>
+                <p class="no-results-title">Keine Ergebnisse für ${qDisplay}</p>
+                <p class="no-results-sub">Versuche es mit einem ICAO-Code (z.&nbsp;B.&nbsp;<strong>EDDF</strong>), IATA-Code (<strong>FRA</strong>) oder einem Stadt- bzw. Ländernamen. Aktive Filter können Ergebnisse ausschließen.</p>
+                <button class="no-results-reset" onclick="resetSuche()">Filter &amp; Suche zurücksetzen</button>
+            </div>`;
         return;
     }
     ladeNaechste(liste);
