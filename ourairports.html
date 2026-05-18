@@ -1382,6 +1382,15 @@
             footer p { font-size: 0.68rem; line-height: 2; }
         }
 
+        /* Kartennamen auf Mobile: Text umbrechen statt overflow */
+        @media (max-width: 640px) {
+            .btn-chart {
+                white-space: normal;
+                word-break: break-word;
+                max-width: 100%;
+            }
+        }
+
         /* Very small phones (≤ 400px) */
         @media (max-width: 400px) {
             .karten-extern-zeile { grid-template-columns: 1fr; gap: 4px; }
