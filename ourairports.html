@@ -1539,9 +1539,9 @@
         footer      { padding-bottom: max(var(--space-lg), calc(16px + env(safe-area-inset-bottom, 0px))); }
         main.catalog { padding-bottom: max(var(--space-sm), calc(8px  + env(safe-area-inset-bottom, 0px))); }
 
-        /* ── iOS-Zoom-Fix: Input font-size ≥ 16px verhindert Auto-Zoom ── */
+        /* ── iOS-Zoom-Fix: nur Text-Inputs brauchen ≥16px (select öffnet nativen Picker, kein Zoom) ── */
         @media (max-width: 900px) {
-            #suche, .dist-input, select { font-size: 16px !important; }
+            #suche, .dist-input { font-size: 16px !important; }
         }
 
         /* ── iPad Breakpoints ── */
