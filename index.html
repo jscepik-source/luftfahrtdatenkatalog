@@ -3515,17 +3515,46 @@ async function ladeFluege(icao, forceRefresh = false) {
     }
 
     try {
+        function parseAdsbFiFormat(d) {
+            return d.aircraft || d.ac || [];
+        }
+        function parseOpenSky(d) {
+            return (d.states || [])
+                .filter(s => s[1] && s[5] != null && s[6] != null)
+                .map(s => ({
+                    flight:    (s[1] || '').trim(),
+                    t: '', r: '',
+                    squawk:    s[14] || '',
+                    dst:       haversine(lat, lon, s[6], s[5]) / 1.852,
+                    gs:        s[9]  != null ? s[9]  * 1.944  : 0,
+                    baro_rate: s[11] != null ? s[11] * 196.85 : 0,
+                    alt_baro:  s[7]  != null ? s[7]  * 3.281  : null,
+                    track:     s[10] ?? null,
+                }))
+                .filter(a => a.dst <= 20);
+        }
         const versuche = [
             async () => {
                 const r = await fetch(`https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`,
-                    { signal: AbortSignal.timeout(7000) });
+                    { signal: AbortSignal.timeout(8000) });
                 if (!r.ok) throw new Error(r.status);
-                const d = await r.json();
-                return { ac: d.aircraft || d.ac || [], src: 'adsb.fi' };
+                return { ac: parseAdsbFiFormat(await r.json()), src: 'adsb.fi' };
+            },
+            async () => {
+                const r = await fetch(`https://api.adsb.lol/v2/lat/${lat}/lon/${lon}/dist/20`,
+                    { signal: AbortSignal.timeout(8000) });
+                if (!r.ok) throw new Error(r.status);
+                return { ac: parseAdsbFiFormat(await r.json()), src: 'adsb.lol' };
+            },
+            async () => {
+                const r = await fetch(`https://api.airplanes.live/v2/lat/${lat}/lon/${lon}/dist/20`,
+                    { signal: AbortSignal.timeout(8000) });
+                if (!r.ok) throw new Error(r.status);
+                return { ac: parseAdsbFiFormat(await r.json()), src: 'airplanes.live' };
             },
             async () => {
                 const r = await fetch(`https://globe.adsbexchange.com/re-api/?lat=${lat}&lon=${lon}&dist=20`,
-                    { signal: AbortSignal.timeout(7000) });
+                    { signal: AbortSignal.timeout(8000) });
                 if (!r.ok) throw new Error(r.status);
                 const d = await r.json();
                 return { ac: d.ac || d.aircraft || [], src: 'ADS-B Exchange' };
@@ -3536,21 +3565,7 @@ async function ladeFluege(icao, forceRefresh = false) {
                     `https://opensky-network.org/api/states/all?lamin=${lat-pad}&lamax=${lat+pad}&lomin=${lon-pad}&lomax=${lon+pad}`,
                     { signal: AbortSignal.timeout(10000) });
                 if (!r.ok) throw new Error(r.status);
-                const d = await r.json();
-                const ac = (d.states || [])
-                    .filter(s => s[1] && s[5] != null && s[6] != null)
-                    .map(s => ({
-                        flight:    (s[1] || '').trim(),
-                        t: '', r: '',
-                        squawk:    s[14] || '',
-                        dst:       haversine(lat, lon, s[6], s[5]) / 1.852,
-                        gs:        s[9]  != null ? s[9]  * 1.944  : 0,
-                        baro_rate: s[11] != null ? s[11] * 196.85 : 0,
-                        alt_baro:  s[7]  != null ? s[7]  * 3.281  : null,
-                        track:     s[10] ?? null,
-                    }))
-                    .filter(a => a.dst <= 20);
-                return { ac, src: 'OpenSky Network' };
+                return { ac: parseOpenSky(await r.json()), src: 'OpenSky Network' };
             },
         ];
 
@@ -3612,12 +3627,9 @@ async function ladeFluege(icao, forceRefresh = false) {
         _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 60000);
 
     } catch(e) {
-        const msg = e.message === 'all_failed'
-            ? 'Alle drei Quellen (adsb.fi, ADS-B Exchange, OpenSky) nicht erreichbar – bitte Verbindung prüfen.'
-            : 'Live-Daten konnten nicht geladen werden.';
         el.innerHTML = `
             <div class="fluege-refresh-row">
-                <span class="fluege-ts" style="color:var(--color-text-dim)">${msg}</span>
+                <span class="fluege-ts" style="color:var(--color-text-dim)">Flugzeug-Liste nicht verfügbar – Live-Radar unten funktioniert.</span>
                 <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)">↺ Erneut versuchen</button>
             </div>
             ${globe()}${extLinks()}`;
