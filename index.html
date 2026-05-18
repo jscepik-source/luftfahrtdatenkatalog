@@ -1410,9 +1410,80 @@
             font-size: 1.4rem; opacity: 0.25; z-index: 2;
         }
         @media (max-width: 900px) { .hero-right { display: none; } }
+
+        /* ═══════════════════════════════════════════════════════════════
+           iOS / iPhone PWA – Safe Area + Touch-Optimierungen
+           Getestet für iPhone 16 Pro (Dynamic Island, 393×852 CSS-px)
+        ═══════════════════════════════════════════════════════════════ */
+
+        /* Globales Tap-Highlight + Font-Smoothing */
+        * { -webkit-tap-highlight-color: transparent; }
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior-y: none; /* kein Bounce beim oberen Rand */
+        }
+
+        /* ── Dynamic Island: Header bekommt Safe-Area-Padding oben ── */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            header {
+                padding-top: calc(28px + env(safe-area-inset-top));
+                padding-left:  max(var(--space-lg), calc(var(--space-lg) + env(safe-area-inset-left)));
+                padding-right: max(var(--space-lg), calc(var(--space-lg) + env(safe-area-inset-right)));
+            }
+            @media (max-width: 640px) {
+                header {
+                    padding-top: calc(var(--space-xs) + env(safe-area-inset-top));
+                    padding-left:  max(var(--space-sm), calc(var(--space-sm) + env(safe-area-inset-left)));
+                    padding-right: max(var(--space-sm), calc(var(--space-sm) + env(safe-area-inset-right)));
+                }
+            }
+        }
+
+        /* ── Home-Indicator: Footer + Main bekommen Padding unten ── */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            footer {
+                padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
+            }
+            main.catalog {
+                padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom));
+            }
+        }
+
+        /* ── iOS-Zoom-Fix: Inputs müssen ≥ 16px sein ── */
+        @media (max-width: 768px) {
+            #suche     { font-size: 16px !important; }
+            .dist-input { font-size: 16px !important; }
+            select      { font-size: 16px !important; }
+        }
+
+        /* ── PWA Standalone Mode (data-pwa="true" via JS gesetzt) ── */
+        [data-pwa="true"] header {
+            /* Kein doppelter Schatten / border — sieht in der App cleaner aus */
+            box-shadow: none;
+        }
+        [data-pwa="true"] nav.toolbar {
+            /* Toolbar klebt direkt unter dem Header — kein Gap */
+            border-top: none;
+        }
+        /* Mindest-Tipp-Zielgröße 44pt (Apple HIG) im App-Modus durchsetzen */
+        [data-pwa="true"] .card-header { min-height: 56px; }
+        [data-pwa="true"] .chip        { min-height: 36px; }
+        [data-pwa="true"] .card-tab    { min-height: 40px; }
+
+        /* ── Momentum-Scrolling für lange Listen ── */
+        main.catalog, .card-section, .card-body {
+            -webkit-overflow-scrolling: touch;
+        }
     </style>
 </head>
 <body>
+<script>
+// PWA Standalone-Modus erkennen (iOS + Android)
+if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+    document.documentElement.setAttribute('data-pwa', 'true');
+}
+</script>
 
 <!-- ── Header ── -->
 <header>
