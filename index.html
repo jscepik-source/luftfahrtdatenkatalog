@@ -3556,6 +3556,7 @@ document.addEventListener('keydown', e => {
     const TOTAL = 2;
     let idx = 0;
     let timer = null;
+    let pointerIsTouch = false;  // sobald Touch erkannt → Mouse-Events ignorieren
 
     function heroGoto(n) {
         idx = ((n % TOTAL) + TOTAL) % TOTAL;
@@ -3566,7 +3567,8 @@ document.addEventListener('keydown', e => {
 
     function startAuto() {
         clearInterval(timer);
-        timer = setInterval(() => heroGoto(idx + 1), 7500);
+        // Kein Advance wenn Tab unsichtbar (verhindert Batching nach Tab-Wechsel)
+        timer = setInterval(() => { if (!document.hidden) heroGoto(idx + 1); }, 7500);
     }
     function stopAuto() {
         clearInterval(timer);
@@ -3575,15 +3577,27 @@ document.addEventListener('keydown', e => {
 
     startAuto();
 
-    // pause on hover / touch
+    // Tab-Wechsel: Timer anhalten, sauber neu starten wenn wieder sichtbar
+    document.addEventListener('visibilitychange', () => {
+        document.hidden ? stopAuto() : startAuto();
+    });
+
     const section = document.querySelector('.hero-section');
 
-    section.addEventListener('mouseenter', stopAuto);
-    section.addEventListener('mouseleave', startAuto);
-    section.addEventListener('touchstart', stopAuto, { passive: true });
-    section.addEventListener('touchend', () => setTimeout(startAuto, 3000), { passive: true });
+    // Mouse-Hover nur auf echten Desktops (nicht auf Synthetics nach Touch)
+    section.addEventListener('mouseenter', () => { if (!pointerIsTouch) stopAuto(); });
+    section.addEventListener('mouseleave', () => { if (!pointerIsTouch) startAuto(); });
 
-    // swipe support
+    // Touch: Flag setzen + Timer stoppen, nach Loslassen neu starten
+    section.addEventListener('touchstart', () => {
+        pointerIsTouch = true;
+        stopAuto();
+    }, { passive: true });
+    section.addEventListener('touchend', () => {
+        setTimeout(startAuto, 2500);
+    }, { passive: true });
+
+    // Swipe-Erkennung
     let touchX = null;
     section.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
     section.addEventListener('touchend', e => {
