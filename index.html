@@ -3533,38 +3533,51 @@ async function ladeFluege(icao, forceRefresh = false) {
                 }))
                 .filter(a => a.dst <= 20);
         }
+        function proxied(url) {
+            // Zwei CORS-Proxies als Fallback
+            return [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            ];
+        }
+        async function fetchAny(urls, timeout = 9000) {
+            for (const u of urls) {
+                try {
+                    const r = await fetch(u, { signal: AbortSignal.timeout(timeout) });
+                    if (r.ok) return r;
+                } catch {}
+            }
+            throw new Error('all_urls_failed');
+        }
+
+        const adsbFiUrl      = `https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`;
+        const adsbLolUrl     = `https://api.adsb.lol/v2/lat/${lat}/lon/${lon}/dist/20`;
+        const airplanesUrl   = `https://api.airplanes.live/v2/lat/${lat}/lon/${lon}/dist/20`;
+        const adsbExchUrl    = `https://globe.adsbexchange.com/re-api/?lat=${lat}&lon=${lon}&dist=20`;
+
+        const pad = 0.4;
+        const openSkyUrl = `https://opensky-network.org/api/states/all?lamin=${lat-pad}&lamax=${lat+pad}&lomin=${lon-pad}&lomax=${lon+pad}`;
+
         const versuche = [
             async () => {
-                const r = await fetch(`https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`,
-                    { signal: AbortSignal.timeout(8000) });
-                if (!r.ok) throw new Error(r.status);
+                const r = await fetchAny([adsbFiUrl, ...proxied(adsbFiUrl)]);
                 return { ac: parseAdsbFiFormat(await r.json()), src: 'adsb.fi' };
             },
             async () => {
-                const r = await fetch(`https://api.adsb.lol/v2/lat/${lat}/lon/${lon}/dist/20`,
-                    { signal: AbortSignal.timeout(8000) });
-                if (!r.ok) throw new Error(r.status);
+                const r = await fetchAny([adsbLolUrl, ...proxied(adsbLolUrl)]);
                 return { ac: parseAdsbFiFormat(await r.json()), src: 'adsb.lol' };
             },
             async () => {
-                const r = await fetch(`https://api.airplanes.live/v2/lat/${lat}/lon/${lon}/dist/20`,
-                    { signal: AbortSignal.timeout(8000) });
-                if (!r.ok) throw new Error(r.status);
+                const r = await fetchAny([airplanesUrl, ...proxied(airplanesUrl)]);
                 return { ac: parseAdsbFiFormat(await r.json()), src: 'airplanes.live' };
             },
             async () => {
-                const r = await fetch(`https://globe.adsbexchange.com/re-api/?lat=${lat}&lon=${lon}&dist=20`,
-                    { signal: AbortSignal.timeout(8000) });
-                if (!r.ok) throw new Error(r.status);
+                const r = await fetchAny([adsbExchUrl, ...proxied(adsbExchUrl)]);
                 const d = await r.json();
                 return { ac: d.ac || d.aircraft || [], src: 'ADS-B Exchange' };
             },
             async () => {
-                const pad = 0.4;
-                const r = await fetch(
-                    `https://opensky-network.org/api/states/all?lamin=${lat-pad}&lamax=${lat+pad}&lomin=${lon-pad}&lomax=${lon+pad}`,
-                    { signal: AbortSignal.timeout(10000) });
-                if (!r.ok) throw new Error(r.status);
+                const r = await fetchAny([openSkyUrl, ...proxied(openSkyUrl)], 12000);
                 return { ac: parseOpenSky(await r.json()), src: 'OpenSky Network' };
             },
         ];
