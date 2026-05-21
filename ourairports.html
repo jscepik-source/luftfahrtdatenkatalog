@@ -1174,6 +1174,32 @@
             backdrop-filter: blur(4px);
         }
         .fluege-globe-open:hover { background: rgba(0,0,0,0.8); }
+
+        /* ── ACARS ── */
+        .acars-container { display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
+        .acars-msg {
+            background: var(--color-metar-bg); border: 1px solid var(--color-metar-bd);
+            border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.78rem;
+        }
+        .acars-msg-head {
+            display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+            margin-bottom: 4px; font-size: 0.72rem; color: var(--color-text-sub);
+        }
+        .acars-tail  { font-weight: 600; color: var(--color-primary); }
+        .acars-type  {
+            background: var(--color-primary-bg); color: var(--color-primary);
+            padding: 1px 6px; border-radius: var(--radius-pill); font-size: 0.68rem;
+        }
+        .acars-text  { font-family: monospace; color: var(--color-metar-text); white-space: pre-wrap; word-break: break-all; }
+        .acars-no-key { text-align: center; padding: 24px 16px; color: var(--color-text-sub); font-size: 0.85rem; }
+        .acars-no-key a { color: var(--color-primary); }
+        .acars-refresh {
+            align-self: flex-start; font-size: 0.75rem; color: var(--color-text-sub); cursor: pointer;
+            background: none; border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm); padding: 3px 10px; margin-bottom: 4px;
+        }
+        .acars-refresh:hover { background: var(--color-surface-2); }
+
         .notam-map-btn {
             display: flex;
             align-items: center;
@@ -1819,6 +1845,10 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
+
+// ── Airframes.io ACARS-API ────────────────────────────────────────────────────
+// API-Key unter https://airframes.io/account anfordern (kostenlos als Feeder)
+const AIRFRAMES_API_KEY = '';
 
 const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
@@ -3053,6 +3083,7 @@ out skel qt;`;
                 <button class="card-tab" onclick="switchTab(this,'fluege','${icao}')">Flüge</button>
                 <button class="card-tab" onclick="switchTab(this,'wetter')">Wetter</button>
                 <button class="card-tab" onclick="switchTab(this,'notam','${icao}')">NOTAMs</button>
+                <button class="card-tab" onclick="switchTab(this,'acars','${icao}')">ACARS</button>
                 ${hasCoords ? `<button class="card-tab" onclick="switchTab(this,'karte','${icao}')">Karte</button>` : ''}
             </div>
 
@@ -3107,6 +3138,13 @@ out skel qt;`;
                     <h3 class="section-title">🌅 Sonnenauf-/-untergang (UTC, heute)</h3>
                     <dl class="sun-grid" id="sonne-${icao}"><span class="status-loading">wird berechnet…</span></dl>
                 </section>` : ''}
+            </div>
+
+            <!-- ACARS Panel -->
+            <div class="card-tab-panel" data-panel="acars">
+                <div id="acars-${icao}" class="acars-container">
+                    <span class="status-loading">Wird geladen…</span>
+                </div>
             </div>
 
             <!-- Karten Panel -->
@@ -3489,6 +3527,64 @@ async function ladeEurocontrol(icao) {
     }
 }
 
+// ── ACARS (Airframes.io) ─────────────────────────────────────────────────────
+async function ladeAcars(icao, force = false) {
+    const el = document.getElementById(`acars-${icao}`);
+    if (!el) return;
+    if (el.dataset.geladen && !force) return;
+    el.dataset.geladen = '1';
+
+    if (!AIRFRAMES_API_KEY) {
+        el.innerHTML = `<div class="acars-no-key">
+            🔑 Kein API-Key konfiguriert.<br>
+            <a href="https://airframes.io/account" target="_blank" rel="noopener">Kostenlos als Feeder registrieren</a>
+            und Key in <code>AIRFRAMES_API_KEY</code> eintragen.
+        </div>`;
+        return;
+    }
+
+    el.innerHTML = '<span class="status-loading">ACARS-Nachrichten werden geladen…</span>';
+
+    try {
+        const res = await fetch(
+            `https://api.airframes.io/v1/messages?airport=${icao}&limit=25&order=desc`,
+            { headers: { 'Authorization': `Bearer ${AIRFRAMES_API_KEY}`, 'Accept': 'application/json' } }
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const msgs = json.messages || json.data || json || [];
+
+        if (!msgs.length) {
+            el.innerHTML = '<span class="status-loading">Keine ACARS-Nachrichten vorhanden.</span>';
+            return;
+        }
+
+        const reihen = msgs.map(m => {
+            const zeit = m.timestamp || m.created_at || m.time || '';
+            const zeitStr = zeit ? new Date(zeit).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC' }) + ' UTC' : '–';
+            const tail   = m.tail || m.registration || m.aircraft?.registration || '';
+            const flight = m.flight || m.flight_number || '';
+            const typ    = m.label || m.type || m.message_type || '';
+            const text   = m.text || m.message || m.body || '';
+            return `<div class="acars-msg">
+                <div class="acars-msg-head">
+                    <span class="acars-tail">${tail || '?'}</span>
+                    ${flight ? `<span>${flight}</span>` : ''}
+                    ${typ    ? `<span class="acars-type">${typ}</span>` : ''}
+                    <span style="margin-left:auto">${zeitStr}</span>
+                </div>
+                ${text ? `<div class="acars-text">${text.replace(/</g,'&lt;')}</div>` : ''}
+            </div>`;
+        }).join('');
+
+        el.innerHTML = `
+            <button class="acars-refresh" onclick="ladeAcars('${icao}', true)">↻ Aktualisieren</button>
+            ${reihen}`;
+    } catch(e) {
+        el.innerHTML = `<span class="status-error">Fehler: ${e.message}</span>`;
+    }
+}
+
 // ── Card Tabs ────────────────────────────────────────────────────────────────
 function switchTab(btn, panel, icao) {
     const body = btn.closest('.card-body');
@@ -3500,6 +3596,7 @@ function switchTab(btn, panel, icao) {
     if (panel === 'fluege'  && icao) ladeFluege(icao);
     if (panel === 'notam'   && icao) ladeNfl(icao);
     if (panel === 'karten'  && icao) ladeEurocontrol(icao);
+    if (panel === 'acars'   && icao) ladeAcars(icao);
 }
 
 // ── Flüge (ADS-B Live) ────────────────────────────────────────────────────────
