@@ -1202,6 +1202,11 @@
 
         /* ── Infrastruktur (OSM) ── */
         .infra-container { padding: 4px 0; }
+        .infra-map {
+            height: 320px; border-radius: var(--radius-md);
+            overflow: hidden; margin-bottom: 14px;
+            border: 1px solid var(--color-border);
+        }
 
         /* Zusammenfassung oben */
         .infra-summary {
@@ -1528,6 +1533,7 @@
 
             /* Map */
             .map-container { height: 230px; }
+            .infra-map     { height: 240px; }
             .map-links { flex-wrap: wrap; }
 
             /* Footer */
@@ -2214,7 +2220,8 @@ function calcSonne(lat, lon) {
     return { auf: fmt(noon - H / 15), unter: fmt(noon + H / 15) };
 }
 
-const karteInstanzen = {};
+const karteInstanzen      = {};
+const infraKarteInstanzen = {};
 
 async function ladeKarte(icao, lat, lon) {
     const el = document.getElementById(`karte-${icao}`);
@@ -3739,6 +3746,12 @@ async function ladeInfrastruktur(icao, force = false) {
     if (el.dataset.geladen && !force) return;
     el.dataset.geladen = '1';
 
+    // Alte Karten-Instanz aufräumen
+    if (infraKarteInstanzen[icao]) {
+        infraKarteInstanzen[icao].remove();
+        delete infraKarteInstanzen[icao];
+    }
+
     const ap = katalog[icao];
     if (!ap || ap.lat === undefined || ap.lon === undefined) {
         el.innerHTML = '<span class="status-error">Keine Koordinaten verfügbar.</span>';
@@ -3844,12 +3857,88 @@ out center tags;`;
         }
 
         el.innerHTML = `
+            <div id="infra-map-${icao}" class="infra-map"></div>
             <div class="infra-summary">${summaryHtml}</div>
             ${sectionsHtml}
             <div class="infra-footer">
                 <div class="infra-source">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende · ODbL · <a href="https://overpass-api.de" target="_blank" rel="noopener">Overpass API</a></div>
                 <button class="infra-refresh" onclick="ladeInfrastruktur('${icao}', true)">↻ Aktualisieren</button>
             </div>`;
+
+        // ── Karte initialisieren ──────────────────────────────────────────────
+        const mapEl = document.getElementById(`infra-map-${icao}`);
+        const imap  = L.map(mapEl, { center: [ap.lat, ap.lon], zoom: 14, scrollWheelZoom: false });
+        infraKarteInstanzen[icao] = imap;
+
+        const osmTile = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap', maxZoom: 19
+        });
+        const satTile = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© Esri World Imagery', maxZoom: 19
+        });
+        satTile.addTo(imap);  // Satellit als Standard – Infrastruktur besser sichtbar
+        L.control.layers({ '🛰 Satellit': satTile, 'Straßenkarte': osmTile }, {}, { position: 'topright' }).addTo(imap);
+
+        // Farben pro Typ
+        const typeColors = {
+            terminal:         '#6366f1',
+            gate:             '#22c55e',
+            parking_position: '#f59e0b',
+            apron:            '#94a3b8',
+            hangar:           '#8b5cf6',
+            tower:            '#ef4444',
+            helipad:          '#06b6d4',
+            navigationaid:    '#ec4899',
+        };
+        const typeRadius = {
+            terminal: 9, gate: 6, parking_position: 5,
+            tower: 8, helipad: 7, hangar: 6, apron: 5, navigationaid: 6,
+        };
+
+        const bounds = [];
+        for (const [type, items] of sortedGroups) {
+            const m      = typeMeta[type];
+            const color  = typeColors[type] || '#64748b';
+            const radius = typeRadius[type]  || 5;
+
+            for (const item of items) {
+                const lat = item.lat ?? item.center?.lat;
+                const lon = item.lon ?? item.center?.lon;
+                if (!lat || !lon) continue;
+
+                const ref  = item.tags?.ref  || item.tags?.name || '–';
+                const name = item.tags?.name || '';
+                const osmLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`;
+
+                const popup = `<div style="font-family:var(--font,sans-serif);min-width:130px">
+                    <div style="font-weight:700;font-size:0.9rem;margin-bottom:3px">${m.icon} ${ref}</div>
+                    ${name && name !== ref ? `<div style="font-size:0.78rem;color:#64748b;margin-bottom:3px">${name}</div>` : ''}
+                    <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px">${m.label}</div>
+                    <a href="${osmLink}" target="_blank" rel="noopener"
+                       style="font-size:0.72rem;color:#2563eb;text-decoration:none">In OSM öffnen ↗</a>
+                </div>`;
+
+                L.circleMarker([lat, lon], {
+                    radius,
+                    color:       '#fff',
+                    fillColor:   color,
+                    fillOpacity: 0.9,
+                    weight:      1.5,
+                }).bindPopup(popup).addTo(imap);
+
+                bounds.push([lat, lon]);
+            }
+        }
+
+        // Auf alle Marker einzoomen
+        if (bounds.length > 1) {
+            imap.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
+        }
+
+        requestAnimationFrame(() => requestAnimationFrame(() => imap.invalidateSize()));
+
+        // Aeroway-Geometrie (Runways, Taxiways, Terminals) als Hintergrund
+        ladeFlughafenLayout(imap, ap.lat, ap.lon);
 
     } catch(e) {
         el.innerHTML = `<span class="status-error">Fehler beim Laden: ${e.message}</span>`;
@@ -3863,6 +3952,9 @@ function switchTab(btn, panel, icao) {
     body.querySelectorAll('.card-tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === panel));
     if (panel === 'karte'   && icao && karteInstanzen[icao]) {
         setTimeout(() => karteInstanzen[icao].invalidateSize(), 60);
+    }
+    if (panel === 'infra'   && icao && infraKarteInstanzen[icao]) {
+        setTimeout(() => infraKarteInstanzen[icao].invalidateSize(), 60);
     }
     if (panel === 'fluege'  && icao) ladeFluege(icao);
     if (panel === 'notam'   && icao) ladeNfl(icao);
