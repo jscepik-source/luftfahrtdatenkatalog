@@ -1303,6 +1303,29 @@
         .infra-empty { text-align: center; padding: 28px 16px; color: var(--color-text-sub); font-size: 0.83rem; }
         .infra-empty a { color: var(--color-primary); }
 
+        /* Navaid-Karten */
+        .infra-navaid-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 7px;
+        }
+        .infra-navaid-card {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-md); padding: 10px 12px;
+            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+        }
+        .infra-navaid-card:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-navaid-head {
+            display: flex; align-items: center; gap: 7px; margin-bottom: 5px;
+        }
+        .infra-navaid-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .infra-navaid-ident { font-weight: 700; font-size: 0.88rem; color: var(--color-text); }
+        .infra-navaid-type  {
+            font-size: 0.66rem; font-weight: 700; padding: 1px 5px;
+            border-radius: 3px; background: var(--color-surface-2);
+            color: var(--color-text-sub); white-space: nowrap;
+        }
+        .infra-navaid-name  { font-size: 0.72rem; color: var(--color-text-sub); margin-bottom: 5px; }
+        .infra-navaid-row   { font-size: 0.71rem; color: var(--color-text-dim); line-height: 1.6; }
+
         .notam-map-btn {
             display: flex;
             align-items: center;
@@ -3784,28 +3807,40 @@ async function ladeInfrastruktur(icao, force = false) {
 
     el.innerHTML = '<span class="status-loading">OSM-Infrastrukturdaten werden geladen…</span>';
 
-    // around: statt bbox – präziser, schneller für runde Radien
-    // navigationaid absichtlich ausgeschlossen: OSM taggt jede einzelne
-    // Anflugbefeuerungsleuchte damit → hunderte nutzloser Punkte
-    const radius = 10000; // 10 km
+    // Helipad + navigationaid bewusst ausgelassen:
+    // - helipad: meist abseits des Flughafens oder irrelevant
+    // - navigationaid: OSM taggt jede einzelne Anfluglampe → hunderte Punkte
+    // Radar kommt über man_made=radar separat
+    const radius = 8000; // 8 km – eng am Flughafen
     const query = `[out:json][timeout:25];
 (
-  node["aeroway"~"terminal|gate|parking_position|tower|helipad|hangar"](around:${radius},${ap.lat},${ap.lon});
-  way["aeroway"~"terminal|gate|parking_position|tower|helipad|hangar|apron"](around:${radius},${ap.lat},${ap.lon});
+  node["aeroway"~"terminal|gate|parking_position|tower|hangar"](around:${radius},${ap.lat},${ap.lon});
+  way["aeroway"~"terminal|gate|parking_position|tower|hangar|apron"](around:${radius},${ap.lat},${ap.lon});
   relation["aeroway"="terminal"](around:${radius},${ap.lat},${ap.lon});
+  node["man_made"="radar"](around:${radius},${ap.lat},${ap.lon});
+  way["man_made"="radar"](around:${radius},${ap.lat},${ap.lon});
 );
 out center tags;`;
 
     const typeMeta = {
-        terminal:         { icon: '🏛️', label: 'Terminals',         color: '#6366f1', radius: 9,  order: 1, open: true,  style: 'cards'  },
-        gate:             { icon: '🚪', label: 'Gates',              color: '#22c55e', radius: 6,  order: 2, open: true,  style: 'prefix' },
-        parking_position: { icon: '🅿️', label: 'Abstellpositionen', color: '#f59e0b', radius: 5,  order: 3, open: false, style: 'prefix' },
-        apron:            { icon: '🛬', label: 'Vorfelder',          color: '#94a3b8', radius: 5,  order: 4, open: false, style: 'chips'  },
-        hangar:           { icon: '🏗️', label: 'Hangars',            color: '#8b5cf6', radius: 6,  order: 5, open: false, style: 'chips'  },
-        tower:            { icon: '🗼', label: 'Tower',              color: '#ef4444', radius: 8,  order: 6, open: true,  style: 'chips'  },
-        helipad:          { icon: '🚁', label: 'Hubschrauberplätze', color: '#06b6d4', radius: 7,  order: 7, open: false, style: 'chips'  },
-        // navigationaid: absichtlich ausgelassen – OSM taggt jede Anfluglampe einzeln → unbrauchbar als Marker
+        terminal:         { icon: '🏛️', label: 'Terminals',         color: '#6366f1', radius: 9,  order: 1, open: true,  style: 'cards'   },
+        gate:             { icon: '🚪', label: 'Gates',              color: '#22c55e', radius: 6,  order: 2, open: true,  style: 'prefix'  },
+        parking_position: { icon: '🅿️', label: 'Abstellpositionen', color: '#f59e0b', radius: 5,  order: 3, open: false, style: 'prefix'  },
+        apron:            { icon: '🛬', label: 'Vorfelder',          color: '#94a3b8', radius: 5,  order: 4, open: false, style: 'chips'   },
+        hangar:           { icon: '🏗️', label: 'Hangars',            color: '#8b5cf6', radius: 6,  order: 5, open: false, style: 'chips'   },
+        tower:            { icon: '🗼', label: 'Tower',              color: '#ef4444', radius: 8,  order: 6, open: true,  style: 'chips'   },
+        _radar:           { icon: '📡', label: 'Radar',              color: '#dc2626', radius: 10, order: 7, open: true,  style: 'chips'   },
+        _navaids:         { icon: '🛸', label: 'ILS / VOR / NDB',   color: '#f97316', radius: 8,  order: 0, open: true,  style: 'navaids' },
     };
+
+    // Farbe nach Navaid-Typ
+    function navaidColor(type) {
+        if (/ILS|LOC|GS/.test(type))  return '#3b82f6'; // blau – Präzisionsanflug
+        if (/VOR|TACAN/.test(type))   return '#f97316'; // orange – Streckennavigation
+        if (/NDB/.test(type))         return '#a855f7'; // lila – NDB
+        if (/DME/.test(type))         return '#64748b'; // grau – reine Entfernung
+        return '#06b6d4';
+    }
 
     // Overpass-Abfrage mit automatischem Fallback auf Spiegel-Server
     async function overpassFetch(queryStr) {
@@ -3835,18 +3870,24 @@ out center tags;`;
         const json = await overpassFetch(query);
         const elements = json.elements || [];
 
-        // Nach Typ gruppieren
+        // ── OSM-Elemente gruppieren ───────────────────────────────────────────
         const groups = {};
         for (const item of elements) {
-            const t = item.tags?.aeroway;
+            let t = item.tags?.aeroway;
+            if (!t && item.tags?.man_made === 'radar') t = '_radar';
             if (!t || !typeMeta[t]) continue;
             (groups[t] = groups[t] || []).push(item);
         }
 
+        // ── OurAirports-Navaids als eigene Gruppe ─────────────────────────────
+        const rawNavaids = (ap.navaids || []).filter(n => n.lat && n.lon);
+        if (rawNavaids.length > 0) groups['_navaids'] = rawNavaids;
+
         if (Object.keys(groups).length === 0) {
             el.innerHTML = `<div class="infra-empty">
-                <p>Keine detaillierten Infrastrukturdaten in OSM erfasst.</p>
-                <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(ap.name)}" target="_blank" rel="noopener">In OSM ansehen ↗</a>
+                <p>Keine Infrastrukturdaten verfügbar.</p>
+                <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(ap.name)}"
+                   target="_blank" rel="noopener">In OSM ansehen ↗</a>
             </div>`;
             return;
         }
@@ -3869,12 +3910,51 @@ out center tags;`;
         let sectionsHtml = '';
         for (const [type, items] of sortedGroups) {
             const m = typeMeta[type];
-            items.sort(infraSortRef);
             let bodyHtml = '';
 
-            if (m.style === 'cards') {
+            if (type === '_navaids') {
+                // Navaids: Detailkarten mit Frequenz, Typ, Elevation
+                bodyHtml = `<div class="infra-navaid-grid">`;
+                const sorted = [...items].sort((a,b) => (a.type||'').localeCompare(b.type||'') || (a.ident||'').localeCompare(b.ident||''));
+                for (const n of sorted) {
+                    const col  = navaidColor(n.type || '');
+                    const freq = n.freq ? `${parseFloat(n.freq) > 1000 ? (parseFloat(n.freq)/1000).toFixed(2)+' MHz' : n.freq+' kHz'}` : '';
+                    const osmLink = `https://www.openstreetmap.org/?mlat=${n.lat}&mlon=${n.lon}#map=17/${n.lat}/${n.lon}`;
+                    bodyHtml += `<div class="infra-navaid-card" onclick="window.open('${osmLink}','_blank')">
+                        <div class="infra-navaid-head">
+                            <span class="infra-navaid-dot" style="background:${col}"></span>
+                            <span class="infra-navaid-ident">${n.ident || '–'}</span>
+                            <span class="infra-navaid-type">${n.type || ''}</span>
+                        </div>
+                        ${n.name ? `<div class="infra-navaid-name">${n.name}</div>` : ''}
+                        ${freq ? `<div class="infra-navaid-row">📡 ${freq}</div>` : ''}
+                        ${n.elev !== undefined ? `<div class="infra-navaid-row">⬆ ${n.elev} ft</div>` : ''}
+                        ${n.mag_var !== undefined ? `<div class="infra-navaid-row">🧭 ${n.mag_var > 0 ? '+' : ''}${n.mag_var}° Missweisung</div>` : ''}
+                        ${n.power ? `<div class="infra-navaid-row">⚡ ${n.power}</div>` : ''}
+                        ${n.dme_ch ? `<div class="infra-navaid-row">DME Kanal ${n.dme_ch}</div>` : ''}
+                    </div>`;
+                }
+                bodyHtml += `</div>`;
+
+            } else if (type === '_radar') {
+                // Radar: Karten aus OSM
                 bodyHtml = `<div class="infra-terminal-grid">`;
                 for (const item of items) {
+                    const name    = item.tags?.name || item.tags?.ref || '–';
+                    const rtype   = item.tags?.radar || item.tags?.['radar:type'] || '';
+                    const op      = item.tags?.operator || '';
+                    const url     = infraOsmUrl(item);
+                    bodyHtml += `<div class="infra-terminal-card" ${url ? `onclick="window.open('${url}','_blank')"` : ''}>
+                        <div class="infra-terminal-name">${name}</div>
+                        ${rtype ? `<div class="infra-terminal-sub">${rtype}</div>` : ''}
+                        ${op    ? `<div class="infra-terminal-sub">${op}</div>` : ''}
+                    </div>`;
+                }
+                bodyHtml += `</div>`;
+
+            } else if (m.style === 'cards') {
+                bodyHtml = `<div class="infra-terminal-grid">`;
+                for (const item of [...items].sort(infraSortRef)) {
                     const ref  = item.tags?.ref  || '';
                     const name = item.tags?.name || ref || '–';
                     const url  = infraOsmUrl(item);
@@ -3886,9 +3966,9 @@ out center tags;`;
                 bodyHtml += `</div>`;
 
             } else if (m.style === 'prefix') {
-                const pfGroups = infraPrefixGroups(items);
+                const pfGroups = infraPrefixGroups([...items].sort(infraSortRef));
                 if (pfGroups.length <= 1) {
-                    bodyHtml = `<div class="infra-grid">${items.map(infraChip).join('')}</div>`;
+                    bodyHtml = `<div class="infra-grid">${[...items].sort(infraSortRef).map(infraChip).join('')}</div>`;
                 } else {
                     for (const [prefix, pfItems] of pfGroups) {
                         bodyHtml += `<div class="infra-prefix-group">
@@ -3898,7 +3978,7 @@ out center tags;`;
                     }
                 }
             } else {
-                bodyHtml = `<div class="infra-grid">${items.map(infraChip).join('')}</div>`;
+                bodyHtml = `<div class="infra-grid">${[...items].sort(infraSortRef).map(infraChip).join('')}</div>`;
             }
 
             sectionsHtml += infraSectionHtml(m.icon, m.label, items.length, bodyHtml, m.open, m.color);
@@ -3910,13 +3990,16 @@ out center tags;`;
             <div id="infra-map-${icao}" class="infra-map"></div>
             ${sectionsHtml}
             <div class="infra-footer">
-                <div class="infra-source">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende · ODbL · <a href="https://overpass-api.de" target="_blank" rel="noopener">Overpass API</a></div>
+                <div class="infra-source">
+                    OSM: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende · ODbL ·
+                    Navaids: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a>
+                </div>
                 <button class="infra-refresh" onclick="ladeInfrastruktur('${icao}', true)">↻ Aktualisieren</button>
             </div>`;
 
-        // ── Karte ─────────────────────────────────────────────────────────────
+        // ── Karte initialisieren ──────────────────────────────────────────────
         const mapEl = document.getElementById(`infra-map-${icao}`);
-        const imap  = L.map(mapEl, { center: [ap.lat, ap.lon], zoom: 15, scrollWheelZoom: false });
+        const imap  = L.map(mapEl, { center: [ap.lat, ap.lon], zoom: 16, scrollWheelZoom: false });
         infraKarteInstanzen[icao] = imap;
         infraLayerGroups[icao]    = {};
 
@@ -3929,42 +4012,82 @@ out center tags;`;
         satTile.addTo(imap);
         L.control.layers({ '🛰 Satellit': satTile, 'Straßenkarte': osmTile }, {}, { position: 'topright' }).addTo(imap);
 
-        // Marker in Layer-Groups aufteilen
         const bounds = [];
+
         for (const [type, items] of sortedGroups) {
             const m     = typeMeta[type];
             const group = L.layerGroup().addTo(imap);
             infraLayerGroups[icao][type] = group;
 
-            for (const item of items) {
-                const lat = item.lat ?? item.center?.lat;
-                const lon = item.lon ?? item.center?.lon;
-                if (!lat || !lon) continue;
+            if (type === '_navaids') {
+                // Navaids aus OurAirports
+                for (const n of items) {
+                    const col  = navaidColor(n.type || '');
+                    const freq = n.freq ? `${parseFloat(n.freq) > 1000 ? (parseFloat(n.freq)/1000).toFixed(2)+' MHz' : n.freq+' kHz'}` : '';
+                    const popup = `<div style="font-family:var(--font,sans-serif);min-width:160px">
+                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+                            <span style="width:10px;height:10px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>
+                            <span style="font-weight:700;font-size:0.92rem">${n.ident || '–'}</span>
+                            <span style="font-size:0.65rem;font-weight:700;background:#f1f5f9;padding:1px 5px;border-radius:3px;color:#64748b">${n.type || ''}</span>
+                        </div>
+                        ${n.name ? `<div style="font-size:0.76rem;color:#475569;margin-bottom:4px">${n.name}</div>` : ''}
+                        ${freq ? `<div style="font-size:0.72rem;color:#64748b">📡 ${freq}</div>` : ''}
+                        ${n.elev !== undefined ? `<div style="font-size:0.72rem;color:#64748b">⬆ ${n.elev} ft MSL</div>` : ''}
+                        ${n.mag_var !== undefined ? `<div style="font-size:0.72rem;color:#64748b">🧭 ${n.mag_var > 0 ? '+' : ''}${n.mag_var}° Missweisung</div>` : ''}
+                        ${n.power ? `<div style="font-size:0.72rem;color:#64748b">⚡ ${n.power}</div>` : ''}
+                        ${n.dme_ch ? `<div style="font-size:0.72rem;color:#64748b">DME Kanal ${n.dme_ch}</div>` : ''}
+                    </div>`;
+                    L.circleMarker([n.lat, n.lon], {
+                        radius: 8, color: '#fff', fillColor: col, fillOpacity: 0.95, weight: 2,
+                    }).bindPopup(popup).addTo(group);
+                    bounds.push([n.lat, n.lon]);
+                }
 
-                const ref  = item.tags?.ref  || item.tags?.name || '–';
-                const name = item.tags?.name || '';
-                const osmLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`;
-                const popup = `<div style="font-family:var(--font,sans-serif);min-width:140px">
-                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${m.color};flex-shrink:0"></span>
-                        <span style="font-weight:700;font-size:0.88rem">${ref}</span>
-                    </div>
-                    ${name && name !== ref ? `<div style="font-size:0.76rem;color:#64748b;margin-bottom:2px">${name}</div>` : ''}
-                    <div style="font-size:0.71rem;color:#94a3b8;margin-bottom:6px">${m.icon} ${m.label}</div>
-                    <a href="${osmLink}" target="_blank" rel="noopener"
-                       style="font-size:0.71rem;color:#2563eb;text-decoration:none">In OSM öffnen ↗</a>
-                </div>`;
+            } else {
+                // OSM-Elemente (terminal, gate, stand, apron, hangar, tower, radar)
+                for (const item of items) {
+                    const lat = item.lat ?? item.center?.lat;
+                    const lon = item.lon ?? item.center?.lon;
+                    if (!lat || !lon) continue;
 
-                L.circleMarker([lat, lon], {
-                    radius: m.radius, color: '#fff',
-                    fillColor: m.color, fillOpacity: 0.9, weight: 1.5,
-                }).bindPopup(popup).addTo(group);
-
-                bounds.push([lat, lon]);
+                    const ref  = item.tags?.ref  || item.tags?.name || item.tags?.radar || '–';
+                    const name = item.tags?.name || '';
+                    const extra = type === '_radar'
+                        ? [item.tags?.radar, item.tags?.operator].filter(Boolean).join(' · ')
+                        : '';
+                    const osmLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`;
+                    const popup = `<div style="font-family:var(--font,sans-serif);min-width:140px">
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                            <span style="width:10px;height:10px;border-radius:50%;background:${m.color};display:inline-block;flex-shrink:0"></span>
+                            <span style="font-weight:700;font-size:0.88rem">${ref}</span>
+                        </div>
+                        ${name && name !== ref ? `<div style="font-size:0.75rem;color:#64748b;margin-bottom:2px">${name}</div>` : ''}
+                        ${extra ? `<div style="font-size:0.72rem;color:#94a3b8;margin-bottom:2px">${extra}</div>` : ''}
+                        <div style="font-size:0.71rem;color:#94a3b8;margin-bottom:6px">${m.icon} ${m.label}</div>
+                        <a href="${osmLink}" target="_blank" rel="noopener"
+                           style="font-size:0.71rem;color:#2563eb;text-decoration:none">In OSM öffnen ↗</a>
+                    </div>`;
+                    L.circleMarker([lat, lon], {
+                        radius: m.radius, color: '#fff',
+                        fillColor: m.color, fillOpacity: 0.9, weight: 1.5,
+                    }).bindPopup(popup).addTo(group);
+                    bounds.push([lat, lon]);
+                }
             }
         }
 
-        if (bounds.length > 1) imap.fitBounds(bounds, { padding: [40, 40], maxZoom: 16, minZoom: 14 });
+        // Auf Flughafenbereich einzoomen (Navaids können weit entfernt sein → ignorieren)
+        const osmBounds = bounds.filter((_, i) => {
+            const type = sortedGroups[Math.floor(i / (bounds.length / sortedGroups.length))]?.[0];
+            return type !== '_navaids';
+        });
+        const zoomTarget = osmBounds.length > 1 ? osmBounds : bounds;
+        if (zoomTarget.length > 1) {
+            imap.fitBounds(zoomTarget, { padding: [30, 30], maxZoom: 16, minZoom: 14 });
+        } else {
+            imap.setView([ap.lat, ap.lon], 15);
+        }
+
         requestAnimationFrame(() => requestAnimationFrame(() => imap.invalidateSize()));
         ladeFlughafenLayout(imap, ap.lat, ap.lon);
 
