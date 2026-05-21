@@ -3785,10 +3785,12 @@ async function ladeInfrastruktur(icao, force = false) {
     el.innerHTML = '<span class="status-loading">OSM-Infrastrukturdaten werden geladen…</span>';
 
     // around: statt bbox – präziser, schneller für runde Radien
+    // navigationaid absichtlich ausgeschlossen: OSM taggt jede einzelne
+    // Anflugbefeuerungsleuchte damit → hunderte nutzloser Punkte
     const radius = 10000; // 10 km
     const query = `[out:json][timeout:25];
 (
-  node["aeroway"~"terminal|gate|parking_position|tower|helipad|hangar|navigationaid|apron"](around:${radius},${ap.lat},${ap.lon});
+  node["aeroway"~"terminal|gate|parking_position|tower|helipad|hangar"](around:${radius},${ap.lat},${ap.lon});
   way["aeroway"~"terminal|gate|parking_position|tower|helipad|hangar|apron"](around:${radius},${ap.lat},${ap.lon});
   relation["aeroway"="terminal"](around:${radius},${ap.lat},${ap.lon});
 );
@@ -3802,7 +3804,7 @@ out center tags;`;
         hangar:           { icon: '🏗️', label: 'Hangars',            color: '#8b5cf6', radius: 6,  order: 5, open: false, style: 'chips'  },
         tower:            { icon: '🗼', label: 'Tower',              color: '#ef4444', radius: 8,  order: 6, open: true,  style: 'chips'  },
         helipad:          { icon: '🚁', label: 'Hubschrauberplätze', color: '#06b6d4', radius: 7,  order: 7, open: false, style: 'chips'  },
-        navigationaid:    { icon: '📡', label: 'Navigationsanlagen', color: '#ec4899', radius: 6,  order: 8, open: false, style: 'chips'  },
+        // navigationaid: absichtlich ausgelassen – OSM taggt jede Anfluglampe einzeln → unbrauchbar als Marker
     };
 
     // Overpass-Abfrage mit automatischem Fallback auf Spiegel-Server
