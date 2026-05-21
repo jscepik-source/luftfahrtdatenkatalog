@@ -6,11 +6,20 @@ import urllib.request
 import subprocess
 import time
 
+try:
+    from timezonefinder import TimezoneFinder
+    _tf = TimezoneFinder()
+except ImportError:
+    _tf = None
+    print("Hinweis: timezonefinder nicht installiert – Ortszeit-Feature deaktiviert.")
+    print("         pip install timezonefinder")
+
 AIRPORTS_CSV  = "https://davidmegginson.github.io/ourairports-data/airports.csv"
 RUNWAYS_CSV   = "https://davidmegginson.github.io/ourairports-data/runways.csv"
 FREQS_CSV     = "https://davidmegginson.github.io/ourairports-data/airport-frequencies.csv"
 NAVAIDS_CSV   = "https://davidmegginson.github.io/ourairports-data/navaids.csv"
 COUNTRIES_CSV = "https://davidmegginson.github.io/ourairports-data/countries.csv"
+REGIONS_CSV   = "https://davidmegginson.github.io/ourairports-data/regions.csv"
 
 
 def lade_csv(url, bezeichnung):
@@ -34,6 +43,7 @@ def durchlauf():
     freqs     = lade_csv(FREQS_CSV,     "Frequenzen")
     navaids   = lade_csv(NAVAIDS_CSV,   "Nav-Aids")
     countries = lade_csv(COUNTRIES_CSV, "Länder")
+    regions   = lade_csv(REGIONS_CSV,   "Regionen")
 
     country_map = {}
     for c in countries:
@@ -43,6 +53,13 @@ def durchlauf():
                 'name':      c.get('name', ''),
                 'continent': c.get('continent', '')
             }
+
+    region_map = {}
+    for reg in regions:
+        code = reg.get('code', '').strip()
+        name = reg.get('name', '').strip()
+        if code and name:
+            region_map[code] = name
 
     runway_map = {}
     for r in runways:
@@ -114,8 +131,9 @@ def durchlauf():
         if not ident:
             continue
 
-        iso   = ap.get('iso_country', '')
-        cinfo = country_map.get(iso, {})
+        iso        = ap.get('iso_country', '')
+        iso_region = ap.get('iso_region', '')
+        cinfo      = country_map.get(iso, {})
 
         entry = {
             'name':         ap.get('name', ''),
@@ -123,7 +141,7 @@ def durchlauf():
             'country':      iso,
             'country_name': cinfo.get('name', ''),
             'continent':    cinfo.get('continent', ap.get('continent', '')),
-            'region':       ap.get('iso_region', ''),
+            'region':       region_map.get(iso_region, iso_region),  # z.B. "Bavaria" statt "DE-BY"
             'city':         ap.get('municipality', ''),
             'scheduled':    ap.get('scheduled_service', '') == 'yes',
             'rank':         berechne_wichtigkeit(ap),
@@ -141,6 +159,15 @@ def durchlauf():
         if ap.get('local_code'):     entry['local'] = ap['local_code']
         if ap.get('home_link'):      entry['web']   = ap['home_link']
         if ap.get('wikipedia_link'): entry['wiki']  = ap['wikipedia_link']
+        if ap.get('keywords'):
+            kw = ap['keywords'].strip()
+            if kw:
+                entry['kw'] = kw
+
+        if _tf and 'lat' in entry and 'lon' in entry:
+            tz = _tf.timezone_at(lat=entry['lat'], lng=entry['lon'])
+            if tz:
+                entry['tz'] = tz
 
         rwy = runway_map.get(ident, [])
         if rwy: entry['runways'] = rwy

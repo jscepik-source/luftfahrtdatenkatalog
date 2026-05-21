@@ -2029,7 +2029,8 @@ function suche() {
         if (aliasIso && (ap.country||'').toUpperCase() === aliasIso) return true;
         return icao.toLowerCase().includes(q) || (ap.iata||'').toLowerCase().includes(q)
             || (ap.name||'').toLowerCase().includes(q) || (ap.city||'').toLowerCase().includes(q)
-            || (ap.country||'').toLowerCase().includes(q) || (ap.country_name||'').toLowerCase().includes(q);
+            || (ap.country||'').toLowerCase().includes(q) || (ap.country_name||'').toLowerCase().includes(q)
+            || (ap.region||'').toLowerCase().includes(q) || (ap.kw||'').toLowerCase().includes(q);
     });
     angezeigtBis = 0;
     const liste = document.getElementById('liste');
@@ -3052,6 +3053,8 @@ out skel qt;`;
                     <div class="detail-item"><dt>Kontinent</dt><dd>${kontinent || '–'}</dd></div>
                     <div class="detail-item"><dt>Höhe</dt><dd>${elev}</dd></div>
                     ${coords ? `<div class="detail-item"><dt>Koordinaten</dt><dd>${coords}</dd></div>` : ''}
+                    <div class="detail-item"><dt>🕐 UTC</dt><dd class="ap-zeit" data-tz="UTC">–</dd></div>
+                    ${ap.tz ? `<div class="detail-item"><dt>🏠 Ortszeit</dt><dd class="ap-zeit" data-tz="${ap.tz}">–</dd></div>` : ''}
                 </dl>
                 <div class="action-links">
                     <a class="btn-sv" href="${svUrl}" target="_blank" rel="noopener">✈ SkyVector</a>
@@ -3172,12 +3175,26 @@ out skel qt;`;
     return article;
 }
 
+function aktualisiereZeiten() {
+    const now = new Date();
+    document.querySelectorAll('.ap-zeit[data-tz]').forEach(el => {
+        const tz = el.dataset.tz;
+        try {
+            el.textContent = now.toLocaleTimeString('de-DE', {
+                hour: '2-digit', minute: '2-digit', timeZone: tz
+            });
+        } catch(e) { el.textContent = '–'; }
+    });
+}
+setInterval(aktualisiereZeiten, 30000);
+
 function toggle(btn, icao, lat, lon) {
     const offen = btn.classList.toggle('open');
     btn.setAttribute('aria-expanded', offen);
     btn.nextElementSibling.classList.toggle('open');
     btn.closest('article').classList.toggle('card-open', offen);
     if (offen) {
+        aktualisiereZeiten();
         if (lat && lon) {
             ladeErst(icao, lat, lon);
             ladeKarte(icao, lat, lon);
