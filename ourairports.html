@@ -1287,6 +1287,28 @@
         .infra-item:hover { background: var(--color-primary-bg); border-color: var(--color-primary); color: var(--color-primary); }
         .infra-item-sub { font-size: 0.63rem; color: var(--color-text-dim); font-weight: 400; margin-top: 1px; }
 
+        /* Detail-Chips (z.B. Haltepositionen mit ILS-Kategorie) */
+        .infra-detail-chip {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm); padding: 4px 9px;
+            font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column;
+            transition: background var(--transition), border-color var(--transition); min-width: 44px;
+        }
+        .infra-detail-chip:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-detail-chip-main { font-weight: 600; color: var(--color-text); }
+        .infra-detail-chip-sub  { font-size: 0.61rem; color: var(--color-text-dim); margin-top: 1px; white-space: nowrap; }
+
+        /* Anlagen-Karten (Fuel, Tower, Radar, …) */
+        .infra-anlage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 7px; }
+        .infra-anlage-card {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-md); padding: 10px 12px;
+            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+        }
+        .infra-anlage-card:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-anlage-name  { font-weight: 600; font-size: 0.82rem; color: var(--color-text); margin-bottom: 4px; }
+        .infra-anlage-row   { font-size: 0.71rem; color: var(--color-text-sub); line-height: 1.7; }
+
         /* Fußzeile */
         .infra-footer {
             display: flex; align-items: center; justify-content: space-between;
@@ -3811,12 +3833,12 @@ async function ladeInfrastruktur(icao, force = false) {
     // - helipad: meist abseits des Flughafens oder irrelevant
     // - navigationaid: OSM taggt jede einzelne Anfluglampe → hunderte Punkte
     // Radar kommt über man_made=radar separat
-    const r1 = 8000;  // Flughafen-Infrastruktur: eng am Platz
-    const r2 = 30000; // Navaids: VOR/NDB können 20+ km entfernt liegen
+    const r1 = 8000;  // Flughafen-Infrastruktur
+    const r2 = 30000; // Navaids (VOR/NDB können weit entfernt sein)
     const query = `[out:json][timeout:25];
 (
-  node["aeroway"~"terminal|gate|parking_position|tower|hangar"](around:${r1},${ap.lat},${ap.lon});
-  way["aeroway"~"terminal|gate|parking_position|tower|hangar|apron"](around:${r1},${ap.lat},${ap.lon});
+  node["aeroway"~"terminal|gate|parking_position|tower|hangar|holding_position|windsock|fuel"](around:${r1},${ap.lat},${ap.lon});
+  way["aeroway"~"terminal|gate|parking_position|tower|hangar|apron|fuel"](around:${r1},${ap.lat},${ap.lon});
   relation["aeroway"="terminal"](around:${r1},${ap.lat},${ap.lon});
   node["man_made"="radar"](around:${r1},${ap.lat},${ap.lon});
   way["man_made"="radar"](around:${r1},${ap.lat},${ap.lon});
@@ -3825,23 +3847,75 @@ async function ladeInfrastruktur(icao, force = false) {
 out center tags;`;
 
     const typeMeta = {
-        terminal:         { icon: '🏛️', label: 'Terminals',         color: '#6366f1', radius: 9,  order: 1, open: true,  style: 'cards'   },
-        gate:             { icon: '🚪', label: 'Gates',              color: '#22c55e', radius: 6,  order: 2, open: true,  style: 'prefix'  },
-        parking_position: { icon: '🅿️', label: 'Abstellpositionen', color: '#f59e0b', radius: 5,  order: 3, open: false, style: 'prefix'  },
-        apron:            { icon: '🛬', label: 'Vorfelder',          color: '#94a3b8', radius: 5,  order: 4, open: false, style: 'chips'   },
-        hangar:           { icon: '🏗️', label: 'Hangars',            color: '#8b5cf6', radius: 6,  order: 5, open: false, style: 'chips'   },
-        tower:            { icon: '🗼', label: 'Tower',              color: '#ef4444', radius: 8,  order: 6, open: true,  style: 'chips'   },
-        _radar:           { icon: '📡', label: 'Radar',              color: '#dc2626', radius: 10, order: 7, open: true,  style: 'chips'   },
-        _navaids:         { icon: '🛸', label: 'ILS / VOR / NDB',   color: '#f97316', radius: 8,  order: 0, open: true,  style: 'navaids' },
+        _navaids:         { icon: '📡', label: 'ILS / VOR / NDB',   color: '#3b82f6', radius: 9,  order: 0, open: true,  style: 'navaids'       },
+        terminal:         { icon: '🏛️', label: 'Terminals',         color: '#6366f1', radius: 9,  order: 1, open: true,  style: 'anlage-cards'  },
+        gate:             { icon: '🚪', label: 'Gates',              color: '#22c55e', radius: 6,  order: 2, open: true,  style: 'prefix'        },
+        parking_position: { icon: '🅿️', label: 'Abstellpositionen', color: '#f59e0b', radius: 5,  order: 3, open: false, style: 'prefix'        },
+        apron:            { icon: '🛬', label: 'Vorfelder',          color: '#94a3b8', radius: 5,  order: 4, open: false, style: 'chips'         },
+        hangar:           { icon: '🏗️', label: 'Hangars',            color: '#8b5cf6', radius: 6,  order: 5, open: false, style: 'anlage-cards'  },
+        tower:            { icon: '🗼', label: 'Tower',              color: '#ef4444', radius: 9,  order: 6, open: true,  style: 'anlage-cards'  },
+        holding_position: { icon: '🛑', label: 'Haltepositionen',   color: '#f43f5e', radius: 5,  order: 7, open: false, style: 'detail-chips'  },
+        windsock:         { icon: '🌬️', label: 'Windsäcke',         color: '#38bdf8', radius: 6,  order: 8, open: false, style: 'anlage-cards'  },
+        fuel:             { icon: '⛽', label: 'Betankung',          color: '#84cc16', radius: 7,  order: 9, open: false, style: 'anlage-cards'  },
+        _radar:           { icon: '📡', label: 'Radar',              color: '#dc2626', radius: 10, order: 10, open: true, style: 'anlage-cards'  },
     };
 
-    // Farbe nach Navaid-Typ
+    // Navaid-Farbe nach Typ
     function navaidColor(type) {
-        if (/ILS|LOC|GS/.test(type))  return '#3b82f6'; // blau – Präzisionsanflug
-        if (/VOR|TACAN/.test(type))   return '#f97316'; // orange – Streckennavigation
-        if (/NDB/.test(type))         return '#a855f7'; // lila – NDB
-        if (/DME/.test(type))         return '#64748b'; // grau – reine Entfernung
+        if (/ILS|LOC|GS/.test(type))  return '#3b82f6';
+        if (/VOR|TACAN/.test(type))   return '#f97316';
+        if (/NDB/.test(type))         return '#a855f7';
+        if (/DME/.test(type))         return '#64748b';
         return '#06b6d4';
+    }
+
+    // Typ-spezifische Detailzeilen für Popups und Listen
+    function osmDetailRows(tags, type) {
+        const r = (icon, val) => val ? `<div style="font-size:0.71rem;color:#64748b;margin-top:2px">${icon} ${val}</div>` : '';
+        switch (type) {
+            case 'terminal':
+                return r('🏢', tags.operator) + r('📊', tags['building:levels'] ? tags['building:levels']+' Etagen' : '') + r('✈️', tags.iata ? 'IATA '+tags.iata : '');
+            case 'gate':
+                return r('🏛️', tags.terminal ? 'Terminal '+tags.terminal : '') + r('🚌', tags.jetway === 'yes' ? 'Fluggastbrücke' : '');
+            case 'parking_position':
+                return r('🏛️', tags.terminal ? 'Terminal '+tags.terminal : '') + r('✈️', tags['aircraft:type'] || tags.aircraft || '');
+            case 'hangar':
+                return r('🏢', tags.operator) + r('📏', tags.height ? tags.height+' m' : '');
+            case 'tower':
+                return r('🏢', tags.operator) + r('📏', tags.height ? tags.height+' m Höhe' : '') + r('📞', tags['icao:unit'] || '');
+            case 'holding_position':
+                return r('🛫', tags.runway ? 'Runway '+tags.runway : '') + r('📡', tags['ils:category'] ? 'ILS Kat. '+tags['ils:category'] : '');
+            case 'windsock':
+                return r('💡', tags.lit === 'yes' ? 'Beleuchtet' : tags.lit === 'no' ? 'Unbeleuchtet' : '') + r('📍', tags.name || '');
+            case 'fuel': {
+                const fuels = [];
+                if (tags['fuel:jetA1'] === 'yes' || tags['fuel:jet_a'] === 'yes') fuels.push('Jet A-1');
+                if (tags['fuel:avgas'] === 'yes') fuels.push('AvGas 100LL');
+                if (tags['fuel:mogas'] === 'yes') fuels.push('MoGas');
+                return r('⛽', fuels.join(' · ')) + r('🏢', tags.operator) + r('🕐', tags.opening_hours);
+            }
+            case '_radar': {
+                const rt = tags.radar || tags['radar:type'] || tags['surveillance:type'] || '';
+                return r('📡', rt ? 'Typ: '+rt : '') + r('🏢', tags.operator) + r('📶', tags.frequency || '') + r('📏', tags.height ? tags.height+' m' : tags.ele ? tags.ele+' m ü.NN' : '');
+            }
+            default:
+                return r('🏢', tags.operator || '') + r('🔲', tags.surface || '');
+        }
+    }
+
+    // Detail-Chip (Halteposition etc.) mit optionaler Unterzeile
+    function infraDetailChip(item, type) {
+        const tags = item.tags || {};
+        const ref  = tags.ref || tags.name || '–';
+        const url  = infraOsmUrl(item);
+        let sub = '';
+        if (type === 'holding_position') {
+            sub = tags['ils:category'] ? 'ILS Kat. '+tags['ils:category'] : (tags.runway ? 'RWY '+tags.runway : '');
+        }
+        return `<div class="infra-detail-chip" ${url ? `onclick="window.open('${url}','_blank')"` : ''}>
+            <span class="infra-detail-chip-main">${ref}</span>
+            ${sub ? `<span class="infra-detail-chip-sub">${sub}</span>` : ''}
+        </div>`;
     }
 
     // Overpass-Abfrage mit automatischem Fallback auf Spiegel-Server
@@ -3969,34 +4043,34 @@ out center tags;`;
                 }
                 bodyHtml += `</div>`;
 
-            } else if (type === '_radar') {
-                // Radar: Karten aus OSM
-                bodyHtml = `<div class="infra-terminal-grid">`;
-                for (const item of items) {
-                    const name    = item.tags?.name || item.tags?.ref || '–';
-                    const rtype   = item.tags?.radar || item.tags?.['radar:type'] || '';
-                    const op      = item.tags?.operator || '';
-                    const url     = infraOsmUrl(item);
-                    bodyHtml += `<div class="infra-terminal-card" ${url ? `onclick="window.open('${url}','_blank')"` : ''}>
-                        <div class="infra-terminal-name">${name}</div>
-                        ${rtype ? `<div class="infra-terminal-sub">${rtype}</div>` : ''}
-                        ${op    ? `<div class="infra-terminal-sub">${op}</div>` : ''}
+            } else if (m.style === 'anlage-cards') {
+                // Anlagen-Karten: Tower, Hangar, Radar, Fuel, Windsock, Terminal
+                bodyHtml = `<div class="infra-anlage-grid">`;
+                for (const item of [...items].sort(infraSortRef)) {
+                    const tags = item.tags || {};
+                    const name = tags.name || tags.ref || '–';
+                    const url  = infraOsmUrl(item);
+                    const det  = osmDetailRows(tags, type);
+                    bodyHtml += `<div class="infra-anlage-card" ${url ? `onclick="window.open('${url}','_blank')"` : ''}>
+                        <div class="infra-anlage-name">${name}</div>
+                        ${det}
                     </div>`;
                 }
                 bodyHtml += `</div>`;
 
-            } else if (m.style === 'cards') {
-                bodyHtml = `<div class="infra-terminal-grid">`;
-                for (const item of [...items].sort(infraSortRef)) {
-                    const ref  = item.tags?.ref  || '';
-                    const name = item.tags?.name || ref || '–';
-                    const url  = infraOsmUrl(item);
-                    bodyHtml += `<div class="infra-terminal-card" ${url ? `onclick="window.open('${url}','_blank')"` : ''}>
-                        <div class="infra-terminal-name">${name}</div>
-                        ${ref && ref !== name ? `<div class="infra-terminal-sub">Ref: ${ref}</div>` : ''}
-                    </div>`;
+            } else if (m.style === 'detail-chips') {
+                // Detail-Chips mit Unterzeile (Haltepositionen)
+                const pfGroups = infraPrefixGroups([...items].sort(infraSortRef));
+                if (pfGroups.length <= 1) {
+                    bodyHtml = `<div class="infra-grid">${[...items].sort(infraSortRef).map(i => infraDetailChip(i, type)).join('')}</div>`;
+                } else {
+                    for (const [prefix, pfItems] of pfGroups) {
+                        bodyHtml += `<div class="infra-prefix-group">
+                            <div class="infra-prefix-label">${prefix === '#' ? 'Sonstige' : prefix}</div>
+                            <div class="infra-grid">${pfItems.map(i => infraDetailChip(i, type)).join('')}</div>
+                        </div>`;
+                    }
                 }
-                bodyHtml += `</div>`;
 
             } else if (m.style === 'prefix') {
                 const pfGroups = infraPrefixGroups([...items].sort(infraSortRef));
@@ -4077,26 +4151,26 @@ out center tags;`;
                 }
 
             } else {
-                // OSM-Elemente (terminal, gate, stand, apron, hangar, tower, radar)
+                // OSM-Elemente
                 for (const item of items) {
                     const lat = item.lat ?? item.center?.lat;
                     const lon = item.lon ?? item.center?.lon;
                     if (!lat || !lon) continue;
 
-                    const ref  = item.tags?.ref  || item.tags?.name || item.tags?.radar || '–';
-                    const name = item.tags?.name || '';
-                    const extra = type === '_radar'
-                        ? [item.tags?.radar, item.tags?.operator].filter(Boolean).join(' · ')
-                        : '';
+                    const tags = item.tags || {};
+                    const ref  = tags.ref || tags.name || '–';
+                    const name = tags.name || '';
                     const osmLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`;
-                    const popup = `<div style="font-family:var(--font,sans-serif);min-width:140px">
+                    const detailRows = osmDetailRows(tags, type);
+
+                    const popup = `<div style="font-family:var(--font,sans-serif);min-width:150px">
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
                             <span style="width:10px;height:10px;border-radius:50%;background:${m.color};display:inline-block;flex-shrink:0"></span>
                             <span style="font-weight:700;font-size:0.88rem">${ref}</span>
                         </div>
-                        ${name && name !== ref ? `<div style="font-size:0.75rem;color:#64748b;margin-bottom:2px">${name}</div>` : ''}
-                        ${extra ? `<div style="font-size:0.72rem;color:#94a3b8;margin-bottom:2px">${extra}</div>` : ''}
-                        <div style="font-size:0.71rem;color:#94a3b8;margin-bottom:6px">${m.icon} ${m.label}</div>
+                        ${name && name !== ref ? `<div style="font-size:0.76rem;color:#475569;margin-bottom:3px">${name}</div>` : ''}
+                        ${detailRows}
+                        <div style="font-size:0.69rem;color:#94a3b8;margin-top:4px;margin-bottom:5px">${m.icon} ${m.label}</div>
                         <a href="${osmLink}" target="_blank" rel="noopener"
                            style="font-size:0.71rem;color:#2563eb;text-decoration:none">In OSM öffnen ↗</a>
                     </div>`;
