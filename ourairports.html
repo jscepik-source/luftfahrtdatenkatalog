@@ -3869,6 +3869,16 @@ out center tags;`;
         return '#06b6d4';
     }
 
+    // Morse-Code aus Navaid-Kennung (z.B. "FFM" → ".. .. ..-. ..-. --")
+    const MORSE = {A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',0:'-----',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.'};
+    function toMorse(ident) {
+        return (ident || '').toUpperCase().split('').map(c => MORSE[c] || '').filter(Boolean).join(' ');
+    }
+
+    // Ist es ein VOR-Typ?
+    const isVorType = t => /VOR|TACAN|DVOR/.test(t || '');
+    const FA_URL = 'https://www.fachagentur-wind-solar.de/veroeffentlichungen/interaktive-karten/drehfunkfeuer';
+
     // Typ-spezifische Detailzeilen für Popups und Listen
     function osmDetailRows(tags, type) {
         const r = (icon, val) => val ? `<div style="font-size:0.71rem;color:#64748b;margin-top:2px">${icon} ${val}</div>` : '';
@@ -4039,6 +4049,8 @@ out center tags;`;
                         ${n.mag_var !== undefined ? `<div class="infra-navaid-row">🧭 ${n.mag_var > 0 ? '+' : ''}${n.mag_var}° Missweisung</div>` : ''}
                         ${n.power ? `<div class="infra-navaid-row">⚡ ${n.power}</div>` : ''}
                         ${n.dme_ch ? `<div class="infra-navaid-row">DME Kanal ${n.dme_ch}</div>` : ''}
+                        ${isVorType(n.type) ? `<div class="infra-navaid-row" style="margin-top:3px;font-family:monospace;letter-spacing:.1em;color:#94a3b8">${toMorse(n.ident)}</div>` : ''}
+                        ${isVorType(n.type) ? `<div class="infra-navaid-row" style="margin-top:4px"><a href="${FA_URL}" target="_blank" rel="noopener" style="color:#2563eb;text-decoration:none;font-size:0.69rem">🗺 FA Wind/Solar Karte ↗</a></div>` : ''}
                     </div>`;
                 }
                 bodyHtml += `</div>`;
@@ -4143,6 +4155,11 @@ out center tags;`;
                         ${n.mag_var !== undefined ? `<div style="font-size:0.72rem;color:#64748b">🧭 ${n.mag_var > 0 ? '+' : ''}${n.mag_var}° Missweisung</div>` : ''}
                         ${n.power ? `<div style="font-size:0.72rem;color:#64748b">⚡ ${n.power}</div>` : ''}
                         ${n.dme_ch ? `<div style="font-size:0.72rem;color:#64748b">DME Kanal ${n.dme_ch}</div>` : ''}
+                        ${isVorType(n.type) ? `<div style="font-family:monospace;font-size:0.72rem;color:#94a3b8;letter-spacing:.12em;margin-top:3px">${toMorse(n.ident)}</div>` : ''}
+                        <div style="margin-top:6px;display:flex;gap:10px;flex-wrap:wrap">
+                            <a href="https://www.openstreetmap.org/?mlat=${n.lat}&mlon=${n.lon}#map=12/${n.lat}/${n.lon}" target="_blank" rel="noopener" style="font-size:0.71rem;color:#2563eb;text-decoration:none">OSM ↗</a>
+                            ${isVorType(n.type) ? `<a href="${FA_URL}" target="_blank" rel="noopener" style="font-size:0.71rem;color:#2563eb;text-decoration:none">FA Drehfunkfeuer ↗</a>` : ''}
+                        </div>
                     </div>`;
                     L.circleMarker([n.lat, n.lon], {
                         radius: 8, color: '#fff', fillColor: col, fillOpacity: 0.95, weight: 2,
@@ -4180,6 +4197,41 @@ out center tags;`;
                     }).bindPopup(popup).addTo(group);
                     bounds.push([lat, lon]);
                 }
+            }
+        }
+
+        // ── VOR-Schutzbereiche (15 km) als eigene togglebare Ebene ──────────────
+        const vorNavaids = (groups['_navaids'] || []).filter(n => isVorType(n.type) && n.lat && n.lon);
+        if (vorNavaids.length > 0) {
+            const schutzGroup = L.layerGroup(); // standardmäßig NICHT auf Karte (zu groß bei Zoom 16)
+            infraLayerGroups[icao]['_vorschutz'] = schutzGroup;
+
+            for (const n of vorNavaids) {
+                const col = navaidColor(n.type);
+                // Äußerer Schutzbereich: 15 km (Standard-DME/VOR-Schutz laut DFS/ICAO)
+                L.circle([n.lat, n.lon], {
+                    radius: 15000, color: col, fillColor: col,
+                    fillOpacity: 0.04, weight: 1.5, opacity: 0.5, dashArray: '8,5',
+                }).bindPopup(`<b>VOR-Schutzbereich 15 km</b><br>${n.ident} (${n.type})<br>
+                    <small style="color:#64748b">Quelle: ICAO Annex 10 / DFS</small><br>
+                    <a href="${FA_URL}" target="_blank" rel="noopener" style="font-size:0.71rem;color:#2563eb;text-decoration:none">FA Wind/Solar Karte ↗</a>`).addTo(schutzGroup);
+                // Innerer Bereich: 3 km (kritischer Nahbereich)
+                L.circle([n.lat, n.lon], {
+                    radius: 3000, color: col, fillColor: col,
+                    fillOpacity: 0.08, weight: 1, opacity: 0.4, dashArray: '3,4',
+                }).bindPopup(`<b>VOR-Nahbereich 3 km</b><br>${n.ident} (${n.type})`).addTo(schutzGroup);
+            }
+
+            // Filter-Button nachträglich in die Filter-Leiste einhängen
+            const filterBar = el.querySelector('.infra-filter-bar');
+            if (filterBar) {
+                const btn = document.createElement('button');
+                btn.id = `ifbtn-${icao}-_vorschutz`;
+                btn.className = 'infra-filter-btn';   // initial NICHT aktiv
+                btn.style.cssText = `border-color:#f97316;color:#f97316`;
+                btn.innerHTML = `⭕ VOR-Schutzzone <span class="infra-filter-count">${vorNavaids.length}</span>`;
+                btn.onclick = () => toggleInfraFilter(icao, '_vorschutz');
+                filterBar.appendChild(btn);
             }
         }
 
