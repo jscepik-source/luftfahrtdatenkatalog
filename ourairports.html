@@ -1202,39 +1202,92 @@
 
         /* ── Infrastruktur (OSM) ── */
         .infra-container { padding: 4px 0; }
-        .infra-source { font-size: 0.72rem; color: var(--color-text-dim); margin-bottom: 10px; }
-        .infra-source a { color: var(--color-primary); text-decoration: none; }
-        .infra-section { margin-bottom: 14px; }
-        .infra-section-title {
-            font-size: 0.78rem; font-weight: 600; color: var(--color-text-sub);
-            text-transform: uppercase; letter-spacing: 0.05em;
-            margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+
+        /* Zusammenfassung oben */
+        .infra-summary {
+            display: flex; flex-wrap: wrap; gap: 6px;
+            margin-bottom: 14px;
         }
-        .infra-count {
-            background: var(--color-surface-2); color: var(--color-text-dim);
-            border-radius: var(--radius-pill); padding: 1px 7px;
-            font-size: 0.7rem; font-weight: 500;
-        }
-        .infra-grid {
-            display: flex; flex-wrap: wrap; gap: 5px;
-        }
-        .infra-item {
+        .infra-summary-chip {
+            display: flex; align-items: center; gap: 5px;
             background: var(--color-surface-2); border: 1px solid var(--color-border);
-            border-radius: var(--radius-sm); padding: 4px 9px;
-            font-size: 0.78rem; cursor: pointer; transition: background var(--transition);
-            display: flex; flex-direction: column; align-items: flex-start;
+            border-radius: var(--radius-pill); padding: 4px 11px;
+            font-size: 0.75rem; color: var(--color-text-sub); white-space: nowrap;
         }
-        .infra-item:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
-        .infra-ref { font-weight: 600; color: var(--color-text); }
-        .infra-name { font-size: 0.68rem; color: var(--color-text-sub); margin-top: 1px; }
-        .infra-empty { text-align: center; padding: 20px 16px; color: var(--color-text-sub); font-size: 0.83rem; }
-        .infra-empty a { color: var(--color-primary); }
+        .infra-summary-num { font-weight: 700; color: var(--color-text); }
+
+        /* Sektionen */
+        .infra-section {
+            border: 1px solid var(--color-border); border-radius: var(--radius-md);
+            margin-bottom: 7px; overflow: hidden;
+        }
+        .infra-section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 9px 13px; background: var(--color-surface-2);
+            cursor: pointer; user-select: none; gap: 8px;
+        }
+        .infra-section-header:hover { background: var(--color-primary-bg); }
+        .infra-section-left { display: flex; align-items: center; gap: 7px; }
+        .infra-section-label { font-size: 0.8rem; font-weight: 600; color: var(--color-text); }
+        .infra-count {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-pill); padding: 1px 8px;
+            font-size: 0.68rem; font-weight: 600; color: var(--color-text-sub);
+        }
+        .infra-chevron {
+            font-size: 0.65rem; color: var(--color-text-dim);
+            transition: transform 0.2s ease; flex-shrink: 0;
+        }
+        .infra-section.open .infra-chevron { transform: rotate(180deg); }
+        .infra-section-body { display: none; padding: 11px 13px 13px; }
+        .infra-section.open .infra-section-body { display: block; }
+
+        /* Terminal-Karten */
+        .infra-terminal-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 7px;
+        }
+        .infra-terminal-card {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-md); padding: 10px 12px;
+            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+        }
+        .infra-terminal-card:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-terminal-name { font-weight: 600; font-size: 0.8rem; color: var(--color-text); }
+        .infra-terminal-sub  { font-size: 0.68rem; color: var(--color-text-sub); margin-top: 2px; }
+
+        /* Prefix-Gruppen (Gates, Stands) */
+        .infra-prefix-group { margin-bottom: 9px; }
+        .infra-prefix-group:last-child { margin-bottom: 0; }
+        .infra-prefix-label {
+            font-size: 0.68rem; font-weight: 700; color: var(--color-text-dim);
+            letter-spacing: 0.07em; margin-bottom: 4px; text-transform: uppercase;
+        }
+        .infra-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+        .infra-item {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm); padding: 3px 8px;
+            font-size: 0.75rem; font-weight: 500; color: var(--color-text);
+            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+            display: flex; flex-direction: column;
+        }
+        .infra-item:hover { background: var(--color-primary-bg); border-color: var(--color-primary); color: var(--color-primary); }
+        .infra-item-sub { font-size: 0.63rem; color: var(--color-text-dim); font-weight: 400; margin-top: 1px; }
+
+        /* Fußzeile */
+        .infra-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 12px; flex-wrap: wrap; gap: 6px;
+        }
+        .infra-source { font-size: 0.69rem; color: var(--color-text-dim); }
+        .infra-source a { color: var(--color-primary); text-decoration: none; }
         .infra-refresh {
-            align-self: flex-start; font-size: 0.75rem; color: var(--color-text-sub); cursor: pointer;
-            background: none; border: 1px solid var(--color-border);
-            border-radius: var(--radius-sm); padding: 3px 10px; margin-bottom: 8px;
+            font-size: 0.72rem; color: var(--color-text-sub); cursor: pointer;
+            background: none; border: 1px solid var(--color-border); font-family: var(--font);
+            border-radius: var(--radius-sm); padding: 3px 10px;
         }
         .infra-refresh:hover { background: var(--color-surface-2); }
+        .infra-empty { text-align: center; padding: 28px 16px; color: var(--color-text-sub); font-size: 0.83rem; }
+        .infra-empty a { color: var(--color-primary); }
 
         .notam-map-btn {
             display: flex;
@@ -3630,6 +3683,56 @@ async function ladeAcars(icao, force = false) {
 }
 
 // ── Infrastruktur (OpenStreetMap / Overpass API) ─────────────────────────────
+function toggleInfraSection(header) {
+    header.closest('.infra-section').classList.toggle('open');
+}
+
+function infraOsmUrl(item) {
+    const lat = item.lat ?? item.center?.lat;
+    const lon = item.lon ?? item.center?.lon;
+    return lat && lon ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}` : '';
+}
+
+function infraSortRef(a, b) {
+    const ra = a.tags?.ref || a.tags?.name || '';
+    const rb = b.tags?.ref || b.tags?.name || '';
+    return ra.localeCompare(rb, 'de', { numeric: true });
+}
+
+// Gruppiert Gates/Stands nach Buchstaben-Präfix (A1→A, 101→#)
+function infraPrefixGroups(items) {
+    const groups = {};
+    for (const item of items) {
+        const ref = item.tags?.ref || item.tags?.name || '?';
+        const m   = ref.match(/^([A-Za-z]+)/);
+        const key = m ? m[1].toUpperCase() : '#';
+        (groups[key] = groups[key] || []).push(item);
+    }
+    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b, 'de', { numeric: true }));
+}
+
+function infraChip(item) {
+    const ref  = item.tags?.ref  || item.tags?.name || '–';
+    const name = item.tags?.name || '';
+    const url  = infraOsmUrl(item);
+    const sub  = (name && name !== ref) ? `<span class="infra-item-sub">${name}</span>` : '';
+    return `<div class="infra-item" ${url ? `onclick="window.open('${url}','_blank')" title="In OSM öffnen"` : ''}>${ref}${sub}</div>`;
+}
+
+function infraSectionHtml(icon, label, count, bodyHtml, openByDefault) {
+    return `<div class="infra-section ${openByDefault ? 'open' : ''}">
+        <div class="infra-section-header" onclick="toggleInfraSection(this)">
+            <div class="infra-section-left">
+                <span>${icon}</span>
+                <span class="infra-section-label">${label}</span>
+                <span class="infra-count">${count}</span>
+            </div>
+            <span class="infra-chevron">▼</span>
+        </div>
+        <div class="infra-section-body">${bodyHtml}</div>
+    </div>`;
+}
+
 async function ladeInfrastruktur(icao, force = false) {
     const el = document.getElementById(`infra-${icao}`);
     if (!el) return;
@@ -3644,7 +3747,7 @@ async function ladeInfrastruktur(icao, force = false) {
 
     el.innerHTML = '<span class="status-loading">OSM-Infrastrukturdaten werden geladen…</span>';
 
-    const delta = 0.13; // ~14 km Radius – reicht für große Flughäfen
+    const delta = 0.13;
     const bbox  = `${ap.lat - delta},${ap.lon - delta},${ap.lat + delta},${ap.lon + delta}`;
     const query = `[out:json][timeout:30];
 (
@@ -3654,32 +3757,29 @@ async function ladeInfrastruktur(icao, force = false) {
 );
 out center tags;`;
 
-    const typeLabels = {
-        terminal:         { icon: '🏛️', label: 'Terminals',          order: 1 },
-        gate:             { icon: '🚪', label: 'Gates',               order: 2 },
-        parking_position: { icon: '🅿️', label: 'Abstellpositionen',  order: 3 },
-        apron:            { icon: '🛬', label: 'Vorfelder',           order: 4 },
-        hangar:           { icon: '🏗️', label: 'Hangars',             order: 5 },
-        tower:            { icon: '🗼', label: 'Tower',               order: 6 },
-        helipad:          { icon: '🚁', label: 'Hubschrauberplätze',  order: 7 },
-        navigationaid:    { icon: '📡', label: 'Navigationsanlagen',  order: 8 },
+    const typeMeta = {
+        terminal:         { icon: '🏛️', label: 'Terminals',          order: 1, open: true,  style: 'cards'  },
+        gate:             { icon: '🚪', label: 'Gates',               order: 2, open: true,  style: 'prefix' },
+        parking_position: { icon: '🅿️', label: 'Abstellpositionen',  order: 3, open: false, style: 'prefix' },
+        apron:            { icon: '🛬', label: 'Vorfelder (Aprons)',  order: 4, open: false, style: 'chips'  },
+        hangar:           { icon: '🏗️', label: 'Hangars',             order: 5, open: false, style: 'chips'  },
+        tower:            { icon: '🗼', label: 'Tower',               order: 6, open: true,  style: 'chips'  },
+        helipad:          { icon: '🚁', label: 'Hubschrauberplätze',  order: 7, open: false, style: 'chips'  },
+        navigationaid:    { icon: '📡', label: 'Navigationsanlagen',  order: 8, open: false, style: 'chips'  },
     };
 
     try {
-        const res = await fetch('https://overpass-api.de/api/interpreter', {
-            method: 'POST',
-            body: query
-        });
+        const res = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         const elements = json.elements || [];
 
-        // Gruppieren nach Typ
+        // Nach Typ gruppieren
         const groups = {};
         for (const item of elements) {
-            const type = item.tags?.aeroway;
-            if (!type || !typeLabels[type]) continue;
-            (groups[type] = groups[type] || []).push(item);
+            const t = item.tags?.aeroway;
+            if (!t || !typeMeta[t]) continue;
+            (groups[t] = groups[t] || []).push(item);
         }
 
         if (Object.keys(groups).length === 0) {
@@ -3690,47 +3790,66 @@ out center tags;`;
             return;
         }
 
-        // Sortiert nach order
-        const sorted = Object.entries(groups).sort(
-            (a, b) => (typeLabels[a[0]]?.order || 99) - (typeLabels[b[0]]?.order || 99)
+        // Zusammenfassung (Chips oben)
+        const sortedGroups = Object.entries(groups).sort(
+            (a, b) => (typeMeta[a[0]]?.order || 99) - (typeMeta[b[0]]?.order || 99)
         );
+        const summaryHtml = sortedGroups.map(([t, items]) => {
+            const m = typeMeta[t];
+            return `<div class="infra-summary-chip">${m.icon} ${m.label} <span class="infra-summary-num">${items.length}</span></div>`;
+        }).join('');
 
-        let html = '';
-        for (const [type, items] of sorted) {
-            const meta = typeLabels[type];
-            // Sortiere Einträge numerisch nach ref
-            items.sort((a, b) => {
-                const ra = a.tags?.ref || a.tags?.name || '';
-                const rb = b.tags?.ref || b.tags?.name || '';
-                return ra.localeCompare(rb, 'de', { numeric: true });
-            });
+        // Sektionen aufbauen
+        let sectionsHtml = '';
+        for (const [type, items] of sortedGroups) {
+            const m = typeMeta[type];
+            items.sort(infraSortRef);
+            let bodyHtml = '';
 
-            html += `<div class="infra-section">
-                <div class="infra-section-title">${meta.icon} ${meta.label} <span class="infra-count">${items.length}</span></div>
-                <div class="infra-grid">`;
+            if (m.style === 'cards') {
+                // Terminal-Karten
+                bodyHtml = `<div class="infra-terminal-grid">`;
+                for (const item of items) {
+                    const ref  = item.tags?.ref  || '';
+                    const name = item.tags?.name || ref || '–';
+                    const url  = infraOsmUrl(item);
+                    bodyHtml += `<div class="infra-terminal-card" ${url ? `onclick="window.open('${url}','_blank')"` : ''}>
+                        <div class="infra-terminal-name">${name}</div>
+                        ${ref && ref !== name ? `<div class="infra-terminal-sub">Ref: ${ref}</div>` : ''}
+                    </div>`;
+                }
+                bodyHtml += `</div>`;
 
-            for (const item of items) {
-                const ref  = item.tags?.ref  || '';
-                const name = item.tags?.name || '';
-                const display = ref || name || '–';
-                const lat = item.lat ?? item.center?.lat;
-                const lon = item.lon ?? item.center?.lon;
-                const osmUrl = lat && lon
-                    ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`
-                    : '';
-                html += `<div class="infra-item"
-                    ${osmUrl ? `onclick="window.open('${osmUrl}','_blank')" title="In OSM öffnen"` : ''}>
-                    <span class="infra-ref">${display}</span>
-                    ${name && ref ? `<span class="infra-name">${name}</span>` : ''}
-                </div>`;
+            } else if (m.style === 'prefix') {
+                // Buchstaben-Gruppen
+                const pfGroups = infraPrefixGroups(items);
+                if (pfGroups.length <= 1) {
+                    // Keine Gruppierung nötig
+                    bodyHtml = `<div class="infra-grid">${items.map(infraChip).join('')}</div>`;
+                } else {
+                    for (const [prefix, pfItems] of pfGroups) {
+                        bodyHtml += `<div class="infra-prefix-group">
+                            <div class="infra-prefix-label">${prefix === '#' ? 'Sonstige' : prefix}</div>
+                            <div class="infra-grid">${pfItems.map(infraChip).join('')}</div>
+                        </div>`;
+                    }
+                }
+
+            } else {
+                // Standard-Chips
+                bodyHtml = `<div class="infra-grid">${items.map(infraChip).join('')}</div>`;
             }
-            html += `</div></div>`;
+
+            sectionsHtml += infraSectionHtml(m.icon, m.label, items.length, bodyHtml, m.open);
         }
 
         el.innerHTML = `
-            <button class="infra-refresh" onclick="ladeInfrastruktur('${icao}', true)">↻ Aktualisieren</button>
-            <div class="infra-source">Quelle: <a href="https://www.openstreetmap.org" target="_blank" rel="noopener">OpenStreetMap</a> · <a href="https://overpass-api.de" target="_blank" rel="noopener">Overpass API</a> · © ODbL</div>
-            ${html}`;
+            <div class="infra-summary">${summaryHtml}</div>
+            ${sectionsHtml}
+            <div class="infra-footer">
+                <div class="infra-source">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende · ODbL · <a href="https://overpass-api.de" target="_blank" rel="noopener">Overpass API</a></div>
+                <button class="infra-refresh" onclick="ladeInfrastruktur('${icao}', true)">↻ Aktualisieren</button>
+            </div>`;
 
     } catch(e) {
         el.innerHTML = `<span class="status-error">Fehler beim Laden: ${e.message}</span>`;
