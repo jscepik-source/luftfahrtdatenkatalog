@@ -2989,23 +2989,38 @@ out skel qt;`;
     const overpUrl = `https://overpass-turbo.eu/?Q=${encodeURIComponent(overpRawQuery)}&run=true`;
 
     const rwyRows = ap.runways && ap.runways.length
-        ? ap.runways.map(r => `<tr class="${r.closed ? 'rwy-closed' : ''}">
-            <td>${r.le||''}${r.he ? ' / '+r.he : ''}</td>
+        ? ap.runways.map(r => {
+            const leLink = (r.le_lat !== undefined && r.le_lon !== undefined)
+                ? `<a href="https://maps.google.com/?q=${r.le_lat},${r.le_lon}" target="_blank" rel="noopener" title="${r.le_lat}, ${r.le_lon}">📍</a>` : '';
+            const heLink = (r.he_lat !== undefined && r.he_lon !== undefined)
+                ? `<a href="https://maps.google.com/?q=${r.he_lat},${r.he_lon}" target="_blank" rel="noopener" title="${r.he_lat}, ${r.he_lon}">📍</a>` : '';
+            return `<tr class="${r.closed ? 'rwy-closed' : ''}">
+            <td>${r.le||''}${leLink}${r.he ? ' / '+r.he+heLink : ''}</td>
             <td>${r.length !== undefined ? `${r.length.toLocaleString()} ft / ${Math.round(r.length * 0.3048)} m` : '–'}</td>
             <td>${r.width !== undefined ? `${r.width} ft / ${Math.round(r.width * 0.3048)} m` : '–'}</td>
             <td>${r.le_hdg !== undefined ? r.le_hdg+'°' : '–'} / ${r.he_hdg !== undefined ? r.he_hdg+'°' : '–'}</td>
             <td>${r.surface || '–'}</td>
             <td>${r.lighted ? '💡' : '–'}</td>
-          </tr>`).join('') : '';
+          </tr>`;
+        }).join('') : '';
 
     const frqRows = ap.freqs && ap.freqs.length
         ? ap.freqs.map(f => `<tr><td>${f.type||'–'}</td><td>${f.freq||'–'}</td><td>${f.desc||'–'}</td></tr>`).join('') : '';
 
     const navRows = ap.navaids && ap.navaids.length
-        ? ap.navaids.map(n => `<tr>
+        ? ap.navaids.map(n => {
+            const navMapLink = (n.lat !== undefined && n.lon !== undefined)
+                ? `<a href="https://maps.google.com/?q=${n.lat},${n.lon}" target="_blank" rel="noopener" title="${n.lat}, ${n.lon}">📍</a>` : '–';
+            const navCoords = (n.lat !== undefined && n.lon !== undefined)
+                ? `${n.lat}, ${n.lon}` : '';
+            return `<tr>
             <td>${n.ident||'–'}</td><td>${n.name||'–'}</td><td>${n.type||'–'}</td>
             <td>${n.freq||'–'}</td><td>${n.dme_ch||'–'}</td><td>${n.power||'–'}</td><td>${n.usage||'–'}</td>
-          </tr>`).join('') : '';
+            <td>${navMapLink}</td>
+            <td>${n.elev !== undefined ? n.elev+' ft' : '–'}</td>
+            <td>${n.slaved_var !== undefined ? n.slaved_var+'°' : '–'}</td>
+          </tr>`;
+        }).join('') : '';
 
     const meta = [ap.city, ap.country_name || ap.country, kontinent].filter(Boolean).join(' · ');
     // For German airports: use direct catalog URL if already loaded, else generic fallback
@@ -3083,7 +3098,7 @@ out skel qt;`;
                 ${navRows ? `<section class="card-section">
                     <h3 class="section-title">📡 Nav-Aids</h3>
                     <table class="data-table">
-                        <thead><tr><th>Kennung</th><th>Name</th><th>Typ</th><th>Freq (kHz)</th><th>DME</th><th>Leistung</th><th>Nutzung</th></tr></thead>
+                        <thead><tr><th>Kennung</th><th>Name</th><th>Typ</th><th>Freq (kHz)</th><th>DME</th><th>Leistung</th><th>Nutzung</th><th>Position</th><th>Höhe</th><th>Slaved Var.</th></tr></thead>
                         <tbody>${navRows}</tbody>
                     </table>
                 </section>` : ''}

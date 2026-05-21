@@ -85,6 +85,14 @@ def durchlauf():
         except (ValueError, KeyError): pass
         try: entry['he_thr']   = int(r['he_displaced_threshold_ft']) if r.get('he_displaced_threshold_ft') else 0
         except (ValueError, KeyError): pass
+        try: entry['le_lat']   = round(float(r['le_latitude_deg']), 5)
+        except (ValueError, KeyError): pass
+        try: entry['le_lon']   = round(float(r['le_longitude_deg']), 5)
+        except (ValueError, KeyError): pass
+        try: entry['he_lat']   = round(float(r['he_latitude_deg']), 5)
+        except (ValueError, KeyError): pass
+        try: entry['he_lon']   = round(float(r['he_longitude_deg']), 5)
+        except (ValueError, KeyError): pass
         if r.get('surface'):        entry['surface'] = r['surface']
         if r.get('lighted') == '1': entry['lighted'] = True
         if r.get('closed')  == '1': entry['closed']  = True
@@ -119,6 +127,21 @@ def durchlauf():
         try:
             mv = round(float(n['magnetic_variation_deg']), 1)
             if mv != 0: entry['mag_var'] = mv
+        except (ValueError, KeyError):
+            pass
+        try:
+            entry['lat'] = round(float(n['latitude_deg']), 5)
+            entry['lon'] = round(float(n['longitude_deg']), 5)
+        except (ValueError, KeyError):
+            pass
+        try:
+            elev = int(float(n['elevation_ft']))
+            if elev != 0: entry['elev'] = elev
+        except (ValueError, KeyError):
+            pass
+        try:
+            sv = round(float(n['slaved_variation_deg']), 1)
+            if sv != 0: entry['slaved_var'] = sv
         except (ValueError, KeyError):
             pass
         navaid_map.setdefault(airport, []).append(entry)
