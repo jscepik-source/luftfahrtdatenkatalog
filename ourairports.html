@@ -1200,6 +1200,42 @@
         }
         .acars-refresh:hover { background: var(--color-surface-2); }
 
+        /* ── Infrastruktur (OSM) ── */
+        .infra-container { padding: 4px 0; }
+        .infra-source { font-size: 0.72rem; color: var(--color-text-dim); margin-bottom: 10px; }
+        .infra-source a { color: var(--color-primary); text-decoration: none; }
+        .infra-section { margin-bottom: 14px; }
+        .infra-section-title {
+            font-size: 0.78rem; font-weight: 600; color: var(--color-text-sub);
+            text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+        }
+        .infra-count {
+            background: var(--color-surface-2); color: var(--color-text-dim);
+            border-radius: var(--radius-pill); padding: 1px 7px;
+            font-size: 0.7rem; font-weight: 500;
+        }
+        .infra-grid {
+            display: flex; flex-wrap: wrap; gap: 5px;
+        }
+        .infra-item {
+            background: var(--color-surface-2); border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm); padding: 4px 9px;
+            font-size: 0.78rem; cursor: pointer; transition: background var(--transition);
+            display: flex; flex-direction: column; align-items: flex-start;
+        }
+        .infra-item:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-ref { font-weight: 600; color: var(--color-text); }
+        .infra-name { font-size: 0.68rem; color: var(--color-text-sub); margin-top: 1px; }
+        .infra-empty { text-align: center; padding: 20px 16px; color: var(--color-text-sub); font-size: 0.83rem; }
+        .infra-empty a { color: var(--color-primary); }
+        .infra-refresh {
+            align-self: flex-start; font-size: 0.75rem; color: var(--color-text-sub); cursor: pointer;
+            background: none; border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm); padding: 3px 10px; margin-bottom: 8px;
+        }
+        .infra-refresh:hover { background: var(--color-surface-2); }
+
         .notam-map-btn {
             display: flex;
             align-items: center;
@@ -3084,6 +3120,7 @@ out skel qt;`;
                 <button class="card-tab" onclick="switchTab(this,'wetter')">Wetter</button>
                 <button class="card-tab" onclick="switchTab(this,'notam','${icao}')">NOTAMs</button>
                 <button class="card-tab" onclick="switchTab(this,'acars','${icao}')">ACARS</button>
+                ${hasCoords ? `<button class="card-tab" onclick="switchTab(this,'infra','${icao}')">Infrastruktur</button>` : ''}
                 ${hasCoords ? `<button class="card-tab" onclick="switchTab(this,'karte','${icao}')">Karte</button>` : ''}
             </div>
 
@@ -3143,6 +3180,13 @@ out skel qt;`;
             <!-- ACARS Panel -->
             <div class="card-tab-panel" data-panel="acars">
                 <div id="acars-${icao}" class="acars-container">
+                    <span class="status-loading">Wird geladen…</span>
+                </div>
+            </div>
+
+            <!-- Infrastruktur Panel (OSM) -->
+            <div class="card-tab-panel" data-panel="infra">
+                <div id="infra-${icao}" class="infra-container">
                     <span class="status-loading">Wird geladen…</span>
                 </div>
             </div>
@@ -3585,6 +3629,114 @@ async function ladeAcars(icao, force = false) {
     }
 }
 
+// ── Infrastruktur (OpenStreetMap / Overpass API) ─────────────────────────────
+async function ladeInfrastruktur(icao, force = false) {
+    const el = document.getElementById(`infra-${icao}`);
+    if (!el) return;
+    if (el.dataset.geladen && !force) return;
+    el.dataset.geladen = '1';
+
+    const ap = katalog[icao];
+    if (!ap || ap.lat === undefined || ap.lon === undefined) {
+        el.innerHTML = '<span class="status-error">Keine Koordinaten verfügbar.</span>';
+        return;
+    }
+
+    el.innerHTML = '<span class="status-loading">OSM-Infrastrukturdaten werden geladen…</span>';
+
+    const delta = 0.13; // ~14 km Radius – reicht für große Flughäfen
+    const bbox  = `${ap.lat - delta},${ap.lon - delta},${ap.lat + delta},${ap.lon + delta}`;
+    const query = `[out:json][timeout:30];
+(
+  node["aeroway"~"terminal|gate|parking_position|tower|helipad|hangar|navigationaid|apron"](${bbox});
+  way["aeroway"~"terminal|gate|parking_position|tower|helipad|hangar|apron"](${bbox});
+  relation["aeroway"="terminal"](${bbox});
+);
+out center tags;`;
+
+    const typeLabels = {
+        terminal:         { icon: '🏛️', label: 'Terminals',          order: 1 },
+        gate:             { icon: '🚪', label: 'Gates',               order: 2 },
+        parking_position: { icon: '🅿️', label: 'Abstellpositionen',  order: 3 },
+        apron:            { icon: '🛬', label: 'Vorfelder',           order: 4 },
+        hangar:           { icon: '🏗️', label: 'Hangars',             order: 5 },
+        tower:            { icon: '🗼', label: 'Tower',               order: 6 },
+        helipad:          { icon: '🚁', label: 'Hubschrauberplätze',  order: 7 },
+        navigationaid:    { icon: '📡', label: 'Navigationsanlagen',  order: 8 },
+    };
+
+    try {
+        const res = await fetch('https://overpass-api.de/api/interpreter', {
+            method: 'POST',
+            body: query
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const elements = json.elements || [];
+
+        // Gruppieren nach Typ
+        const groups = {};
+        for (const item of elements) {
+            const type = item.tags?.aeroway;
+            if (!type || !typeLabels[type]) continue;
+            (groups[type] = groups[type] || []).push(item);
+        }
+
+        if (Object.keys(groups).length === 0) {
+            el.innerHTML = `<div class="infra-empty">
+                <p>Keine detaillierten Infrastrukturdaten in OSM erfasst.</p>
+                <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(ap.name)}" target="_blank" rel="noopener">In OSM ansehen ↗</a>
+            </div>`;
+            return;
+        }
+
+        // Sortiert nach order
+        const sorted = Object.entries(groups).sort(
+            (a, b) => (typeLabels[a[0]]?.order || 99) - (typeLabels[b[0]]?.order || 99)
+        );
+
+        let html = '';
+        for (const [type, items] of sorted) {
+            const meta = typeLabels[type];
+            // Sortiere Einträge numerisch nach ref
+            items.sort((a, b) => {
+                const ra = a.tags?.ref || a.tags?.name || '';
+                const rb = b.tags?.ref || b.tags?.name || '';
+                return ra.localeCompare(rb, 'de', { numeric: true });
+            });
+
+            html += `<div class="infra-section">
+                <div class="infra-section-title">${meta.icon} ${meta.label} <span class="infra-count">${items.length}</span></div>
+                <div class="infra-grid">`;
+
+            for (const item of items) {
+                const ref  = item.tags?.ref  || '';
+                const name = item.tags?.name || '';
+                const display = ref || name || '–';
+                const lat = item.lat ?? item.center?.lat;
+                const lon = item.lon ?? item.center?.lon;
+                const osmUrl = lat && lon
+                    ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`
+                    : '';
+                html += `<div class="infra-item"
+                    ${osmUrl ? `onclick="window.open('${osmUrl}','_blank')" title="In OSM öffnen"` : ''}>
+                    <span class="infra-ref">${display}</span>
+                    ${name && ref ? `<span class="infra-name">${name}</span>` : ''}
+                </div>`;
+            }
+            html += `</div></div>`;
+        }
+
+        el.innerHTML = `
+            <button class="infra-refresh" onclick="ladeInfrastruktur('${icao}', true)">↻ Aktualisieren</button>
+            <div class="infra-source">Quelle: <a href="https://www.openstreetmap.org" target="_blank" rel="noopener">OpenStreetMap</a> · <a href="https://overpass-api.de" target="_blank" rel="noopener">Overpass API</a> · © ODbL</div>
+            ${html}`;
+
+    } catch(e) {
+        el.innerHTML = `<span class="status-error">Fehler beim Laden: ${e.message}</span>`;
+    }
+}
+
 // ── Card Tabs ────────────────────────────────────────────────────────────────
 function switchTab(btn, panel, icao) {
     const body = btn.closest('.card-body');
@@ -3597,6 +3749,7 @@ function switchTab(btn, panel, icao) {
     if (panel === 'notam'   && icao) ladeNfl(icao);
     if (panel === 'karten'  && icao) ladeEurocontrol(icao);
     if (panel === 'acars'   && icao) ladeAcars(icao);
+    if (panel === 'infra'   && icao) ladeInfrastruktur(icao);
 }
 
 // ── Flüge (ADS-B Live) ────────────────────────────────────────────────────────
