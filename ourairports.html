@@ -2277,6 +2277,47 @@ function calcSonne(lat, lon) {
 
 const karteInstanzen      = {};
 const infraKarteInstanzen = {};
+
+// ── Radar-Typen-Datenbank ────────────────────────────────────────────────────
+const RADAR_TYPEN = {
+    // Primärradar (PSR)
+    'PSR':     { name: 'Primärradar (PSR)',                    band: 'S/L-Band',              reichweite: '',          hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Prim%C3%A4rradar' },
+    'SRE-M':   { name: 'SRE-M – Surveillance Radar (Medium)', band: 'L-Band (1250–1350 MHz)', reichweite: '300 NM',    hersteller: 'Hensoldt',   wiki: 'https://de.wikipedia.org/wiki/SRE-M' },
+    'SRE-M6':  { name: 'SRE-M6 Primärradar',                  band: 'L-Band',                reichweite: '300 NM',    hersteller: 'Hensoldt',   wiki: 'https://de.wikipedia.org/wiki/SRE-M' },
+    'SRE-M7':  { name: 'SRE-M7 Primärradar',                  band: 'L-Band',                reichweite: '300 NM',    hersteller: 'Hensoldt',   wiki: 'https://de.wikipedia.org/wiki/SRE-M' },
+    'SRE-M8':  { name: 'SRE-M8 Primärradar',                  band: 'L-Band',                reichweite: '300 NM',    hersteller: 'Hensoldt',   wiki: 'https://de.wikipedia.org/wiki/SRE-M' },
+    'ASR':     { name: 'Flughafen-Überwachungsradar (ASR)',    band: 'S-Band (2–4 GHz)',      reichweite: '60 NM',     hersteller: '',           wiki: 'https://en.wikipedia.org/wiki/Airport_surveillance_radar' },
+    'ASR-11':  { name: 'ASR-11 (DASR)',                        band: 'S-Band',                reichweite: '60 NM',     hersteller: 'Raytheon',   wiki: 'https://en.wikipedia.org/wiki/Airport_surveillance_radar' },
+    'ARSR':    { name: 'Strecken-Überwachungsradar (ARSR)',    band: 'L-Band',                reichweite: '250 NM',    hersteller: '',           wiki: '' },
+    // Sekundärradar (SSR)
+    'SSR':     { name: 'Sekundärradar (SSR)',                  band: 'L-Band (1030/1090 MHz)', reichweite: '250 NM',   hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Sekund%C3%A4rradar' },
+    'MSSR':    { name: 'Monopuls-Sekundärradar (MSSR)',        band: 'L-Band (1030/1090 MHz)', reichweite: '250 NM',   hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Sekund%C3%A4rradar' },
+    'Mode-S':  { name: 'Mode-S Sekundärradar',                 band: '1030/1090 MHz',         reichweite: '250 NM',   hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Mode_S' },
+    // Multilateration
+    'MLAT':    { name: 'Multilateration (MLAT)',               band: '1090 MHz (ADS-B)',      reichweite: 'lokal',     hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Multilateration' },
+    'WAM':     { name: 'Wide Area Multilateration (WAM)',      band: '1090 MHz',              reichweite: 'regional',  hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Multilateration' },
+    // Rollfeld / Bodenüberwachung
+    'SMR':     { name: 'Rollfeld-Überwachungsradar (SMR)',     band: 'X/Ka-Band (9–36 GHz)', reichweite: 'Flugfeld',  hersteller: '',           wiki: '' },
+    'ASDE':    { name: 'Airport Surface Detection Equipment',   band: 'X-Band',               reichweite: 'Flugfeld',  hersteller: '',           wiki: '' },
+    'ASDE-X':  { name: 'ASDE-X (Fusion SMR + SSR)',            band: 'X-Band + 1090 MHz',    reichweite: 'Flugfeld',  hersteller: 'Raytheon',   wiki: '' },
+    // Wetterradar
+    'WX':      { name: 'Wetterradar',                          band: 'C/S-Band',              reichweite: '200 NM',   hersteller: '',           wiki: '' },
+    'DWSR':    { name: 'Doppler-Wetterradar (DWSR)',           band: 'C-Band (5,6 GHz)',      reichweite: '200 NM',   hersteller: '',           wiki: '' },
+    // ILS-Radar
+    'PAR':     { name: 'Präzisions-Anflug-Radar (PAR)',        band: 'X/Ku-Band',             reichweite: '20 NM',    hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Instrumentenlandesystem' },
+    'GCA':     { name: 'Ground Controlled Approach (GCA)',     band: 'X-Band',                reichweite: '20 NM',    hersteller: '',           wiki: '' },
+};
+
+// Erkennt Radar-Typ aus OSM-Tags (name, model, radar:type, radar, surveillance:type)
+function erkennRadarTyp(tags) {
+    const felder = [tags.model, tags['radar:type'], tags.radar, tags['surveillance:type'], tags.name, tags.ref];
+    for (const f of felder) {
+        if (!f) continue;
+        const schluessel = Object.keys(RADAR_TYPEN).find(k => f.toUpperCase().includes(k.toUpperCase()));
+        if (schluessel) return { key: schluessel, ...RADAR_TYPEN[schluessel] };
+    }
+    return null;
+}
 const infraLayerGroups    = {};   // { icao: { terminal: L.layerGroup, … } }
 
 function toggleInfraFilter(icao, type) {
@@ -3905,8 +3946,23 @@ out center tags;`;
                 return r('⛽', fuels.join(' · ')) + r('🏢', tags.operator) + r('🕐', tags.opening_hours);
             }
             case '_radar': {
-                const rt = tags.radar || tags['radar:type'] || tags['surveillance:type'] || '';
-                return r('📡', rt ? 'Typ: '+rt : '') + r('🏢', tags.operator) + r('📶', tags.frequency || '') + r('📏', tags.height ? tags.height+' m' : tags.ele ? tags.ele+' m ü.NN' : '');
+                const rt   = erkennRadarTyp(tags);
+                const raw  = tags.model || tags.radar || tags['radar:type'] || tags['surveillance:type'] || '';
+                const typeName    = rt ? rt.name : (raw || '');
+                const band        = rt?.band        || tags.frequency || '';
+                const reichweite  = rt?.reichweite  || '';
+                const hersteller  = rt?.hersteller  || tags.manufacturer || '';
+                const wikiUrl     = rt?.wiki         || '';
+                const elev        = tags.height ? tags.height + ' m' : tags.ele ? tags.ele + ' m ü.NN' : '';
+                let html = '';
+                if (typeName)           html += r('📡', typeName);
+                if (band)               html += r('📶', 'Band: ' + band);
+                if (reichweite)         html += r('🎯', 'Reichweite: ' + reichweite);
+                if (hersteller)         html += r('🏭', hersteller);
+                if (tags.operator)      html += r('🏢', tags.operator);
+                if (elev)               html += r('📏', elev);
+                if (wikiUrl)            html += `<div style="font-size:0.71rem;margin-top:4px"><a href="${wikiUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#2563eb;text-decoration:none">Wikipedia ↗</a></div>`;
+                return html;
             }
             default:
                 return r('🏢', tags.operator || '') + r('🔲', tags.surface || '');
