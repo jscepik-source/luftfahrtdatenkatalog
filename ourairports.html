@@ -3811,14 +3811,16 @@ async function ladeInfrastruktur(icao, force = false) {
     // - helipad: meist abseits des Flughafens oder irrelevant
     // - navigationaid: OSM taggt jede einzelne Anfluglampe → hunderte Punkte
     // Radar kommt über man_made=radar separat
-    const radius = 8000; // 8 km – eng am Flughafen
+    const r1 = 8000;  // Flughafen-Infrastruktur: eng am Platz
+    const r2 = 30000; // Navaids: VOR/NDB können 20+ km entfernt liegen
     const query = `[out:json][timeout:25];
 (
-  node["aeroway"~"terminal|gate|parking_position|tower|hangar"](around:${radius},${ap.lat},${ap.lon});
-  way["aeroway"~"terminal|gate|parking_position|tower|hangar|apron"](around:${radius},${ap.lat},${ap.lon});
-  relation["aeroway"="terminal"](around:${radius},${ap.lat},${ap.lon});
-  node["man_made"="radar"](around:${radius},${ap.lat},${ap.lon});
-  way["man_made"="radar"](around:${radius},${ap.lat},${ap.lon});
+  node["aeroway"~"terminal|gate|parking_position|tower|hangar"](around:${r1},${ap.lat},${ap.lon});
+  way["aeroway"~"terminal|gate|parking_position|tower|hangar|apron"](around:${r1},${ap.lat},${ap.lon});
+  relation["aeroway"="terminal"](around:${r1},${ap.lat},${ap.lon});
+  node["man_made"="radar"](around:${r1},${ap.lat},${ap.lon});
+  way["man_made"="radar"](around:${r1},${ap.lat},${ap.lon});
+  node["aeroway"="navigationaid"]["navaid:type"~"ILS|ILS-DME|LOC|LOC-DME|GS|VOR|VORDME|VORTAC|DVOR|NDB|NDB-DME|DME|TACAN"](around:${r2},${ap.lat},${ap.lon});
 );
 out center tags;`;
 
@@ -3871,17 +3873,48 @@ out center tags;`;
         const elements = json.elements || [];
 
         // ── OSM-Elemente gruppieren ───────────────────────────────────────────
-        const groups = {};
+        const groups     = {};
+        const osmNavIdents = new Set(); // Duplikat-Schutz beim Merge mit OurAirports
+
         for (const item of elements) {
             let t = item.tags?.aeroway;
             if (!t && item.tags?.man_made === 'radar') t = '_radar';
+
+            // OSM navigationaid mit navaid:type → als synthetisches Navaid-Objekt
+            if (t === 'navigationaid' && item.tags?.['navaid:type']) {
+                const lat = item.lat ?? item.center?.lat;
+                const lon = item.lon ?? item.center?.lon;
+                if (!lat || !lon) continue;
+                const navType = item.tags['navaid:type'];
+                const ident   = item.tags['ref:icao'] || item.tags.ref || item.tags.icao || item.tags.name || '?';
+                const rawFreq = item.tags.frequency || item.tags.freq || '';
+                // OSM speichert Frequenzen oft in MHz als Dezimalzahl (z.B. "110.90")
+                // OurAirports in kHz (z.B. "110900") → vereinheitlichen auf kHz
+                let freqKhz = '';
+                if (rawFreq) {
+                    const f = parseFloat(rawFreq);
+                    freqKhz = (!isNaN(f) && f < 10000) ? String(Math.round(f * 1000)) : String(Math.round(f));
+                }
+                const navObj = {
+                    ident, name: item.tags.name || '', type: navType,
+                    freq: freqKhz, lat, lon,
+                    _src: 'osm'
+                };
+                osmNavIdents.add(ident.toUpperCase());
+                (groups['_navaids'] = groups['_navaids'] || []).push(navObj);
+                continue;
+            }
+
             if (!t || !typeMeta[t]) continue;
             (groups[t] = groups[t] || []).push(item);
         }
 
-        // ── OurAirports-Navaids als eigene Gruppe ─────────────────────────────
-        const rawNavaids = (ap.navaids || []).filter(n => n.lat && n.lon);
-        if (rawNavaids.length > 0) groups['_navaids'] = rawNavaids;
+        // ── OurAirports-Navaids ergänzen (keine Duplikate) ───────────────────
+        const rawNavaids = (ap.navaids || []).filter(n => n.lat && n.lon &&
+            !osmNavIdents.has((n.ident || '').toUpperCase()));
+        if (rawNavaids.length > 0) {
+            groups['_navaids'] = [...(groups['_navaids'] || []), ...rawNavaids];
+        }
 
         if (Object.keys(groups).length === 0) {
             el.innerHTML = `<div class="infra-empty">
