@@ -635,6 +635,15 @@
         }
         .data-table tr:last-child td { border-bottom: none; }
         .data-table tr.rwy-closed td { color: var(--color-text-dim); text-decoration: line-through; }
+        .ils-badge {
+            display: inline-block; font-size: 0.57rem; font-weight: 700;
+            padding: 1px 5px; border-radius: 3px; margin-left: 4px;
+            vertical-align: middle; letter-spacing: 0.04em; white-space: nowrap;
+        }
+        .ils-3 { background: #f59e0b; color: #07111f; }
+        .ils-2 { background: #3b82f6; color: #fff; }
+        .ils-1 { background: #22c55e; color: #07111f; }
+        .ils-nc { background: #475569; color: #fff; }
 
         /* ── Weather ── */
         .metar-box {
@@ -1971,6 +1980,69 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
 
+// ── ILS-Kategorien Deutschland (Quelle: Wikipedia / DFS / AIP) ───────────────
+const ILS_KAT_DE = {
+  // ── Internationale Verkehrsflughäfen (DFS) ────────────────────────────────
+  EDDB:{'06L':'III','06R':'III','24L':'III','24R':'III'},          // Berlin-Brandenburg
+  EDDW:{'09':'III','27':'III'},                                     // Bremen
+  EDDC:{'04':'I','22':'III'},                                       // Dresden
+  EDDL:{'05L':'I','05R':'III','23L':'III','23R':'III'},             // Düsseldorf
+  EDDE:{'09':'I'},                                                   // Erfurt-Weimar
+  EDDF:{'07C':'III','07L':'III','07R':'III','25C':'III','25L':'III','25R':'III','07Y':'I','25Y':'I'}, // Frankfurt
+  EDDH:{'05':'I','15':'I','23':'III'},                              // Hamburg
+  EDDV:{'09L':'III','09R':'I','27L':'I','27R':'I'},                 // Hannover
+  EDDK:{'13L':'III','24':'I','31R':'III'},                          // Köln/Bonn
+  EDDP:{'08L':'III','08R':'III','26L':'III','26R':'III'},           // Leipzig/Halle
+  EDDM:{'08L':'III','08R':'III','26L':'III','26R':'III'},           // München
+  EDDG:{'07':'I','25':'III'},                                       // Münster/Osnabrück
+  EDDN:{'10':'I','28':'III','28Y':'NOCAT'},                         // Nürnberg
+  EDDR:{'27':'I'},                                                   // Saarbrücken
+  EDDS:{'07':'III','25':'III'},                                     // Stuttgart
+  // ── Regionalflugplätze ────────────────────────────────────────────────────
+  EDMA:{'25':'I'},                                                   // Augsburg
+  EDVE:{'26':'I'},                                                   // Braunschweig-Wolfsburg
+  EDLW:{'06':'II','24':'II'},                                        // Dortmund
+  EDFH:{'03':'I','21':'III'},                                        // Frankfurt-Hahn
+  EDNY:{'06':'I','24':'III'},                                        // Friedrichshafen
+  EDSB:{'03':'I','21':'III'},                                        // Karlsruhe/Baden-Baden
+  EDVK:{'09':'I','27':'III'},                                        // Kassel-Calden
+  EDHK:{'08':'I','26':'I'},                                          // Kiel-Holtenau
+  EDAC:{'22':'I'},                                                   // Leipzig-Altenburg
+  EDHL:{'07':'I','25':'I'},                                          // Lübeck-Blankensee
+  EDJA:{'06':'I','24':'I'},                                          // Memmingen
+  EDFM:{'27':'NOCAT'},                                               // Mannheim
+  EDLN:{'13':'I','31':'I'},                                          // Mönchengladbach
+  EDLV:{'27':'III'},                                                 // Niederrhein
+  EDLP:{'06':'I','24':'I'},                                          // Paderborn/Lippstadt
+  EDTY:{'28':'I'},                                                   // Schwäbisch Hall
+  EDSG:{'31':'I'},                                                   // Siegerland
+  EDXW:{'32':'I'},                                                   // Sylt
+  // ── Militärflugplätze ─────────────────────────────────────────────────────
+  ETNH:{'25':'I'},   // Hohn
+  ETSH:{'27':'I'},   // Holzdorf
+  ETSI:{'24':'I'},   // Ingolstadt/Manching
+  ETNL:{'09':'I','25':'I'}, // Laage
+  ETSN:{'27':'I'},   // Neuburg
+  ETHN:{'25':'I'},   // Niederstetten
+  ETMN:{'25':'I'},   // Nordholz
+  ETNN:{'24':'I'},   // Nörvenich
+  ETNW:{'08':'I','26':'I'}, // Wunstorf
+  ETNG:{},           // Geilenkirchen (NATO)
+  // ── Sonstige ─────────────────────────────────────────────────────────────
+  EDHI:{'23':'II'},  // Hamburg-Finkenwerder
+  EDTL:{'21':'I'},   // Lahr
+  EDMO:{'22':'I'},   // Oberpfaffenhofen
+};
+
+function ilsBadge(icao, desig) {
+    if (!desig || !ILS_KAT_DE[icao]) return '';
+    const kat = ILS_KAT_DE[icao][(desig).toUpperCase()];
+    if (!kat) return '';
+    const cls = kat === 'III' ? 'ils-3' : kat === 'II' ? 'ils-2' : kat === 'I' ? 'ils-1' : 'ils-nc';
+    const label = kat === 'NOCAT' ? 'ILS' : `CAT ${kat}`;
+    return `<span class="ils-badge ${cls}" title="ILS-Kategorie ${kat}">${label}</span>`;
+}
+
 const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
 let nflJsonCache         = null;
@@ -3203,8 +3275,10 @@ out skel qt;`;
                 ? `<a href="https://maps.google.com/?q=${r.le_lat},${r.le_lon}" target="_blank" rel="noopener" title="${r.le_lat}, ${r.le_lon}">📍</a>` : '';
             const heLink = (r.he_lat !== undefined && r.he_lon !== undefined)
                 ? `<a href="https://maps.google.com/?q=${r.he_lat},${r.he_lon}" target="_blank" rel="noopener" title="${r.he_lat}, ${r.he_lon}">📍</a>` : '';
+            const leBadge = ilsBadge(icao, r.le);
+            const heBadge = ilsBadge(icao, r.he);
             return `<tr class="${r.closed ? 'rwy-closed' : ''}">
-            <td>${r.le||''}${leLink}${r.he ? ' / '+r.he+heLink : ''}</td>
+            <td>${r.le||''}${leBadge}${leLink}${r.he ? ' / '+r.he+heBadge+heLink : ''}</td>
             <td>${r.length !== undefined ? `${r.length.toLocaleString()} ft / ${Math.round(r.length * 0.3048)} m` : '–'}</td>
             <td>${r.width !== undefined ? `${r.width} ft / ${Math.round(r.width * 0.3048)} m` : '–'}</td>
             <td>${r.le_hdg !== undefined ? r.le_hdg+'°' : '–'} / ${r.he_hdg !== undefined ? r.he_hdg+'°' : '–'}</td>
