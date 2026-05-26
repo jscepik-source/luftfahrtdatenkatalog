@@ -1174,6 +1174,155 @@
             backdrop-filter: blur(4px);
         }
         .fluege-globe-open:hover { background: rgba(0,0,0,0.8); }
+
+        /* ── Infrastruktur (OSM) ── */
+        .infra-container { padding: 4px 0; }
+
+        /* Filter-Leiste */
+        .infra-filter-bar {
+            display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px;
+        }
+        .infra-filter-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 9px; border-radius: var(--radius-pill);
+            border: 1px solid; cursor: pointer; font-family: var(--font);
+            font-size: 0.67rem; font-weight: 600; white-space: nowrap;
+            transition: opacity var(--transition), background var(--transition), color var(--transition);
+            line-height: 1.4;
+        }
+        .infra-filter-btn.active  { color: #fff; }
+        .infra-filter-btn:not(.active) { background: transparent !important; color: var(--color-text-sub); opacity: 0.4; }
+        .infra-filter-btn:hover   { opacity: 1 !important; }
+        .infra-filter-count { font-weight: 400; opacity: 0.8; }
+
+        /* Karte */
+        .infra-map {
+            height: 360px; border-radius: var(--radius-md);
+            overflow: hidden; margin-bottom: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        /* Sektionen */
+        .infra-section {
+            border: 1px solid var(--color-border); border-radius: var(--radius-md);
+            margin-bottom: 6px; overflow: hidden;
+        }
+        .infra-section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 9px 13px; background: var(--color-surface-2);
+            cursor: pointer; user-select: none; gap: 8px;
+        }
+        .infra-section-header:hover { background: var(--color-primary-bg); }
+        .infra-section-left { display: flex; align-items: center; gap: 7px; }
+        .infra-section-dot  {
+            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+        }
+        .infra-section-label { font-size: 0.8rem; font-weight: 600; color: var(--color-text); }
+        .infra-count {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-pill); padding: 1px 8px;
+            font-size: 0.68rem; font-weight: 600; color: var(--color-text-sub);
+        }
+        .infra-chevron {
+            font-size: 0.65rem; color: var(--color-text-dim);
+            transition: transform 0.2s ease; flex-shrink: 0;
+        }
+        .infra-section.open .infra-chevron { transform: rotate(180deg); }
+        .infra-section-body { display: none; padding: 11px 13px 13px; }
+        .infra-section.open .infra-section-body { display: block; }
+
+        /* Terminal-Karten */
+        .infra-terminal-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 7px;
+        }
+        .infra-terminal-card {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-md); padding: 10px 12px;
+            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+        }
+        .infra-terminal-card:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-terminal-name { font-weight: 600; font-size: 0.8rem; color: var(--color-text); }
+        .infra-terminal-sub  { font-size: 0.68rem; color: var(--color-text-sub); margin-top: 2px; }
+
+        /* Präfix-Gruppen */
+        .infra-prefix-group { margin-bottom: 9px; }
+        .infra-prefix-group:last-child { margin-bottom: 0; }
+        .infra-prefix-label {
+            font-size: 0.67rem; font-weight: 700; color: var(--color-text-dim);
+            letter-spacing: 0.07em; margin-bottom: 4px; text-transform: uppercase;
+        }
+        .infra-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+        .infra-item {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm); padding: 3px 8px;
+            font-size: 0.75rem; font-weight: 500; color: var(--color-text);
+            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+            display: flex; flex-direction: column;
+        }
+        .infra-item:hover { background: var(--color-primary-bg); border-color: var(--color-primary); color: var(--color-primary); }
+        .infra-item-sub { font-size: 0.63rem; color: var(--color-text-dim); font-weight: 400; margin-top: 1px; }
+
+        /* Detail-Chips (z.B. Haltepositionen mit ILS-Kategorie) */
+        .infra-detail-chip {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm); padding: 4px 9px;
+            font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column;
+            transition: background var(--transition), border-color var(--transition); min-width: 44px;
+        }
+        .infra-detail-chip:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-detail-chip-main { font-weight: 600; color: var(--color-text); }
+        .infra-detail-chip-sub  { font-size: 0.61rem; color: var(--color-text-dim); margin-top: 1px; white-space: nowrap; }
+
+        /* Anlagen-Karten (Fuel, Tower, Radar, …) */
+        .infra-anlage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 7px; }
+        .infra-anlage-card {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-md); padding: 10px 12px;
+            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+        }
+        .infra-anlage-card:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-anlage-name  { font-weight: 600; font-size: 0.82rem; color: var(--color-text); margin-bottom: 4px; }
+        .infra-anlage-row   { font-size: 0.71rem; color: var(--color-text-sub); line-height: 1.7; }
+
+        /* Fußzeile */
+        .infra-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 10px; flex-wrap: wrap; gap: 6px;
+        }
+        .infra-source { font-size: 0.68rem; color: var(--color-text-dim); }
+        .infra-source a { color: var(--color-primary); text-decoration: none; }
+        .infra-refresh {
+            font-size: 0.71rem; color: var(--color-text-sub); cursor: pointer;
+            background: none; border: 1px solid var(--color-border); font-family: var(--font);
+            border-radius: var(--radius-sm); padding: 3px 10px;
+        }
+        .infra-refresh:hover { background: var(--color-surface-2); }
+        .infra-empty { text-align: center; padding: 28px 16px; color: var(--color-text-sub); font-size: 0.83rem; }
+        .infra-empty a { color: var(--color-primary); }
+
+        /* Navaid-Karten */
+        .infra-navaid-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 7px;
+        }
+        .infra-navaid-card {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-md); padding: 10px 12px;
+            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+        }
+        .infra-navaid-card:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+        .infra-navaid-head {
+            display: flex; align-items: center; gap: 7px; margin-bottom: 5px;
+        }
+        .infra-navaid-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .infra-navaid-ident { font-weight: 700; font-size: 0.88rem; color: var(--color-text); }
+        .infra-navaid-type  {
+            font-size: 0.66rem; font-weight: 700; padding: 1px 5px;
+            border-radius: 3px; background: var(--color-surface-2);
+            color: var(--color-text-sub); white-space: nowrap;
+        }
+        .infra-navaid-name  { font-size: 0.72rem; color: var(--color-text-sub); margin-bottom: 5px; }
+        .infra-navaid-row   { font-size: 0.71rem; color: var(--color-text-dim); line-height: 1.6; }
+
         .notam-map-btn {
             display: flex;
             align-items: center;
@@ -1413,7 +1562,9 @@
 
             /* Map */
             .map-container { height: 230px; }
+            .infra-map     { height: 260px; }
             .map-links { flex-wrap: wrap; }
+            .infra-filter-btn { font-size: 0.67rem; padding: 4px 9px; }
 
             /* Footer */
             footer { padding: var(--space-lg) var(--space-sm); }
@@ -2029,7 +2180,8 @@ function suche() {
         if (aliasIso && (ap.country||'').toUpperCase() === aliasIso) return true;
         return icao.toLowerCase().includes(q) || (ap.iata||'').toLowerCase().includes(q)
             || (ap.name||'').toLowerCase().includes(q) || (ap.city||'').toLowerCase().includes(q)
-            || (ap.country||'').toLowerCase().includes(q) || (ap.country_name||'').toLowerCase().includes(q);
+            || (ap.country||'').toLowerCase().includes(q) || (ap.country_name||'').toLowerCase().includes(q)
+            || (ap.region||'').toLowerCase().includes(q) || (ap.kw||'').toLowerCase().includes(q);
     });
     angezeigtBis = 0;
     const liste = document.getElementById('liste');
@@ -2094,7 +2246,65 @@ function calcSonne(lat, lon) {
     return { auf: fmt(noon - H / 15), unter: fmt(noon + H / 15) };
 }
 
-const karteInstanzen = {};
+const karteInstanzen      = {};
+const infraKarteInstanzen = {};
+
+// ── Radar-Typen-Datenbank ────────────────────────────────────────────────────
+const RADAR_TYPEN = {
+    // Primärradar (PSR)
+    'PSR':     { name: 'Primärradar (PSR)',                    band: 'S/L-Band',              reichweite: '',          hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Prim%C3%A4rradar' },
+    'SRE-M':   { name: 'SRE-M – Surveillance Radar (Medium)', band: 'L-Band (1250–1350 MHz)', reichweite: '300 NM',    hersteller: 'Hensoldt',   wiki: 'https://de.wikipedia.org/wiki/SRE-M' },
+    'SRE-M6':  { name: 'SRE-M6 Primärradar',                  band: 'L-Band',                reichweite: '300 NM',    hersteller: 'Hensoldt',   wiki: 'https://de.wikipedia.org/wiki/SRE-M' },
+    'SRE-M7':  { name: 'SRE-M7 Primärradar',                  band: 'L-Band',                reichweite: '300 NM',    hersteller: 'Hensoldt',   wiki: 'https://de.wikipedia.org/wiki/SRE-M' },
+    'SRE-M8':  { name: 'SRE-M8 Primärradar',                  band: 'L-Band',                reichweite: '300 NM',    hersteller: 'Hensoldt',   wiki: 'https://de.wikipedia.org/wiki/SRE-M' },
+    'ASR':     { name: 'Flughafen-Überwachungsradar (ASR)',    band: 'S-Band (2–4 GHz)',      reichweite: '60 NM',     hersteller: '',           wiki: 'https://en.wikipedia.org/wiki/Airport_surveillance_radar' },
+    'ASR-11':  { name: 'ASR-11 (DASR)',                        band: 'S-Band',                reichweite: '60 NM',     hersteller: 'Raytheon',   wiki: 'https://en.wikipedia.org/wiki/Airport_surveillance_radar' },
+    'ARSR':    { name: 'Strecken-Überwachungsradar (ARSR)',    band: 'L-Band',                reichweite: '250 NM',    hersteller: '',           wiki: '' },
+    // Sekundärradar (SSR)
+    'SSR':     { name: 'Sekundärradar (SSR)',                  band: 'L-Band (1030/1090 MHz)', reichweite: '250 NM',   hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Sekund%C3%A4rradar' },
+    'MSSR':    { name: 'Monopuls-Sekundärradar (MSSR)',        band: 'L-Band (1030/1090 MHz)', reichweite: '250 NM',   hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Sekund%C3%A4rradar' },
+    'Mode-S':  { name: 'Mode-S Sekundärradar',                 band: '1030/1090 MHz',         reichweite: '250 NM',   hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Mode_S' },
+    // Multilateration
+    'MLAT':    { name: 'Multilateration (MLAT)',               band: '1090 MHz (ADS-B)',      reichweite: 'lokal',     hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Multilateration' },
+    'WAM':     { name: 'Wide Area Multilateration (WAM)',      band: '1090 MHz',              reichweite: 'regional',  hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Multilateration' },
+    // Rollfeld / Bodenüberwachung
+    'SMR':     { name: 'Rollfeld-Überwachungsradar (SMR)',     band: 'X/Ka-Band (9–36 GHz)', reichweite: 'Flugfeld',  hersteller: '',           wiki: '' },
+    'ASDE':    { name: 'Airport Surface Detection Equipment',   band: 'X-Band',               reichweite: 'Flugfeld',  hersteller: '',           wiki: '' },
+    'ASDE-X':  { name: 'ASDE-X (Fusion SMR + SSR)',            band: 'X-Band + 1090 MHz',    reichweite: 'Flugfeld',  hersteller: 'Raytheon',   wiki: '' },
+    // Wetterradar
+    'WX':      { name: 'Wetterradar',                          band: 'C/S-Band',              reichweite: '200 NM',   hersteller: '',           wiki: '' },
+    'DWSR':    { name: 'Doppler-Wetterradar (DWSR)',           band: 'C-Band (5,6 GHz)',      reichweite: '200 NM',   hersteller: '',           wiki: '' },
+    // ILS-Radar
+    'PAR':     { name: 'Präzisions-Anflug-Radar (PAR)',        band: 'X/Ku-Band',             reichweite: '20 NM',    hersteller: '',           wiki: 'https://de.wikipedia.org/wiki/Instrumentenlandesystem' },
+    'GCA':     { name: 'Ground Controlled Approach (GCA)',     band: 'X-Band',                reichweite: '20 NM',    hersteller: '',           wiki: '' },
+};
+
+// Erkennt Radar-Typ aus OSM-Tags (name, model, radar:type, radar, surveillance:type)
+function erkennRadarTyp(tags) {
+    const felder = [tags.model, tags['radar:type'], tags.radar, tags['surveillance:type'], tags.name, tags.ref];
+    for (const f of felder) {
+        if (!f) continue;
+        const schluessel = Object.keys(RADAR_TYPEN).find(k => f.toUpperCase().includes(k.toUpperCase()));
+        if (schluessel) return { key: schluessel, ...RADAR_TYPEN[schluessel] };
+    }
+    return null;
+}
+const infraLayerGroups    = {};   // { icao: { terminal: L.layerGroup, … } }
+
+function toggleInfraFilter(icao, type) {
+    const imap   = infraKarteInstanzen[icao];
+    const layers = infraLayerGroups[icao];
+    if (!imap || !layers?.[type]) return;
+    const layer = layers[type];
+    const btn   = document.getElementById(`ifbtn-${icao}-${type}`);
+    if (imap.hasLayer(layer)) {
+        imap.removeLayer(layer);
+        btn?.classList.remove('active');
+    } else {
+        layer.addTo(imap);
+        btn?.classList.add('active');
+    }
+}
 
 async function ladeKarte(icao, lat, lon) {
     const el = document.getElementById(`karte-${icao}`);
@@ -2988,23 +3198,38 @@ out skel qt;`;
     const overpUrl = `https://overpass-turbo.eu/?Q=${encodeURIComponent(overpRawQuery)}&run=true`;
 
     const rwyRows = ap.runways && ap.runways.length
-        ? ap.runways.map(r => `<tr class="${r.closed ? 'rwy-closed' : ''}">
-            <td>${r.le||''}${r.he ? ' / '+r.he : ''}</td>
+        ? ap.runways.map(r => {
+            const leLink = (r.le_lat !== undefined && r.le_lon !== undefined)
+                ? `<a href="https://maps.google.com/?q=${r.le_lat},${r.le_lon}" target="_blank" rel="noopener" title="${r.le_lat}, ${r.le_lon}">📍</a>` : '';
+            const heLink = (r.he_lat !== undefined && r.he_lon !== undefined)
+                ? `<a href="https://maps.google.com/?q=${r.he_lat},${r.he_lon}" target="_blank" rel="noopener" title="${r.he_lat}, ${r.he_lon}">📍</a>` : '';
+            return `<tr class="${r.closed ? 'rwy-closed' : ''}">
+            <td>${r.le||''}${leLink}${r.he ? ' / '+r.he+heLink : ''}</td>
             <td>${r.length !== undefined ? `${r.length.toLocaleString()} ft / ${Math.round(r.length * 0.3048)} m` : '–'}</td>
             <td>${r.width !== undefined ? `${r.width} ft / ${Math.round(r.width * 0.3048)} m` : '–'}</td>
             <td>${r.le_hdg !== undefined ? r.le_hdg+'°' : '–'} / ${r.he_hdg !== undefined ? r.he_hdg+'°' : '–'}</td>
             <td>${r.surface || '–'}</td>
             <td>${r.lighted ? '💡' : '–'}</td>
-          </tr>`).join('') : '';
+          </tr>`;
+        }).join('') : '';
 
     const frqRows = ap.freqs && ap.freqs.length
         ? ap.freqs.map(f => `<tr><td>${f.type||'–'}</td><td>${f.freq||'–'}</td><td>${f.desc||'–'}</td></tr>`).join('') : '';
 
     const navRows = ap.navaids && ap.navaids.length
-        ? ap.navaids.map(n => `<tr>
+        ? ap.navaids.map(n => {
+            const navMapLink = (n.lat !== undefined && n.lon !== undefined)
+                ? `<a href="https://maps.google.com/?q=${n.lat},${n.lon}" target="_blank" rel="noopener" title="${n.lat}, ${n.lon}">📍</a>` : '–';
+            const navCoords = (n.lat !== undefined && n.lon !== undefined)
+                ? `${n.lat}, ${n.lon}` : '';
+            return `<tr>
             <td>${n.ident||'–'}</td><td>${n.name||'–'}</td><td>${n.type||'–'}</td>
             <td>${n.freq||'–'}</td><td>${n.dme_ch||'–'}</td><td>${n.power||'–'}</td><td>${n.usage||'–'}</td>
-          </tr>`).join('') : '';
+            <td>${navMapLink}</td>
+            <td>${n.elev !== undefined ? n.elev+' ft' : '–'}</td>
+            <td>${n.slaved_var !== undefined ? n.slaved_var+'°' : '–'}</td>
+          </tr>`;
+        }).join('') : '';
 
     const meta = [ap.city, ap.country_name || ap.country, kontinent].filter(Boolean).join(' · ');
     // For German airports: use direct catalog URL if already loaded, else generic fallback
@@ -3037,6 +3262,7 @@ out skel qt;`;
                 <button class="card-tab" onclick="switchTab(this,'fluege','${icao}')">Flüge</button>
                 <button class="card-tab" onclick="switchTab(this,'wetter')">Wetter</button>
                 <button class="card-tab" onclick="switchTab(this,'notam','${icao}')">NOTAMs</button>
+                ${hasCoords ? `<button class="card-tab" onclick="switchTab(this,'infra','${icao}')">Infrastruktur</button>` : ''}
                 ${hasCoords ? `<button class="card-tab" onclick="switchTab(this,'karte','${icao}')">Karte</button>` : ''}
             </div>
 
@@ -3052,6 +3278,8 @@ out skel qt;`;
                     <div class="detail-item"><dt>Kontinent</dt><dd>${kontinent || '–'}</dd></div>
                     <div class="detail-item"><dt>Höhe</dt><dd>${elev}</dd></div>
                     ${coords ? `<div class="detail-item"><dt>Koordinaten</dt><dd>${coords}</dd></div>` : ''}
+                    <div class="detail-item"><dt>🕐 UTC</dt><dd class="ap-zeit" data-tz="UTC">–</dd></div>
+                    ${ap.tz ? `<div class="detail-item"><dt>🏠 Ortszeit</dt><dd class="ap-zeit" data-tz="${ap.tz}">–</dd></div>` : ''}
                 </dl>
                 <div class="action-links">
                     <a class="btn-sv" href="${svUrl}" target="_blank" rel="noopener">✈ SkyVector</a>
@@ -3080,7 +3308,7 @@ out skel qt;`;
                 ${navRows ? `<section class="card-section">
                     <h3 class="section-title">📡 Nav-Aids</h3>
                     <table class="data-table">
-                        <thead><tr><th>Kennung</th><th>Name</th><th>Typ</th><th>Freq (kHz)</th><th>DME</th><th>Leistung</th><th>Nutzung</th></tr></thead>
+                        <thead><tr><th>Kennung</th><th>Name</th><th>Typ</th><th>Freq (kHz)</th><th>DME</th><th>Leistung</th><th>Nutzung</th><th>Position</th><th>Höhe</th><th>Slaved Var.</th></tr></thead>
                         <tbody>${navRows}</tbody>
                     </table>
                 </section>` : ''}
@@ -3088,6 +3316,13 @@ out skel qt;`;
                     <h3 class="section-title">🌅 Sonnenauf-/-untergang (UTC, heute)</h3>
                     <dl class="sun-grid" id="sonne-${icao}"><span class="status-loading">wird berechnet…</span></dl>
                 </section>` : ''}
+            </div>
+
+            <!-- Infrastruktur Panel (OSM) -->
+            <div class="card-tab-panel" data-panel="infra">
+                <div id="infra-${icao}" class="infra-container">
+                    <span class="status-loading">Wird geladen…</span>
+                </div>
             </div>
 
             <!-- Karten Panel -->
@@ -3172,12 +3407,26 @@ out skel qt;`;
     return article;
 }
 
+function aktualisiereZeiten() {
+    const now = new Date();
+    document.querySelectorAll('.ap-zeit[data-tz]').forEach(el => {
+        const tz = el.dataset.tz;
+        try {
+            el.textContent = now.toLocaleTimeString('de-DE', {
+                hour: '2-digit', minute: '2-digit', timeZone: tz
+            });
+        } catch(e) { el.textContent = '–'; }
+    });
+}
+setInterval(aktualisiereZeiten, 30000);
+
 function toggle(btn, icao, lat, lon) {
     const offen = btn.classList.toggle('open');
     btn.setAttribute('aria-expanded', offen);
     btn.nextElementSibling.classList.toggle('open');
     btn.closest('article').classList.toggle('card-open', offen);
     if (offen) {
+        aktualisiereZeiten();
         if (lat && lon) {
             ladeErst(icao, lat, lon);
             ladeKarte(icao, lat, lon);
@@ -3456,6 +3705,516 @@ async function ladeEurocontrol(icao) {
     }
 }
 
+// ── Infrastruktur (OpenStreetMap / Overpass API) ─────────────────────────────
+function toggleInfraSection(header) {
+    header.closest('.infra-section').classList.toggle('open');
+}
+
+function infraOsmUrl(item) {
+    const lat = item.lat ?? item.center?.lat;
+    const lon = item.lon ?? item.center?.lon;
+    return lat && lon ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}` : '';
+}
+
+function infraSortRef(a, b) {
+    const ra = a.tags?.ref || a.tags?.name || '';
+    const rb = b.tags?.ref || b.tags?.name || '';
+    return ra.localeCompare(rb, 'de', { numeric: true });
+}
+
+// Gruppiert Gates/Stands nach Buchstaben-Präfix (A1→A, 101→#)
+function infraPrefixGroups(items) {
+    const groups = {};
+    for (const item of items) {
+        const ref = item.tags?.ref || item.tags?.name || '?';
+        const m   = ref.match(/^([A-Za-z]+)/);
+        const key = m ? m[1].toUpperCase() : '#';
+        (groups[key] = groups[key] || []).push(item);
+    }
+    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b, 'de', { numeric: true }));
+}
+
+function infraChip(item) {
+    const ref  = item.tags?.ref  || item.tags?.name || '–';
+    const name = item.tags?.name || '';
+    const url  = infraOsmUrl(item);
+    const sub  = (name && name !== ref) ? `<span class="infra-item-sub">${name}</span>` : '';
+    return `<div class="infra-item" ${url ? `onclick="window.open('${url}','_blank')" title="In OSM öffnen"` : ''}>${ref}${sub}</div>`;
+}
+
+function infraSectionHtml(icon, label, count, bodyHtml, openByDefault, color) {
+    return `<div class="infra-section ${openByDefault ? 'open' : ''}">
+        <div class="infra-section-header" onclick="toggleInfraSection(this)">
+            <div class="infra-section-left">
+                <span class="infra-section-dot" style="background:${color}"></span>
+                <span class="infra-section-label">${icon} ${label}</span>
+                <span class="infra-count">${count}</span>
+            </div>
+            <span class="infra-chevron">▼</span>
+        </div>
+        <div class="infra-section-body">${bodyHtml}</div>
+    </div>`;
+}
+
+async function ladeInfrastruktur(icao, force = false) {
+    const el = document.getElementById(`infra-${icao}`);
+    if (!el) return;
+    if (el.dataset.geladen && !force) return;
+    el.dataset.geladen = '1';
+
+    // Alte Karten-Instanz + Layer-Groups aufräumen
+    if (infraKarteInstanzen[icao]) { infraKarteInstanzen[icao].remove(); delete infraKarteInstanzen[icao]; }
+    delete infraLayerGroups[icao];
+
+    const ap = katalog[icao];
+    if (!ap || ap.lat === undefined || ap.lon === undefined) {
+        el.innerHTML = '<span class="status-error">Keine Koordinaten verfügbar.</span>';
+        return;
+    }
+
+    el.innerHTML = '<span class="status-loading">OSM-Infrastrukturdaten werden geladen…</span>';
+
+    // Helipad + navigationaid bewusst ausgelassen:
+    // - helipad: meist abseits des Flughafens oder irrelevant
+    // - navigationaid: OSM taggt jede einzelne Anfluglampe → hunderte Punkte
+    // Radar kommt über man_made=radar separat
+    const r1 = 8000;  // Flughafen-Infrastruktur
+    const r2 = 30000; // Navaids (VOR/NDB können weit entfernt sein)
+    const query = `[out:json][timeout:25];
+(
+  node["aeroway"~"terminal|gate|parking_position|tower|hangar|holding_position|windsock|fuel"](around:${r1},${ap.lat},${ap.lon});
+  way["aeroway"~"terminal|gate|parking_position|tower|hangar|apron|fuel"](around:${r1},${ap.lat},${ap.lon});
+  relation["aeroway"="terminal"](around:${r1},${ap.lat},${ap.lon});
+  node["man_made"="radar"](around:${r1},${ap.lat},${ap.lon});
+  way["man_made"="radar"](around:${r1},${ap.lat},${ap.lon});
+  node["aeroway"="navigationaid"]["navaid:type"~"ILS|ILS-DME|LOC|LOC-DME|GS|VOR|VORDME|VORTAC|DVOR|NDB|NDB-DME|DME|TACAN"](around:${r2},${ap.lat},${ap.lon});
+);
+out center tags;`;
+
+    const typeMeta = {
+        _navaids:         { icon: '📡', label: 'ILS / VOR / NDB',   color: '#3b82f6', radius: 9,  order: 0,  open: false, style: 'navaids'       },
+        terminal:         { icon: '🏛️', label: 'Terminals',         color: '#6366f1', radius: 9,  order: 1,  open: false, style: 'anlage-cards'  },
+        gate:             { icon: '🚪', label: 'Gates',              color: '#22c55e', radius: 6,  order: 2,  open: false, style: 'prefix'        },
+        parking_position: { icon: '🅿️', label: 'Abstellpositionen', color: '#f59e0b', radius: 5,  order: 3,  open: false, style: 'prefix'        },
+        apron:            { icon: '🛬', label: 'Vorfelder',          color: '#94a3b8', radius: 5,  order: 4,  open: false, style: 'chips'         },
+        hangar:           { icon: '🏗️', label: 'Hangars',            color: '#8b5cf6', radius: 6,  order: 5,  open: false, style: 'anlage-cards'  },
+        tower:            { icon: '🗼', label: 'Tower',              color: '#ef4444', radius: 9,  order: 6,  open: false, style: 'anlage-cards'  },
+        holding_position: { icon: '🛑', label: 'Haltepositionen',   color: '#f43f5e', radius: 5,  order: 7,  open: false, style: 'detail-chips'  },
+        windsock:         { icon: '🌬️', label: 'Windsäcke',         color: '#38bdf8', radius: 6,  order: 8,  open: false, style: 'anlage-cards'  },
+        fuel:             { icon: '⛽', label: 'Betankung',          color: '#84cc16', radius: 7,  order: 9,  open: false, style: 'anlage-cards'  },
+        _radar:           { icon: '📡', label: 'Radar',              color: '#dc2626', radius: 10, order: 10, open: false, style: 'anlage-cards'  },
+    };
+
+    // Navaid-Farbe nach Typ
+    function navaidColor(type) {
+        if (/ILS|LOC|GS/.test(type))  return '#3b82f6';
+        if (/VOR|TACAN/.test(type))   return '#f97316';
+        if (/NDB/.test(type))         return '#a855f7';
+        if (/DME/.test(type))         return '#64748b';
+        return '#06b6d4';
+    }
+
+    // Morse-Code aus Navaid-Kennung (z.B. "FFM" → ".. .. ..-. ..-. --")
+    const MORSE = {A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',0:'-----',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.'};
+    function toMorse(ident) {
+        return (ident || '').toUpperCase().split('').map(c => MORSE[c] || '').filter(Boolean).join(' ');
+    }
+
+    // Ist es ein VOR-Typ?
+    const isVorType = t => /VOR|TACAN|DVOR/.test(t || '');
+    const FA_URL = 'https://www.fachagentur-wind-solar.de/veroeffentlichungen/interaktive-karten/drehfunkfeuer';
+
+    // Typ-spezifische Detailzeilen für Popups und Listen
+    function osmDetailRows(tags, type) {
+        const r = (icon, val) => val ? `<div style="font-size:0.71rem;color:#64748b;margin-top:2px">${icon} ${val}</div>` : '';
+        switch (type) {
+            case 'terminal':
+                return r('🏢', tags.operator) + r('📊', tags['building:levels'] ? tags['building:levels']+' Etagen' : '') + r('✈️', tags.iata ? 'IATA '+tags.iata : '');
+            case 'gate':
+                return r('🏛️', tags.terminal ? 'Terminal '+tags.terminal : '') + r('🚌', tags.jetway === 'yes' ? 'Fluggastbrücke' : '');
+            case 'parking_position':
+                return r('🏛️', tags.terminal ? 'Terminal '+tags.terminal : '') + r('✈️', tags['aircraft:type'] || tags.aircraft || '');
+            case 'hangar':
+                return r('🏢', tags.operator) + r('📏', tags.height ? tags.height+' m' : '');
+            case 'tower':
+                return r('🏢', tags.operator) + r('📏', tags.height ? tags.height+' m Höhe' : '') + r('📞', tags['icao:unit'] || '');
+            case 'holding_position':
+                return r('🛫', tags.runway ? 'Runway '+tags.runway : '') + r('📡', tags['ils:category'] ? 'ILS Kat. '+tags['ils:category'] : '');
+            case 'windsock':
+                return r('💡', tags.lit === 'yes' ? 'Beleuchtet' : tags.lit === 'no' ? 'Unbeleuchtet' : '') + r('📍', tags.name || '');
+            case 'fuel': {
+                const fuels = [];
+                if (tags['fuel:jetA1'] === 'yes' || tags['fuel:jet_a'] === 'yes') fuels.push('Jet A-1');
+                if (tags['fuel:avgas'] === 'yes') fuels.push('AvGas 100LL');
+                if (tags['fuel:mogas'] === 'yes') fuels.push('MoGas');
+                return r('⛽', fuels.join(' · ')) + r('🏢', tags.operator) + r('🕐', tags.opening_hours);
+            }
+            case '_radar': {
+                const rt   = erkennRadarTyp(tags);
+                const raw  = tags.model || tags.radar || tags['radar:type'] || tags['surveillance:type'] || '';
+                const typeName    = rt ? rt.name : (raw || '');
+                const band        = rt?.band        || tags.frequency || '';
+                const reichweite  = rt?.reichweite  || '';
+                const hersteller  = rt?.hersteller  || tags.manufacturer || '';
+                const wikiUrl     = rt?.wiki         || '';
+                const elev        = tags.height ? tags.height + ' m' : tags.ele ? tags.ele + ' m ü.NN' : '';
+                let html = '';
+                if (typeName)           html += r('📡', typeName);
+                if (band)               html += r('📶', 'Band: ' + band);
+                if (reichweite)         html += r('🎯', 'Reichweite: ' + reichweite);
+                if (hersteller)         html += r('🏭', hersteller);
+                if (tags.operator)      html += r('🏢', tags.operator);
+                if (elev)               html += r('📏', elev);
+                if (wikiUrl)            html += `<div style="font-size:0.71rem;margin-top:4px"><a href="${wikiUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#2563eb;text-decoration:none">Wikipedia ↗</a></div>`;
+                return html;
+            }
+            default:
+                return r('🏢', tags.operator || '') + r('🔲', tags.surface || '');
+        }
+    }
+
+    // Detail-Chip (Halteposition etc.) mit optionaler Unterzeile
+    function infraDetailChip(item, type) {
+        const tags = item.tags || {};
+        const ref  = tags.ref || tags.name || '–';
+        const url  = infraOsmUrl(item);
+        let sub = '';
+        if (type === 'holding_position') {
+            sub = tags['ils:category'] ? 'ILS Kat. '+tags['ils:category'] : (tags.runway ? 'RWY '+tags.runway : '');
+        }
+        return `<div class="infra-detail-chip" ${url ? `onclick="window.open('${url}','_blank')"` : ''}>
+            <span class="infra-detail-chip-main">${ref}</span>
+            ${sub ? `<span class="infra-detail-chip-sub">${sub}</span>` : ''}
+        </div>`;
+    }
+
+    // Overpass-Abfrage mit automatischem Fallback auf Spiegel-Server
+    async function overpassFetch(queryStr) {
+        const endpoints = [
+            'https://overpass-api.de/api/interpreter',
+            'https://overpass.kumi.systems/api/interpreter',
+            'https://overpass.openstreetmap.ru/api/interpreter',
+        ];
+        let lastErr;
+        for (const url of endpoints) {
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 28000); // 28 s pro Versuch
+            try {
+                const r = await fetch(url, { method: 'POST', body: queryStr, signal: ctrl.signal });
+                clearTimeout(timer);
+                if (r.ok) return r.json();
+                lastErr = new Error(`HTTP ${r.status} (${url})`);
+            } catch (e) {
+                clearTimeout(timer);
+                lastErr = e.name === 'AbortError' ? new Error(`Timeout (${url})`) : e;
+            }
+        }
+        throw lastErr;
+    }
+
+    try {
+        const json = await overpassFetch(query);
+        const elements = json.elements || [];
+
+        // ── OSM-Elemente gruppieren ───────────────────────────────────────────
+        const groups     = {};
+        const osmNavIdents = new Set(); // Duplikat-Schutz beim Merge mit OurAirports
+
+        for (const item of elements) {
+            let t = item.tags?.aeroway;
+            if (!t && item.tags?.man_made === 'radar') t = '_radar';
+
+            // OSM navigationaid mit navaid:type → als synthetisches Navaid-Objekt
+            if (t === 'navigationaid' && item.tags?.['navaid:type']) {
+                const lat = item.lat ?? item.center?.lat;
+                const lon = item.lon ?? item.center?.lon;
+                if (!lat || !lon) continue;
+                const navType = item.tags['navaid:type'];
+                const ident   = item.tags['ref:icao'] || item.tags.ref || item.tags.icao || item.tags.name || '?';
+                const rawFreq = item.tags.frequency || item.tags.freq || '';
+                // OSM speichert Frequenzen oft in MHz als Dezimalzahl (z.B. "110.90")
+                // OurAirports in kHz (z.B. "110900") → vereinheitlichen auf kHz
+                let freqKhz = '';
+                if (rawFreq) {
+                    const f = parseFloat(rawFreq);
+                    freqKhz = (!isNaN(f) && f < 10000) ? String(Math.round(f * 1000)) : String(Math.round(f));
+                }
+                const navObj = {
+                    ident, name: item.tags.name || '', type: navType,
+                    freq: freqKhz, lat, lon,
+                    _src: 'osm'
+                };
+                osmNavIdents.add(ident.toUpperCase());
+                (groups['_navaids'] = groups['_navaids'] || []).push(navObj);
+                continue;
+            }
+
+            if (!t || !typeMeta[t]) continue;
+            (groups[t] = groups[t] || []).push(item);
+        }
+
+        // ── OurAirports-Navaids ergänzen (keine Duplikate) ───────────────────
+        const rawNavaids = (ap.navaids || []).filter(n => n.lat && n.lon &&
+            !osmNavIdents.has((n.ident || '').toUpperCase()));
+        if (rawNavaids.length > 0) {
+            groups['_navaids'] = [...(groups['_navaids'] || []), ...rawNavaids];
+        }
+
+        if (Object.keys(groups).length === 0) {
+            el.innerHTML = `<div class="infra-empty">
+                <p>Keine Infrastrukturdaten verfügbar.</p>
+                <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(ap.name)}"
+                   target="_blank" rel="noopener">In OSM ansehen ↗</a>
+            </div>`;
+            return;
+        }
+
+        const sortedGroups = Object.entries(groups).sort(
+            (a, b) => (typeMeta[a[0]]?.order || 99) - (typeMeta[b[0]]?.order || 99)
+        );
+
+        // ── Filter-Leiste ─────────────────────────────────────────────────────
+        const filterHtml = sortedGroups.map(([type, items]) => {
+            const m = typeMeta[type];
+            return `<button id="ifbtn-${icao}-${type}" class="infra-filter-btn active"
+                style="background:${m.color};border-color:${m.color}"
+                onclick="toggleInfraFilter('${icao}','${type}')">
+                ${m.icon} ${m.label} <span class="infra-filter-count">${items.length}</span>
+            </button>`;
+        }).join('');
+
+        // ── Sektionen aufbauen ────────────────────────────────────────────────
+        let sectionsHtml = '';
+        for (const [type, items] of sortedGroups) {
+            const m = typeMeta[type];
+            let bodyHtml = '';
+
+            if (type === '_navaids') {
+                // Navaids: Detailkarten mit Frequenz, Typ, Elevation
+                bodyHtml = `<div class="infra-navaid-grid">`;
+                const sorted = [...items].sort((a,b) => (a.type||'').localeCompare(b.type||'') || (a.ident||'').localeCompare(b.ident||''));
+                for (const n of sorted) {
+                    const col  = navaidColor(n.type || '');
+                    const freq = n.freq ? `${parseFloat(n.freq) > 1000 ? (parseFloat(n.freq)/1000).toFixed(2)+' MHz' : n.freq+' kHz'}` : '';
+                    const osmLink = `https://www.openstreetmap.org/?mlat=${n.lat}&mlon=${n.lon}#map=17/${n.lat}/${n.lon}`;
+                    bodyHtml += `<div class="infra-navaid-card" onclick="window.open('${osmLink}','_blank')">
+                        <div class="infra-navaid-head">
+                            <span class="infra-navaid-dot" style="background:${col}"></span>
+                            <span class="infra-navaid-ident">${n.ident || '–'}</span>
+                            <span class="infra-navaid-type">${n.type || ''}</span>
+                        </div>
+                        ${n.name ? `<div class="infra-navaid-name">${n.name}</div>` : ''}
+                        ${freq ? `<div class="infra-navaid-row">📡 ${freq}</div>` : ''}
+                        ${n.elev !== undefined ? `<div class="infra-navaid-row">⬆ ${n.elev} ft</div>` : ''}
+                        ${n.mag_var !== undefined ? `<div class="infra-navaid-row">🧭 ${n.mag_var > 0 ? '+' : ''}${n.mag_var}° Missweisung</div>` : ''}
+                        ${n.power ? `<div class="infra-navaid-row">⚡ ${n.power}</div>` : ''}
+                        ${n.dme_ch ? `<div class="infra-navaid-row">DME Kanal ${n.dme_ch}</div>` : ''}
+                        ${isVorType(n.type) ? `<div class="infra-navaid-row" style="margin-top:3px;font-family:monospace;letter-spacing:.1em;color:#94a3b8">${toMorse(n.ident)}</div>` : ''}
+                        ${isVorType(n.type) ? `<div class="infra-navaid-row" style="margin-top:4px"><a href="${FA_URL}" target="_blank" rel="noopener" style="color:#2563eb;text-decoration:none;font-size:0.69rem">🗺 FA Wind/Solar Karte ↗</a></div>` : ''}
+                    </div>`;
+                }
+                bodyHtml += `</div>`;
+
+            } else if (m.style === 'anlage-cards') {
+                // Anlagen-Karten: Tower, Hangar, Radar, Fuel, Windsock, Terminal
+                bodyHtml = `<div class="infra-anlage-grid">`;
+                for (const item of [...items].sort(infraSortRef)) {
+                    const tags = item.tags || {};
+                    const name = tags.name || tags.ref || '–';
+                    const url  = infraOsmUrl(item);
+                    const det  = osmDetailRows(tags, type);
+                    bodyHtml += `<div class="infra-anlage-card" ${url ? `onclick="window.open('${url}','_blank')"` : ''}>
+                        <div class="infra-anlage-name">${name}</div>
+                        ${det}
+                    </div>`;
+                }
+                bodyHtml += `</div>`;
+
+            } else if (m.style === 'detail-chips') {
+                // Detail-Chips mit Unterzeile (Haltepositionen)
+                const pfGroups = infraPrefixGroups([...items].sort(infraSortRef));
+                if (pfGroups.length <= 1) {
+                    bodyHtml = `<div class="infra-grid">${[...items].sort(infraSortRef).map(i => infraDetailChip(i, type)).join('')}</div>`;
+                } else {
+                    for (const [prefix, pfItems] of pfGroups) {
+                        bodyHtml += `<div class="infra-prefix-group">
+                            <div class="infra-prefix-label">${prefix === '#' ? 'Sonstige' : prefix}</div>
+                            <div class="infra-grid">${pfItems.map(i => infraDetailChip(i, type)).join('')}</div>
+                        </div>`;
+                    }
+                }
+
+            } else if (m.style === 'prefix') {
+                const pfGroups = infraPrefixGroups([...items].sort(infraSortRef));
+                if (pfGroups.length <= 1) {
+                    bodyHtml = `<div class="infra-grid">${[...items].sort(infraSortRef).map(infraChip).join('')}</div>`;
+                } else {
+                    for (const [prefix, pfItems] of pfGroups) {
+                        bodyHtml += `<div class="infra-prefix-group">
+                            <div class="infra-prefix-label">${prefix === '#' ? 'Sonstige' : prefix}</div>
+                            <div class="infra-grid">${pfItems.map(infraChip).join('')}</div>
+                        </div>`;
+                    }
+                }
+            } else {
+                bodyHtml = `<div class="infra-grid">${[...items].sort(infraSortRef).map(infraChip).join('')}</div>`;
+            }
+
+            sectionsHtml += infraSectionHtml(m.icon, m.label, items.length, bodyHtml, m.open, m.color);
+        }
+
+        // ── DOM schreiben ─────────────────────────────────────────────────────
+        el.innerHTML = `
+            <div class="infra-filter-bar">${filterHtml}</div>
+            <div id="infra-map-${icao}" class="infra-map"></div>
+            ${sectionsHtml}
+            <div class="infra-footer">
+                <div class="infra-source">
+                    OSM: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende · ODbL ·
+                    Navaids: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a>
+                </div>
+                <button class="infra-refresh" onclick="ladeInfrastruktur('${icao}', true)">↻ Aktualisieren</button>
+            </div>`;
+
+        // ── Karte initialisieren ──────────────────────────────────────────────
+        const mapEl = document.getElementById(`infra-map-${icao}`);
+        const imap  = L.map(mapEl, { center: [ap.lat, ap.lon], zoom: 16, scrollWheelZoom: false });
+        infraKarteInstanzen[icao] = imap;
+        infraLayerGroups[icao]    = {};
+
+        const osmTile = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap', maxZoom: 19
+        });
+        const satTile = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© Esri World Imagery', maxZoom: 19
+        });
+        satTile.addTo(imap);
+        L.control.layers({ '🛰 Satellit': satTile, 'Straßenkarte': osmTile }, {}, { position: 'topright' }).addTo(imap);
+
+        const bounds = [];
+
+        for (const [type, items] of sortedGroups) {
+            const m     = typeMeta[type];
+            const group = L.layerGroup().addTo(imap);
+            infraLayerGroups[icao][type] = group;
+
+            if (type === '_navaids') {
+                // Navaids aus OurAirports
+                for (const n of items) {
+                    const col  = navaidColor(n.type || '');
+                    const freq = n.freq ? `${parseFloat(n.freq) > 1000 ? (parseFloat(n.freq)/1000).toFixed(2)+' MHz' : n.freq+' kHz'}` : '';
+                    const popup = `<div style="font-family:var(--font,sans-serif);min-width:160px">
+                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+                            <span style="width:10px;height:10px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>
+                            <span style="font-weight:700;font-size:0.92rem">${n.ident || '–'}</span>
+                            <span style="font-size:0.65rem;font-weight:700;background:#f1f5f9;padding:1px 5px;border-radius:3px;color:#64748b">${n.type || ''}</span>
+                        </div>
+                        ${n.name ? `<div style="font-size:0.76rem;color:#475569;margin-bottom:4px">${n.name}</div>` : ''}
+                        ${freq ? `<div style="font-size:0.72rem;color:#64748b">📡 ${freq}</div>` : ''}
+                        ${n.elev !== undefined ? `<div style="font-size:0.72rem;color:#64748b">⬆ ${n.elev} ft MSL</div>` : ''}
+                        ${n.mag_var !== undefined ? `<div style="font-size:0.72rem;color:#64748b">🧭 ${n.mag_var > 0 ? '+' : ''}${n.mag_var}° Missweisung</div>` : ''}
+                        ${n.power ? `<div style="font-size:0.72rem;color:#64748b">⚡ ${n.power}</div>` : ''}
+                        ${n.dme_ch ? `<div style="font-size:0.72rem;color:#64748b">DME Kanal ${n.dme_ch}</div>` : ''}
+                        ${isVorType(n.type) ? `<div style="font-family:monospace;font-size:0.72rem;color:#94a3b8;letter-spacing:.12em;margin-top:3px">${toMorse(n.ident)}</div>` : ''}
+                        <div style="margin-top:6px;display:flex;gap:10px;flex-wrap:wrap">
+                            <a href="https://www.openstreetmap.org/?mlat=${n.lat}&mlon=${n.lon}#map=12/${n.lat}/${n.lon}" target="_blank" rel="noopener" style="font-size:0.71rem;color:#2563eb;text-decoration:none">OSM ↗</a>
+                            ${isVorType(n.type) ? `<a href="${FA_URL}" target="_blank" rel="noopener" style="font-size:0.71rem;color:#2563eb;text-decoration:none">FA Drehfunkfeuer ↗</a>` : ''}
+                        </div>
+                    </div>`;
+                    L.circleMarker([n.lat, n.lon], {
+                        radius: 8, color: '#fff', fillColor: col, fillOpacity: 0.95, weight: 2,
+                    }).bindPopup(popup).addTo(group);
+                    bounds.push([n.lat, n.lon]);
+                }
+
+            } else {
+                // OSM-Elemente
+                for (const item of items) {
+                    const lat = item.lat ?? item.center?.lat;
+                    const lon = item.lon ?? item.center?.lon;
+                    if (!lat || !lon) continue;
+
+                    const tags = item.tags || {};
+                    const ref  = tags.ref || tags.name || '–';
+                    const name = tags.name || '';
+                    const osmLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=18/${lat}/${lon}`;
+                    const detailRows = osmDetailRows(tags, type);
+
+                    const popup = `<div style="font-family:var(--font,sans-serif);min-width:150px">
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                            <span style="width:10px;height:10px;border-radius:50%;background:${m.color};display:inline-block;flex-shrink:0"></span>
+                            <span style="font-weight:700;font-size:0.88rem">${ref}</span>
+                        </div>
+                        ${name && name !== ref ? `<div style="font-size:0.76rem;color:#475569;margin-bottom:3px">${name}</div>` : ''}
+                        ${detailRows}
+                        <div style="font-size:0.69rem;color:#94a3b8;margin-top:4px;margin-bottom:5px">${m.icon} ${m.label}</div>
+                        <a href="${osmLink}" target="_blank" rel="noopener"
+                           style="font-size:0.71rem;color:#2563eb;text-decoration:none">In OSM öffnen ↗</a>
+                    </div>`;
+                    L.circleMarker([lat, lon], {
+                        radius: m.radius, color: '#fff',
+                        fillColor: m.color, fillOpacity: 0.9, weight: 1.5,
+                    }).bindPopup(popup).addTo(group);
+                    bounds.push([lat, lon]);
+                }
+            }
+        }
+
+        // ── VOR-Schutzbereiche (15 km) als eigene togglebare Ebene ──────────────
+        const vorNavaids = (groups['_navaids'] || []).filter(n => isVorType(n.type) && n.lat && n.lon);
+        if (vorNavaids.length > 0) {
+            const schutzGroup = L.layerGroup(); // standardmäßig NICHT auf Karte (zu groß bei Zoom 16)
+            infraLayerGroups[icao]['_vorschutz'] = schutzGroup;
+
+            for (const n of vorNavaids) {
+                const col = navaidColor(n.type);
+                // Äußerer Schutzbereich: 15 km (Standard-DME/VOR-Schutz laut DFS/ICAO)
+                L.circle([n.lat, n.lon], {
+                    radius: 15000, color: col, fillColor: col,
+                    fillOpacity: 0.04, weight: 1.5, opacity: 0.5, dashArray: '8,5',
+                }).bindPopup(`<b>VOR-Schutzbereich 15 km</b><br>${n.ident} (${n.type})<br>
+                    <small style="color:#64748b">Quelle: ICAO Annex 10 / DFS</small><br>
+                    <a href="${FA_URL}" target="_blank" rel="noopener" style="font-size:0.71rem;color:#2563eb;text-decoration:none">FA Wind/Solar Karte ↗</a>`).addTo(schutzGroup);
+                // Innerer Bereich: 3 km (kritischer Nahbereich)
+                L.circle([n.lat, n.lon], {
+                    radius: 3000, color: col, fillColor: col,
+                    fillOpacity: 0.08, weight: 1, opacity: 0.4, dashArray: '3,4',
+                }).bindPopup(`<b>VOR-Nahbereich 3 km</b><br>${n.ident} (${n.type})`).addTo(schutzGroup);
+            }
+
+            // Filter-Button nachträglich in die Filter-Leiste einhängen
+            const filterBar = el.querySelector('.infra-filter-bar');
+            if (filterBar) {
+                const btn = document.createElement('button');
+                btn.id = `ifbtn-${icao}-_vorschutz`;
+                btn.className = 'infra-filter-btn';   // initial NICHT aktiv
+                btn.style.cssText = `border-color:#f97316;color:#f97316`;
+                btn.innerHTML = `⭕ VOR-Schutzzone <span class="infra-filter-count">${vorNavaids.length}</span>`;
+                btn.onclick = () => toggleInfraFilter(icao, '_vorschutz');
+                filterBar.appendChild(btn);
+            }
+        }
+
+        // Auf Flughafenbereich einzoomen (Navaids können weit entfernt sein → ignorieren)
+        const osmBounds = bounds.filter((_, i) => {
+            const type = sortedGroups[Math.floor(i / (bounds.length / sortedGroups.length))]?.[0];
+            return type !== '_navaids';
+        });
+        const zoomTarget = osmBounds.length > 1 ? osmBounds : bounds;
+        if (zoomTarget.length > 1) {
+            imap.fitBounds(zoomTarget, { padding: [30, 30], maxZoom: 16, minZoom: 14 });
+        } else {
+            imap.setView([ap.lat, ap.lon], 15);
+        }
+
+        requestAnimationFrame(() => requestAnimationFrame(() => imap.invalidateSize()));
+        ladeFlughafenLayout(imap, ap.lat, ap.lon);
+
+    } catch(e) {
+        el.innerHTML = `<span class="status-error">Fehler beim Laden: ${e.message}</span>`;
+    }
+}
+
 // ── Card Tabs ────────────────────────────────────────────────────────────────
 function switchTab(btn, panel, icao) {
     const body = btn.closest('.card-body');
@@ -3464,9 +4223,13 @@ function switchTab(btn, panel, icao) {
     if (panel === 'karte'   && icao && karteInstanzen[icao]) {
         setTimeout(() => karteInstanzen[icao].invalidateSize(), 60);
     }
+    if (panel === 'infra'   && icao && infraKarteInstanzen[icao]) {
+        setTimeout(() => infraKarteInstanzen[icao].invalidateSize(), 60);
+    }
     if (panel === 'fluege'  && icao) ladeFluege(icao);
     if (panel === 'notam'   && icao) ladeNfl(icao);
     if (panel === 'karten'  && icao) ladeEurocontrol(icao);
+    if (panel === 'infra'   && icao) ladeInfrastruktur(icao);
 }
 
 // ── Flüge (ADS-B Live) ────────────────────────────────────────────────────────
