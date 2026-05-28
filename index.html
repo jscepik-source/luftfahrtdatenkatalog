@@ -1943,13 +1943,13 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 
 <!-- ── Footer ── -->
 <footer>
-    <p style="font-size:0.75rem;font-weight:600;color:var(--color-text-sub);margin-bottom:var(--space-sm)">
+    <p>
         Studentisches Projekt · Avionik &amp; Luftfahrttechnik ·
-        <a href="https://www.hs-rm.de" target="_blank" rel="noopener" style="color:var(--color-primary)">Hochschule RheinMain</a>
+        <a href="https://www.hs-rm.de" target="_blank" rel="noopener">Hochschule RheinMain</a>
         · Katalog aktualisiert alle 6 Stunden
     </p>
-    <p>
-        <strong style="color:var(--color-text-sub);font-size:0.7rem">Datenquellen:</strong>
+    <p style="margin-top:6px">
+        Datenquellen:
         <a href="https://ourairports.com/data/" target="_blank" rel="noopener">OurAirports</a> (Flughäfen, Runways, Nav-Aids)
         <span class="sep">·</span>
         <a href="https://aviationweather.gov" target="_blank" rel="noopener">NOAA AWC</a> (METAR, TAF, NOTAMs)
@@ -1962,7 +1962,9 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
         <span class="sep">·</span>
         <a href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">EAD / EUROCONTROL</a>
         <span class="sep">·</span>
-        <a href="https://adsb.fi" target="_blank" rel="noopener">ADS-B Quellen</a> (adsb.fi, adsb.lol, airplanes.live)
+        ADS-B Quellen (<a href="https://adsb.fi" target="_blank" rel="noopener">adsb.fi</a>,
+        <a href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol</a>,
+        <a href="https://airplanes.live" target="_blank" rel="noopener">airplanes.live</a>)
     </p>
     <p style="margin-top:var(--space-sm)">
         <button onclick="document.getElementById('modal-impressum').classList.add('open')" style="background:none;border:none;cursor:pointer;font-family:var(--font);font-size:0.72rem;color:var(--color-text-sub);text-decoration:underline;padding:0">Impressum</button>
