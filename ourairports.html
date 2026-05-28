@@ -5255,12 +5255,12 @@ function globusZoomAuf(lat, lon, icao) {
 
 <script>
 // ── KI-Assistent (v2) ────────────────────────────────────────────────────────
-const AI_KEY_STORE = 'aeroguide_gemini_key';
-const AI_MODEL     = 'gemini-2.0-flash';
-let aiHistory      = [];
-let aiOpen         = false;
-let aiReady        = false;
-let aiCurrentIcao  = null; // aktuell offener Flughafen
+const GEMINI_API_KEY = 'HIER_DEINEN_KEY_EINSETZEN'; // ← deinen Gemini-Key hier eintragen
+const AI_MODEL       = 'gemini-2.0-flash';
+let aiHistory        = [];
+let aiOpen           = false;
+let aiReady          = false;
+let aiCurrentIcao    = null;
 
 // ── Kontext aus der App lesen ────────────────────────────────────────────────
 function getAiContext() {
@@ -5344,33 +5344,13 @@ function aiUpdateCtxLabel() {
 }
 
 function aiInit() {
-    const key = localStorage.getItem(AI_KEY_STORE);
-    if (key) { aiReady = true; aiWelcome(); }
-    else       aiShowKeyForm();
-}
-
-function aiShowKeyForm() {
-    const msgs = document.getElementById('ai-messages');
-    msgs.innerHTML = `<div class="ai-key-form">
-        <p>Für den KI-Assistenten wird ein <strong>Gemini API-Key</strong> benötigt.<br>
-        Der Key wird nur in deinem Browser gespeichert — niemals hochgeladen.</p>
-        <input id="ai-key-input" type="password" placeholder="AIza…" autocomplete="off"
-            onkeydown="if(event.key==='Enter')aiSaveKey()">
-        <button onclick="aiSaveKey()">Key speichern &amp; starten</button>
-        <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">
-            ↗ Kostenlos bei Google AI Studio holen (gemini-2.0-flash ist gratis)
-        </a>
-    </div>`;
-    document.getElementById('ai-suggestions').innerHTML = '';
-}
-
-function aiSaveKey() {
-    const key = (document.getElementById('ai-key-input')?.value || '').trim();
-    if (!key) return;
-    localStorage.setItem(AI_KEY_STORE, key);
-    aiReady = true;
-    document.getElementById('ai-messages').innerHTML = '';
-    aiWelcome();
+    if (GEMINI_API_KEY && GEMINI_API_KEY !== 'HIER_DEINEN_KEY_EINSETZEN') {
+        aiReady = true;
+        aiWelcome();
+    } else {
+        document.getElementById('ai-messages').innerHTML =
+            '<div class="ai-key-form"><p>⚙️ Kein API-Key konfiguriert. Bitte <strong>GEMINI_API_KEY</strong> im Quellcode eintragen.</p></div>';
+    }
 }
 
 function aiWelcome() {
@@ -5471,8 +5451,7 @@ async function aiSend() {
     aiAddTyping();
 
     try {
-        const key = localStorage.getItem(AI_KEY_STORE);
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent?key=${key}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
         const body = {
             system_instruction: { parts: [{ text: systemWithCtx }] },
             contents: aiHistory,
@@ -5510,7 +5489,7 @@ async function aiSend() {
         aiRemoveTyping();
         const isKey = /API_KEY|INVALID|403/i.test(e.message);
         const msg = isKey
-            ? `Ungültiger API-Key. <a href="#" onclick="localStorage.removeItem('${AI_KEY_STORE}');aiShowKeyForm();return false" style="color:var(--color-primary)">Key ändern</a>`
+            ? `Ungültiger API-Key. Bitte <strong>GEMINI_API_KEY</strong> im Quellcode prüfen.`
             : `Fehler: ${e.message}`;
         aiAddMsg('bot', `⚠️ ${msg}`);
     }
