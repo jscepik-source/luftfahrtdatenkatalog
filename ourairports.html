@@ -1345,28 +1345,39 @@
         .infra-empty { text-align: center; padding: 28px 16px; color: var(--color-text-sub); font-size: 0.83rem; }
         .infra-empty a { color: var(--color-primary); }
 
-        /* Navaid-Karten */
+        /* Navaid-Karten (neu) */
         .infra-navaid-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 7px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(175px,1fr)); gap: 8px;
         }
         .infra-navaid-card {
             background: var(--color-surface); border: 1px solid var(--color-border);
-            border-radius: var(--radius-md); padding: 10px 12px;
-            cursor: pointer; transition: background var(--transition), border-color var(--transition);
+            border-radius: var(--radius-md); overflow: hidden;
+            cursor: pointer; transition: border-color var(--transition), box-shadow var(--transition);
         }
-        .infra-navaid-card:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
-        .infra-navaid-head {
-            display: flex; align-items: center; gap: 7px; margin-bottom: 5px;
+        .infra-navaid-card:hover { border-color: var(--color-primary); box-shadow: 0 0 0 2px var(--color-primary-bg); }
+        .infra-navaid-hdr {
+            display: flex; align-items: center; gap: 6px;
+            padding: 7px 10px; border-bottom: 1px solid transparent;
         }
-        .infra-navaid-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-        .infra-navaid-ident { font-weight: 700; font-size: 0.88rem; color: var(--color-text); }
-        .infra-navaid-type  {
-            font-size: 0.66rem; font-weight: 700; padding: 1px 5px;
-            border-radius: 3px; background: var(--color-surface-2);
-            color: var(--color-text-sub); white-space: nowrap;
+        .infra-navaid-pill {
+            font-size: 0.56rem; font-weight: 700; letter-spacing: 0.06em;
+            padding: 2px 6px; border-radius: 3px; color: #fff;
+            white-space: nowrap; flex-shrink: 0;
         }
-        .infra-navaid-name  { font-size: 0.72rem; color: var(--color-text-sub); margin-bottom: 5px; }
-        .infra-navaid-row   { font-size: 0.71rem; color: var(--color-text-dim); line-height: 1.6; }
+        .infra-navaid-id {
+            font-weight: 700; font-size: 0.9rem;
+            font-family: 'Courier New', monospace; letter-spacing: 0.05em;
+            color: var(--color-text); flex: 1;
+        }
+        .infra-navaid-body { padding: 8px 10px; }
+        .infra-navaid-name { font-size: 0.7rem; color: var(--color-text-sub); margin-bottom: 5px; line-height: 1.35; }
+        .infra-navaid-freq { font-size: 0.82rem; font-weight: 600; color: var(--color-text); margin-bottom: 3px; }
+        .infra-navaid-detail { font-size: 0.68rem; color: var(--color-text-dim); line-height: 1.8; }
+        .infra-navaid-morse {
+            font-family: 'Courier New', monospace; letter-spacing: 0.13em;
+            color: var(--color-text-dim); font-size: 0.64rem; margin-top: 5px;
+            padding-top: 5px; border-top: 1px dashed var(--color-border);
+        }
 
         .notam-map-btn {
             display: flex;
@@ -3896,21 +3907,22 @@ async function ladeInfrastruktur(icao, force = false) {
     // - helipad: meist abseits des Flughafens oder irrelevant
     // - navigationaid: OSM taggt jede einzelne Anfluglampe → hunderte Punkte
     // Radar kommt über man_made=radar separat
-    const r1 = 8000;  // Flughafen-Infrastruktur
-    const r2 = 30000; // Navaids (VOR/NDB können weit entfernt sein)
-    const query = `[out:json][timeout:25];
+    const r1 = 8000;   // Flughafen-Infrastruktur
+    const r2 = 30000;  // Navaids (VOR/NDB können weit vom Flughafen entfernt sein)
+    const r3 = 50000;  // Radar (Approach/Area-Radar typisch 10–40 km entfernt)
+    const query = `[out:json][timeout:30];
 (
   node["aeroway"~"terminal|gate|parking_position|tower|hangar|holding_position|windsock|fuel"](around:${r1},${ap.lat},${ap.lon});
   way["aeroway"~"terminal|gate|parking_position|tower|hangar|apron|fuel"](around:${r1},${ap.lat},${ap.lon});
   relation["aeroway"="terminal"](around:${r1},${ap.lat},${ap.lon});
-  node["man_made"="radar"](around:${r1},${ap.lat},${ap.lon});
-  way["man_made"="radar"](around:${r1},${ap.lat},${ap.lon});
+  node["man_made"="radar"](around:${r3},${ap.lat},${ap.lon});
+  way["man_made"="radar"](around:${r3},${ap.lat},${ap.lon});
   node["aeroway"="navigationaid"]["navaid:type"~"ILS|ILS-DME|LOC|LOC-DME|GS|VOR|VORDME|VORTAC|DVOR|NDB|NDB-DME|DME|TACAN"](around:${r2},${ap.lat},${ap.lon});
 );
 out center tags;`;
 
     const typeMeta = {
-        _navaids:         { icon: '📡', label: 'ILS / VOR / NDB',   color: '#3b82f6', radius: 9,  order: 0,  open: false, style: 'navaids'       },
+        _navaids:         { icon: '📡', label: 'ILS · VOR · NDB',   color: '#3b82f6', radius: 9,  order: 0,  open: false, style: 'navaids'       },
         terminal:         { icon: '🏛️', label: 'Terminals',         color: '#6366f1', radius: 9,  order: 1,  open: false, style: 'anlage-cards'  },
         gate:             { icon: '🚪', label: 'Gates',              color: '#22c55e', radius: 6,  order: 2,  open: false, style: 'prefix'        },
         parking_position: { icon: '🅿️', label: 'Abstellpositionen', color: '#f59e0b', radius: 5,  order: 3,  open: false, style: 'prefix'        },
@@ -3920,7 +3932,7 @@ out center tags;`;
         holding_position: { icon: '🛑', label: 'Haltepositionen',   color: '#f43f5e', radius: 5,  order: 7,  open: false, style: 'detail-chips'  },
         windsock:         { icon: '🌬️', label: 'Windsäcke',         color: '#38bdf8', radius: 6,  order: 8,  open: false, style: 'anlage-cards'  },
         fuel:             { icon: '⛽', label: 'Betankung',          color: '#84cc16', radius: 7,  order: 9,  open: false, style: 'anlage-cards'  },
-        _radar:           { icon: '📡', label: 'Radar',              color: '#dc2626', radius: 10, order: 10, open: false, style: 'anlage-cards'  },
+        _radar:           { icon: '📡', label: 'Radar (50 km)',      color: '#dc2626', radius: 10, order: 10, open: false, style: 'anlage-cards'  },
     };
 
     // Navaid-Farbe nach Typ
@@ -4108,27 +4120,74 @@ out center tags;`;
             let bodyHtml = '';
 
             if (type === '_navaids') {
-                // Navaids: Detailkarten mit Frequenz, Typ, Elevation
                 bodyHtml = `<div class="infra-navaid-grid">`;
-                const sorted = [...items].sort((a,b) => (a.type||'').localeCompare(b.type||'') || (a.ident||'').localeCompare(b.ident||''));
+                // Sortierung: ILS zuerst, dann VOR, NDB, DME
+                const navOrder = t => /ILS|LOC|GS|LDA/.test(t) ? 0 : /VOR|TACAN|DVOR/.test(t) ? 1 : /NDB/.test(t) ? 2 : 3;
+                const sorted = [...items].sort((a,b) =>
+                    navOrder(a.type||'') - navOrder(b.type||'') || (a.ident||'').localeCompare(b.ident||''));
+
                 for (const n of sorted) {
-                    const col  = navaidColor(n.type || '');
-                    const freq = n.freq ? `${parseFloat(n.freq) > 1000 ? (parseFloat(n.freq)/1000).toFixed(2)+' MHz' : n.freq+' kHz'}` : '';
-                    const osmLink = `https://www.openstreetmap.org/?mlat=${n.lat}&mlon=${n.lon}#map=17/${n.lat}/${n.lon}`;
-                    bodyHtml += `<div class="infra-navaid-card" onclick="window.open('${osmLink}','_blank')">
-                        <div class="infra-navaid-head">
-                            <span class="infra-navaid-dot" style="background:${col}"></span>
-                            <span class="infra-navaid-ident">${n.ident || '–'}</span>
-                            <span class="infra-navaid-type">${n.type || ''}</span>
+                    const t   = (n.type || '').toUpperCase();
+                    const isILS = /ILS|LOC|GS|LDA/.test(t);
+                    const isVOR = /VOR|TACAN|DVOR/.test(t);
+                    const isNDB = /NDB/.test(t);
+
+                    // Farbe nach Typ
+                    const col = isILS ? '#3b82f6' : isVOR ? '#f97316' : isNDB ? '#a855f7' : '#64748b';
+
+                    // Typ-Label bereinigen
+                    const typeLabel = t.replace('ILS-DME','ILS/DME').replace('LOC-DME','LOC/DME')
+                        .replace('NDB-DME','NDB/DME').replace('VORDME','VOR/DME')
+                        .replace('VOR-DME','VOR/DME').replace('VORTAC','VOR/TAC') || '?';
+
+                    // Frequenz (OurAirports: kHz-Werte >1000 = VHF in kHz, <1000 = NDB in kHz)
+                    let freqStr = '';
+                    if (n.freq) {
+                        const f = parseFloat(n.freq);
+                        freqStr = f > 1000 ? (f/1000).toFixed(2)+' MHz' : f.toFixed(0)+' kHz';
+                    }
+
+                    // ILS-CAT-Badge aus Lookup (Runway aus Name extrahieren)
+                    let catBadge = '';
+                    if (isILS && ILS_KAT_DE[icao]) {
+                        const m = (n.name||n.ident||'').match(/\b(0[1-9]|[12]\d|3[0-6])[LRC]?\b/i);
+                        if (m) {
+                            const rk = m[0].toUpperCase();
+                            const kat = ILS_KAT_DE[icao][rk];
+                            if (kat) {
+                                const cls = kat==='III'?'ils-3':kat==='II'?'ils-2':kat==='I'?'ils-1':'ils-nc';
+                                catBadge = `<span class="ils-badge ${cls}">CAT ${kat}</span>`;
+                            }
+                        }
+                    }
+
+                    // Morse (VOR + NDB)
+                    const morse = (isVOR || isNDB) && n.ident ? toMorse(n.ident) : '';
+
+                    // Detailzeilen
+                    const details = [
+                        n.dme_ch    ? `DME ${n.dme_ch}` : '',
+                        n.elev !== undefined ? `⬆ ${n.elev} ft MSL` : '',
+                        n.slaved_var !== undefined ? `🧭 ${n.slaved_var > 0 ? '+' : ''}${n.slaved_var}° Var` : '',
+                        n.power     ? `⚡ ${n.power}` : '',
+                        n.usage     ? n.usage : '',
+                    ].filter(Boolean).join('<br>');
+
+                    const osmLink = n.lat && n.lon
+                        ? `https://www.openstreetmap.org/?mlat=${n.lat}&mlon=${n.lon}#map=14/${n.lat}/${n.lon}` : null;
+
+                    bodyHtml += `<div class="infra-navaid-card" ${osmLink ? `onclick="window.open('${osmLink}','_blank')"` : ''}>
+                        <div class="infra-navaid-hdr" style="background:${col}1a;border-bottom-color:${col}30">
+                            <span class="infra-navaid-pill" style="background:${col}">${typeLabel}</span>
+                            <span class="infra-navaid-id">${n.ident || '–'}</span>
+                            ${catBadge}
                         </div>
-                        ${n.name ? `<div class="infra-navaid-name">${n.name}</div>` : ''}
-                        ${freq ? `<div class="infra-navaid-row">📡 ${freq}</div>` : ''}
-                        ${n.elev !== undefined ? `<div class="infra-navaid-row">⬆ ${n.elev} ft</div>` : ''}
-                        ${n.mag_var !== undefined ? `<div class="infra-navaid-row">🧭 ${n.mag_var > 0 ? '+' : ''}${n.mag_var}° Missweisung</div>` : ''}
-                        ${n.power ? `<div class="infra-navaid-row">⚡ ${n.power}</div>` : ''}
-                        ${n.dme_ch ? `<div class="infra-navaid-row">DME Kanal ${n.dme_ch}</div>` : ''}
-                        ${isVorType(n.type) ? `<div class="infra-navaid-row" style="margin-top:3px;font-family:monospace;letter-spacing:.1em;color:#94a3b8">${toMorse(n.ident)}</div>` : ''}
-                        ${isVorType(n.type) ? `<div class="infra-navaid-row" style="margin-top:4px"><a href="${FA_URL}" target="_blank" rel="noopener" style="color:#2563eb;text-decoration:none;font-size:0.69rem">🗺 FA Wind/Solar Karte ↗</a></div>` : ''}
+                        <div class="infra-navaid-body">
+                            ${n.name ? `<div class="infra-navaid-name">${n.name}</div>` : ''}
+                            ${freqStr ? `<div class="infra-navaid-freq">📡 ${freqStr}</div>` : ''}
+                            ${details ? `<div class="infra-navaid-detail">${details}</div>` : ''}
+                            ${morse ? `<div class="infra-navaid-morse">${morse}</div>` : ''}
+                        </div>
                     </div>`;
                 }
                 bodyHtml += `</div>`;
