@@ -9,7 +9,43 @@
     <meta name="apple-mobile-web-app-title" content="Flughäfen">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.svg">
-    <title>Weltweiter Flughafen-Katalog</title>
+
+    <title>Luftfahrtdatenkatalog — 72.000 Flughäfen, METAR, NOTAMs & Live ADS-B</title>
+    <meta name="description" content="Kostenloser Flughafen-Katalog mit 72.000 Airports weltweit: Live-METAR, TAF, NOTAMs, ILS-Kategorien, Runways, AIP-Karten und Live ADS-B Radar. ICAO, IATA oder Stadtname eingeben — sofort Ergebnisse.">
+    <meta name="keywords" content="Flughafen, ICAO, IATA, METAR, TAF, NOTAM, ADS-B, Runway, ILS, Luftfahrt, Aviation, Airport, Flugwetter, AIP">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Jan Scepik, Hochschule RheinMain">
+    <link rel="canonical" href="https://jscepik-source.github.io/dfs-katalog/">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jscepik-source.github.io/dfs-katalog/">
+    <meta property="og:title" content="Luftfahrtdatenkatalog — 72.000 Flughäfen, METAR & Live ADS-B">
+    <meta property="og:description" content="ICAO, IATA, Name oder Stadt eingeben: Live-METAR, TAF, NOTAMs, ILS-Kategorien, Runways und ADS-B Radar für jeden Flughafen weltweit.">
+    <meta property="og:locale" content="de_DE">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Luftfahrtdatenkatalog — 72.000 Flughäfen">
+    <meta name="twitter:description" content="Live METAR, NOTAMs, ADS-B Radar und ILS-Daten für 72.000 Airports weltweit.">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Luftfahrtdatenkatalog",
+      "url": "https://jscepik-source.github.io/dfs-katalog/",
+      "description": "Weltweiter Flughafen-Katalog mit Live-METAR, TAF, NOTAMs, ILS-Kategorien, Runways und ADS-B Radar für 72.000 Airports.",
+      "applicationCategory": "NavigationApplication",
+      "operatingSystem": "Any",
+      "inLanguage": "de",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "author": {
+        "@type": "Person",
+        "name": "Jan Scepik",
+        "affiliation": { "@type": "CollegeOrUniversity", "name": "Hochschule RheinMain" }
+      }
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1763,6 +1799,7 @@
     </style>
 </head>
 <body>
+<noscript><style>body::before{content:"JavaScript ist erforderlich, um den Flughafen-Katalog zu laden.";display:block;padding:2rem;font-family:sans-serif;text-align:center;color:#64748b}</style></noscript>
 <script>
 // PWA Standalone-Modus erkennen (iOS + Android)
 if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
@@ -1776,8 +1813,8 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
         <span class="header-wordmark">Luftfahrtdatenkatalog</span>
         <div class="header-divider" aria-hidden="true"></div>
         <div class="header-text">
-            <h1>Weltweiter Flughafen-Katalog</h1>
-            <p>72.000 Flughäfen &middot; METAR / TAF &middot; NOTAMs &middot; Runways &middot; AIP-Karten &middot; Entfernungsrechner</p>
+            <h1>72.000 Flughäfen weltweit</h1>
+            <p>Live METAR &middot; TAF &middot; NOTAMs &middot; ILS-Kategorien &middot; AIP-Karten &middot; ADS-B Radar</p>
         </div>
         <button class="btn-theme" id="theme-btn" onclick="toggleTheme()" aria-label="Hell/Dunkel-Modus umschalten">🌙</button>
     </div>
@@ -1816,11 +1853,11 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
                     </div>
                 </div>
 
-                <!-- Slide 2: HS RheinMain -->
+                <!-- Slide 2: Funktionen -->
                 <div class="hero-slide">
-                    <div class="hero-stat-group" style="flex-direction:column;gap:10px;text-align:center">
-                        <div class="hero-stat-num" style="font-size:clamp(1.1rem,3vw,1.6rem);letter-spacing:0.02em;font-weight:700">Hochschule RheinMain</div>
-                        <div class="hero-stat-label" style="font-size:0.75rem;letter-spacing:0.08em">Studentisches Projekt &mdash; Fachbereich Ingenieurwissenschaften</div>
+                    <div class="hero-stat-group" style="flex-direction:column;gap:8px;text-align:center;padding:0 8px">
+                        <div class="hero-stat-num" style="font-size:clamp(0.9rem,2.5vw,1.15rem);letter-spacing:0.01em;font-weight:600;color:#f59e0b">ICAO · IATA · Name · Stadt · Land</div>
+                        <div class="hero-stat-label" style="font-size:0.72rem;max-width:320px;margin:0 auto;line-height:1.6">Tippe auf einen Flughafen: Live-Wetter, NOTAMs, Runways mit ILS-Kategorie, Karten und ADS-B Radar</div>
                     </div>
                 </div>
 
@@ -1905,22 +1942,26 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 
 <!-- ── Footer ── -->
 <footer>
+    <p style="font-size:0.75rem;font-weight:600;color:var(--color-text-sub);margin-bottom:var(--space-sm)">
+        Studentisches Projekt · Avionik &amp; Luftfahrttechnik ·
+        <a href="https://www.hs-rm.de" target="_blank" rel="noopener" style="color:var(--color-primary)">Hochschule RheinMain</a>
+        · Katalog aktualisiert alle 6 Stunden
+    </p>
     <p>
-        Flughäfen, Runways, Frequenzen, Nav-Aids:
-        <a href="https://ourairports.com/data/" target="_blank" rel="noopener">OurAirports</a>
-        <span class="sep">|</span>
-        METAR, TAF, NOTAMs:
-        <a href="https://aviationweather.gov" target="_blank" rel="noopener">Aviation Weather Center (NOAA)</a>
-        <span class="sep">|</span>
-        Charts &amp; Flugplanung:
-        <a href="https://skyvector.com" target="_blank" rel="noopener">SkyVector</a>
-        <span class="sep">|</span>
-        NOTAMs offiziell:
+        <strong style="color:var(--color-text-sub);font-size:0.7rem">Datenquellen:</strong>
+        <a href="https://ourairports.com/data/" target="_blank" rel="noopener">OurAirports</a> (Flughäfen, Runways, Nav-Aids)
+        <span class="sep">·</span>
+        <a href="https://aviationweather.gov" target="_blank" rel="noopener">NOAA AWC</a> (METAR, TAF, NOTAMs)
+        <span class="sep">·</span>
+        <a href="https://skyvector.com" target="_blank" rel="noopener">SkyVector</a> (Charts)
+        <span class="sep">·</span>
         <a href="https://www.icao.int/safety/iStars/Pages/NOTAM-Search.aspx" target="_blank" rel="noopener">ICAO iStars</a>
         <span class="sep">·</span>
-        <a href="https://notams.aim.faa.gov/notamSearch" target="_blank" rel="noopener">FAA NOTAM System</a>
+        <a href="https://notams.aim.faa.gov/notamSearch" target="_blank" rel="noopener">FAA NOTAM</a>
         <span class="sep">·</span>
-        <a href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">EAD Basic / DFS AIM (EUROCONTROL)</a>
+        <a href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">EAD / EUROCONTROL</a>
+        <span class="sep">·</span>
+        <a href="https://adsb.fi" target="_blank" rel="noopener">ADS-B Quellen</a> (adsb.fi, adsb.lol, airplanes.live)
     </p>
     <p style="margin-top:var(--space-sm)">
         <button onclick="document.getElementById('modal-impressum').classList.add('open')" style="background:none;border:none;cursor:pointer;font-family:var(--font);font-size:0.72rem;color:var(--color-text-sub);text-decoration:underline;padding:0">Impressum</button>
@@ -2165,18 +2206,18 @@ function zeigeHinweis() {
     document.getElementById('liste').innerHTML = `
         <div class="hint">
             <span class="hint-icon">✈️</span>
-            <h2 class="hint-title">Flughafen suchen</h2>
-            <p class="hint-sub">72.000+ Flughäfen weltweit &mdash; METAR, NOTAMs, Runways, Live ADS-B</p>
-            <p class="hint-how">Gib oben ICAO-Code, IATA-Code, Name, Stadt oder Land ein &mdash; oder tippe auf ein Beispiel:</p>
+            <h2 class="hint-title">Welcher Flughafen?</h2>
+            <p class="hint-sub">ICAO, IATA, Name, Stadt oder Land &mdash; einfach oben eintippen.</p>
+            <p class="hint-how">Schnellstart mit einem Beispiel:</p>
             <div class="hint-examples">
                 ${examples.map(([code,name]) =>
                     `<button class="hint-ex" onclick="sucheBeispiel('${code}')"><span class="hint-ex-code">${code}</span><span class="hint-ex-name">${name}</span></button>`
                 ).join('')}
             </div>
             <div class="hint-filter-info">
-                <strong>Filter:</strong> Typ, Kontinent oder Linienflugstatus über die Chips oben einschränken.<br>
-                <strong>📏 Entfernung:</strong> Zwei Flughäfen eingeben und die Großkreis-Distanz berechnen lassen – nützlich für Streckenplanung.<br>
-                <strong>Live-Daten:</strong> Flughafen antippen → aktuelles METAR, TAF, NOTAMs und Live ADS-B Radar werden direkt abgerufen.
+                <strong>Flughafen antippen</strong> → Live-METAR, TAF, NOTAMs, Runways mit ILS-Kategorie, AIP-Karten und ADS-B Radar.<br>
+                <strong>📏 Entfernung</strong> → Großkreis-Distanz zwischen zwei Flughäfen berechnen.<br>
+                <strong>Filter-Chips</strong> → nach Typ (International, Regional, Heliport …), Kontinent oder Linienflugstatus einschränken.
             </div>
         </div>`;
     document.getElementById('zaehler').textContent = `${Object.keys(katalog).length.toLocaleString()} Flughäfen geladen`;
