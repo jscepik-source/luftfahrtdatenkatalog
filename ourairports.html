@@ -244,7 +244,7 @@
             top: 0;
             z-index: 100;
             transition: background var(--transition);
-            box-shadow: 0 1px 0 var(--color-border);
+            box-shadow: 0 4px 20px rgba(27,54,93,0.05), 0 1px 0 var(--color-border);
         }
 
         .toolbar-inner {
@@ -411,23 +411,28 @@
             border-radius: var(--radius-md);
             margin-bottom: 6px;
             overflow: hidden;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+            box-shadow: 0 2px 8px rgba(27,54,93,0.05);
         }
         article.airport-card:hover {
             border-color: var(--color-primary);
-            box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+            box-shadow: 0 4px 20px rgba(27,54,93,0.10);
+            transform: translateY(-2px);
         }
         [data-theme="dark"] article.airport-card:hover {
             border-color: var(--color-primary);
-            box-shadow: 0 2px 12px rgba(96,165,250,0.1);
+            box-shadow: 0 4px 20px rgba(96,165,250,0.12);
+            transform: translateY(-2px);
         }
         article.airport-card.card-open {
             border-color: rgba(59,130,246,0.55);
-            box-shadow: 0 0 0 1px rgba(59,130,246,0.08), 0 6px 28px rgba(37,99,235,0.13);
+            box-shadow: 0 0 0 1px rgba(59,130,246,0.08), 0 8px 32px rgba(27,54,93,0.13);
+            transform: translateY(-1px);
         }
         [data-theme="dark"] article.airport-card.card-open {
             border-color: rgba(96,165,250,0.5);
-            box-shadow: 0 0 0 1px rgba(96,165,250,0.08), 0 6px 28px rgba(96,165,250,0.14);
+            box-shadow: 0 0 0 1px rgba(96,165,250,0.08), 0 8px 32px rgba(96,165,250,0.14);
+            transform: translateY(-1px);
         }
 
         .card-header {
@@ -565,7 +570,15 @@
             gap: var(--space-sm);
             margin-bottom: var(--space-md);
         }
-        .detail-item { display: flex; flex-direction: column; gap: 3px; }
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: var(--space-xs) var(--space-sm);
+        }
         .detail-item dt {
             font-size: 0.68rem;
             font-weight: 600;
@@ -642,8 +655,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding-bottom: 6px;
+            padding: 0 0 6px 10px;
             border-bottom: 1px solid var(--color-border);
+            border-left: 3px solid var(--color-primary);
+            border-radius: 0;
         }
 
         /* ── Table ── */
@@ -670,10 +685,104 @@
             color: var(--color-text-sub);
         }
         .data-table tr:last-child td { border-bottom: none; }
-        .data-table tr.rwy-closed td { color: var(--color-text-dim); text-decoration: line-through; }
+        .data-table tbody tr:hover td {
+            background: var(--color-primary-bg);
+        }
+        [data-theme="dark"] .data-table tbody tr:hover td {
+            background: rgba(96,165,250,0.06);
+        }
+        /* ── Runway Cards ── */
+        .rwy-list { display: flex; flex-direction: column; gap: 6px; }
+        .rwy-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 10px 14px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .rwy-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 2px 10px rgba(27,54,93,0.07);
+        }
+        [data-theme="dark"] .rwy-card:hover { box-shadow: 0 2px 10px rgba(96,165,250,0.08); }
+        .rwy-card.rwy-card-closed { opacity: 0.6; }
+
+        /* Runway card left column */
+        .rwy-card-left {
+            min-width: 76px; width: 76px;
+            background: var(--color-icao-bg);
+            color: var(--color-icao-text);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 14px 8px; gap: 8px; flex-shrink: 0;
+        }
+        .rwy-des-large {
+            font-family: 'Courier New', monospace;
+            font-weight: 700; font-size: 1.05rem;
+            letter-spacing: 0.02em; text-align: center; line-height: 1.35;
+        }
+        .rwy-des-sep { font-size: 0.6rem; opacity: 0.38; display: block; }
+        .rwy-status-chip {
+            font-size: 0.56rem; font-weight: 700; letter-spacing: 0.07em;
+            text-transform: uppercase; padding: 2px 6px; border-radius: 3px;
+        }
+        .rwy-status-active { background: rgba(34,197,94,0.2); color: #4ade80; }
+        .rwy-status-closed { background: rgba(239,68,68,0.2); color: #f87171; }
+
+        /* Runway card body */
+        .rwy-card-body { flex: 1; min-width: 0; padding: 12px 14px; }
+        .rwy-data-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px; margin-bottom: 10px;
+        }
+        .rwy-data-label {
+            font-size: 0.59rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--color-text-dim); margin-bottom: 3px;
+        }
+        .rwy-data-value { font-size: 0.82rem; font-weight: 600; color: var(--color-text); line-height: 1.3; }
+        .rwy-card-badges {
+            display: flex; flex-wrap: wrap; gap: 5px;
+            padding-top: 8px; border-top: 1px solid var(--color-border);
+        }
+        .rwy-dim-badge {
+            font-size: 0.69rem; font-weight: 600;
+            padding: 2px 9px; border-radius: 4px;
+            background: var(--color-surface-2);
+            color: var(--color-text-sub);
+            border: 1px solid var(--color-border);
+            font-family: 'Courier New', monospace;
+        }
+
+        /* ── Frequency List ── */
+        .frq-list { display: flex; flex-direction: column; }
+        .frq-item {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            padding: 9px 2px; gap: var(--space-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+        .frq-item:last-child { border-bottom: none; }
+        .frq-name { font-size: 0.85rem; font-weight: 500; color: var(--color-text); }
+        .frq-type { font-size: 0.67rem; color: var(--color-text-dim); margin-top: 1px; }
+        .frq-freq-badge {
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem; font-weight: 700;
+            color: var(--color-primary);
+            background: var(--color-primary-bg);
+            border: 1px solid rgba(37,99,235,0.15);
+            padding: 3px 10px; border-radius: var(--radius-sm);
+            white-space: nowrap; flex-shrink: 0;
+        }
+        [data-theme="dark"] .frq-freq-badge { border-color: rgba(96,165,250,0.2); }
+
         .ils-badge {
-            display: inline-block; font-size: 0.57rem; font-weight: 700;
-            padding: 1px 5px; border-radius: 3px; margin-left: 4px;
+            display: inline-block; font-size: 0.68rem; font-weight: 700;
+            padding: 2px 8px; border-radius: 4px; margin-left: 0;
             vertical-align: middle; letter-spacing: 0.04em; white-space: nowrap;
         }
         .ils-3 { background: #f59e0b; color: #07111f; }
@@ -700,6 +809,12 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: var(--space-sm);
+        }
+        .wx-item {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: var(--space-xs) var(--space-sm);
         }
         .wx-item dt { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-dim); margin-bottom: 2px; }
         .wx-item dd { font-size: 0.88rem; font-weight: 700; }
@@ -735,7 +850,23 @@
         .notam-zeit { font-size: 0.7rem; color: var(--color-text-dim); display: block; margin-bottom: 2px; }
 
         /* ── NOTAMs ── */
-        .notam-list { display: flex; flex-direction: column; gap: var(--space-xs); }
+        .notam-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            position: relative;
+            padding-left: 14px;
+        }
+        .notam-list::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 4px;
+            bottom: 4px;
+            width: 2px;
+            background: var(--color-notam-bd);
+            border-radius: 2px;
+        }
         .notam-item {
             background: var(--color-notam-bg);
             border: 1px solid var(--color-notam-bd);
@@ -747,6 +878,19 @@
             white-space: pre-wrap;
             word-break: break-all;
             line-height: 1.6;
+            position: relative;
+            border-left: 3px solid var(--color-accent);
+        }
+        .notam-item::before {
+            content: '';
+            position: absolute;
+            left: -18px;
+            top: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-accent);
+            border: 2px solid var(--color-surface-2);
         }
 
         /* ── Karten Externe Quellen ── */
@@ -855,6 +999,157 @@
         .modal-box h3 { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-dim); margin: var(--space-md) 0 var(--space-xs); }
         .modal-box p  { font-size: 0.85rem; color: var(--color-text-sub); line-height: 1.65; margin-bottom: var(--space-sm); }
         .modal-box a  { color: var(--color-primary); }
+
+        /* ── KI-Assistent ── */
+        #ai-fab {
+            position: fixed; bottom: 24px; right: 24px; z-index: 8000;
+            width: 52px; height: 52px; border-radius: 50%;
+            background: var(--color-primary);
+            color: #fff; border: none; cursor: pointer;
+            font-size: 1.3rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 20px rgba(27,54,93,0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        #ai-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(27,54,93,0.35); }
+        #ai-fab .ai-fab-badge {
+            position: absolute; top: -3px; right: -3px;
+            background: #f59e0b; color: #07111f;
+            font-size: 0.55rem; font-weight: 800;
+            padding: 1px 4px; border-radius: 6px; letter-spacing: 0.03em;
+        }
+
+        #ai-panel {
+            position: fixed; bottom: 86px; right: 24px; z-index: 8000;
+            width: 360px; max-width: calc(100vw - 32px);
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(27,54,93,0.18);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.92) translateY(12px);
+            opacity: 0; pointer-events: none;
+            transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), opacity 0.18s ease;
+            max-height: 70vh;
+        }
+        #ai-panel.ai-open {
+            transform: scale(1) translateY(0);
+            opacity: 1; pointer-events: all;
+        }
+
+        .ai-panel-head {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px; background: var(--color-primary);
+            color: #fff; flex-shrink: 0;
+        }
+        .ai-panel-head-icon { font-size: 1.2rem; }
+        .ai-panel-head-title { flex: 1; font-weight: 700; font-size: 0.88rem; letter-spacing: -0.01em; }
+        .ai-panel-head-sub { font-size: 0.67rem; opacity: 0.7; }
+        .ai-panel-close {
+            background: none; border: none; color: rgba(255,255,255,0.7);
+            cursor: pointer; font-size: 1.1rem; padding: 2px 4px; line-height: 1;
+        }
+        .ai-panel-close:hover { color: #fff; }
+
+        #ai-messages {
+            flex: 1; overflow-y: auto; padding: 12px;
+            display: flex; flex-direction: column; gap: 8px;
+            scroll-behavior: smooth;
+        }
+        .ai-msg {
+            max-width: 88%; padding: 9px 12px;
+            border-radius: var(--radius-md); font-size: 0.82rem; line-height: 1.55;
+        }
+        .ai-msg-bot {
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .ai-msg-user {
+            background: var(--color-primary);
+            color: #fff; align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-msg-typing {
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            align-self: flex-start; border-bottom-left-radius: 4px;
+            padding: 10px 14px;
+        }
+        .ai-typing-dots { display: flex; gap: 4px; }
+        .ai-typing-dots span {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--color-text-dim);
+            animation: aiDot 1.2s infinite ease-in-out;
+        }
+        .ai-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .ai-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes aiDot {
+            0%,80%,100% { transform: scale(0.7); opacity: 0.4; }
+            40%          { transform: scale(1);   opacity: 1; }
+        }
+
+        .ai-panel-suggestions {
+            display: flex; flex-wrap: wrap; gap: 5px;
+            padding: 0 12px 8px; flex-shrink: 0;
+        }
+        .ai-sugg {
+            font-size: 0.7rem; padding: 4px 10px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-pill);
+            background: var(--color-surface-2);
+            color: var(--color-text-sub); cursor: pointer;
+            transition: border-color var(--transition), color var(--transition);
+            white-space: nowrap;
+        }
+        .ai-sugg:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+        .ai-panel-input {
+            display: flex; gap: 6px; padding: 10px 12px;
+            border-top: 1px solid var(--color-border); flex-shrink: 0;
+        }
+        #ai-input {
+            flex: 1; padding: 7px 11px;
+            font-family: var(--font); font-size: 0.83rem;
+            border: 1.5px solid var(--color-border);
+            border-radius: var(--radius-pill);
+            background: var(--color-surface-2);
+            color: var(--color-text); outline: none;
+            transition: border-color var(--transition);
+        }
+        #ai-input:focus { border-color: var(--color-primary); background: var(--color-surface); }
+        #ai-send {
+            background: var(--color-primary); color: #fff;
+            border: none; border-radius: 50%;
+            width: 34px; height: 34px; min-width: 34px;
+            cursor: pointer; font-size: 1rem; display: flex;
+            align-items: center; justify-content: center;
+            transition: background var(--transition);
+        }
+        #ai-send:hover { background: var(--color-primary-hov); }
+        #ai-send:disabled { opacity: 0.5; cursor: default; }
+
+        .ai-key-form {
+            padding: 16px 14px; display: flex; flex-direction: column; gap: 10px;
+        }
+        .ai-key-form p { font-size: 0.8rem; color: var(--color-text-sub); line-height: 1.5; }
+        .ai-key-form input {
+            width: 100%; padding: 8px 12px;
+            font-family: var(--font); font-size: 0.82rem;
+            border: 1.5px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-surface-2); color: var(--color-text); outline: none;
+        }
+        .ai-key-form input:focus { border-color: var(--color-primary); }
+        .ai-key-form button {
+            padding: 8px; background: var(--color-primary); color: #fff;
+            border: none; border-radius: var(--radius-sm);
+            font-family: var(--font); font-size: 0.83rem; font-weight: 600;
+            cursor: pointer;
+        }
+        .ai-key-form a { font-size: 0.72rem; color: var(--color-primary); text-decoration: none; }
+        .ai-key-form a:hover { text-decoration: underline; }
 
         /* ── Footer ── */
         footer {
@@ -1438,35 +1733,86 @@
             gap: 6px;
         }
         .fluege-list { display: flex; flex-direction: column; gap: 4px; }
-        .flug-item {
+        /* ── Flüge Stats ── */
+        .fluege-stats {
             display: grid;
-            grid-template-columns: 90px 1fr auto;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 10px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+        }
+        .fluege-stat-box {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-sm);
-            font-size: 0.78rem;
-            transition: border-color var(--transition);
+            padding: 8px 12px;
         }
-        .flug-item:hover { border-color: var(--color-primary); }
+        .fluege-stat-label {
+            font-size: 0.61rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--color-text-dim); margin-bottom: 4px;
+        }
+        .fluege-stat-value { font-size: 1.35rem; font-weight: 700; color: var(--color-text); line-height: 1; }
+        .fluege-stat-land .fluege-stat-value { color: #22c55e; }
+        .fluege-stat-dep  .fluege-stat-value { color: #f59e0b; }
+        [data-theme="dark"] .fluege-stat-land .fluege-stat-value { color: #4ade80; }
+        [data-theme="dark"] .fluege-stat-dep  .fluege-stat-value { color: #fbbf24; }
+
+        /* ── Flug-Item (Card) ── */
+        .flug-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 10px 14px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .flug-item:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 2px 8px rgba(27,54,93,0.07);
+        }
+        [data-theme="dark"] .flug-item:hover { box-shadow: 0 2px 8px rgba(96,165,250,0.08); }
+        .flug-icon-badge {
+            width: 38px; height: 38px; min-width: 38px;
+            background: var(--color-icao-bg);
+            color: var(--color-icao-text);
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.95rem; flex-shrink: 0;
+        }
+        .flug-info { flex: 1; min-width: 0; }
         .flug-callsign {
             font-family: 'Courier New', monospace;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: var(--color-primary);
-            letter-spacing: 0.04em;
+            font-weight: 700; font-size: 0.85rem;
+            color: var(--color-primary); letter-spacing: 0.04em;
+            text-decoration: none;
         }
-        .flug-route { color: var(--color-text-sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .flug-route strong { color: var(--color-text); font-weight: 600; }
-        .flug-zeit {
-            font-size: 0.72rem;
-            color: var(--color-text-dim);
-            white-space: nowrap;
-            text-align: right;
-        }
+        .flug-callsign:hover { text-decoration: underline; }
+        .flug-sub { font-size: 0.71rem; color: var(--color-text-dim); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .flug-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+        .flug-alt  { font-size: 0.7rem; color: var(--color-text-dim); white-space: nowrap; }
+        .flug-chip { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; letter-spacing: 0.03em; }
+        .flug-chip-land   { background: #dcfce7; color: #166534; }
+        .flug-chip-dep    { background: #fef3c7; color: #92400e; }
+        .flug-chip-cruise { background: #dbeafe; color: #1e40af; }
+        .flug-chip-gnd    { background: var(--color-surface-2); color: var(--color-text-dim); border: 1px solid var(--color-border); }
+        [data-theme="dark"] .flug-chip-land   { background: #14532d; color: #86efac; }
+        [data-theme="dark"] .flug-chip-dep    { background: #422006; color: #fcd34d; }
+        [data-theme="dark"] .flug-chip-cruise { background: #1e3a5f; color: #93c5fd; }
         .flug-empty { font-size: 0.82rem; color: var(--color-text-dim); padding: var(--space-sm) 0; }
+
+        /* ── In-Range Traffic (Altitude Bar) ── */
+        .flug-range-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 14px; background: var(--color-surface);
+            border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+        }
+        .flug-range-cs { font-size: 0.8rem; font-weight: 700; font-family: 'Courier New', monospace; color: var(--color-accent); flex-shrink: 0; min-width: 80px; }
+        .flug-range-bar-wrap { flex: 1; }
+        .flug-range-meta { font-size: 0.68rem; color: var(--color-text-dim); }
+        .flug-range-bar { height: 3px; background: var(--color-border); border-radius: 2px; overflow: hidden; margin-top: 3px; }
+        .flug-range-bar-fill { height: 100%; background: var(--color-accent); border-radius: 2px; }
+        .flug-range-alt { font-size: 0.7rem; color: var(--color-text-dim); white-space: nowrap; flex-shrink: 0; }
 
         /* ── Card Tabs ── */
         .card-tabs {
@@ -1577,6 +1923,12 @@
             .data-table { font-size: 0.74rem; min-width: 400px; }
             .data-table th, .data-table td { padding: 6px 8px; }
 
+            /* Runway cards mobile */
+            .rwy-card-left { min-width: 58px; width: 58px; padding: 10px 6px; }
+            .rwy-des-large { font-size: 0.88rem; }
+            .rwy-data-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .rwy-card-body { padding: 10px 10px; }
+
             /* Action buttons */
             .action-links { flex-direction: column; gap: 6px; }
             .btn-sv, .btn-aip { width: 100%; justify-content: center; padding: 10px 16px; }
@@ -1606,7 +1958,8 @@
             /* Flüge */
             .fluege-cols { grid-template-columns: 1fr; }
             .fluege-globe-wrap iframe { height: 240px; }
-            .flug-item { grid-template-columns: 62px 1fr auto; gap: 6px; padding: 7px 8px; }
+            .flug-item { padding: 8px 10px; gap: 8px; }
+            .flug-icon-badge { width: 32px; height: 32px; min-width: 32px; }
 
             /* Hero */
             .hero-slide { gap: 20px; padding: 20px var(--space-sm) 12px; flex-direction: column; align-items: center; }
@@ -1642,7 +1995,9 @@
             .karten-extern-label { padding-top: 0; }
             .card-tab { padding: 7px 7px; font-size: 0.62rem; letter-spacing: 0.02em; }
             .action-links .btn-ext { width: 100%; justify-content: center; }
-            .flug-item { grid-template-columns: 58px 1fr; }
+            .flug-item { gap: 6px; }
+            .fluege-stats { gap: 4px; }
+            .fluege-stat-value { font-size: 1.1rem; }
             .flug-zeit { display: none; }
             .hero-stat-num { font-size: 1.4rem; }
             .badge-iata { display: none; }
@@ -3332,18 +3687,58 @@ out skel qt;`;
                 ? `<a href="https://maps.google.com/?q=${r.he_lat},${r.he_lon}" target="_blank" rel="noopener" title="${r.he_lat}, ${r.he_lon}">📍</a>` : '';
             const leBadge = ilsBadge(icao, r.le);
             const heBadge = ilsBadge(icao, r.he);
-            return `<tr class="${r.closed ? 'rwy-closed' : ''}">
-            <td>${r.le||''}${leBadge}${leLink}${r.he ? ' / '+r.he+heBadge+heLink : ''}</td>
-            <td>${r.length !== undefined ? `${r.length.toLocaleString()} ft / ${Math.round(r.length * 0.3048)} m` : '–'}</td>
-            <td>${r.width !== undefined ? `${r.width} ft / ${Math.round(r.width * 0.3048)} m` : '–'}</td>
-            <td>${r.le_hdg !== undefined ? r.le_hdg+'°' : '–'} / ${r.he_hdg !== undefined ? r.he_hdg+'°' : '–'}</td>
-            <td>${r.surface || '–'}</td>
-            <td>${r.lighted ? '💡' : '–'}</td>
-          </tr>`;
+
+            const lenM   = r.length !== undefined ? Math.round(r.length * 0.3048) : null;
+            const widM   = r.width  !== undefined ? Math.round(r.width  * 0.3048) : null;
+            const dims   = lenM !== null ? `${lenM.toLocaleString()}m${widM !== null ? ' × '+widM+'m' : ''}` : '–';
+            const hdg    = (r.le_hdg !== undefined && r.he_hdg !== undefined)
+                ? `${r.le_hdg}° / ${r.he_hdg}°`
+                : (r.le_hdg !== undefined ? `${r.le_hdg}°` : '–');
+            const surf   = r.surface || '–';
+            const light  = r.lighted ? '💡 Aktiv' : '–';
+            const lenFt  = r.length !== undefined ? `${r.length.toLocaleString()} ft` : '';
+
+            const statusCls  = r.closed ? 'rwy-status-closed' : 'rwy-status-active';
+            const statusText = r.closed ? 'GESCHLOSSEN' : 'AKTIV';
+
+            const ilsItems = [
+                r.le ? `${leBadge}${leLink}` : '',
+                r.he ? `${heBadge}${heLink}` : ''
+            ].filter(s => s.trim());
+            const badges = [
+                ...ilsItems,
+                lenFt ? `<span class="rwy-dim-badge">${lenFt}</span>` : ''
+            ].filter(Boolean).join('');
+
+            return `<div class="rwy-card${r.closed ? ' rwy-card-closed' : ''}">
+                <div class="rwy-card-left">
+                    <div class="rwy-des-large">${r.le||'?'}${r.he ? `<span class="rwy-des-sep">▲▼</span>${r.he}` : ''}</div>
+                    <span class="rwy-status-chip ${statusCls}">${statusText}</span>
+                </div>
+                <div class="rwy-card-body">
+                    <div class="rwy-data-grid">
+                        <div><div class="rwy-data-label">Oberfläche</div><div class="rwy-data-value">${surf}</div></div>
+                        <div><div class="rwy-data-label">Dimensionen</div><div class="rwy-data-value">${dims}</div></div>
+                        <div><div class="rwy-data-label">Kurs (MAG)</div><div class="rwy-data-value">${hdg}</div></div>
+                        <div><div class="rwy-data-label">Befeuerung</div><div class="rwy-data-value">${light}</div></div>
+                    </div>
+                    ${badges ? `<div class="rwy-card-badges">${badges}</div>` : ''}
+                </div>
+            </div>`;
         }).join('') : '';
 
     const frqRows = ap.freqs && ap.freqs.length
-        ? ap.freqs.map(f => `<tr><td>${f.type||'–'}</td><td>${f.freq||'–'}</td><td>${f.desc||'–'}</td></tr>`).join('') : '';
+        ? ap.freqs.map(f => {
+            const name = f.desc && f.desc !== f.type ? f.desc : (f.type || '–');
+            const sub  = f.desc && f.desc !== f.type && f.type ? f.type : '';
+            return `<div class="frq-item">
+                <div>
+                    <div class="frq-name">${name}</div>
+                    ${sub ? `<div class="frq-type">${sub}</div>` : ''}
+                </div>
+                <span class="frq-freq-badge">${f.freq||'–'}</span>
+            </div>`;
+        }).join('') : '';
 
     const navRows = ap.navaids && ap.navaids.length
         ? ap.navaids.map(n => {
@@ -3422,17 +3817,11 @@ out skel qt;`;
                 </div>
                 ${rwyRows ? `<section class="card-section">
                     <h3 class="section-title">🛬 Runways ${zeichneRunwaySVG(ap.runways)}</h3>
-                    <table class="data-table">
-                        <thead><tr><th>Kennung</th><th>Länge</th><th>Breite</th><th>Kurs LE / HE</th><th>Belag</th><th>Bel.</th></tr></thead>
-                        <tbody>${rwyRows}</tbody>
-                    </table>
+                    <div class="rwy-list">${rwyRows}</div>
                 </section>` : ''}
                 ${frqRows ? `<section class="card-section">
                     <h3 class="section-title">📻 Frequenzen</h3>
-                    <table class="data-table">
-                        <thead><tr><th>Typ</th><th>MHz</th><th>Bezeichnung</th></tr></thead>
-                        <tbody>${frqRows}</tbody>
-                    </table>
+                    <div class="frq-list">${frqRows}</div>
                 </section>` : ''}
                 ${navRows ? `<section class="card-section">
                     <h3 class="section-title">📡 Nav-Aids</h3>
@@ -4557,22 +4946,54 @@ async function ladeFluege(icao, forceRefresh = false) {
         function renderFlugzeug(a) {
             const cs   = (a.flight || '').trim();
             const ph   = phase(a);
-            const reg  = a.r ? `<span class="flug-reg">${a.r}</span>` : '';
+            const reg  = a.r || '';
             const type = a.t || '';
             const alt  = a.alt_baro != null ? `${Math.round(a.alt_baro).toLocaleString()} ft` : '';
             const spd  = a.gs ? `${Math.round(a.gs)} kt` : '';
             const dist = a.dst != null ? `${a.dst.toFixed(1)} nm` : '';
             const arr  = trackArrow(a.track);
-            const route = (a.orig_iata && a.dest_iata)
-                ? `<strong>${a.orig_iata}→${a.dest_iata}</strong> · `
-                : (a.from_icao && a.to_icao)
-                ? `<strong>${a.from_icao}→${a.to_icao}</strong> · `
-                : '';
-            const info = [type, alt, spd, dist].filter(Boolean).join(' · ');
+            const route = (a.orig_iata && a.dest_iata) ? `${a.orig_iata}→${a.dest_iata}`
+                : (a.from_icao && a.to_icao) ? `${a.from_icao}→${a.to_icao}` : '';
+            const regType = [reg, type].filter(Boolean).join(' · ');
+            const subParts = [regType, route, dist].filter(Boolean);
+            const chipMap = {
+                'flug-ph-land':   ['flug-chip-land',   'Ankunft'],
+                'flug-ph-dep':    ['flug-chip-dep',    'Abflug'],
+                'flug-ph-cruise': ['flug-chip-cruise', 'Überflug'],
+                'flug-ph-gnd':    ['flug-chip-gnd',    'Boden']
+            };
+            const [chipCls, chipLbl] = chipMap[ph.cls] || ['flug-chip-gnd','–'];
             return `<div class="flug-item">
-                <a class="flug-callsign ${ph.cls}" href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener">${ph.icon} ${cs}${reg}</a>
-                <span class="flug-route">${route}${info}${arr ? ' ' + arr : ''}</span>
-                <span class="flug-zeit flug-phase-label">${ph.label}</span>
+                <div class="flug-icon-badge">${ph.icon}${arr ? `<span style="font-size:.65em;opacity:.7;margin-left:1px">${arr}</span>` : ''}</div>
+                <div class="flug-info">
+                    <a class="flug-callsign" href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener">${cs}</a>
+                    ${subParts.length ? `<div class="flug-sub">${subParts.join(' · ')}</div>` : ''}
+                </div>
+                <div class="flug-right">
+                    <span class="flug-chip ${chipCls}">${chipLbl}</span>
+                    ${alt ? `<span class="flug-alt">${alt}${spd ? ' · '+spd : ''}</span>` : ''}
+                </div>
+            </div>`;
+        }
+
+        function renderRangeItem(a) {
+            const cs  = (a.flight || '').trim();
+            const reg = a.r || '';
+            const type= a.t || '';
+            const alt = a.alt_baro != null ? Math.round(a.alt_baro) : null;
+            const spd = a.gs ? `${Math.round(a.gs)} kt` : '';
+            const dist= a.dst != null ? `${a.dst.toFixed(1)} nm` : '';
+            const altPct = alt != null ? Math.min(100, Math.max(2, alt / 450)) : 0;
+            const altStr = alt != null ? `${alt.toLocaleString()} ft` : '';
+            const regType= [reg, type ? `(${type})` : ''].filter(Boolean).join(' ');
+            const meta   = [regType, spd, dist].filter(Boolean).join(' · ');
+            return `<div class="flug-range-item">
+                <span class="flug-range-cs">${cs}</span>
+                <div class="flug-range-bar-wrap">
+                    ${meta ? `<div class="flug-range-meta">${meta}</div>` : ''}
+                    <div class="flug-range-bar"><div class="flug-range-bar-fill" style="width:${altPct}%"></div></div>
+                </div>
+                ${altStr ? `<span class="flug-range-alt">ALT: ${altStr}</span>` : ''}
             </div>`;
         }
 
@@ -4597,15 +5018,39 @@ async function ladeFluege(icao, forceRefresh = false) {
         const zeit = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
         const an   = airnavUrl ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav</a>` : '';
 
+        const inRange = [...reiseflug, ...boden];
+        const rangeHtml = inRange.length
+            ? `<div class="fluege-list">${inRange.map(renderRangeItem).join('')}</div>`
+            : `<p class="flug-empty" style="margin:0">Keine Flugzeuge in Reichweite</p>`;
+
         el.innerHTML = `
             <div class="fluege-refresh-row">
-                <span class="fluege-ts">Live ADS-B via <strong>${result.src}</strong> · Stand ${zeit}</span>
+                <span class="fluege-ts">Live ADS-B · <strong>${result.src}</strong> · ${zeit}</span>
                 <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)">↺ Aktualisieren</button>
+            </div>
+            <div class="fluege-stats">
+                <div class="fluege-stat-box fluege-stat-land">
+                    <div class="fluege-stat-label">Ankünfte</div>
+                    <div class="fluege-stat-value">${ankuenfte.length}</div>
+                </div>
+                <div class="fluege-stat-box fluege-stat-dep">
+                    <div class="fluege-stat-label">Abflüge</div>
+                    <div class="fluege-stat-value">${abfluege.length}</div>
+                </div>
+                <div class="fluege-stat-box">
+                    <div class="fluege-stat-label">In Reichweite</div>
+                    <div class="fluege-stat-value">${inRange.length}</div>
+                </div>
             </div>
             ${renderAcc('🛬','Ankünfte ','#22c55e', ankuenfte, 'Keine ankommenden Flugzeuge')}
             ${renderAcc('🛫','Abflüge ','#f59e0b', abfluege,  'Keine abfliegenden Flugzeuge')}
-            ${renderAcc('✈','Reiseflug ','var(--color-primary)', reiseflug, 'Keine Überflüge')}
-            ${renderAcc('🅿','Boden ','var(--color-text-dim)', boden, 'Keine Flugzeuge am Boden erfasst')}
+            <div class="fluege-acc">
+                <div class="fluege-acc-head" onclick="this.closest('.fluege-acc').classList.toggle('open')">
+                    <span class="fluege-acc-label" style="color:var(--color-accent)">✈ In Reichweite<span class="fluege-acc-count">(${inRange.length})</span></span>
+                    <span class="fluege-acc-arrow">▶</span>
+                </div>
+                <div class="fluege-acc-body">${rangeHtml}</div>
+            </div>
             <p class="fluege-hinweis" style="margin-top:8px">Vollständige Flugpläne:
                 <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
                 <a href="${faArrUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware Ankünfte</a> ·
@@ -4783,6 +5228,298 @@ function globusZoomAuf(lat, lon, icao) {
     document.head.appendChild(s);
 }());
 </script>
+<!-- ── KI-Assistent ── -->
+<button id="ai-fab" onclick="aiToggle()" aria-label="KI-Assistent öffnen" title="KI-Assistent">
+    <span>✈</span>
+    <span class="ai-fab-badge">KI</span>
+</button>
+
+<div id="ai-panel" role="dialog" aria-label="KI-Assistent">
+    <div class="ai-panel-head">
+        <span class="ai-panel-head-icon">✈</span>
+        <div style="flex:1">
+            <div class="ai-panel-head-title">AeroGuide KI</div>
+            <div class="ai-panel-head-sub" id="ai-ctx-label">Powered by Gemini</div>
+        </div>
+        <button class="ai-panel-close" onclick="aiToggle()" aria-label="Schließen">✕</button>
+    </div>
+    <div id="ai-messages"></div>
+    <div class="ai-panel-suggestions" id="ai-suggestions"></div>
+    <div class="ai-panel-input">
+        <button id="ai-mic" onclick="aiMic()" aria-label="Spracheingabe" title="Spracheingabe" style="background:none;border:1.5px solid var(--color-border);border-radius:50%;width:34px;height:34px;min-width:34px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--color-text-sub);transition:border-color .2s,color .2s">🎤</button>
+        <input id="ai-input" type="text" placeholder="Frage stellen…" autocomplete="off"
+            onkeydown="if(event.key==='Enter')aiSend()">
+        <button id="ai-send" onclick="aiSend()" aria-label="Senden">↑</button>
+    </div>
+</div>
+
+<script>
+// ── KI-Assistent (v2) ────────────────────────────────────────────────────────
+const AI_KEY_STORE = 'aeroguide_gemini_key';
+const AI_MODEL     = 'gemini-2.0-flash';
+let aiHistory      = [];
+let aiOpen         = false;
+let aiReady        = false;
+let aiCurrentIcao  = null; // aktuell offener Flughafen
+
+// ── Kontext aus der App lesen ────────────────────────────────────────────────
+function getAiContext() {
+    const q = (document.getElementById('suche')?.value || '').trim();
+    const openCard = document.querySelector('article.airport-card.card-open');
+    const icao = openCard ? openCard.querySelector('.badge-icao')?.textContent?.trim() : null;
+    aiCurrentIcao = icao || null;
+
+    let ctx = '';
+    if (q) ctx += `\nAktuelle Suche des Nutzers: "${q}"`;
+    if (icao) {
+        ctx += `\nAktuell geöffneter Flughafen: ${icao}`;
+        // METAR wenn geladen
+        const metarEl = openCard?.querySelector('.metar-raw');
+        if (metarEl) ctx += `\nAktuelles METAR: ${metarEl.textContent.trim().split('\n')[0]}`;
+        // NOTAMs wenn geladen
+        const notams = openCard?.querySelectorAll('.notam-item');
+        if (notams?.length) ctx += `\n${notams.length} NOTAM(s) aktiv`;
+        // Runways
+        const rwys = openCard?.querySelectorAll('.rwy-card');
+        if (rwys?.length) ctx += `\n${rwys.length} Piste(n) angezeigt`;
+    }
+    return ctx;
+}
+
+const AI_SYSTEM_BASE = `Du bist AeroGuide, ein freundlicher KI-Assistent für den "Luftfahrtdatenkatalog" – eine Web-App mit 72.000 Flughäfen weltweit. Du hilfst Nutzern auf Deutsch bei:
+• Suche: ICAO (z.B. EDDF), IATA (FRA), Stadtname (Frankfurt), Flughafenname
+• Filter-Chips: "Alle", "International", "Regional", "Klein", "Heliport"
+• Tabs nach Aufklappen: Info, Karten, Flüge, Wetter, NOTAMs, Infrastruktur, Karte
+• METAR/TAF: Wetterformat, Abkürzungen (VFR/IFR/MVFR/LIFR, BKN, OVC, TS, CAVOK usw.)
+• NOTAM-Erklärung: Codes, Bedeutung, Gültigkeit
+• ILS-Kategorien: CAT I (DH 200ft), CAT II (DH 100ft), CAT IIIa/b/c
+• ADS-B Live-Radar im "Flüge"-Tab (20nm Radius)
+• Distanzrechner in der unteren Leiste
+WICHTIG: Wenn der Nutzer einen Flughafen suchen oder öffnen möchte, antworte mit dem exakten Format [SEARCH:ICAO] oder [SEARCH:query] – z.B. [SEARCH:EDDF] oder [SEARCH:Frankfurt]. Die App führt die Suche dann automatisch aus.
+Antworte IMMER auf Deutsch, kurz und hilfreich.`;
+
+// ── App-Steuerung ────────────────────────────────────────────────────────────
+function aiExecuteSearch(query) {
+    const inp = document.getElementById('suche');
+    if (!inp) return;
+    inp.value = query;
+    inp.dispatchEvent(new Event('input'));
+    // Scroll zur Ergebnisliste
+    setTimeout(() => {
+        const list = document.getElementById('liste');
+        if (list) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+    if (!aiOpen) aiToggle();
+    aiAddMsg('bot', `🔍 Suche nach **${query}** ausgeführt. Die Ergebnisse erscheinen in der App.`);
+}
+
+function aiParseActions(text) {
+    // [SEARCH:query] aus Antwort extrahieren
+    const match = text.match(/\[SEARCH:([^\]]+)\]/i);
+    if (match) {
+        const query = match[1].trim();
+        setTimeout(() => aiExecuteSearch(query), 100);
+        return text.replace(/\[SEARCH:[^\]]+\]/gi, '').trim();
+    }
+    return text;
+}
+
+// ── UI Helpers ───────────────────────────────────────────────────────────────
+function aiToggle() {
+    aiOpen = !aiOpen;
+    document.getElementById('ai-panel').classList.toggle('ai-open', aiOpen);
+    if (aiOpen && !aiReady) aiInit();
+    if (aiOpen) {
+        aiUpdateCtxLabel();
+        setTimeout(() => document.getElementById('ai-input').focus(), 250);
+    }
+}
+
+function aiUpdateCtxLabel() {
+    const ctx = getAiContext();
+    const label = document.getElementById('ai-ctx-label');
+    if (!label) return;
+    if (aiCurrentIcao) label.textContent = `Kontext: ${aiCurrentIcao} · Gemini`;
+    else label.textContent = 'Powered by Gemini';
+}
+
+function aiInit() {
+    const key = localStorage.getItem(AI_KEY_STORE);
+    if (key) { aiReady = true; aiWelcome(); }
+    else       aiShowKeyForm();
+}
+
+function aiShowKeyForm() {
+    const msgs = document.getElementById('ai-messages');
+    msgs.innerHTML = `<div class="ai-key-form">
+        <p>Für den KI-Assistenten wird ein <strong>Gemini API-Key</strong> benötigt.<br>
+        Der Key wird nur in deinem Browser gespeichert — niemals hochgeladen.</p>
+        <input id="ai-key-input" type="password" placeholder="AIza…" autocomplete="off"
+            onkeydown="if(event.key==='Enter')aiSaveKey()">
+        <button onclick="aiSaveKey()">Key speichern &amp; starten</button>
+        <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">
+            ↗ Kostenlos bei Google AI Studio holen (gemini-2.0-flash ist gratis)
+        </a>
+    </div>`;
+    document.getElementById('ai-suggestions').innerHTML = '';
+}
+
+function aiSaveKey() {
+    const key = (document.getElementById('ai-key-input')?.value || '').trim();
+    if (!key) return;
+    localStorage.setItem(AI_KEY_STORE, key);
+    aiReady = true;
+    document.getElementById('ai-messages').innerHTML = '';
+    aiWelcome();
+}
+
+function aiWelcome() {
+    aiHistory = [];
+    const hasAirport = !!document.querySelector('article.airport-card.card-open');
+    aiShowSuggestions(hasAirport
+        ? ['Diesen Flughafen erklären', 'METAR erklären', 'NOTAMs zusammenfassen', 'Wie komme ich zu den Karten?']
+        : ['Was kann diese App?', 'Zeige EDDF', 'Was bedeutet METAR?', 'Was ist ILS CAT III?']);
+    aiAddMsg('bot', 'Hallo! Ich bin AeroGuide ✈ — dein KI-Assistent. Ich kann Flughäfen suchen, METAR erklären, NOTAMs deuten und durch die App führen. Was darf es sein?');
+}
+
+function aiShowSuggestions(list) {
+    document.getElementById('ai-suggestions').innerHTML =
+        list.map(s => `<button class="ai-sugg" onclick="aiSendText(this.textContent)">${s}</button>`).join('');
+}
+
+function aiAddMsg(role, text) {
+    const msgs = document.getElementById('ai-messages');
+    const div  = document.createElement('div');
+    div.className = `ai-msg ai-msg-${role}`;
+    div.innerHTML  = text
+        .replace(/\n/g, '<br>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    return div;
+}
+
+function aiAddTyping() {
+    const msgs = document.getElementById('ai-messages');
+    const div  = document.createElement('div');
+    div.className = 'ai-msg ai-msg-typing';
+    div.id        = 'ai-typing';
+    div.innerHTML  = '<div class="ai-typing-dots"><span></span><span></span><span></span></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+}
+function aiRemoveTyping() { document.getElementById('ai-typing')?.remove(); }
+
+async function aiSendText(text) {
+    document.getElementById('ai-input').value = text;
+    await aiSend();
+}
+
+// ── Vom Card-Button aufgerufen (METAR / NOTAM erklären) ──────────────────────
+function aiAskAbout(text, label) {
+    if (!aiOpen) aiToggle();
+    setTimeout(async () => {
+        document.getElementById('ai-input').value = `${label}: ${text}`;
+        await aiSend();
+    }, aiReady ? 50 : 600);
+}
+
+// ── Spracheingabe ────────────────────────────────────────────────────────────
+let aiSpeechRecog = null;
+function aiMic() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) { alert('Spracheingabe wird von diesem Browser nicht unterstützt (Chrome empfohlen).'); return; }
+    if (aiSpeechRecog) { aiSpeechRecog.stop(); aiSpeechRecog = null; aiMicReset(); return; }
+    const recog = new SpeechRecognition();
+    recog.lang = 'de-DE'; recog.interimResults = false; recog.maxAlternatives = 1;
+    aiSpeechRecog = recog;
+    document.getElementById('ai-mic').style.color = '#ef4444';
+    document.getElementById('ai-mic').style.borderColor = '#ef4444';
+    document.getElementById('ai-input').placeholder = '🎤 Sprechen…';
+    recog.onresult = e => {
+        document.getElementById('ai-input').value = e.results[0][0].transcript;
+        aiMicReset(); aiSend();
+    };
+    recog.onerror = recog.onend = () => { aiMicReset(); aiSpeechRecog = null; };
+    recog.start();
+}
+function aiMicReset() {
+    const mic = document.getElementById('ai-mic');
+    if (mic) { mic.style.color = ''; mic.style.borderColor = ''; }
+    const inp = document.getElementById('ai-input');
+    if (inp) inp.placeholder = 'Frage stellen…';
+}
+
+// ── Hauptfunktion: Nachricht senden ─────────────────────────────────────────
+async function aiSend() {
+    const input = document.getElementById('ai-input');
+    const text  = input.value.trim();
+    if (!text || !aiReady) return;
+    input.value = '';
+    document.getElementById('ai-send').disabled = true;
+    document.getElementById('ai-suggestions').innerHTML = '';
+
+    aiAddMsg('user', text);
+
+    // Kontext injizieren
+    const ctx = getAiContext();
+    const systemWithCtx = ctx
+        ? AI_SYSTEM_BASE + `\n\n── AKTUELLER APP-KONTEXT ──${ctx}`
+        : AI_SYSTEM_BASE;
+
+    aiHistory.push({ role: 'user', parts: [{ text }] });
+    aiAddTyping();
+
+    try {
+        const key = localStorage.getItem(AI_KEY_STORE);
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent?key=${key}`;
+        const body = {
+            system_instruction: { parts: [{ text: systemWithCtx }] },
+            contents: aiHistory,
+            generationConfig: { maxOutputTokens: 500, temperature: 0.7 }
+        };
+        const res  = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+
+        let reply = data.candidates?.[0]?.content?.parts?.[0]?.text || '(Keine Antwort)';
+        aiHistory.push({ role: 'model', parts: [{ text: reply }] });
+        if (aiHistory.length > 24) aiHistory = aiHistory.slice(-24);
+
+        // App-Aktionen ausführen
+        reply = aiParseActions(reply);
+
+        aiRemoveTyping();
+        if (reply) aiAddMsg('bot', reply);
+
+        // Kontextbezogene Follow-up-Vorschläge
+        if (/metar|cavok|vfr|ifr|taf/i.test(reply+text))
+            aiShowSuggestions(['Was bedeutet CAVOK?', 'VFR vs IFR?', 'Was bedeutet BKN?', 'Taupunkt erklären']);
+        else if (/notam/i.test(reply+text))
+            aiShowSuggestions(['Wie lange gilt ein NOTAM?', 'Was bedeutet TWY?', 'Was ist ein SIGMET?', 'NOTAMs für EDDF']);
+        else if (/ils|cat\s*i/i.test(reply+text))
+            aiShowSuggestions(['CAT I vs CAT III?', 'Was brauche ich für CAT III?', 'Was ist Decision Height?']);
+        else if (/suche|zeige|finde|öffne/i.test(reply+text))
+            aiShowSuggestions(['Zeige KJFK', 'Zeige LEMD', 'Suche Heathrow', 'Große Flughäfen in Japan']);
+        else
+            aiShowSuggestions(['Zeige EDDF', 'Was kann die App?', 'NOTAMs erklären', 'METAR lesen']);
+
+        aiUpdateCtxLabel();
+
+    } catch(e) {
+        aiRemoveTyping();
+        const isKey = /API_KEY|INVALID|403/i.test(e.message);
+        const msg = isKey
+            ? `Ungültiger API-Key. <a href="#" onclick="localStorage.removeItem('${AI_KEY_STORE}');aiShowKeyForm();return false" style="color:var(--color-primary)">Key ändern</a>`
+            : `Fehler: ${e.message}`;
+        aiAddMsg('bot', `⚠️ ${msg}`);
+    }
+
+    document.getElementById('ai-send').disabled = false;
+    document.getElementById('ai-input').focus();
+}
+</script>
+
 <script>
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
