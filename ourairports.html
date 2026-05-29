@@ -5720,8 +5720,11 @@ async function aiSend() {
         } finally { clearTimeout(t); }
     }
 
-    // ── Pollinations.ai (kein Key nötig, immer kostenlos) ────────────────────
-    const pollinationsModels = ['openai-large', 'openai', 'mistral'];
+    // ── Pollinations.ai (kein Key, kein Limit für normale Nutzung) ──────────
+    const pollinationsModels = [
+        'openai', 'mistral', 'llama', 'mistral-large',
+        'openai-large', 'deepseek-reasoning-small', 'qwen-coder'
+    ];
     const oaiMessages = [{ role: 'system', content: systemWithCtx }, ...toOAI(aiHistory)];
     for (const model of pollinationsModels) {
         try {
@@ -5729,7 +5732,8 @@ async function aiSend() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ model, messages: oaiMessages, private: true, nolog: true })
-            });
+            }, 15000);
+            if (res.status === 429) { await new Promise(r => setTimeout(r, 600)); continue; }
             if (!res.ok) { lastErr = new Error(`HTTP ${res.status}`); continue; }
             const data = await res.json();
             const txt  = data.choices?.[0]?.message?.content;
