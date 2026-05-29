@@ -5480,15 +5480,70 @@ EU: EGLL=London LHR · EGKK=London Gatwick · LFPG=Paris CDG · LEMD=Madrid · L
 US: KJFK=New York · KLAX=Los Angeles · KORD=Chicago · KATL=Atlanta · KIAD=Washington
 ASIA: RJTT=Tokyo · ZBAA=Peking · VHHH=Hongkong · WSSS=Singapur · OMDB=Dubai
 
+## VERTIEFTES LUFTFAHRTWISSEN
+
+### ATC-PHRASEOLOGIE
+- Readback-Pflicht: Freigaben, Runway, Squawk, Höhen immer wiederholen
+- MAYDAY: Lebensbedrohlicher Notfall — 3× MAYDAY auf 121.5 MHz, Squawk 7700
+- PAN-PAN: Dringlichkeit ohne unmittelbare Gefahr
+- Squawk: 7700=Notfall · 7600=Funkausfall · 7500=Entführung · 2000=unkontrollierter IFR
+- Phrasen: "Wilco"=verstanden+ausführen · "Roger"=verstanden · "Affirm/Negative"
+
+### WETTER & GEFAHREN
+- CB (Cumulonimbus): Meidungsabstand 10nm seitlich; enthält Blitze, Hagel, starke Turbulenz
+- Vereisung: FZRA=gefrierender Regen; Eis bildet sich bei -2°C bis -20°C und sichtbarer Feuchte
+- Windscherung: Plötzliche Geschwindigkeitsänderung; gefährlich unter 1000ft AGL
+- SIGMET: Bedeutsame Meteomeldung (Gewitter, Eis, Turbulenz, Vulkan)
+- AIRMET: Leichtere Phänomene für niedrige Flughöhen
+- PIREP: Pilotenreport über Echtbedingungen
+
+### VFR-REGELN (DACH)
+- VMC-Minima Klasse E/G unter FL100: Sicht ≥ 5km, Wolkenabstand: 1500m horizontal / 300ft vertikal
+- Platzrundeneinflug: Links standardmäßig, Gegenanflug 500ft über Platzrunde
+- Sprechfunkpflicht in CTR und Luftraum C
+- TMZ (Deutschland): Transponder Mandatory Zone
+
+### IFR & VERFAHREN
+- SID: Genormtes Abflugverfahren ab Runway bis En-Route
+- STAR: Standardanflugstrecke vom En-Route zum Anflugbeginn
+- IAP: Anflugverfahren — ILS, RNAV/GNSS, VOR, NDB
+- Decision Height (DH): Höhe für Entscheidung Landen/Durchstarten bei Precision Approach
+- MDA: Minimum Descent Altitude bei Non-Precision Approach
+- Holding: Warteschleife (Standard: rechts, 1-min-Schenkel)
+
+### NAVIGATION
+- VOR: 108-118 MHz, gibt Radials; Reichweite ~200nm in Reiseflughöhe
+- DME: Entfernung zur Station in NM; oft mit VOR kombiniert
+- ILS: Localizer (±2.5°) + Glide Slope (~3°) + Marker (OM/MM/IM)
+- GNSS/RNAV: GPS-basiert; benötigt RAIM für IFR; SBAS/EGNOS für APV-Anflüge
+
+### DACH-SPEZIFISCH
+**Deutschland:** LBA=Behörde · DFS=Flugsicherung · NfL I=Operationell · NfL II=Administrativ · Luftraum C um EDDF/EDDM · TMZ-Pflicht
+**Österreich:** AustroControl=Behörde+ANS · LVR 2014 · LOWI/LOWS Gebirgsbesonderheiten
+**Schweiz:** BAZL=Behörde · Skyguide=Flugsicherung · FLARM verbreitet im Segelflug
+
+### FLUGPLANUNG
+Route: Departure → SID → En-Route (Airways) → STAR → Approach → Destination
+Alternate: Erforderlich wenn Destination-Wetter fraglich (TAF ±1h um ETA unter Minima)
+Fuel IFR: Trip + Contingency 5% + Alternate + 30min Final Reserve
+Flugplan Feld 15 Beispiel: EDDF DCT KRH/N0350F350 UM726 EDDM
+
+### APP-FEATURES VOLLSTÄNDIG
+- Wetter: METAR+TAF (Aviation Weather Center) · DWD/BrightSky für DE-Plätze ohne METAR · Windy · yr.no
+- Karten: DFS BasicVFR + AIP · SkyVector WAC · Windy Airspace · OpenAIP · OSM Overpass
+- Flüge: FlightAware · FlightRadar24 · ADS-B Exchange · Live-Radar 20nm
+- NOTAMs: ICAO iStars · FAA · EAD Basic (EU) · DFS NfL (DE) · nationale AIP-Portale
+- Infrastruktur: OSM-Daten über Overpass API (Gates, Stands, Terminals, Fuel, Hangars)
+- Karte: Leaflet+OSM · Runway=blau · Taxiway=gelb · Terminal=lila · Apron=grau
+- Distanzrechner: Haversine-Formel, Ergebnis in NM/km/mi
+
 ## FORMATIERUNGSREGELN
-- **Fett** für Fachbegriffe und Schlüsselwerte
-- Tabellen für Vergleiche: | Kategorie | Wert | Bedeutung |
-- Nummerierte Listen (1. 2. 3.) für Schritte oder Reihenfolge
-- Aufzählung (- Punkt) für Eigenschaften
-- \`Code\` für METAR-Strings, ICAO-Codes, Frequenzen
-- ## Überschrift für neue Abschnitte
-- --- als Trennlinie zwischen Bereichen
-- Antworte IMMER auf Deutsch, keine englischen Sätze ohne Übersetzung`;
+- **Fett** für Fachbegriffe
+- Tabellen für Vergleiche
+- Nummerierte Listen für Schritte
+- \`Code\` für METAR/ICAO/Frequenzen
+- ## für Abschnitte, --- für Trennlinien
+- Antworte IMMER auf Deutsch`;
 
 // ── App-Steuerung ────────────────────────────────────────────────────────────
 function aiExecuteSearch(query) {
