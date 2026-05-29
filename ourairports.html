@@ -5622,13 +5622,8 @@ function aiParseActions(text) {
     let out = text;
     // Reihenfolge wichtig: OPEN_TAB vor OPEN
     out = out.replace(/\[OPEN_TAB:([^,\]]+),([^\]]+)\]/gi, (_, icao, tab) => {
-        const ic = icao.trim(), tb = tab.trim();
-        aiExecuteOpenTab(ic, tb);
-        // Auto-Explain: warte bis Daten geladen, dann automatisch erklären
-        if (!aiAutoExplaining && (tb === 'wetter' || tb === 'notam' || tb === 'info')) {
-            aiAutoDataWait(ic, tb);
-        }
-        return `✈ *Öffne ${ic} → ${tb}*`;
+        aiExecuteOpenTab(icao.trim(), tab.trim());
+        return `✈ *Öffne ${icao.trim()} → ${tab.trim()}*`;
     });
     out = out.replace(/\[OPEN:([^\]]+)\]/gi, (_, icao) => {
         setTimeout(() => aiExecuteOpen(icao.trim()), 150);
@@ -5653,35 +5648,6 @@ function aiParseActions(text) {
     return out.trim();
 }
 
-// ── Auto-Explain: wartet bis Daten geladen, erklärt dann ─────────────────────
-async function aiAutoDataWait(icao, tab) {
-    const selectors = {
-        wetter: '.metar-raw, .metar-box',
-        notam:  '.notam-item, .nfl-item',
-        info:   '.detail-grid'
-    };
-    const sel = selectors[tab] || '.card-body';
-    const prompts = {
-        wetter: `Erkläre das aktuelle METAR für ${icao} aus dem App-Kontext`,
-        notam:  `Fasse die aktuellen NOTAMs für ${icao} kurz zusammen`,
-        info:   `Zeige die wichtigsten Infos für ${icao}`
-    };
-
-    // Warte bis Daten im DOM erscheinen (max 6 Sek, alle 200ms)
-    let loaded = false;
-    for (let i = 0; i < 30; i++) {
-        await new Promise(r => setTimeout(r, 200));
-        const openCard = document.querySelector('article.airport-card.card-open');
-        if (openCard?.querySelector(sel)) { loaded = true; break; }
-    }
-    if (!loaded || !aiReady || !aiOpen) return;
-
-    // Automatisch erklären mit echten Daten aus der App
-    aiAutoExplaining = true;
-    document.getElementById('ai-input').value = prompts[tab] || `Erkläre die Daten für ${icao}`;
-    await aiSend();
-    aiAutoExplaining = false;
-}
 
 // ── UI Helpers ───────────────────────────────────────────────────────────────
 function aiToggle() {
@@ -5720,19 +5686,10 @@ function aiWelcome() {
     }
 }
 
-// ── Proaktive METAR-Erklärung wenn Wetter-Tab geladen ────────────────────────
 function aiOnWeatherLoaded(icao) {
-    if (!aiOpen || !aiReady || aiAutoExplained.has(icao)) return;
-    aiAutoExplained.add(icao);
-    const openCard = document.querySelector(`article.airport-card.card-open`);
-    const metarEl  = openCard?.querySelector('.metar-raw');
-    if (!metarEl) return;
-    const metar = metarEl.textContent.trim().split('\n')[0];
-    if (!metar || metar.length < 10) return;
-    setTimeout(() => {
-        aiShowSuggestions(['METAR komplett erklären', 'Ist VFR möglich?', 'TAF erklären', 'NOTAMs zeigen']);
-        aiAddMsg('bot', `📡 **Wetter geladen für ${icao}!** \`${metar.substring(0,60)}…\`\nSoll ich das METAR Zeile für Zeile erklären?`);
-    }, 800);
+    // Nur Vorschläge aktualisieren wenn KI-Panel offen, nichts automatisch senden
+    if (!aiOpen || !aiReady) return;
+    aiShowSuggestions([`METAR ${icao} erklären`, 'Ist VFR möglich?', `NOTAMs ${icao}`, 'TAF erklären']);
 }
 
 function aiShowSuggestions(list) {
