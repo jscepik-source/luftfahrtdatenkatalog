@@ -4111,6 +4111,7 @@ async function ladeWetter(icao, lat, lon) {
 
     wettercache[icao] = html;
     el.innerHTML = html;
+    aiOnWeatherLoaded(icao);
 }
 
 
@@ -5254,15 +5255,48 @@ function globusZoomAuf(lat, lon, icao) {
 </div>
 
 <script>
-// ── KI-Assistent (v2) ────────────────────────────────────────────────────────
-const GEMINI_API_KEY = 'AIzaSyBpEmqXfouSsRwufxurO8pkhxZMUM03DqU';
-const AI_MODEL       = 'gemini-2.0-flash';
-let aiHistory        = [];
-let aiOpen           = false;
-let aiReady          = false;
-let aiCurrentIcao    = null;
+// ── KI-Assistent (v4) ────────────────────────────────────────────────────────
+const GEMINI_API_KEY   = 'AIzaSyBpEmqXfouSsRwufxurO8pkhxZMUM03DqU';
+const AI_MODEL         = 'gemini-2.0-flash';
+let aiHistory          = [];
+let aiOpen             = false;
+let aiReady            = false;
+let aiCurrentIcao      = null;
+let aiAutoExplained    = new Set();
 
-// ── Kontext aus der App lesen (v3 – vollständig) ─────────────────────────────
+// ── Direkte Flughafendaten aus katalog ───────────────────────────────────────
+function aiLookupAirport(query) {
+    if (!katalog || !query) return null;
+    const key = query.trim().toUpperCase();
+    if (katalog[key]) return { icao: key, ...katalog[key] };
+    const hit = Object.entries(katalog).find(([, ap]) => ap.iata?.toUpperCase() === key);
+    if (hit) return { icao: hit[0], ...hit[1] };
+    return null;
+}
+
+function aiFormatAirport(icao, ap) {
+    if (!ap) return `${icao}: nicht in der Datenbank`;
+    const parts = [`**${icao}${ap.iata ? ' / '+ap.iata : ''}** – ${ap.name || '?'}`];
+    if (ap.city || ap.country_name) parts.push(`${[ap.city, ap.country_name || ap.country].filter(Boolean).join(', ')}`);
+    if (ap.elev !== undefined) parts.push(`Höhe: ${ap.elev} ft / ${Math.round(ap.elev*0.3048)} m`);
+    if (ap.type) parts.push(`Typ: ${ap.type.replace(/_/g,' ')}`);
+    if (ap.scheduled) parts.push('✈ Linienflugdienst');
+    if (ap.runways?.length) {
+        parts.push(`Pisten (${ap.runways.length}):`);
+        ap.runways.slice(0,5).forEach(r => {
+            const len = r.length ? `${Math.round(r.length*0.3048)}m` : '?';
+            const hdg = (r.le_hdg !== undefined && r.he_hdg !== undefined) ? ` ${r.le_hdg}°/${r.he_hdg}°` : '';
+            parts.push(`  RWY ${r.le||'?'}/${r.he||'?'}${hdg}: ${len} · ${r.surface||'?'}${r.closed?' [GESCHLOSSEN]':''}`);
+        });
+    }
+    if (ap.freqs?.length) {
+        parts.push(`Frequenzen:`);
+        ap.freqs.slice(0,8).forEach(f => parts.push(`  ${f.desc||f.type||'?'}: ${f.freq} MHz`));
+    }
+    return parts.join('\n');
+}
+
+// ── Kontext aus der App lesen (v4) ───────────────────────────────────────────
 function getAiContext() {
     const q = (document.getElementById('suche')?.value || '').trim();
     const openCard = document.querySelector('article.airport-card.card-open');
@@ -5271,6 +5305,17 @@ function getAiContext() {
 
     let ctx = '';
     if (q) ctx += `\nSuche: "${q}"`;
+
+    // Sichtbare Suchergebnisse
+    const visCards = [...document.querySelectorAll('article.airport-card')];
+    if (visCards.length && q) {
+        const sample = visCards.slice(0, 6).map(c => {
+            const ic = c.querySelector('.badge-icao')?.textContent?.trim() || '';
+            const nm = c.querySelector('.card-name')?.textContent?.trim() || '';
+            return `${ic}(${nm})`;
+        }).join(', ');
+        ctx += `\nErgebnisse: ${sample}`;
+    }
 
     if (openCard && icao) {
         const name  = openCard.querySelector('.card-name')?.textContent?.trim() || '';
@@ -5352,52 +5397,57 @@ function getAiContext() {
     return ctx;
 }
 
-const AI_SYSTEM_BASE = `Du bist AeroGuide, ein präziser Luftfahrt-KI-Assistent für den "Luftfahrtdatenkatalog" – eine kostenlose Web-App mit 72.000 Flughäfen weltweit (Datenquelle: OurAirports).
+const AI_SYSTEM_BASE = `Du bist AeroGuide, ein leistungsstarker Luftfahrt-KI-Assistent für den "Luftfahrtdatenkatalog" mit 72.000 Flughäfen weltweit.
 
-## APP-AKTIONEN (wichtig!)
-Wenn der Nutzer nach einem Flughafen fragt oder suchen will:
-→ antworte mit [SEARCH:EDDF] oder [SEARCH:Frankfurt]
-Wenn der Nutzer einen Tab öffnen will (Wetter, NOTAMs, Karte, Flüge, Infrastruktur, Karten, Info):
-→ antworte mit [TAB:wetter] / [TAB:notam] / [TAB:karte] / [TAB:fluege] / [TAB:infra] / [TAB:karten] / [TAB:info]
+## APP-AKTIONEN – handle direkt in der App:
+[SEARCH:Frankfurt] – Suche starten (ICAO, IATA, Name, Stadt, Land)
+[OPEN:EDDF] – Flughafen suchen und Card automatisch öffnen
+[OPEN_TAB:EDDF,wetter] – Öffnen UND Tab wechseln (wetter/notam/karte/fluege/infra/karten/info)
+[TAB:wetter] – Tab am aktuell geöffneten Flughafen wechseln
+[FILTER:large_airport] – Filter: large_airport / medium_airport / small_airport / heliport / (leer=alle)
+[DISTANCE:EDDF,EDDM] – Distanzrechner befüllen + berechnen
+Mehrere Aktionen pro Antwort erlaubt! Beispiel: "Hier das Wetter [OPEN_TAB:EDDF,wetter]"
 
-## APP-TABS (nach Aufklappen eines Flughafens)
-Info · Karten (DFS VFR/IFR, SkyVector, EUROCONTROL ERC) · Flüge (ADS-B 20nm) · Wetter (METAR+TAF) · NOTAMs · Infrastruktur (Gates/Stands/OSM) · Karte (Leaflet+OSM)
-Distanzrechner: ICAO-zu-ICAO in NM/km/mi, unten auf der Seite.
+## WANN WELCHE AKTION:
+Nutzer fragt "zeige X" / "öffne X" / "was ist X" → [OPEN:X]
+Nutzer fragt "Wetter X" / "METAR X" → [OPEN_TAB:X,wetter]
+Nutzer fragt "NOTAMs X" → [OPEN_TAB:X,notam]
+Nutzer fragt "Karte X" / "wo liegt X" → [OPEN_TAB:X,karte]
+Nutzer fragt "Distanz X zu Y" → [DISTANCE:X,Y]
+Nutzer fragt "zeig nur Heliports" → [FILTER:heliport]
 
-## METAR VOLLSTÄNDIG DEKODIEREN
+## APP-TABS
+Info · Karten (DFS VFR/IFR, SkyVector, ERC) · Flüge (ADS-B 20nm Live) · Wetter (METAR+TAF) · NOTAMs · Infrastruktur (Gates/Stands/OSM) · Karte (Leaflet+OSM)
+
+## METAR DEKODIEREN
 Format: ICAO DDHHMMz WIND SICHT [WETTER] WOLKEN TEMP/TAU QNH [TREND]
-Wind: 18015KT=180°/15kt · VRB=variabel · CALM=windstill · 18015G28KT=Böen 28kt · 180V220=variable Richtung
-Sicht: 9999=>10km · 0800=800m · CAVOK=Sicht>10km, keine Wolken<5000ft, kein WX
-Wolken: FEW(1-2/8)·SCT(3-4/8)·BKN(5-7/8)·OVC(8/8) + Höhe in 100ft · CB=Cumulonimbus · TCU=Towering Cumulus · NSC=keine
-Wetter: +=stark/-=schwach · TS=Gewitter · RA=Regen · SN=Schnee · FG=Nebel(< 1km) · BR=Dunst(>1km) · DZ=Niesel · GR=Hagel · SH=Schauer · FZ=gefrierend · SA=Sand · DU=Staub · BLSN=Schneefegen
-Temp: 15/08=15°C Tau 8°C · M05=-5°C
-QNH: Q1013=1013hPa · A2992=29.92inHg (US)
-Flightkategorien: VFR(>3SM,>1000ft) · MVFR(1-3SM oder 500-1000ft) · IFR(<1SM oder <500ft) · LIFR(<1/4SM oder <200ft)
-Trend: NOSIG=keine Änderung · TEMPO=vorübergehend · BECMG=werdend dauerhaft · PROB30/40=Wahrscheinlichkeit
-RVR: R28L/P6000FT=Runway 28L Sicht>6000ft
+Wind: 18015KT=180°/15kt · VRB=variabel · CALM · 18015G28KT=Böen · 180V220=variable Richtung
+Sicht: 9999=>10km · 0800=800m · CAVOK=Sicht>10km, keine Wolken<5000ft
+Wolken: FEW(1-2/8)·SCT(3-4/8)·BKN(5-7/8)·OVC(8/8) + Höhe×100ft · CB · TCU · NSC
+Wetter: +=stark/-=schwach · TS·RA·SN·FG(<1km)·BR(>1km)·DZ·GR·SH·FZ·BLSN
+Temp: 15/08=15°C/8°C Taupunkt · M05=-5°C | QNH: Q1013=hPa · A2992=inHg
+FlightCat: VFR(>3SM,>1000ft) · MVFR(1-3SM,500-1000ft) · IFR(<1SM,<500ft) · LIFR(<1/4SM,<200ft)
+Trend: NOSIG · TEMPO · BECMG · PROB30/40 | RVR: R28L/P6000FT
 
-## TAF
-Gültig 24-30h · FM=ab · TEMPO=vorübergehend · BECMG=werdend · PROB30/40=Wahrscheinlichkeit
-FM221800=am 22. ab 18:00 UTC
+## TAF: FM=ab · TEMPO=vorübergehend · BECMG=dauerhaft werdend · PROB30=30% Wahrscheinlichkeit
 
-## NOTAM
-Format: !ICAO ICAO Q-Code Koordinaten Höhe Gültig Text
-Q-Codes: QMRLC=Runway closed · QMXLC=Taxiway closed · QNVAS=VOR n.v. · QICAS=ILS n.v. · QFAAH=Flughafen geöffnet · QFAHX=ungewöhnliche Aktivität · QOBCE=neues Hindernis
-NfL I = operationell (Verfahren) · NfL II = Verwaltung/Information
+## NOTAM Q-Codes: QMRLC=Runway closed · QMXLC=Taxiway · QNVAS=VOR n.v. · QICAS=ILS n.v. · QOBCE=neues Hindernis · QFAAH=geöffnet
 
-## ILS KATEGORIEN
-CAT I: DH 200ft, RVR 550m · CAT II: DH 100ft, RVR 300m · CAT IIIa: DH 50ft, RVR 200m · CAT IIIb: DH 15ft, RVR 50m · CAT IIIc: kein DH/RVR (selten)
+## ILS: CAT I(DH 200ft,RVR 550m) · CAT II(100ft,300m) · CAT IIIa(50ft,200m) · CAT IIIb(15ft,50m) · CAT IIIc(0/0)
 
-## LUFTRAUMKLASSEN
-A=nur IFR mit Freigabe · C=IFR+VFR, beide mit Freigabe (um Großflughäfen) · D=Kontrollzone · E/F/G=abnehmende Kontrolle bis unkontrolliert
+## LUFTRAUM: A=nur IFR · C=alle mit Freigabe · D=Kontrollzone(CTR) · E/G=unkontrolliert
 
-## NAVIGATIONS-ABKÜRZUNGEN
-VOR=Drehfunkfeuer · ILS=Instrument Landing System · DME=Entfernungsmesser · NDB=ungerichtetes Funkfeuer · RNAV/GNSS=Flächennavigation · LOC=Localizer · GS=Gleitpfad · GP=Glide Path · FAP=Final Approach Point
+## NAVAIDS: VOR·ILS·DME·NDB·RNAV/GNSS · SID=Abflug · STAR=Anflug · ATIS · FIR · TMA
 
-## SONSTIGES
-ATIS=automatische Terminal-Info · CTAF/Unicom=unkontrollierter Flughafen · SID=Abflugverfahren · STAR=Anflugverfahren · ATC=Flugverkehrskontrolle · FIR=Fluginformationsregion · TMA=Kontrollbezirk · CTR=Kontrollzone · ATZ=Flughafenverkehrszone · EDDF=Frankfurt · EDDM=München · EDDB=Berlin BER · LOWW=Wien · LSZH=Zürich
+## FLUGHÄFEN BEKANNT:
+DE: EDDF=Frankfurt · EDDM=München · EDDB=Berlin BER · EDDH=Hamburg · EDDK=Köln · EDDS=Stuttgart · EDDL=Düsseldorf
+AT: LOWW=Wien · LOWI=Innsbruck · LOWS=Salzburg
+CH: LSZH=Zürich · LSGG=Genf · LSMM=Bern
+EU: EGLL=London LHR · EGKK=London Gatwick · LFPG=Paris CDG · LEMD=Madrid · LIRF=Rom Fiumicino · EHAM=Amsterdam · EDDB=Berlin · LYBE=Belgrad
+US: KJFK=New York · KLAX=Los Angeles · KORD=Chicago · KATL=Atlanta · KIAD=Washington
+ASIA: RJTT=Tokyo · ZBAA=Peking · VHHH=Hongkong · WSSS=Singapur · OMDB=Dubai
 
-Antworte IMMER auf Deutsch. Nutze **Fett** für Schlüsselbegriffe. Halte Antworten präzise aber vollständig.`;
+Antworte auf Deutsch. **Fett** für Begriffe. Sei präzise und vollständig.`;
 
 // ── App-Steuerung ────────────────────────────────────────────────────────────
 function aiExecuteSearch(query) {
@@ -5410,28 +5460,87 @@ function aiExecuteSearch(query) {
     }, 300);
 }
 
+function aiExecuteOpen(icao) {
+    aiExecuteSearch(icao.trim().toUpperCase());
+    setTimeout(() => {
+        const cards = document.querySelectorAll('article.airport-card');
+        // find exact ICAO match
+        let target = [...cards].find(c => c.querySelector('.badge-icao')?.textContent?.trim() === icao.trim().toUpperCase());
+        if (!target) target = cards[0];
+        if (target && !target.classList.contains('card-open')) {
+            target.querySelector('.card-header')?.click();
+        }
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 700);
+}
+
+function aiExecuteOpenTab(icao, tab) {
+    aiExecuteOpen(icao);
+    setTimeout(() => aiExecuteTab(tab), 1400);
+}
+
 function aiExecuteTab(tab) {
     const openCard = document.querySelector('article.airport-card.card-open');
     if (!openCard) return false;
+    const t = tab.toLowerCase();
     const btn = [...openCard.querySelectorAll('.card-tab')].find(b =>
-        b.textContent.trim().toLowerCase().includes(tab.toLowerCase()) ||
-        (b.getAttribute('onclick') || '').includes(tab)
+        b.textContent.trim().toLowerCase().includes(t) ||
+        (b.getAttribute('onclick') || '').toLowerCase().includes(t)
     );
     if (btn) { btn.click(); return true; }
     return false;
 }
 
+function aiExecuteFilter(type) {
+    const t = type.toLowerCase().replace(/_airport/,'').trim();
+    const map = { large:'international', international:'international', medium:'regional', regional:'regional',
+                  small:'klein', klein:'klein', heliport:'heliport', heli:'heliport', alle:'', all:'' };
+    const target = map[t] ?? t;
+    document.querySelectorAll('.chip[data-typ]').forEach(chip => {
+        const chipText = chip.textContent.trim().toLowerCase();
+        const chipTyp  = (chip.dataset.typ || '').toLowerCase();
+        if (target === '' ? chipTyp === '' : (chipTyp.includes(target) || chipText.includes(target))) {
+            chip.click();
+        }
+    });
+}
+
+function aiExecuteDistance(a, b) {
+    const ia = document.getElementById('dist-a');
+    const ib = document.getElementById('dist-b');
+    if (!ia || !ib) return;
+    ia.value = a.trim().toUpperCase();
+    ib.value = b.trim().toUpperCase();
+    if (typeof berechneDistanz === 'function') berechneDistanz();
+    document.querySelector('.dist-panel')?.scrollIntoView({ behavior: 'smooth' });
+}
+
 function aiParseActions(text) {
     let out = text;
-    // [SEARCH:query]
+    // Reihenfolge wichtig: OPEN_TAB vor OPEN
+    out = out.replace(/\[OPEN_TAB:([^,\]]+),([^\]]+)\]/gi, (_, icao, tab) => {
+        setTimeout(() => aiExecuteOpenTab(icao.trim(), tab.trim()), 150);
+        return `✈ *Öffne ${icao.trim()} → ${tab.trim()}*`;
+    });
+    out = out.replace(/\[OPEN:([^\]]+)\]/gi, (_, icao) => {
+        setTimeout(() => aiExecuteOpen(icao.trim()), 150);
+        return `✈ *Öffne ${icao.trim()}*`;
+    });
     out = out.replace(/\[SEARCH:([^\]]+)\]/gi, (_, q) => {
         setTimeout(() => aiExecuteSearch(q.trim()), 150);
         return `🔍 *Suche: ${q.trim()}*`;
     });
-    // [TAB:name]
     out = out.replace(/\[TAB:([^\]]+)\]/gi, (_, t) => {
         const ok = aiExecuteTab(t.trim());
-        return ok ? `📂 *Tab gewechselt: ${t.trim()}*` : '';
+        return ok ? `📂 *Tab: ${t.trim()}*` : '';
+    });
+    out = out.replace(/\[FILTER:([^\]]*)\]/gi, (_, type) => {
+        setTimeout(() => aiExecuteFilter(type.trim()), 150);
+        return `🔽 *Filter: ${type.trim() || 'Alle'}*`;
+    });
+    out = out.replace(/\[DISTANCE:([^,\]]+),([^\]]+)\]/gi, (_, a, b) => {
+        setTimeout(() => aiExecuteDistance(a, b), 150);
+        return `📏 *Distanz: ${a.trim()} → ${b.trim()}*`;
     });
     return out.trim();
 }
@@ -5467,11 +5576,30 @@ function aiInit() {
 
 function aiWelcome() {
     aiHistory = [];
-    const hasAirport = !!document.querySelector('article.airport-card.card-open');
-    aiShowSuggestions(hasAirport
-        ? ['Diesen Flughafen erklären', 'METAR erklären', 'NOTAMs zusammenfassen', 'Wie komme ich zu den Karten?']
-        : ['Was kann diese App?', 'Zeige EDDF', 'Was bedeutet METAR?', 'Was ist ILS CAT III?']);
-    aiAddMsg('bot', 'Hallo! Ich bin AeroGuide ✈ — dein KI-Assistent. Ich kann Flughäfen suchen, METAR erklären, NOTAMs deuten und durch die App führen. Was darf es sein?');
+    const openCard = document.querySelector('article.airport-card.card-open');
+    const icao = openCard?.querySelector('.badge-icao')?.textContent?.trim();
+    if (icao) {
+        aiShowSuggestions([`${icao} erklären`, 'METAR erklären', 'NOTAMs zeigen', `Karte von ${icao}`]);
+        aiAddMsg('bot', `Hallo! Ich bin **AeroGuide** ✈ — ich sehe dass **${icao}** geöffnet ist. Was soll ich dazu wissen? METAR erklären, NOTAMs zeigen, Pisten vergleichen?`);
+    } else {
+        aiShowSuggestions(['Zeige EDDF', 'Wetter Frankfurt', 'Was ist ILS CAT III?', 'Vergleiche EDDF und EDDM']);
+        aiAddMsg('bot', 'Hallo! Ich bin **AeroGuide** ✈ — ich kann Flughäfen öffnen, METAR/TAF erklären, NOTAMs deuten, Distanzen berechnen und durch alle App-Features führen. Was darf es sein?');
+    }
+}
+
+// ── Proaktive METAR-Erklärung wenn Wetter-Tab geladen ────────────────────────
+function aiOnWeatherLoaded(icao) {
+    if (!aiOpen || !aiReady || aiAutoExplained.has(icao)) return;
+    aiAutoExplained.add(icao);
+    const openCard = document.querySelector(`article.airport-card.card-open`);
+    const metarEl  = openCard?.querySelector('.metar-raw');
+    if (!metarEl) return;
+    const metar = metarEl.textContent.trim().split('\n')[0];
+    if (!metar || metar.length < 10) return;
+    setTimeout(() => {
+        aiShowSuggestions(['METAR komplett erklären', 'Ist VFR möglich?', 'TAF erklären', 'NOTAMs zeigen']);
+        aiAddMsg('bot', `📡 **Wetter geladen für ${icao}!** \`${metar.substring(0,60)}…\`\nSoll ich das METAR Zeile für Zeile erklären?`);
+    }, 800);
 }
 
 function aiShowSuggestions(list) {
@@ -5559,7 +5687,18 @@ async function aiSend() {
     aiAddMsg('user', text);
 
     // Kontext injizieren
-    const ctx = getAiContext();
+    let ctx = getAiContext();
+
+    // Direkte Flughafendaten für erwähnte ICAOs nachladen
+    const icaoMentions = [...text.toUpperCase().matchAll(/\b([A-Z]{4})\b/g)].map(m => m[1]);
+    const extraData = [];
+    for (const code of [...new Set(icaoMentions)].slice(0, 3)) {
+        if (code === aiCurrentIcao) continue;
+        const ap = aiLookupAirport(code);
+        if (ap) extraData.push(aiFormatAirport(code, ap));
+    }
+    if (extraData.length) ctx += `\n\nAngefragte Flughäfen:\n${extraData.join('\n---\n')}`;
+
     const systemWithCtx = ctx
         ? AI_SYSTEM_BASE + `\n\n── AKTUELLER APP-KONTEXT ──${ctx}`
         : AI_SYSTEM_BASE;
@@ -5589,16 +5728,24 @@ async function aiSend() {
         if (reply) aiAddMsg('bot', reply);
 
         // Kontextbezogene Follow-up-Vorschläge
-        if (/metar|cavok|vfr|ifr|taf/i.test(reply+text))
-            aiShowSuggestions(['Was bedeutet CAVOK?', 'VFR vs IFR?', 'Was bedeutet BKN?', 'Taupunkt erklären']);
-        else if (/notam/i.test(reply+text))
-            aiShowSuggestions(['Wie lange gilt ein NOTAM?', 'Was bedeutet TWY?', 'Was ist ein SIGMET?', 'NOTAMs für EDDF']);
-        else if (/ils|cat\s*i/i.test(reply+text))
-            aiShowSuggestions(['CAT I vs CAT III?', 'Was brauche ich für CAT III?', 'Was ist Decision Height?']);
-        else if (/suche|zeige|finde|öffne/i.test(reply+text))
-            aiShowSuggestions(['Zeige KJFK', 'Zeige LEMD', 'Suche Heathrow', 'Große Flughäfen in Japan']);
+        const combined = (reply + text).toLowerCase();
+        const openIcao = aiCurrentIcao;
+        if (/metar|cavok|vfr|ifr|taf|rvr/i.test(combined))
+            aiShowSuggestions(['Was bedeutet CAVOK?', 'Ist VFR möglich?', 'Was bedeutet BKN 030?', 'TAF erklären']);
+        else if (/notam|nfl/i.test(combined))
+            aiShowSuggestions(['Wie lange gilt ein NOTAM?', 'Was ist QMRLC?', openIcao ? `NOTAMs ${openIcao}` : 'NOTAMs EDDF', 'Was ist ein SIGMET?']);
+        else if (/ils|cat\s*i|cat\s*ii|cat\s*iii/i.test(combined))
+            aiShowSuggestions(['CAT I vs CAT III?', 'Welche Ausrüstung brauche ich?', 'Was ist Decision Height?', 'ILS EDDF zeigen']);
+        else if (/piste|runway|rwy|oberfläche|asphalt/i.test(combined))
+            aiShowSuggestions([openIcao ? `Alle Pisten ${openIcao}` : 'Pisten EDDF', 'Was ist PCN?', 'Pisten Frankfurt vs München', 'Längste Pisten weltweit']);
+        else if (/distanz|entfernung|distance|nm|kilometer/i.test(combined))
+            aiShowSuggestions(['EDDF → EDDM', 'EDDF → EGLL', 'LOWW → LSZH', 'Frankfurt nach New York']);
+        else if (/vergleich|compare|vs\.|versus/i.test(combined))
+            aiShowSuggestions(['EDDF vs EDDM', 'Frankfurt vs Wien', 'EGLL vs LFPG', 'KJFK vs KLAX']);
+        else if (openIcao)
+            aiShowSuggestions([`METAR ${openIcao} erklären`, `NOTAMs ${openIcao}`, `Karte ${openIcao}`, `Pisten ${openIcao}`]);
         else
-            aiShowSuggestions(['Zeige EDDF', 'Was kann die App?', 'NOTAMs erklären', 'METAR lesen']);
+            aiShowSuggestions(['Zeige EDDF', 'Wetter München', 'Vergleiche EDDF EDDM', 'Distanz FRA LHR']);
 
         aiUpdateCtxLabel();
 
