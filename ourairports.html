@@ -5573,13 +5573,8 @@ function aiUpdateCtxLabel() {
 }
 
 function aiInit() {
-    if (GEMINI_API_KEY && GEMINI_API_KEY !== 'HIER_DEINEN_KEY_EINSETZEN') {
-        aiReady = true;
-        aiWelcome();
-    } else {
-        document.getElementById('ai-messages').innerHTML =
-            '<div class="ai-key-form"><p>⚙️ Kein API-Key konfiguriert. Bitte <strong>GEMINI_API_KEY</strong> im Quellcode eintragen.</p></div>';
-    }
+    aiReady = true;
+    aiWelcome();
 }
 
 function aiWelcome() {
