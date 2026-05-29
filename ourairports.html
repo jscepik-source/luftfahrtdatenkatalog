@@ -5256,14 +5256,21 @@ function globusZoomAuf(lat, lon, icao) {
 
 <script>
 // ── KI-Assistent (v4) ────────────────────────────────────────────────────────
-const GEMINI_API_KEY   = 'AIzaSyBpEmqXfouSsRwufxurO8pkhxZMUM03DqU';
-const AI_MODELS        = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b'];
+const GEMINI_API_KEY   = ''; // optional – leer lassen → Pollinations.ai wird genutzt
+const AI_MODELS        = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 let   aiModelIdx       = 0;
 let aiHistory          = [];
 let aiOpen             = false;
 let aiReady            = false;
 let aiCurrentIcao      = null;
 let aiAutoExplained    = new Set();
+
+function toOAI(history) {
+    return history.map(h => ({
+        role: h.role === 'model' ? 'assistant' : 'user',
+        content: h.parts[0].text
+    }));
+}
 
 // ── Direkte Flughafendaten aus katalog ───────────────────────────────────────
 function aiLookupAirport(query) {
@@ -5707,26 +5714,56 @@ async function aiSend() {
     aiHistory.push({ role: 'user', parts: [{ text }] });
     aiAddTyping();
 
-    let reply = null, lastErr = null;
-    for (let attempt = 0; attempt < AI_MODELS.length; attempt++) {
-        const model = AI_MODELS[(aiModelIdx + attempt) % AI_MODELS.length];
+    let reply = null, lastErr = null, usedModel = '';
+
+    // ── Pollinations.ai (kein Key nötig, immer kostenlos) ────────────────────
+    const pollinationsModels = ['openai-large', 'openai', 'mistral'];
+    for (const model of pollinationsModels) {
         try {
-            const url  = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
-            const body = {
-                system_instruction: { parts: [{ text: systemWithCtx }] },
-                contents: aiHistory,
-                generationConfig: { maxOutputTokens: 1200, temperature: 0.65 }
-            };
-            const res  = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const messages = [
+                { role: 'system', content: systemWithCtx },
+                ...toOAI(aiHistory)
+            ];
+            const res  = await fetch('https://text.pollinations.ai/openai', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model, messages, private: true, seed: Date.now() % 9999 }),
+                signal: AbortSignal.timeout(20000)
+            });
+            if (!res.ok) { lastErr = new Error(`HTTP ${res.status}`); continue; }
             const data = await res.json();
-            if (data.error) { lastErr = new Error(data.error.message); continue; }
-            reply = data.candidates?.[0]?.content?.parts?.[0]?.text || '(Keine Antwort)';
-            aiModelIdx = (aiModelIdx + attempt) % AI_MODELS.length; // merke funktionierenden Index
-            document.getElementById('ai-ctx-label').textContent =
-                (aiCurrentIcao ? `Kontext: ${aiCurrentIcao} · ` : '') + model;
+            const txt  = data.choices?.[0]?.message?.content;
+            if (!txt) { lastErr = new Error('Leere Antwort'); continue; }
+            reply      = txt;
+            usedModel  = `Pollinations / ${model}`;
             break;
         } catch(e) { lastErr = e; }
     }
+
+    // ── Gemini Fallback (nur wenn Key eingetragen) ────────────────────────────
+    if (!reply && GEMINI_API_KEY) {
+        for (let attempt = 0; attempt < AI_MODELS.length; attempt++) {
+            const model = AI_MODELS[(aiModelIdx + attempt) % AI_MODELS.length];
+            try {
+                const url  = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+                const body = {
+                    system_instruction: { parts: [{ text: systemWithCtx }] },
+                    contents: aiHistory,
+                    generationConfig: { maxOutputTokens: 1200, temperature: 0.65 }
+                };
+                const res  = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const data = await res.json();
+                if (data.error) { lastErr = new Error(data.error.message); continue; }
+                reply      = data.candidates?.[0]?.content?.parts?.[0]?.text || '(Keine Antwort)';
+                usedModel  = `Gemini / ${model}`;
+                aiModelIdx = (aiModelIdx + attempt) % AI_MODELS.length;
+                break;
+            } catch(e) { lastErr = e; }
+        }
+    }
+
+    document.getElementById('ai-ctx-label').textContent =
+        (aiCurrentIcao ? `Kontext: ${aiCurrentIcao} · ` : '') + (usedModel || 'KI');
 
     aiRemoveTyping();
 
