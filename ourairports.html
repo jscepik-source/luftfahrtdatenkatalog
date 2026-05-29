@@ -5280,6 +5280,7 @@ let aiOpen             = false;
 let aiReady            = false;
 let aiCurrentIcao      = null;
 let aiAutoExplained    = new Set();
+let aiAutoExplaining   = false; // verhindert Endlosschleife
 
 function toOAI(history) {
     return history.map(h => ({
@@ -5539,6 +5540,12 @@ Flugplan Feld 15 Beispiel: EDDF DCT KRH/N0350F350 UM726 EDDM
 - Karte: Leaflet+OSM · Runway=blau · Taxiway=gelb · Terminal=lila · Apron=grau
 - Distanzrechner: Haversine-Formel, Ergebnis in NM/km/mi
 
+## DATENPRINZIP – STRIKT EINHALTEN
+1. Schau ZUERST in den APP-KONTEXT (unten) — sind METAR/NOTAMs/Pisten-Daten vorhanden?
+2. JA → erkläre NUR diese echten Daten, erfinde nichts dazu
+3. NEIN → führe [OPEN_TAB:ICAO,wetter] aus, schreibe "Ich habe den Wetter-Tab geöffnet — die Live-Daten erscheinen gleich in der App und werden automatisch erklärt."
+4. ERFINDE NIEMALS Wetterdaten, METARs, NOTAMs, Frequenzen oder Pisteninfos. Die App hat echte Live-Daten.
+
 ## FORMATIERUNGSREGELN
 - **Fett** für Fachbegriffe
 - Tabellen für Vergleiche
@@ -5617,8 +5624,13 @@ function aiParseActions(text) {
     let out = text;
     // Reihenfolge wichtig: OPEN_TAB vor OPEN
     out = out.replace(/\[OPEN_TAB:([^,\]]+),([^\]]+)\]/gi, (_, icao, tab) => {
-        setTimeout(() => aiExecuteOpenTab(icao.trim(), tab.trim()), 150);
-        return `✈ *Öffne ${icao.trim()} → ${tab.trim()}*`;
+        const ic = icao.trim(), tb = tab.trim();
+        aiExecuteOpenTab(ic, tb);
+        // Auto-Explain: warte bis Daten geladen, dann automatisch erklären
+        if (!aiAutoExplaining && (tb === 'wetter' || tb === 'notam' || tb === 'info')) {
+            aiAutoDataWait(ic, tb);
+        }
+        return `✈ *Öffne ${ic} → ${tb}*`;
     });
     out = out.replace(/\[OPEN:([^\]]+)\]/gi, (_, icao) => {
         setTimeout(() => aiExecuteOpen(icao.trim()), 150);
@@ -5641,6 +5653,36 @@ function aiParseActions(text) {
         return `📏 *Distanz: ${a.trim()} → ${b.trim()}*`;
     });
     return out.trim();
+}
+
+// ── Auto-Explain: wartet bis Daten geladen, erklärt dann ─────────────────────
+async function aiAutoDataWait(icao, tab) {
+    const selectors = {
+        wetter: '.metar-raw, .metar-box',
+        notam:  '.notam-item, .nfl-item',
+        info:   '.detail-grid'
+    };
+    const sel = selectors[tab] || '.card-body';
+    const prompts = {
+        wetter: `Erkläre das aktuelle METAR für ${icao} aus dem App-Kontext`,
+        notam:  `Fasse die aktuellen NOTAMs für ${icao} kurz zusammen`,
+        info:   `Zeige die wichtigsten Infos für ${icao}`
+    };
+
+    // Warte bis Daten im DOM erscheinen (max 8 Sek)
+    let loaded = false;
+    for (let i = 0; i < 16; i++) {
+        await new Promise(r => setTimeout(r, 500));
+        const openCard = document.querySelector('article.airport-card.card-open');
+        if (openCard?.querySelector(sel)) { loaded = true; break; }
+    }
+    if (!loaded || !aiReady || !aiOpen) return;
+
+    // Automatisch erklären mit echten Daten aus der App
+    aiAutoExplaining = true;
+    document.getElementById('ai-input').value = prompts[tab] || `Erkläre die Daten für ${icao}`;
+    await aiSend();
+    aiAutoExplaining = false;
 }
 
 // ── UI Helpers ───────────────────────────────────────────────────────────────
