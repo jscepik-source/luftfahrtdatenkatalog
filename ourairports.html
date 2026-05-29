@@ -5270,7 +5270,8 @@ function globusZoomAuf(lat, lon, icao) {
 
 <script>
 // ── KI-Assistent (v4) ────────────────────────────────────────────────────────
-const GEMINI_API_KEY   = ''; // optional – leer lassen → Pollinations.ai wird genutzt
+const GROQ_API_KEY     = ''; // ← Groq-Key eintragen: console.groq.com (kostenlos)
+const GEMINI_API_KEY   = ''; // ← optional: Gemini-Key als Fallback
 const AI_MODELS        = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 let   aiModelIdx       = 0;
 let aiHistory          = [];
@@ -5793,6 +5794,25 @@ async function aiSend() {
         try {
             return await fetch(url, { ...opts, signal: ac.signal });
         } finally { clearTimeout(t); }
+    }
+
+    // ── Groq (kostenlos, schnell, stabil) ────────────────────────────────────
+    if (!reply && GROQ_API_KEY) {
+        const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'];
+        for (const model of groqModels) {
+            try {
+                const res = await fetchTimed('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+                    body: JSON.stringify({ model, messages: [{ role:'system', content: systemWithCtx }, ...toOAI(aiHistory)], max_tokens: 1200, temperature: 0.65 })
+                }, 15000);
+                if (!res.ok) { lastErr = new Error(`Groq HTTP ${res.status}`); continue; }
+                const data = await res.json();
+                const txt  = data.choices?.[0]?.message?.content;
+                if (!txt)  { lastErr = new Error('Groq: Leere Antwort'); continue; }
+                reply = txt; usedModel = `Groq / ${model}`; break;
+            } catch(e) { lastErr = e; }
+        }
     }
 
     // ── Pollinations.ai (kein Key nötig) ─────────────────────────────────────
