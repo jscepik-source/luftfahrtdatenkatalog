@@ -5405,6 +5405,15 @@ function getAiContext() {
     return ctx;
 }
 
+// Kürzere Version für Pollinations (spart Tokens)
+const AI_SYSTEM_SHORT = `Du bist AeroGuide, Luftfahrt-KI für "Luftfahrtdatenkatalog" (72.000 Airports).
+APP-AKTIONEN (immer nutzen wenn passend): [SEARCH:X] [OPEN:X] [OPEN_TAB:X,wetter] [TAB:wetter/notam/karte/fluege/infra] [FILTER:large_airport/heliport] [DISTANCE:A,B]
+METAR: Wind=18015KT(180°/15kt) CAVOK=gut SCT/BKN/OVC=Wolken FG=Nebel TS=Gewitter | Kategorien: VFR/MVFR/IFR/LIFR
+ILS: CAT I(200ft/550m) CAT II(100ft/300m) CAT IIIa(50ft/200m) CAT IIIb(15ft/50m)
+NOTAM Q-Codes: QMRLC=Runway closed QICAS=ILS n.v. QNVAS=VOR n.v.
+Bekannte Airports: EDDF=Frankfurt EDDM=München EDDB=Berlin LOWW=Wien LSZH=Zürich EGLL=London LFPG=Paris KJFK=New York
+Antworte auf Deutsch, präzise.`;
+
 const AI_SYSTEM_BASE = `Du bist AeroGuide, ein leistungsstarker Luftfahrt-KI-Assistent für den "Luftfahrtdatenkatalog" mit 72.000 Flughäfen weltweit.
 
 ## APP-AKTIONEN – handle direkt in der App:
@@ -5720,27 +5729,43 @@ async function aiSend() {
         } finally { clearTimeout(t); }
     }
 
-    // ── Pollinations.ai (kein Key, kein Limit für normale Nutzung) ──────────
-    const pollinationsModels = [
-        'openai', 'mistral', 'llama', 'mistral-large',
-        'openai-large', 'deepseek-reasoning-small', 'qwen-coder'
-    ];
-    const oaiMessages = [{ role: 'system', content: systemWithCtx }, ...toOAI(aiHistory)];
+    // ── Pollinations.ai (kein Key nötig) ─────────────────────────────────────
+    const pollinationsModels = ['openai', 'mistral', 'llama', 'mistral-large', 'openai-large'];
+    // Kurzer Systemkontext damit Request-Body klein bleibt
+    const shortCtx  = ctx ? AI_SYSTEM_SHORT + `\n\nKONTEXT:${ctx}` : AI_SYSTEM_SHORT;
+    const oaiMsgs   = [{ role: 'system', content: shortCtx }, ...toOAI(aiHistory)];
     for (const model of pollinationsModels) {
         try {
             const res = await fetchTimed('https://text.pollinations.ai/openai', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model, messages: oaiMessages, private: true, nolog: true })
+                body: JSON.stringify({ model, messages: oaiMsgs, private: true, nolog: true })
             }, 15000);
-            if (res.status === 429) { await new Promise(r => setTimeout(r, 600)); continue; }
-            if (!res.ok) { lastErr = new Error(`HTTP ${res.status}`); continue; }
+            if (res.status === 429) { lastErr = new Error('429'); await new Promise(r => setTimeout(r, 500)); continue; }
+            if (!res.ok)            { lastErr = new Error(`HTTP ${res.status}`); continue; }
             const data = await res.json();
             const txt  = data.choices?.[0]?.message?.content;
-            if (!txt) { lastErr = new Error('Leere Antwort'); continue; }
+            if (!txt)               { lastErr = new Error('Leere Antwort'); continue; }
             reply     = txt;
-            usedModel = model;
+            usedModel = `${model}`;
             break;
+        } catch(e) { lastErr = e; }
+    }
+
+    // ── Pollinations GET-Fallback (noch einfacher, anderer Pfad) ─────────────
+    if (!reply) {
+        try {
+            const lastMsg = aiHistory[aiHistory.length - 1]?.parts[0]?.text || text;
+            const sysEnc  = encodeURIComponent(AI_SYSTEM_SHORT + (ctx ? '\nKONTEXT:' + ctx.substring(0, 300) : ''));
+            const msgEnc  = encodeURIComponent(lastMsg.substring(0, 500));
+            const res     = await fetchTimed(
+                `https://text.pollinations.ai/${msgEnc}?model=openai&system=${sysEnc}&private=true&nolog=true`,
+                {}, 15000
+            );
+            if (res.ok) {
+                const txt = await res.text();
+                if (txt && txt.length > 5) { reply = txt; usedModel = 'openai-get'; }
+            }
         } catch(e) { lastErr = e; }
     }
 
