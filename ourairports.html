@@ -3988,21 +3988,25 @@ const PROXY_NAMEN = {
 };
 
 async function fetchProxy(url) {
+    const enc = encodeURIComponent(url);
     const versuche = [
         { key: 'direct',     u: url },
-        { key: 'allorigins', u: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
-        { key: 'corsproxy',  u: `https://corsproxy.io/?url=${encodeURIComponent(url)}` },
-        { key: 'codetabs',   u: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}` },
+        { key: 'allorigins', u: `https://api.allorigins.win/raw?url=${enc}` },
+        { key: 'corsproxy',  u: `https://corsproxy.io/?url=${enc}` },
+        { key: 'codetabs',   u: `https://api.codetabs.com/v1/proxy?quest=${enc}` },
     ];
-    for (const { key, u } of versuche) {
+    // Alle Proxies parallel starten — erster Gewinner gewinnt
+    return Promise.any(versuche.map(async ({ key, u }) => {
+        const ac  = new AbortController();
+        const tid = setTimeout(() => ac.abort(), 6000);
         try {
-            const res = await fetch(u, { signal: AbortSignal.timeout(8000) });
-            if (!res.ok) continue;
+            const res = await fetch(u, { signal: ac.signal });
+            clearTimeout(tid);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             return { data, quelle: PROXY_NAMEN[key] };
-        } catch(e) {}
-    }
-    throw new Error('Alle Proxies fehlgeschlagen');
+        } catch(e) { clearTimeout(tid); throw e; }
+    })).catch(() => { throw new Error('Alle Proxies fehlgeschlagen'); });
 }
 
 function wetterExternLinks(icao, lat, lon) {
@@ -4020,20 +4024,15 @@ function wetterExternLinks(icao, lat, lon) {
 
 async function ladeBrightSky(lat, lon) {
     const url = `https://api.brightsky.dev/current_weather?lat=${lat}&lon=${lon}`;
-    const versuche = [
-        url,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-    ];
-    for (const u of versuche) {
-        try {
-            const res = await fetch(u);
-            if (!res.ok) continue;
-            const data = await res.json();
-            return data.weather || null;
-        } catch(e) {}
-    }
-    return null;
+    const enc = encodeURIComponent(url);
+    const versuche = [url, `https://api.allorigins.win/raw?url=${enc}`, `https://corsproxy.io/?url=${enc}`];
+    return Promise.any(versuche.map(async u => {
+        const res = await fetch(u, { signal: AbortSignal.timeout ? AbortSignal.timeout(5000) : undefined });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (!data.weather) throw new Error();
+        return data.weather;
+    })).catch(() => null);
 }
 
 function renderBrightSky(w, station) {
@@ -5569,19 +5568,18 @@ function aiExecuteOpen(icao) {
     aiExecuteSearch(icao.trim().toUpperCase());
     setTimeout(() => {
         const cards = document.querySelectorAll('article.airport-card');
-        // find exact ICAO match
         let target = [...cards].find(c => c.querySelector('.badge-icao')?.textContent?.trim() === icao.trim().toUpperCase());
         if (!target) target = cards[0];
         if (target && !target.classList.contains('card-open')) {
             target.querySelector('.card-header')?.click();
         }
         target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 700);
+    }, 300);
 }
 
 function aiExecuteOpenTab(icao, tab) {
     aiExecuteOpen(icao);
-    setTimeout(() => aiExecuteTab(tab), 1400);
+    setTimeout(() => aiExecuteTab(tab), 700);
 }
 
 function aiExecuteTab(tab) {
@@ -5669,10 +5667,10 @@ async function aiAutoDataWait(icao, tab) {
         info:   `Zeige die wichtigsten Infos für ${icao}`
     };
 
-    // Warte bis Daten im DOM erscheinen (max 8 Sek)
+    // Warte bis Daten im DOM erscheinen (max 6 Sek, alle 200ms)
     let loaded = false;
-    for (let i = 0; i < 16; i++) {
-        await new Promise(r => setTimeout(r, 500));
+    for (let i = 0; i < 30; i++) {
+        await new Promise(r => setTimeout(r, 200));
         const openCard = document.querySelector('article.airport-card.card-open');
         if (openCard?.querySelector(sel)) { loaded = true; break; }
     }
