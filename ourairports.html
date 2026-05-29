@@ -5711,26 +5711,31 @@ async function aiSend() {
 
     let reply = null, lastErr = null, usedModel = '';
 
+    // ── Hilfsfunktion: fetch mit Timeout ────────────────────────────────────
+    async function fetchTimed(url, opts, ms = 18000) {
+        const ac = new AbortController();
+        const t  = setTimeout(() => ac.abort(), ms);
+        try {
+            return await fetch(url, { ...opts, signal: ac.signal });
+        } finally { clearTimeout(t); }
+    }
+
     // ── Pollinations.ai (kein Key nötig, immer kostenlos) ────────────────────
     const pollinationsModels = ['openai-large', 'openai', 'mistral'];
+    const oaiMessages = [{ role: 'system', content: systemWithCtx }, ...toOAI(aiHistory)];
     for (const model of pollinationsModels) {
         try {
-            const messages = [
-                { role: 'system', content: systemWithCtx },
-                ...toOAI(aiHistory)
-            ];
-            const res  = await fetch('https://text.pollinations.ai/openai', {
+            const res = await fetchTimed('https://text.pollinations.ai/openai', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model, messages, private: true, seed: Date.now() % 9999 }),
-                signal: AbortSignal.timeout(20000)
+                body: JSON.stringify({ model, messages: oaiMessages, private: true, nolog: true })
             });
             if (!res.ok) { lastErr = new Error(`HTTP ${res.status}`); continue; }
             const data = await res.json();
             const txt  = data.choices?.[0]?.message?.content;
             if (!txt) { lastErr = new Error('Leere Antwort'); continue; }
-            reply      = txt;
-            usedModel  = `Pollinations / ${model}`;
+            reply     = txt;
+            usedModel = model;
             break;
         } catch(e) { lastErr = e; }
     }
@@ -5746,11 +5751,11 @@ async function aiSend() {
                     contents: aiHistory,
                     generationConfig: { maxOutputTokens: 1200, temperature: 0.65 }
                 };
-                const res  = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const res  = await fetchTimed(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                 const data = await res.json();
                 if (data.error) { lastErr = new Error(data.error.message); continue; }
                 reply      = data.candidates?.[0]?.content?.parts?.[0]?.text || '(Keine Antwort)';
-                usedModel  = `Gemini / ${model}`;
+                usedModel  = `Gemini ${model}`;
                 aiModelIdx = (aiModelIdx + attempt) % AI_MODELS.length;
                 break;
             } catch(e) { lastErr = e; }
