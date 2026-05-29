@@ -5270,8 +5270,9 @@ function globusZoomAuf(lat, lon, icao) {
 
 <script>
 // ── KI-Assistent (v4) ────────────────────────────────────────────────────────
-const GROQ_API_KEY     = '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';
-const GEMINI_API_KEY   = ''; // ← optional: Gemini-Key als Fallback
+const WORKER_URL       = 'https://deploy.jscepik.workers.dev/'; // Cloudflare Worker – Key sicher serverseitig
+const GROQ_API_KEY     = ''; // leer – Key liegt im Worker
+const GEMINI_API_KEY   = '';
 const AI_MODELS        = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 let   aiModelIdx       = 0;
 let aiHistory          = [];
@@ -5796,21 +5797,22 @@ async function aiSend() {
         } finally { clearTimeout(t); }
     }
 
-    // ── Groq (kostenlos, schnell, stabil) ────────────────────────────────────
-    if (!reply && GROQ_API_KEY) {
+    // ── Cloudflare Worker → Groq (Key sicher, 100k/Tag) ─────────────────────
+    if (!reply && WORKER_URL) {
         const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'];
         for (const model of groqModels) {
             try {
-                const res = await fetchTimed('https://api.groq.com/openai/v1/chat/completions', {
+                const messages = [{ role:'system', content: systemWithCtx }, ...toOAI(aiHistory)];
+                const res = await fetchTimed(WORKER_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
-                    body: JSON.stringify({ model, messages: [{ role:'system', content: systemWithCtx }, ...toOAI(aiHistory)], max_tokens: 1200, temperature: 0.65 })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ payload: { model, messages, max_tokens: 1200, temperature: 0.65 } })
                 }, 15000);
-                if (!res.ok) { lastErr = new Error(`Groq HTTP ${res.status}`); continue; }
+                if (!res.ok) { lastErr = new Error(`Worker HTTP ${res.status}`); continue; }
                 const data = await res.json();
                 const txt  = data.choices?.[0]?.message?.content;
-                if (!txt)  { lastErr = new Error('Groq: Leere Antwort'); continue; }
-                reply = txt; usedModel = `Groq / ${model}`; break;
+                if (!txt)  { lastErr = new Error('Worker: Leere Antwort'); continue; }
+                reply = txt; usedModel = model; break;
             } catch(e) { lastErr = e; }
         }
     }
