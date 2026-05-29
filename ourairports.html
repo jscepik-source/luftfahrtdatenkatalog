@@ -5441,13 +5441,15 @@ const AI_SYSTEM_BASE = `Du bist AeroGuide, ein leistungsstarker Luftfahrt-KI-Ass
 [DISTANCE:EDDF,EDDM] – Distanzrechner befüllen + berechnen
 Mehrere Aktionen pro Antwort erlaubt! Beispiel: "Hier das Wetter [OPEN_TAB:EDDF,wetter]"
 
-## WANN WELCHE AKTION:
-Nutzer fragt "zeige X" / "öffne X" / "was ist X" → [OPEN:X]
-Nutzer fragt "Wetter X" / "METAR X" → [OPEN_TAB:X,wetter]
-Nutzer fragt "NOTAMs X" → [OPEN_TAB:X,notam]
-Nutzer fragt "Karte X" / "wo liegt X" → [OPEN_TAB:X,karte]
-Nutzer fragt "Distanz X zu Y" → [DISTANCE:X,Y]
-Nutzer fragt "zeig nur Heliports" → [FILTER:heliport]
+## WANN WELCHE AKTION – PFLICHT, IMMER AUSFÜHREN:
+Nutzer fragt nach Wetter/METAR/TAF eines Flughafens → IMMER [OPEN_TAB:ICAO,wetter] + "Ich öffne das Live-Wetter in der App:"
+Nutzer fragt nach NOTAMs → IMMER [OPEN_TAB:ICAO,notam]
+Nutzer fragt nach Lage/Karte → IMMER [OPEN_TAB:ICAO,karte]
+Nutzer fragt "zeige X" / "öffne X" / "was ist X" → IMMER [OPEN:ICAO]
+Nutzer fragt nach Distanz → IMMER [DISTANCE:A,B]
+Nutzer fragt nach Filter → IMMER [FILTER:type]
+
+WICHTIG: Erfinde NIEMALS Wetterdaten, METAR oder NOTAMs! Die App zeigt echte Live-Daten. Öffne stattdessen immer den richtigen Tab mit [OPEN_TAB:]. Sage dem Nutzer: "Die aktuellen Live-Daten siehst du jetzt in der App."
 
 ## APP-TABS
 Info · Karten (DFS VFR/IFR, SkyVector, ERC) · Flüge (ADS-B 20nm Live) · Wetter (METAR+TAF) · NOTAMs · Infrastruktur (Gates/Stands/OSM) · Karte (Leaflet+OSM)
@@ -5736,6 +5738,10 @@ function aiRenderMarkdown(raw) {
         const items = block.trim().split('\n').map(l => l.replace(/^[•\-\*] /,'').trim());
         return '<ul class="ai-ul">' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
     });
+
+    // Links [text](url)
+    t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener" style="color:var(--color-primary);text-decoration:underline">$1</a>');
 
     // Inline-Formatierung
     t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
