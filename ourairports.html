@@ -1051,6 +1051,20 @@
         }
         .ai-panel-close:hover { color: #fff; }
 
+        /* ── KI Nachricht Formatierung ── */
+        .ai-msg-bot .ai-table { width:100%; border-collapse:collapse; font-size:0.78rem; margin:6px 0; }
+        .ai-msg-bot .ai-table th { background:var(--color-primary); color:#fff; padding:5px 8px; text-align:left; font-weight:600; }
+        .ai-msg-bot .ai-table td { padding:4px 8px; border-bottom:1px solid var(--color-border); }
+        .ai-msg-bot .ai-table tr:last-child td { border-bottom:none; }
+        .ai-msg-bot .ai-table tr:nth-child(even) td { background:var(--color-surface-2); }
+        .ai-msg-bot .ai-h1 { font-size:0.92rem; font-weight:700; margin:8px 0 3px; color:var(--color-primary); }
+        .ai-msg-bot .ai-h2 { font-size:0.88rem; font-weight:700; margin:6px 0 2px; color:var(--color-text); border-bottom:1px solid var(--color-border); padding-bottom:2px; }
+        .ai-msg-bot .ai-h3 { font-size:0.82rem; font-weight:600; margin:5px 0 2px; color:var(--color-text-sub); }
+        .ai-msg-bot .ai-hr { border:none; border-top:1px solid var(--color-border); margin:7px 0; }
+        .ai-msg-bot .ai-ul, .ai-msg-bot .ai-ol { padding-left:16px; margin:4px 0; }
+        .ai-msg-bot .ai-ul li, .ai-msg-bot .ai-ol li { margin:2px 0; font-size:0.82rem; }
+        .ai-msg-bot .ai-code { background:var(--color-surface-2); padding:1px 5px; border-radius:3px; font-family:monospace; font-size:0.78em; border:1px solid var(--color-border); }
+
         #ai-messages {
             flex: 1; overflow-y: auto; padding: 12px;
             display: flex; flex-direction: column; gap: 8px;
@@ -5464,7 +5478,15 @@ EU: EGLL=London LHR · EGKK=London Gatwick · LFPG=Paris CDG · LEMD=Madrid · L
 US: KJFK=New York · KLAX=Los Angeles · KORD=Chicago · KATL=Atlanta · KIAD=Washington
 ASIA: RJTT=Tokyo · ZBAA=Peking · VHHH=Hongkong · WSSS=Singapur · OMDB=Dubai
 
-Antworte auf Deutsch. **Fett** für Begriffe. Sei präzise und vollständig.`;
+## FORMATIERUNGSREGELN
+- **Fett** für Fachbegriffe und Schlüsselwerte
+- Tabellen für Vergleiche: | Kategorie | Wert | Bedeutung |
+- Nummerierte Listen (1. 2. 3.) für Schritte oder Reihenfolge
+- Aufzählung (- Punkt) für Eigenschaften
+- \`Code\` für METAR-Strings, ICAO-Codes, Frequenzen
+- ## Überschrift für neue Abschnitte
+- --- als Trennlinie zwischen Bereichen
+- Antworte IMMER auf Deutsch, keine englischen Sätze ohne Übersetzung`;
 
 // ── App-Steuerung ────────────────────────────────────────────────────────────
 function aiExecuteSearch(query) {
@@ -5619,18 +5641,62 @@ function aiShowSuggestions(list) {
         list.map(s => `<button class="ai-sugg" onclick="aiSendText(this.textContent)">${s}</button>`).join('');
 }
 
+function aiRenderMarkdown(raw) {
+    // Zeichen escapen
+    let t = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    // Tabellen (| col | col |)
+    t = t.replace(/((?:^\|.+\|\n?)+)/gm, tableBlock => {
+        const rows = tableBlock.trim().split('\n').filter(r => r.trim());
+        let html = '<table class="ai-table"><tbody>';
+        let isHead = true;
+        for (const row of rows) {
+            if (/^\|[-| ]+\|$/.test(row.trim())) { isHead = false; continue; }
+            const cells = row.split('|').filter((_, i, a) => i > 0 && i < a.length - 1);
+            const tag = isHead ? 'th' : 'td';
+            html += `<tr>${cells.map(c => `<${tag}>${c.trim()}</${tag}>`).join('')}</tr>`;
+            isHead = false;
+        }
+        return html + '</tbody></table>';
+    });
+
+    // Überschriften
+    t = t.replace(/^### (.+)$/gm, '<div class="ai-h3">$1</div>');
+    t = t.replace(/^## (.+)$/gm,  '<div class="ai-h2">$1</div>');
+    t = t.replace(/^# (.+)$/gm,   '<div class="ai-h1">$1</div>');
+
+    // Horizontale Linie
+    t = t.replace(/^---+$/gm, '<hr class="ai-hr">');
+
+    // Nummerierte Liste
+    t = t.replace(/((?:^\d+\. .+\n?)+)/gm, block => {
+        const items = block.trim().split('\n').map(l => l.replace(/^\d+\. /,'').trim());
+        return '<ol class="ai-ol">' + items.map(i => `<li>${i}</li>`).join('') + '</ol>';
+    });
+
+    // Aufzählungsliste
+    t = t.replace(/((?:^[•\-\*] .+\n?)+)/gm, block => {
+        const items = block.trim().split('\n').map(l => l.replace(/^[•\-\*] /,'').trim());
+        return '<ul class="ai-ul">' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
+    });
+
+    // Inline-Formatierung
+    t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/\*(.+?)\*/g,     '<em>$1</em>');
+    t = t.replace(/`([^`]+)`/g,     '<code class="ai-code">$1</code>');
+
+    // Zeilenumbrüche (nach Blöcken nicht nötig)
+    t = t.replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
+    return t;
+}
+
 function aiAddMsg(role, text) {
     const msgs = document.getElementById('ai-messages');
     const div  = document.createElement('div');
     div.className = `ai-msg ai-msg-${role}`;
-    div.innerHTML  = text
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`([^`]+)`/g, '<code style="background:var(--color-surface-2);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:0.8em">$1</code>')
-        .replace(/^#{1,3} (.+)$/gm, '<strong style="font-size:0.9em;display:block;margin-top:6px">$1</strong>')
-        .replace(/^[•·\-] (.+)$/gm, '&bull; $1')
-        .replace(/\n/g, '<br>');
+    div.innerHTML  = role === 'user'
+        ? text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        : aiRenderMarkdown(text);
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
     return div;
