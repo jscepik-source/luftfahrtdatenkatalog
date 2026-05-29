@@ -5257,7 +5257,8 @@ function globusZoomAuf(lat, lon, icao) {
 <script>
 // ── KI-Assistent (v4) ────────────────────────────────────────────────────────
 const GEMINI_API_KEY   = 'AIzaSyBpEmqXfouSsRwufxurO8pkhxZMUM03DqU';
-const AI_MODEL         = 'gemini-2.0-flash';
+const AI_MODELS        = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b'];
+let   aiModelIdx       = 0;
 let aiHistory          = [];
 let aiOpen             = false;
 let aiReady            = false;
@@ -5706,28 +5707,42 @@ async function aiSend() {
     aiHistory.push({ role: 'user', parts: [{ text }] });
     aiAddTyping();
 
-    try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-        const body = {
-            system_instruction: { parts: [{ text: systemWithCtx }] },
-            contents: aiHistory,
-            generationConfig: { maxOutputTokens: 1200, temperature: 0.65 }
-        };
-        const res  = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error.message);
+    let reply = null, lastErr = null;
+    for (let attempt = 0; attempt < AI_MODELS.length; attempt++) {
+        const model = AI_MODELS[(aiModelIdx + attempt) % AI_MODELS.length];
+        try {
+            const url  = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+            const body = {
+                system_instruction: { parts: [{ text: systemWithCtx }] },
+                contents: aiHistory,
+                generationConfig: { maxOutputTokens: 1200, temperature: 0.65 }
+            };
+            const res  = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const data = await res.json();
+            if (data.error) { lastErr = new Error(data.error.message); continue; }
+            reply = data.candidates?.[0]?.content?.parts?.[0]?.text || '(Keine Antwort)';
+            aiModelIdx = (aiModelIdx + attempt) % AI_MODELS.length; // merke funktionierenden Index
+            document.getElementById('ai-ctx-label').textContent =
+                (aiCurrentIcao ? `Kontext: ${aiCurrentIcao} · ` : '') + model;
+            break;
+        } catch(e) { lastErr = e; }
+    }
 
-        let reply = data.candidates?.[0]?.content?.parts?.[0]?.text || '(Keine Antwort)';
+    aiRemoveTyping();
+
+    if (!reply) {
+        const isKey = /API_KEY|INVALID|403|quota/i.test(lastErr?.message || '');
+        const msg = isKey
+            ? `Quota überschritten oder ungültiger Key. Bitte neuen Key bei <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--color-primary)">aistudio.google.com/apikey</a> holen.`
+            : `Fehler: ${lastErr?.message || 'Unbekannt'}`;
+        aiAddMsg('bot', `⚠️ ${msg}`);
+    } else {
         aiHistory.push({ role: 'model', parts: [{ text: reply }] });
         if (aiHistory.length > 24) aiHistory = aiHistory.slice(-24);
 
-        // App-Aktionen ausführen
         reply = aiParseActions(reply);
-
-        aiRemoveTyping();
         if (reply) aiAddMsg('bot', reply);
 
-        // Kontextbezogene Follow-up-Vorschläge
         const combined = (reply + text).toLowerCase();
         const openIcao = aiCurrentIcao;
         if (/metar|cavok|vfr|ifr|taf|rvr/i.test(combined))
@@ -5736,11 +5751,11 @@ async function aiSend() {
             aiShowSuggestions(['Wie lange gilt ein NOTAM?', 'Was ist QMRLC?', openIcao ? `NOTAMs ${openIcao}` : 'NOTAMs EDDF', 'Was ist ein SIGMET?']);
         else if (/ils|cat\s*i|cat\s*ii|cat\s*iii/i.test(combined))
             aiShowSuggestions(['CAT I vs CAT III?', 'Welche Ausrüstung brauche ich?', 'Was ist Decision Height?', 'ILS EDDF zeigen']);
-        else if (/piste|runway|rwy|oberfläche|asphalt/i.test(combined))
+        else if (/piste|runway|rwy/i.test(combined))
             aiShowSuggestions([openIcao ? `Alle Pisten ${openIcao}` : 'Pisten EDDF', 'Was ist PCN?', 'Pisten Frankfurt vs München', 'Längste Pisten weltweit']);
-        else if (/distanz|entfernung|distance|nm|kilometer/i.test(combined))
+        else if (/distanz|entfernung|distance|nm/i.test(combined))
             aiShowSuggestions(['EDDF → EDDM', 'EDDF → EGLL', 'LOWW → LSZH', 'Frankfurt nach New York']);
-        else if (/vergleich|compare|vs\.|versus/i.test(combined))
+        else if (/vergleich|vs\.|versus/i.test(combined))
             aiShowSuggestions(['EDDF vs EDDM', 'Frankfurt vs Wien', 'EGLL vs LFPG', 'KJFK vs KLAX']);
         else if (openIcao)
             aiShowSuggestions([`METAR ${openIcao} erklären`, `NOTAMs ${openIcao}`, `Karte ${openIcao}`, `Pisten ${openIcao}`]);
@@ -5748,14 +5763,6 @@ async function aiSend() {
             aiShowSuggestions(['Zeige EDDF', 'Wetter München', 'Vergleiche EDDF EDDM', 'Distanz FRA LHR']);
 
         aiUpdateCtxLabel();
-
-    } catch(e) {
-        aiRemoveTyping();
-        const isKey = /API_KEY|INVALID|403/i.test(e.message);
-        const msg = isKey
-            ? `Ungültiger API-Key. Bitte <strong>GEMINI_API_KEY</strong> im Quellcode prüfen.`
-            : `Fehler: ${e.message}`;
-        aiAddMsg('bot', `⚠️ ${msg}`);
     }
 
     document.getElementById('ai-send').disabled = false;
