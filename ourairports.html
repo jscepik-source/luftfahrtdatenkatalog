@@ -5577,8 +5577,38 @@ Wenn du Optionen oder Folgefragen anbieten willst: IMMER als [CHOICES: Option 1 
 Beispiele:
 - "Was möchtest du vergleichen? [CHOICES: Pisten | Frequenzen | ILS-Kategorien | Allgemeine Infos]"
 - "Welchen Tab soll ich öffnen? [CHOICES: Wetter | NOTAMs | Karte | Flüge]"
-- "Welchen Flughafen? [CHOICES: EDDF Frankfurt | EDDM München | EDDB Berlin | LOWW Wien]"
-Maximal 4 Optionen pro [CHOICES:]-Block. Der Nutzer kann auch "Andere Frage" wählen und selbst tippen.`;
+Maximal 4 Optionen pro [CHOICES:]-Block.
+
+## STÄDTE MIT MEHREREN FLUGHÄFEN
+Wenn der Nutzer eine STADT nennt (kein ICAO), die mehrere große Flughäfen hat → IMMER [CHOICES:] mit den Hauptflughäfen anbieten, dann den gewählten öffnen.
+
+| Stadt | Flughäfen |
+|---|---|
+| New York | KJFK (JFK Kennedy), KEWR (Newark), KLGA (LaGuardia) |
+| London | EGLL (Heathrow), EGKK (Gatwick), EGLC (City), EGSS (Stansted) |
+| Paris | LFPG (Charles de Gaulle), LFPO (Orly) |
+| Chicago | KORD (O'Hare), KMDW (Midway) |
+| Los Angeles | KLAX (LAX), KBUR (Burbank), KSNA (Orange County) |
+| San Francisco | KSFO (SFO), KOAK (Oakland), KSJC (San Jose) |
+| Washington | KIAD (Dulles), KDCA (Reagan), KBWI (Baltimore) |
+| Miami | KMIA (Miami Intl), KFLL (Fort Lauderdale) |
+| Tokyo | RJTT (Haneda), RJAA (Narita) |
+| Osaka | RJBB (Kansai), RJOO (Itami) |
+| Seoul | RKSI (Incheon), RKSS (Gimpo) |
+| Shanghai | ZSPD (Pudong), ZSSS (Hongqiao) |
+| Beijing | ZBAA (Capital), ZBAD (Daxing) |
+| Dubai | OMDB (Dubai Intl), OMDW (Al Maktoum) |
+| Istanbul | LTFM (Istanbul), LTAI (Antalya) |
+| Amsterdam | EHAM (Schiphol) — nur einer groß |
+| Frankfurt | EDDF — nur einer groß |
+| München | EDDM — nur einer groß |
+| Wien | LOWW — nur einer groß |
+| Zürich | LSZH — nur einer groß |
+
+Beispiel Antwort bei "Wetter New York":
+"New York hat drei große Flughäfen — welchen meinst du?
+[CHOICES: KJFK Kennedy | KEWR Newark | KLGA LaGuardia]"
+→ Nach Auswahl: [OPEN_TAB:KJFK,wetter]`;
 
 // ── App-Steuerung ────────────────────────────────────────────────────────────
 function aiExecuteSearch(query) {
