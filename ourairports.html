@@ -2868,27 +2868,27 @@ async function ladeKarte(icao, lat, lon) {
     });
     L.marker([lat, lon], { icon }).addTo(map).bindPopup(`<strong>${icao}</strong>`);
 
-    // OpenAIP Tile-Layer als Overlay (wenn Key vorhanden)
-    const overlays = {};
+    // Basis Layer-Control
+    const layerCtrl = L.control.layers(
+        { 'Straßenkarte': osmLayer, '🛰 Satellit': satLayer },
+        {},
+        { position: 'topright', collapsed: false }
+    ).addTo(map);
+
+    // OpenAIP Tile-Layer
     if (OPENAIP_KEY) {
         const oaipTile = L.tileLayer(
             `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${OPENAIP_KEY}`,
-            { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.7 }
+            { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.75 }
         );
-        overlays['🌐 OpenAIP Luftraum'] = oaipTile;
         oaipTile.addTo(map);
+        layerCtrl.addOverlay(oaipTile, '🌐 OpenAIP Tiles');
     }
-    L.control.layers(
-        { 'Straßenkarte': osmLayer, '🛰 Satellit': satLayer },
-        overlays,
-        { position: 'topright' }
-    ).addTo(map);
 
     requestAnimationFrame(() => requestAnimationFrame(() => map.invalidateSize()));
     ladeFlughafenLayout(map, lat, lon);
-    if (OPENAIP_KEY) ladeOpenAipLuftraum(map, lat, lon);
-    // SHV-Daten nur für Schweizer Flughäfen (LS-Präfix)
-    if (icao && icao.startsWith('LS')) ladeShvLuftraum(map, lat, lon);
+    if (OPENAIP_KEY) ladeOpenAipLuftraum(map, lat, lon, layerCtrl);
+    if (icao && icao.startsWith('LS')) ladeShvLuftraum(map, lat, lon, layerCtrl);
 }
 
 const OAIP_KLASSE_FARBE = {
@@ -2899,54 +2899,36 @@ const OAIP_KLASSE_FARBE = {
     'OTHER':'#94a3b8'
 };
 
-async function ladeOpenAipLuftraum(map, lat, lon) {
+async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
     try {
-        const dist = 50000; // 50km Radius
-        const res  = await fetch(
-            `https://api.core.openaip.net/api/airspaces?page=0&limit=100&pos=${lat},${lon}&dist=${dist}`,
+        const res = await fetch(
+            `https://api.core.openaip.net/api/airspaces?page=0&limit=100&pos=${lat},${lon}&dist=50000`,
             { headers: { 'x-openaip-api-key': OPENAIP_KEY } }
         );
         if (!res.ok) return;
         const data = await res.json();
-        const luftraumLayer = L.layerGroup();
+        const layer = L.layerGroup();
 
         for (const as of (data.items || [])) {
-            const geo  = as.geometry;
-            if (!geo || geo.type !== 'Polygon') continue;
-
+            if (as.geometry?.type !== 'Polygon') continue;
             const klasse = as.icaoClass || as.type || 'OTHER';
             const farbe  = OAIP_KLASSE_FARBE[klasse.toUpperCase()] || OAIP_KLASSE_FARBE['OTHER'];
-            const coords = geo.coordinates[0].map(([lon, lat]) => [lat, lon]);
-
+            const coords = as.geometry.coordinates[0].map(([lo, la]) => [la, lo]);
             const bot = as.altLimitBottom ? `${as.altLimitBottom.value} ${as.altLimitBottom.unit} ${as.altLimitBottom.referenceDatum}` : '–';
             const top = as.altLimitTop   ? `${as.altLimitTop.value} ${as.altLimitTop.unit} ${as.altLimitTop.referenceDatum}` : '–';
-            const popup = `<strong>${as.name || '?'}</strong><br>Klasse: <b>${klasse}</b><br>FL: ${bot} – ${top}`;
-
-            L.polygon(coords, {
-                color: farbe, weight: 1.5, opacity: 0.85,
-                fillColor: farbe, fillOpacity: 0.08
-            }).bindPopup(popup).addTo(luftraumLayer);
-
-            // Label in der Mitte
-            const center = coords.reduce((a, c) => [a[0]+c[0], a[1]+c[1]], [0,0]).map(v => v/coords.length);
-            L.marker(center, {
-                icon: L.divIcon({
-                    className: '',
-                    html: `<span style="background:${farbe};color:#fff;font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;opacity:0.85">${klasse}</span>`,
-                    iconSize: [24, 14], iconAnchor: [12, 7]
-                })
-            }).addTo(luftraumLayer);
+            L.polygon(coords, { color: farbe, weight: 1.5, opacity: 0.85, fillColor: farbe, fillOpacity: 0.09 })
+             .bindPopup(`<strong>${as.name || '?'}</strong><br>Klasse: <b>${klasse}</b><br>${bot} – ${top}`)
+             .addTo(layer);
+            const c = coords.reduce((a, p) => [a[0]+p[0], a[1]+p[1]], [0,0]).map(v => v/coords.length);
+            L.marker(c, { icon: L.divIcon({ className:'', html:`<span style="background:${farbe};color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px">${klasse}</span>`, iconSize:[28,14], iconAnchor:[14,7] }) }).addTo(layer);
         }
 
-        luftraumLayer.addTo(map);
-        // Layer-Control aktualisieren
-        map.eachLayer(ctrl => {
-            if (ctrl._layerControlInputs) ctrl.addOverlay(luftraumLayer, '🟦 OpenAIP Polygone');
-        });
-    } catch(e) { console.warn('OpenAIP Luftraum:', e.message); }
+        layer.addTo(map);
+        if (layerCtrl) layerCtrl.addOverlay(layer, '🟦 OpenAIP Lufträume');
+    } catch(e) { console.warn('OpenAIP:', e.message); }
 }
 
-async function ladeShvLuftraum(map, lat, lon) {
+async function ladeShvLuftraum(map, lat, lon, layerCtrl) {
     const FILTER_RADIUS = 0.45; // ~50km in Grad
     try {
         const [asRes, wlRes] = await Promise.all([
@@ -2978,12 +2960,10 @@ async function ladeShvLuftraum(map, lat, lon) {
         addFeatures(wlGeo, wlGroup,  '#84cc16');
 
         shvGroup.addTo(map);
-        const ctrl = map._controlContainer?.querySelector('.leaflet-control-layers-overlays');
-        // Layer-Control Einträge
-        L.control.layers({}, {
-            '🇨🇭 SHV Luftraum': shvGroup,
-            '🦅 SHV Wildschutz': wlGroup
-        }, { position: 'topright', collapsed: false }).addTo(map);
+        if (layerCtrl) {
+            layerCtrl.addOverlay(shvGroup, '🇨🇭 SHV Luftraum CH');
+            layerCtrl.addOverlay(wlGroup,  '🦅 SHV Wildschutz CH');
+        }
     } catch(e) { console.warn('SHV:', e.message); }
 }
 
