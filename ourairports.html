@@ -1184,6 +1184,60 @@
         .ai-key-form a { font-size: 0.72rem; color: var(--color-primary); text-decoration: none; }
         .ai-key-form a:hover { text-decoration: underline; }
 
+        /* ── Vergleichs-Panel ── */
+        #vergleich-panel {
+            max-width: 1080px; margin: 0 auto var(--space-md);
+            padding: 0 var(--space-md);
+        }
+        .vgl-wrap {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .vgl-head {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 18px;
+            background: var(--color-primary); color: #fff;
+            font-weight: 700; font-size: 0.88rem;
+        }
+        .vgl-close {
+            background: none; border: none; color: rgba(255,255,255,0.8);
+            cursor: pointer; font-size: 1.1rem; padding: 0 4px;
+        }
+        .vgl-close:hover { color: #fff; }
+        .vgl-grid {
+            display: grid; grid-template-columns: 160px 1fr 1fr;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .vgl-grid:last-child { border-bottom: none; }
+        .vgl-label {
+            padding: 9px 14px;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; color: var(--color-text-dim);
+            background: var(--color-surface-2);
+            border-right: 1px solid var(--color-border);
+            display: flex; align-items: center;
+        }
+        .vgl-cell {
+            padding: 9px 14px; font-size: 0.85rem;
+            border-right: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+        .vgl-cell:last-child { border-right: none; }
+        .vgl-cell strong { color: var(--color-primary); }
+        .vgl-header-cell {
+            padding: 10px 14px; font-weight: 700; font-size: 0.88rem;
+            background: var(--color-surface-2);
+            border-right: 1px solid var(--color-border);
+            text-align: center;
+        }
+        .vgl-header-cell .vgl-icao { font-family: monospace; font-size: 1rem; color: var(--color-primary); }
+        .vgl-header-cell .vgl-name { font-size: 0.75rem; color: var(--color-text-sub); margin-top: 2px; }
+        .vgl-win { background: #dcfce7; }
+        [data-theme="dark"] .vgl-win { background: rgba(22,163,74,0.15); }
+
         /* ── Footer ── */
         footer {
             border-top: 1px solid var(--color-border);
@@ -2330,6 +2384,9 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
         <span id="dist-result" class="dist-result"></span>
     </div>
 </div>
+
+<!-- ── Vergleichs-Panel ── -->
+<div id="vergleich-panel" style="display:none"></div>
 
 <!-- ── Main Content ── -->
 <main class="catalog" aria-label="Flughafenliste">
@@ -5812,27 +5869,87 @@ function aiExecuteFilter(type) {
     });
 }
 
-async function aiExecuteCompare(icao1, icao2) {
-    const inp = document.getElementById('suche');
-    if (!inp) return;
-    // Gemeinsamen Präfix suchen (z.B. EDD für EDDF+EDDM)
-    let prefix = '';
-    for (let i = 0; i < Math.min(icao1.length, icao2.length); i++) {
-        if (icao1[i] === icao2[i]) prefix += icao1[i]; else break;
-    }
-    inp.value = prefix.length >= 2 ? prefix : icao1.slice(0,2);
-    inp.dispatchEvent(new Event('input'));
-    await new Promise(r => setTimeout(r, 500));
-    // Beide Cards öffnen
-    for (const ic of [icao1, icao2]) {
-        const card = [...document.querySelectorAll('article.airport-card')]
-            .find(c => c.querySelector('.badge-icao')?.textContent?.trim() === ic);
-        if (card && !card.classList.contains('card-open')) {
-            card.querySelector('.card-header')?.click();
-            await new Promise(r => setTimeout(r, 250));
+function aiExecuteCompare(icao1, icao2) {
+    const ap1 = katalog[icao1.toUpperCase()];
+    const ap2 = katalog[icao2.toUpperCase()];
+    if (!ap1 || !ap2) return;
+    const i1 = icao1.toUpperCase(), i2 = icao2.toUpperCase();
+
+    const maxRwyLen = ap => {
+        if (!ap.runways?.length) return 0;
+        return Math.max(...ap.runways.map(r => r.length || 0));
+    };
+    const ilsMax = (ap, ic) => {
+        if (!ap.runways?.length) return '–';
+        const icaoKey = ic.toUpperCase();
+        const cats = ap.runways.flatMap(r => [r.le, r.he]).filter(Boolean)
+            .map(des => ILS_KAT_DE?.[icaoKey]?.[(des||'').toUpperCase()] || '')
+            .filter(Boolean);
+        if (!cats.length) return '–';
+        for (const c of ['III','IIIc','IIIb','IIIa','II','I']) {
+            if (cats.some(x => x.includes(c.replace('CAT ',''))) ) return 'CAT ' + c;
         }
-    }
-    document.querySelector('article.airport-card')?.scrollIntoView({ behavior:'smooth', block:'start' });
+        return 'ILS';
+    };
+    const elev = ap => ap.elev !== undefined ? `${ap.elev} ft / ${Math.round(ap.elev*0.3048)} m` : '–';
+    const rwyInfo = ap => ap.runways?.length
+        ? `${ap.runways.length}× (max ${Math.round(maxRwyLen(ap)*0.3048)}m)`
+        : '–';
+    const freqs = ap => ap.freqs?.slice(0,3).map(f => `${f.freq} ${f.desc||f.type||''}`).join('<br>') || '–';
+
+    const win = (v1, v2, higherBetter = true) => {
+        const n1 = parseFloat(v1), n2 = parseFloat(v2);
+        if (isNaN(n1) || isNaN(n2)) return ['',''];
+        return higherBetter
+            ? [n1 >= n2 ? 'vgl-win' : '', n2 >= n1 ? 'vgl-win' : '']
+            : [n1 <= n2 ? 'vgl-win' : '', n2 <= n1 ? 'vgl-win' : ''];
+    };
+
+    const row = (label, v1, v2, cls1='', cls2='') => `
+        <div class="vgl-grid">
+            <div class="vgl-label">${label}</div>
+            <div class="vgl-cell ${cls1}">${v1}</div>
+            <div class="vgl-cell ${cls2}">${v2}</div>
+        </div>`;
+
+    const [wEl1, wEl2] = win(ap1.elev, ap2.elev, false); // niedrigere Höhe besser für Sicht
+    const [wRwy1, wRwy2] = win(maxRwyLen(ap1), maxRwyLen(ap2), true);
+
+    const html = `<div class="vgl-wrap">
+        <div class="vgl-head">
+            ✈ Vergleich: ${i1} vs ${i2}
+            <button class="vgl-close" onclick="document.getElementById('vergleich-panel').style.display='none'">✕</button>
+        </div>
+        <div class="vgl-grid">
+            <div class="vgl-label">Flughafen</div>
+            <div class="vgl-header-cell">
+                <div class="vgl-icao">${i1}</div>
+                <div class="vgl-name">${ap1.name || '–'}</div>
+            </div>
+            <div class="vgl-header-cell">
+                <div class="vgl-icao">${i2}</div>
+                <div class="vgl-name">${ap2.name || '–'}</div>
+            </div>
+        </div>
+        ${row('IATA', ap1.iata||'–', ap2.iata||'–')}
+        ${row('Land', ap1.country_name||ap1.country||'–', ap2.country_name||ap2.country||'–')}
+        ${row('Stadt', ap1.city||'–', ap2.city||'–')}
+        ${row('Höhe', elev(ap1), elev(ap2), wEl1, wEl2)}
+        ${row('Typ', (ap1.type||'').replace(/_/g,' '), (ap2.type||'').replace(/_/g,' '))}
+        ${row('Linienflug', ap1.scheduled?'✅ Ja':'–', ap2.scheduled?'✅ Ja':'–')}
+        ${row('Pisten', rwyInfo(ap1), rwyInfo(ap2), wRwy1, wRwy2)}
+        ${row('Max ILS', ilsMax(ap1,i1), ilsMax(ap2,i2))}
+        ${row('Frequenzen', `<small>${freqs(ap1)}</small>`, `<small>${freqs(ap2)}</small>`)}
+        ${row('Koordinaten',
+            ap1.lat ? `${parseFloat(ap1.lat).toFixed(3)}°N ${parseFloat(ap1.lon).toFixed(3)}°E` : '–',
+            ap2.lat ? `${parseFloat(ap2.lat).toFixed(3)}°N ${parseFloat(ap2.lon).toFixed(3)}°E` : '–'
+        )}
+    </div>`;
+
+    const panel = document.getElementById('vergleich-panel');
+    panel.innerHTML = html;
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function aiExecuteDistance(a, b) {
