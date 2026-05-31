@@ -3068,11 +3068,30 @@ const OAIP_KLASSE_FARBE = {
     'OTHER':'#94a3b8'
 };
 
+const OAIP_UNIT = {0:'ft', 1:'FL', 2:'m'};
+const OAIP_REF  = {0:'GND', 1:'MSL', 2:'STD'};
+const OAIP_ICAO_CLASS = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G'};
+const OAIP_TYPE = {
+    0:'OTHER',1:'RESTRICTED',2:'DANGER',3:'PROHIBITED',4:'CTR',
+    5:'TMZ',6:'RMZ',7:'TMA',8:'TIA',9:'TIZ',10:'TRA',11:'TSA',
+    12:'FIR',13:'UIR',14:'ADIZ',15:'ATZ',16:'MATZ'
+};
+const OAIP_SPECIAL = new Set(['RESTRICTED','DANGER','PROHIBITED','CTR','TMZ','RMZ','TMA','ADIZ','ATZ']);
+
 function formatAlt(lim) {
     if (!lim) return '–';
-    const v = lim.value ?? 0, u = lim.unit || '', r = lim.referenceDatum || '';
-    if (v === 0 && r.toUpperCase() === 'GND') return 'GND';
+    const v = lim.value ?? 0;
+    const u = typeof lim.unit === 'number' ? (OAIP_UNIT[lim.unit] || '') : (lim.unit || '');
+    const r = typeof lim.referenceDatum === 'number' ? (OAIP_REF[lim.referenceDatum] || '') : (lim.referenceDatum || '');
+    if (v === 0 && r === 'GND') return 'GND';
+    if (u === 'FL') return `FL ${v}`;
     return `${v} ${u} ${r}`.trim();
+}
+
+function oaipKlasse(as) {
+    const typeStr  = typeof as.type      === 'number' ? (OAIP_TYPE[as.type]       || 'OTHER') : (as.type       || 'OTHER');
+    const classStr = typeof as.icaoClass === 'number' ? (OAIP_ICAO_CLASS[as.icaoClass] || '') : (as.icaoClass  || '');
+    return (OAIP_SPECIAL.has(typeStr.toUpperCase()) ? typeStr : (classStr || typeStr || 'OTHER')).toUpperCase();
 }
 
 async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
@@ -3091,15 +3110,11 @@ async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
         const KLABEL = {'A':'Klasse A','B':'Klasse B','C':'Klasse C','D':'Klasse D','E':'Klasse E','F':'Klasse F','G':'Klasse G','CTR':'CTR','TMA':'TMA','TMZ':'TMZ','RMZ':'RMZ','RESTRICTED':'Restricted','PROHIBITED':'Prohibited','DANGER':'Danger','OTHER':'Sonstige'};
 
         const items = (data.items || []).filter(as => as.geometry?.type === 'Polygon');
-        items.sort((a, b) => {
-            const ka = (a.icaoClass || a.type || 'OTHER').toUpperCase();
-            const kb = (b.icaoClass || b.type || 'OTHER').toUpperCase();
-            return (PRIO[ka] || 6) - (PRIO[kb] || 6);
-        });
+        items.sort((a, b) => (PRIO[oaipKlasse(a)] || 6) - (PRIO[oaipKlasse(b)] || 6));
         const seenKlassen = new Map();
 
         for (const as of items) {
-            const klasse = (as.icaoClass || as.type || 'OTHER').toUpperCase();
+            const klasse = oaipKlasse(as);
             const farbe  = OAIP_KLASSE_FARBE[klasse] || OAIP_KLASSE_FARBE['OTHER'];
             const coords = as.geometry.coordinates[0].map(([lo, la]) => [la, lo]);
             const bot = formatAlt(as.altLimitBottom);
