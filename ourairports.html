@@ -2489,6 +2489,7 @@ function ilsBadge(icao, desig) {
 
 const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
+const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/lxnav_latest.json';
 let nflJsonCache         = null;
 let eurocontrolCache     = null;
 
@@ -2579,6 +2580,21 @@ fetch(JSON_URL)
         startAnimiertePlatzhalter();
     })
     .catch(() => { document.getElementById('laden').innerHTML = '<p class="status-error">Fehler beim Laden der Daten.</p>'; });
+
+// LXNAV neueste Datenbank nachladen
+fetch(LXNAV_JSON_URL)
+    .then(r => r.json())
+    .then(d => {
+        if (!d?.url) return;
+        const date = d.updated ? new Date(d.updated).toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+        const label = d.label?.replace(/\d{2}\.\d{2} MB.*/, '').replace(/\d{1,2} [A-Za-z]+ \d{4}/, '').trim() || 'Aktuell';
+        document.querySelectorAll('#lxnav-dl-btn').forEach(btn => {
+            btn.href  = d.url;
+            btn.title = `Aktuellste LXNAV Datenbank${date ? ' · Stand ' + date : ''}`;
+            btn.innerHTML = `📥 LXNAV ${label}${date ? ' <small style="opacity:.7">' + date + '</small>' : ''}`;
+            btn.download = d.url.split('/').pop();
+        });
+    }).catch(() => {});
 
 function startAnimiertePlatzhalter() {
     const el = document.getElementById('suche');
@@ -3667,7 +3683,7 @@ function vfrLinksHtml(icao, lat, lon) {
             <span class="karten-extern-label">Segelflug</span>
             <div class="karten-extern-btns">
                 <a class="btn-ext" href="https://www.weglide.org/airport/${icao}" target="_blank" rel="noopener">🪂 WeGlide</a>
-                <a class="btn-ext" href="https://gliding.lxnav.com/lxdownloads/databases/" target="_blank" rel="noopener">📥 LXNAV Datenbank</a>
+                <a class="btn-ext" id="lxnav-dl-btn" href="https://gliding.lxnav.com/lxdownloads/databases/" target="_blank" rel="noopener">📥 LXNAV Datenbank</a>
                 <a class="btn-ext" href="https://thermal.kk7.ch/#${hasCoords ? `${latF},${lonF}` : ''}" target="_blank" rel="noopener">🌡 Thermik-Karte</a>
                 ${isEuropean ? `<a class="btn-ext" href="https://www.openflightmaps.org/" target="_blank" rel="noopener">🗺 Open-Flightmaps</a>` : ''}
                 ${(icao||'').startsWith('ED') || (icao||'').startsWith('ET') ? `<a class="btn-ext" href="https://www.dhv.de/piloten/unsere-fluggelande/fluggelaende-finder/" target="_blank" rel="noopener">🇩🇪 DHV Gelände</a>` : ''}
