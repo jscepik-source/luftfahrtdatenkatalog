@@ -2490,6 +2490,7 @@ function ilsBadge(icao, desig) {
 const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
 const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/lxnav_latest.json';
+const OPENAIP_KEY           = ''; // ← kostenlos: openaip.net → Account → API Key
 let nflJsonCache         = null;
 let eurocontrolCache     = null;
 
@@ -2857,7 +2858,6 @@ async function ladeKarte(icao, lat, lon) {
         maxZoom: 19
     });
     osmLayer.addTo(map);
-    L.control.layers({ 'Straßenkarte': osmLayer, '🛰 Satellit': satLayer }, {}, { position: 'topright' }).addTo(map);
 
     const icon = L.divIcon({
         className: '',
@@ -2866,8 +2866,80 @@ async function ladeKarte(icao, lat, lon) {
     });
     L.marker([lat, lon], { icon }).addTo(map).bindPopup(`<strong>${icao}</strong>`);
 
+    // OpenAIP Tile-Layer als Overlay (wenn Key vorhanden)
+    const overlays = {};
+    if (OPENAIP_KEY) {
+        const oaipTile = L.tileLayer(
+            `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${OPENAIP_KEY}`,
+            { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.7 }
+        );
+        overlays['🌐 OpenAIP Luftraum'] = oaipTile;
+        oaipTile.addTo(map);
+    }
+    L.control.layers(
+        { 'Straßenkarte': osmLayer, '🛰 Satellit': satLayer },
+        overlays,
+        { position: 'topright' }
+    ).addTo(map);
+
     requestAnimationFrame(() => requestAnimationFrame(() => map.invalidateSize()));
     ladeFlughafenLayout(map, lat, lon);
+    if (OPENAIP_KEY) ladeOpenAipLuftraum(map, lat, lon);
+}
+
+const OAIP_KLASSE_FARBE = {
+    'A':'#dc2626','B':'#ea580c','C':'#2563eb','D':'#16a34a',
+    'E':'#ca8a04','F':'#7c3aed','G':'#64748b',
+    'RESTRICTED':'#dc2626','PROHIBITED':'#7f1d1d','DANGER':'#ea580c',
+    'TMZ':'#0891b2','RMZ':'#0e7490','TMA':'#2563eb','CTR':'#16a34a',
+    'OTHER':'#94a3b8'
+};
+
+async function ladeOpenAipLuftraum(map, lat, lon) {
+    try {
+        const dist = 50000; // 50km Radius
+        const res  = await fetch(
+            `https://api.core.openaip.net/api/airspaces?page=0&limit=100&pos=${lat},${lon}&dist=${dist}`,
+            { headers: { 'x-openaip-api-key': OPENAIP_KEY } }
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        const luftraumLayer = L.layerGroup();
+
+        for (const as of (data.items || [])) {
+            const geo  = as.geometry;
+            if (!geo || geo.type !== 'Polygon') continue;
+
+            const klasse = as.icaoClass || as.type || 'OTHER';
+            const farbe  = OAIP_KLASSE_FARBE[klasse.toUpperCase()] || OAIP_KLASSE_FARBE['OTHER'];
+            const coords = geo.coordinates[0].map(([lon, lat]) => [lat, lon]);
+
+            const bot = as.altLimitBottom ? `${as.altLimitBottom.value} ${as.altLimitBottom.unit} ${as.altLimitBottom.referenceDatum}` : '–';
+            const top = as.altLimitTop   ? `${as.altLimitTop.value} ${as.altLimitTop.unit} ${as.altLimitTop.referenceDatum}` : '–';
+            const popup = `<strong>${as.name || '?'}</strong><br>Klasse: <b>${klasse}</b><br>FL: ${bot} – ${top}`;
+
+            L.polygon(coords, {
+                color: farbe, weight: 1.5, opacity: 0.85,
+                fillColor: farbe, fillOpacity: 0.08
+            }).bindPopup(popup).addTo(luftraumLayer);
+
+            // Label in der Mitte
+            const center = coords.reduce((a, c) => [a[0]+c[0], a[1]+c[1]], [0,0]).map(v => v/coords.length);
+            L.marker(center, {
+                icon: L.divIcon({
+                    className: '',
+                    html: `<span style="background:${farbe};color:#fff;font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;opacity:0.85">${klasse}</span>`,
+                    iconSize: [24, 14], iconAnchor: [12, 7]
+                })
+            }).addTo(luftraumLayer);
+        }
+
+        luftraumLayer.addTo(map);
+        // Layer-Control aktualisieren
+        map.eachLayer(ctrl => {
+            if (ctrl._layerControlInputs) ctrl.addOverlay(luftraumLayer, '🟦 OpenAIP Polygone');
+        });
+    } catch(e) { console.warn('OpenAIP Luftraum:', e.message); }
 }
 
 async function ladeFlughafenLayout(map, lat, lon) {
