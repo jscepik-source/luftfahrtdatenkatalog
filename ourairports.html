@@ -2962,13 +2962,34 @@ async function ladeKarte(icao, lat, lon) {
     if (icao && icao.startsWith('LS')) ladeShvLuftraum(map, lat, lon, layerCtrl);
 }
 
-const OAIP_KLASSE_FARBE = {
-    'A':'#dc2626','B':'#ea580c','C':'#2563eb','D':'#16a34a',
-    'E':'#ca8a04','F':'#7c3aed','G':'#64748b',
-    'RESTRICTED':'#dc2626','PROHIBITED':'#7f1d1d','DANGER':'#ea580c',
-    'TMZ':'#0891b2','RMZ':'#0e7490','TMA':'#2563eb','CTR':'#16a34a',
-    'OTHER':'#94a3b8'
+const OAIP_INFO = {
+    'A':          { f:'#b91c1c', dash:false,  fill:0.12, beschr:'Nur IFR · ATC-Freigabe Pflicht' },
+    'B':          { f:'#c2410c', dash:false,  fill:0.12, beschr:'IFR+VFR · alle mit ATC-Freigabe' },
+    'C':          { f:'#1d4ed8', dash:false,  fill:0.12, beschr:'IFR+VFR · VFR braucht Freigabe' },
+    'TMA':        { f:'#1d4ed8', dash:false,  fill:0.10, beschr:'Kontrollbezirk (TMA)' },
+    'D':          { f:'#15803d', dash:false,  fill:0.12, beschr:'Kontrollzone · Sprechfunkpflicht' },
+    'CTR':        { f:'#15803d', dash:false,  fill:0.12, beschr:'Control Zone · Einflug nur mit Freigabe' },
+    'E':          { f:'#b45309', dash:false,  fill:0.08, beschr:'VFR unkontrolliert · IFR mit ATC' },
+    'F':          { f:'#7c3aed', dash:false,  fill:0.07, beschr:'FIS-Dienst empfohlen' },
+    'G':          { f:'#6b7280', dash:false,  fill:0.05, beschr:'Unkontrolliert · kein Dienst' },
+    'TMZ':        { f:'#0891b2', dash:[4,4],  fill:0.10, beschr:'Transponder Mandatory Zone' },
+    'RMZ':        { f:'#0e7490', dash:[4,4],  fill:0.10, beschr:'Radio Mandatory Zone' },
+    'RESTRICTED': { f:'#dc2626', dash:[6,3],  fill:0.18, beschr:'Eingeschränkter Luftraum (R)' },
+    'PROHIBITED': { f:'#7f1d1d', dash:[6,3],  fill:0.22, beschr:'Sperrgebiet (P) · kein Einflug' },
+    'DANGER':     { f:'#d97706', dash:[6,3],  fill:0.15, beschr:'Gefahrengebiet (D)' },
+    'OTHER':      { f:'#94a3b8', dash:false,  fill:0.06, beschr:'' },
 };
+
+function oaipInfo(klasse) {
+    return OAIP_INFO[klasse?.toUpperCase()] || OAIP_INFO['OTHER'];
+}
+
+function fmtAlt(lim) {
+    if (!lim) return '–';
+    const ref = lim.referenceDatum === 'GND' ? 'GND' : lim.referenceDatum || '';
+    const val = lim.value === 0 && ref === 'GND' ? 'GND' : `${lim.value} ${lim.unit}`;
+    return ref === 'GND' && lim.value === 0 ? 'GND' : `${val} ${ref}`.trim();
+}
 
 async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
     try {
@@ -2978,24 +2999,88 @@ async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
         );
         if (!res.ok) return;
         const data = await res.json();
-        const layer = L.layerGroup();
+        const items = data.items || [];
+        if (!items.length) return;
 
-        for (const as of (data.items || [])) {
+        const layer = L.layerGroup();
+        const gefunden = new Map(); // klasse → { name, bot, top }
+
+        // Sortierung: unkritische zuerst (G→E→F→D→C→B→A→Restr.)
+        const SORT = ['G','F','E','D','CTR','TMA','C','B','A','TMZ','RMZ','DANGER','RESTRICTED','PROHIBITED','OTHER'];
+        const sorted = [...items].sort((a,b) => {
+            const ia = SORT.indexOf((a.icaoClass||a.type||'OTHER').toUpperCase());
+            const ib = SORT.indexOf((b.icaoClass||b.type||'OTHER').toUpperCase());
+            return (ia<0?99:ia) - (ib<0?99:ib);
+        });
+
+        for (const as of sorted) {
             if (as.geometry?.type !== 'Polygon') continue;
-            const klasse = as.icaoClass || as.type || 'OTHER';
-            const farbe  = OAIP_KLASSE_FARBE[klasse.toUpperCase()] || OAIP_KLASSE_FARBE['OTHER'];
+            const klasse = (as.icaoClass || as.type || 'OTHER').toUpperCase();
+            const info   = oaipInfo(klasse);
             const coords = as.geometry.coordinates[0].map(([lo, la]) => [la, lo]);
-            const bot = as.altLimitBottom ? `${as.altLimitBottom.value} ${as.altLimitBottom.unit} ${as.altLimitBottom.referenceDatum}` : '–';
-            const top = as.altLimitTop   ? `${as.altLimitTop.value} ${as.altLimitTop.unit} ${as.altLimitTop.referenceDatum}` : '–';
-            L.polygon(coords, { color: farbe, weight: 1.5, opacity: 0.85, fillColor: farbe, fillOpacity: 0.09 })
-             .bindPopup(`<strong>${as.name || '?'}</strong><br>Klasse: <b>${klasse}</b><br>${bot} – ${top}`)
+            const bot    = fmtAlt(as.altLimitBottom);
+            const top    = fmtAlt(as.altLimitTop);
+
+            const polyOpts = {
+                color: info.f, weight: 2, opacity: 0.9,
+                fillColor: info.f, fillOpacity: info.fill,
+                ...(info.dash ? { dashArray: info.dash.join(',') } : {})
+            };
+
+            const popupHtml = `
+                <div style="min-width:180px">
+                    <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">${as.name || '?'}</div>
+                    <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:0.78rem">
+                        <span style="color:#64748b">Klasse</span>
+                        <span style="font-weight:700;color:${info.f}">${klasse}</span>
+                        <span style="color:#64748b">Beschreibung</span>
+                        <span>${info.beschr || '–'}</span>
+                        <span style="color:#64748b">Untere Grenze</span>
+                        <span style="font-weight:600">${bot}</span>
+                        <span style="color:#64748b">Obere Grenze</span>
+                        <span style="font-weight:600">${top}</span>
+                    </div>
+                </div>`;
+
+            L.polygon(coords, polyOpts)
+             .bindPopup(popupHtml, { maxWidth: 240 })
              .addTo(layer);
+
+            // Permanentes Label in der Mitte
             const c = coords.reduce((a, p) => [a[0]+p[0], a[1]+p[1]], [0,0]).map(v => v/coords.length);
-            L.marker(c, { icon: L.divIcon({ className:'', html:`<span style="background:${farbe};color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px">${klasse}</span>`, iconSize:[28,14], iconAnchor:[14,7] }) }).addTo(layer);
+            L.marker(c, {
+                icon: L.divIcon({
+                    className: '',
+                    html: `<div style="background:${info.f};color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.4)">${klasse}</div>`,
+                    iconAnchor: [20, 8]
+                }),
+                interactive: false
+            }).addTo(layer);
+
+            if (!gefunden.has(klasse)) gefunden.set(klasse, { info, bot, top, name: as.name });
         }
 
         layer.addTo(map);
-        if (layerCtrl) layerCtrl.addOverlay(layer, '🟦 OpenAIP Lufträume');
+        if (layerCtrl) layerCtrl.addOverlay(layer, '🟦 Lufträume (OpenAIP)');
+
+        // Legende
+        const LegCtrl = L.Control.extend({
+            onAdd() {
+                const div = L.DomUtil.create('div');
+                div.style.cssText = 'background:rgba(255,255,255,0.95);padding:8px 10px;border-radius:6px;font-size:0.72rem;box-shadow:0 2px 8px rgba(0,0,0,0.15);max-width:200px;border:1px solid #e2e8f0';
+                div.innerHTML = `<div style="font-weight:700;margin-bottom:5px;font-size:0.75rem">Lufträume (${gefunden.size})</div>` +
+                    [...gefunden.entries()].map(([k, v]) =>
+                        `<div style="display:flex;align-items:center;gap:5px;margin:2px 0">
+                            <span style="background:${v.info.f};width:12px;height:12px;border-radius:2px;flex-shrink:0;display:inline-block;${v.info.dash ? 'outline:2px dashed '+v.info.f+';outline-offset:1px;background:transparent' : ''}"></span>
+                            <span><b>${k}</b> – ${v.info.beschr || v.name || ''}</span>
+                        </div>`
+                    ).join('') +
+                    `<div style="color:#94a3b8;margin-top:5px;font-size:0.65rem">Klick auf Fläche = Details</div>`;
+                return div;
+            }
+        });
+        new LegCtrl({ position: 'bottomleft' }).addTo(map);
+
     } catch(e) { console.warn('OpenAIP:', e.message); }
 }
 
