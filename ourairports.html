@@ -3894,7 +3894,7 @@ function baueKarte(icao, ap) {
         : 'https://www.windy.com/?airspace';
     // OpenAIP: kein Deep-Link möglich → Startseite, Nutzer sucht dort manuell
     const openAipUrl = hasCoords
-        ? `https://www.openaip.net/map#11/${latF}/${lonF}`
+        ? `https://www.openaip.net/map#11/${parseFloat(ap.lat).toFixed(4)}/${parseFloat(ap.lon).toFixed(4)}`
         : 'https://www.openaip.net/';
     // Overpass Turbo: sucht den Flughafen in OSM anhand ICAO-Tag — Overpass zoomt selbst hin
     const overpRawQuery = `[out:json][timeout:25];
