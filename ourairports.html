@@ -3045,13 +3045,12 @@ async function ladeKarte(icao, lat, lon) {
         { position: 'topright', collapsed: false }
     ).addTo(map);
 
-    // OpenAIP Tile-Layer
+    // OpenAIP Tile-Layer (optional, standardmäßig aus — Polygone sind der Primär-Layer)
     if (OPENAIP_KEY) {
         const oaipTile = L.tileLayer(
             `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${OPENAIP_KEY}`,
             { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.75 }
         );
-        oaipTile.addTo(map);
         layerCtrl.addOverlay(oaipTile, '🌐 OpenAIP Tiles');
     }
 
