@@ -1,0 +1,129 @@
+{
+  "EPBY": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPBY%201-en-GB.html",
+    "karten": {
+      "EPBY - INSTRUMENT APPROACH CHART - ICAO (ILS z) RWY 26 (CAT A/B/C/D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPBY/12/AD_2_EPBY_12-1.pdf",
+      "EPBY - INSTRUMENT APPROACH CHART - ICAO (ILS y or LOC y) RWY 26 (CAT A/B/C/D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPBY/12/AD_2_EPBY_12-3.pdf",
+      "EPBY - INSTRUMENT APPROACH CHART - ICAO (VOR z) RWY 08 (CAT A/B/C/D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPBY/12/AD_2_EPBY_12-5.pdf",
+      "EPBY - INSTRUMENT APPROACH CHART - ICAO (VOR y) RWY 08 (CAT A/B/C/D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPBY/12/AD_2_EPBY_12-7.pdf",
+      "EPBY - INSTRUMENT APPROACH CHART - ICAO (VOR) RWY 26 (CAT A/B/C/D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPBY/12/AD_2_EPBY_12-9.pdf",
+      "EPBY - INSTRUMENT APPROACH CHART - ICAO (RNP) RWY 08 (CAT A/B/C/D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPBY/12/AD_2_EPBY_12-11.pdf",
+      "EPBY - INSTRUMENT APPROACH CHART - ICAO (RNP) RWY 26 (CAT A/B/C/D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPBY/12/AD_2_EPBY_12-15.pdf",
+      "EPBY - VFR ARRIVAL AND DEPARTURE ROUTES": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPBY/13/AD_2_EPBY_13-1.pdf"
+    }
+  },
+  "EPGD": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPGD%201-en-GB.html",
+    "karten": {
+      "EPGD - VISUAL OPERATION CHART": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPGD/13/AD_2_EPGD_13-1.pdf"
+    }
+  },
+  "EPKK": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPKK%201-en-GB.html",
+    "karten": {
+      "EPKK - STANDARD DEPARTURE CHART - INSTRUMENT (SID) - ICAO (RNAV RWY 07)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKK/08/AD_2_EPKK_08-1.pdf",
+      "EPKK - STANDARD DEPARTURE CHART - INSTRUMENT (SID) - ICAO (RNAV RWY 25)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKK/08/AD_2_EPKK_08-5.pdf",
+      "EPKK - STANDARD ARRIVAL CHART - INSTRUMENT (STAR) - ICAO (RNAV RWY 07)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKK/10/AD_2_EPKK_10-1.pdf",
+      "EPKK - STANDARD ARRIVAL CHART - INSTRUMENT (STAR) - ICAO (RNAV RWY 25)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKK/10/AD_2_EPKK_10-7.pdf",
+      "EPKK - VISUAL OPERATION CHART": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKK/13/AD_2_EPKK_13-1.pdf"
+    }
+  },
+  "EPKT": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPKT%201-en-GB.html",
+    "karten": {
+      "EPKT - STANDARD DEPARTURE CHART - INSTRUMENT (SID) - ICAO (RNAV RWY 08)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKT/08/AD_2_EPKT_08-1.pdf",
+      "EPKT - STANDARD DEPARTURE CHART - INSTRUMENT (SID) - ICAO (RNAV RWY 26)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKT/08/AD_2_EPKT_08-5.pdf",
+      "EPKT - STANDARD ARRIVAL CHART - INSTRUMENT (STAR) - ICAO (RNAV RWY 08)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKT/10/AD_2_EPKT_10-1.pdf",
+      "EPKT - STANDARD ARRIVAL CHART - INSTRUMENT (STAR) - ICAO (RNAV RWY 26)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKT/10/AD_2_EPKT_10-5.pdf",
+      "EPKT - VISUAL OPERATION CHART": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPKT/13/AD_2_EPKT_13-1.pdf"
+    }
+  },
+  "EPLL": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPLL%201-en-GB.html",
+    "karten": {
+      "EPLL - AREA CHART ICAO - ARRIVAL AND TRANSIT ROUTES (TMA ÅÃDÅ¹)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPLL/09/AD_2_EPLL_09-1.pdf",
+      "EPLL - VFR ARRIVAL AND DEPARTURE ROUTES": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPLL/13/AD_2_EPLL_13-1.pdf"
+    }
+  },
+  "EPMO": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPMO%201-en-GB.html",
+    "karten": {
+      "EPMO - STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO (RNAV RWY 08)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/08/AD_2_EPMO_8-1.pdf",
+      "EPMO - STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO (RNAV RWY 26)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/08/AD_2_EPMO_8-5.pdf",
+      "EPMO - STANDARD ARRIVAL CHART INSTRUMENT (STAR) - ICAO (RNAV RWY 08)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/10/AD_2_EPMO_10-1.pdf",
+      "EPMO - STANDARD ARRIVAL CHART INSTRUMENT (STAR) - ICAO (RNAV RWY 26)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/10/AD_2_EPMO_10-7.pdf",
+      "EPMO - INSTRUMENT APPROACH CHART - ICAO (ILS CAT II or LOC) RWY 08 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/12/AD_2_EPMO_12-1.pdf",
+      "EPMO - INSTRUMENT APPROACH CHART - ICAO (VOR) RWY 08 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/12/AD_2_EPMO_12-3.pdf",
+      "EPMO - INSTRUMENT APPROACH CHART - ICAO (VOR) RWY 26 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/12/AD_2_EPMO_12-5.pdf",
+      "EPMO - INSTRUMENT APPROACH CHART - ICAO (RNP) RWY 08 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/12/AD_2_EPMO_12-7.pdf",
+      "EPMO - INSTRUMENT APPROACH CHART - ICAO (RNP) RWY 26 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/12/AD_2_EPMO_12-11.pdf",
+      "EPMO - VISUAL APPROACH CHART - ICAO (RWY 26)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/13/AD_2_EPMO_13-1.pdf",
+      "EPMO - VISUAL OPERATION CHART": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPMO/13/AD_2_EPMO_13-3.pdf"
+    }
+  },
+  "EPPO": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPPO%201-en-GB.html",
+    "karten": {
+      "EPPO - STANDARD DEPARTURE CHART - INSTRUMENT (SID) - ICAO (RNAV RWY 10)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPPO/08/AD_2_EPPO_08-1.pdf",
+      "EPPO - STANDARD DEPARTURE CHART - INSTRUMENT (SID) - ICAO (RNAV RWY 28)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPPO/08/AD_2_EPPO_08-5.pdf",
+      "EPPO - STANDARD ARRIVAL CHART - INSTRUMENT (STAR) - ICAO (RWY 28)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPPO/10/AD_2_EPPO_10-1.pdf",
+      "EPPO - STANDARD ARRIVAL CHART - INSTRUMENT (STAR) - ICAO (RNAV RWY 10)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPPO/10/AD_2_EPPO_10-3.pdf",
+      "EPPO - STANDARD ARRIVAL CHART - INSTRUMENT (STAR) - ICAO (RNAV RWY 28)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPPO/10/AD_2_EPPO_10-7.pdf"
+    }
+  },
+  "EPRA": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPRA%201-en-GB.html",
+    "karten": {
+      "EPRA - AERODROME OBSTACLE CHART - ICAO TYPE A (RWY 07, RWY 25)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPRA/06/AD_2_EPRA_6-1.pdf",
+      "EPRA - VISUAL OPERATION CHART": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPRA/13/AD_2_EPRA_13-1.pdf"
+    }
+  },
+  "EPRZ": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPRZ%201-en-GB.html",
+    "karten": {
+      "EPRZ - VFR ARRIVAL AND DEPARTURE ROUTES": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPRZ/13/AD_2_EPRZ_13-1.pdf"
+    }
+  },
+  "EPSY": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPSY%201-en-GB.html",
+    "karten": {
+      "EPSY - VFR ARRIVAL AND DEPARTURE ROUTES": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPSY/13/AD_2_EPSY_13-1.pdf"
+    }
+  },
+  "EPWA": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPWA%201-en-GB.html",
+    "karten": {
+      "EPWA - STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO (RNAV RWY 11)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/08/AD_2_EPWA_08-1.pdf",
+      "EPWA - STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO (RNAV RWY 15)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/08/AD_2_EPWA_08-5.pdf",
+      "EPWA - STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO (RNAV RWY 29)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/08/AD_2_EPWA_08-9.pdf",
+      "EPWA - STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO (RNAV RWY 33)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/08/AD_2_EPWA_08-13.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (ILS z CAT II or LOC z) RWY 11 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-1.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (ILS y CAT II) RWY 11 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-3.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (ILS z CAT II & III or LOC z) RWY 33 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-5.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (ILS y CAT II & III) RWY 33 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-7.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (ILS x CAT II & III or LOC x) RWY 33 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-9.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (VOR) RWY 11 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-11.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (VOR) RWY 15 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-13.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (VOR) RWY 29 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-15.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (VOR) RWY 33 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-17.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (RNP) RWY 11 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-19.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (RNP) RWY 15 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-23.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (RNP) RWY 29 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-27.pdf",
+      "EPWA - INSTRUMENT APPROACH CHART - ICAO (RNP) RWY 33 (CAT A,B,C,D)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/12/AD_2_EPWA_12-31.pdf",
+      "EPWA - VFR ARRIVAL, DEPARTURE AND TRANSIT ROUTES": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWA/13/AD_2_EPWA_13-3.pdf"
+    }
+  },
+  "EPWR": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPWR%201-en-GB.html",
+    "karten": {
+      "EPWR - STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO (RNAV RWY 11)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWR/08/AD_2_EPWR_08-1.pdf",
+      "EPWR - STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO (RNAV RWY 29)": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPWR/08/AD_2_EPWR_08-5.pdf"
+    }
+  },
+  "EPZG": {
+    "_url": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/eAIP/AD%202%20EPZG%201-en-GB.html",
+    "karten": {
+      "EPZG - VISUAL OPERATION CHART": "https://docs.pansa.pl/ais/eaipifr/AIRAC%20AMDT%2004-26_2026_04_16/documents/Root_WePub/AIP IFR/AD/EPZG/13/AD_2_EPZG_13-1.pdf"
+    }
+  }
+}

@@ -1,0 +1,887 @@
+{
+  "RJAA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAA_full.pdf"
+    }
+  },
+  "RJAF": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAF_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAF_full.pdf"
+    }
+  },
+  "RJAH": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAH_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAH_full.pdf"
+    }
+  },
+  "RJAK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAK_full.pdf"
+    }
+  },
+  "RJAM": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAM_full.pdf"
+    }
+  },
+  "RJAN": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAN_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAN_full.pdf"
+    }
+  },
+  "RJAW": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAW_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAW_full.pdf"
+    }
+  },
+  "RJAZ": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAZ_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJAZ_full.pdf"
+    }
+  },
+  "RJBB": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBB_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBB_full.pdf"
+    }
+  },
+  "RJBD": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBD_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBD_full.pdf"
+    }
+  },
+  "RJBE": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBE_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBE_full.pdf"
+    }
+  },
+  "RJBK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBK_full.pdf"
+    }
+  },
+  "RJBT": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBT_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJBT_full.pdf"
+    }
+  },
+  "RJCA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCA_full.pdf"
+    }
+  },
+  "RJCB": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCB_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCB_full.pdf"
+    }
+  },
+  "RJCC": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCC_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCC_full.pdf"
+    }
+  },
+  "RJCH": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCH_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCH_full.pdf"
+    }
+  },
+  "RJCJ": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCJ_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCJ_full.pdf"
+    }
+  },
+  "RJCK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCK_full.pdf"
+    }
+  },
+  "RJCM": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCM_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCM_full.pdf"
+    }
+  },
+  "RJCN": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCN_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCN_full.pdf"
+    }
+  },
+  "RJCO": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCO_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCO_full.pdf"
+    }
+  },
+  "RJCR": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCR_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCR_full.pdf"
+    }
+  },
+  "RJCT": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCT_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCT_full.pdf"
+    }
+  },
+  "RJCW": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCW_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJCW_full.pdf"
+    }
+  },
+  "RJDA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDA_full.pdf"
+    }
+  },
+  "RJDB": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDB_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDB_full.pdf"
+    }
+  },
+  "RJDC": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDC_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDC_full.pdf"
+    }
+  },
+  "RJDK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDK_full.pdf"
+    }
+  },
+  "RJDM": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDM_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDM_full.pdf"
+    }
+  },
+  "RJDO": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDO_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDO_full.pdf"
+    }
+  },
+  "RJDT": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDT_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDT_full.pdf"
+    }
+  },
+  "RJDU": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDU_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJDU_full.pdf"
+    }
+  },
+  "RJEB": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJEB_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJEB_full.pdf"
+    }
+  },
+  "RJEC": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJEC_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJEC_full.pdf"
+    }
+  },
+  "RJEO": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJEO_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJEO_full.pdf"
+    }
+  },
+  "RJER": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJER_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJER_full.pdf"
+    }
+  },
+  "RJFA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFA_full.pdf"
+    }
+  },
+  "RJFC": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFC_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFC_full.pdf"
+    }
+  },
+  "RJFE": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFE_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFE_full.pdf"
+    }
+  },
+  "RJFF": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFF_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFF_full.pdf"
+    }
+  },
+  "RJFG": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFG_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFG_full.pdf"
+    }
+  },
+  "RJFK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFK_full.pdf"
+    }
+  },
+  "RJFM": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFM_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFM_full.pdf"
+    }
+  },
+  "RJFN": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFN_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFN_full.pdf"
+    }
+  },
+  "RJFO": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFO_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFO_full.pdf"
+    }
+  },
+  "RJFR": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFR_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFR_full.pdf"
+    }
+  },
+  "RJFS": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFS_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFS_full.pdf"
+    }
+  },
+  "RJFT": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFT_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFT_full.pdf"
+    }
+  },
+  "RJFU": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFU_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFU_full.pdf"
+    }
+  },
+  "RJFY": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFY_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFY_full.pdf"
+    }
+  },
+  "RJFZ": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFZ_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJFZ_full.pdf"
+    }
+  },
+  "RJGG": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJGG_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJGG_full.pdf"
+    }
+  },
+  "RJKA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJKA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJKA_full.pdf"
+    }
+  },
+  "RJKB": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJKB_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJKB_full.pdf"
+    }
+  },
+  "RJKI": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJKI_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJKI_full.pdf"
+    }
+  },
+  "RJKN": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJKN_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJKN_full.pdf"
+    }
+  },
+  "RJNA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNA_full.pdf"
+    }
+  },
+  "RJNF": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNF_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNF_full.pdf"
+    }
+  },
+  "RJNG": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNG_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNG_full.pdf"
+    }
+  },
+  "RJNH": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNH_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNH_full.pdf"
+    }
+  },
+  "RJNK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNK_full.pdf"
+    }
+  },
+  "RJNO": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNO_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNO_full.pdf"
+    }
+  },
+  "RJNS": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNS_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNS_full.pdf"
+    }
+  },
+  "RJNT": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNT_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNT_full.pdf"
+    }
+  },
+  "RJNW": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNW_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNW_full.pdf"
+    }
+  },
+  "RJNY": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNY_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJNY_full.pdf"
+    }
+  },
+  "RJOA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOA_full.pdf"
+    }
+  },
+  "RJOB": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOB_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOB_full.pdf"
+    }
+  },
+  "RJOC": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOC_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOC_full.pdf"
+    }
+  },
+  "RJOE": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOE_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOE_full.pdf"
+    }
+  },
+  "RJOF": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOF_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOF_full.pdf"
+    }
+  },
+  "RJOH": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOH_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOH_full.pdf"
+    }
+  },
+  "RJOI": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOI_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOI_full.pdf"
+    }
+  },
+  "RJOK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOK_full.pdf"
+    }
+  },
+  "RJOM": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOM_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOM_full.pdf"
+    }
+  },
+  "RJOO": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOO_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOO_full.pdf"
+    }
+  },
+  "RJOR": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOR_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOR_full.pdf"
+    }
+  },
+  "RJOS": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOS_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOS_full.pdf"
+    }
+  },
+  "RJOT": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOT_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOT_full.pdf"
+    }
+  },
+  "RJOW": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOW_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOW_full.pdf"
+    }
+  },
+  "RJOY": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOY_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOY_full.pdf"
+    }
+  },
+  "RJOZ": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOZ_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJOZ_full.pdf"
+    }
+  },
+  "RJSA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSA_full.pdf"
+    }
+  },
+  "RJSC": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSC_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSC_full.pdf"
+    }
+  },
+  "RJSD": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSD_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSD_full.pdf"
+    }
+  },
+  "RJSF": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSF_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSF_full.pdf"
+    }
+  },
+  "RJSH": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSH_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSH_full.pdf"
+    }
+  },
+  "RJSI": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSI_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSI_full.pdf"
+    }
+  },
+  "RJSK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSK_full.pdf"
+    }
+  },
+  "RJSM": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSM_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSM_full.pdf"
+    }
+  },
+  "RJSN": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSN_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSN_full.pdf"
+    }
+  },
+  "RJSO": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSO_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSO_full.pdf"
+    }
+  },
+  "RJSR": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSR_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSR_full.pdf"
+    }
+  },
+  "RJSS": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSS_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSS_full.pdf"
+    }
+  },
+  "RJST": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJST_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJST_full.pdf"
+    }
+  },
+  "RJSU": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSU_full.pdf"
+    }
+  },
+  "RJSY": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSY_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJSY_full.pdf"
+    }
+  },
+  "RJTA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTA_full.pdf"
+    }
+  },
+  "RJTC": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTC_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTC_full.pdf"
+    }
+  },
+  "RJTE": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTE_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTE_full.pdf"
+    }
+  },
+  "RJTF": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTF_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTF_full.pdf"
+    }
+  },
+  "RJTH": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTH_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTH_full.pdf"
+    }
+  },
+  "RJTJ": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTJ_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTJ_full.pdf"
+    }
+  },
+  "RJTK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTK_full.pdf"
+    }
+  },
+  "RJTL": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTL_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTL_full.pdf"
+    }
+  },
+  "RJTO": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTO_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTO_full.pdf"
+    }
+  },
+  "RJTQ": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTQ_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTQ_full.pdf"
+    }
+  },
+  "RJTT": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTT_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTT_full.pdf"
+    }
+  },
+  "RJTU": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTU_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTU_full.pdf"
+    }
+  },
+  "RJTY": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTY_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RJTY_full.pdf"
+    }
+  },
+  "ROAH": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/ROAH_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/ROAH_full.pdf"
+    }
+  },
+  "RODN": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RODN_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RODN_full.pdf"
+    }
+  },
+  "ROIG": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/ROIG_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/ROIG_full.pdf"
+    }
+  },
+  "ROKJ": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/ROKJ_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/ROKJ_full.pdf"
+    }
+  },
+  "ROKR": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/ROKR_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/ROKR_full.pdf"
+    }
+  },
+  "ROMD": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/ROMD_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/ROMD_full.pdf"
+    }
+  },
+  "ROMY": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/ROMY_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/ROMY_full.pdf"
+    }
+  },
+  "RORA": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RORA_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RORA_full.pdf"
+    }
+  },
+  "RORE": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RORE_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RORE_full.pdf"
+    }
+  },
+  "RORH": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RORH_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RORH_full.pdf"
+    }
+  },
+  "RORK": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RORK_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RORK_full.pdf"
+    }
+  },
+  "RORS": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RORS_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RORS_full.pdf"
+    }
+  },
+  "RORT": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RORT_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RORT_full.pdf"
+    }
+  },
+  "RORY": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/RORY_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/RORY_full.pdf"
+    }
+  },
+  "ROTM": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/ROTM_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/ROTM_full.pdf"
+    }
+  },
+  "ROYN": {
+    "_url": "https://nagodede.github.io/aip/japan/",
+    "karten": {
+      "AIP Charts (PDF)": "https://nagodede.github.io/aip/japan/documents/ROYN_chart.pdf",
+      "AIP Full Document (PDF)": "https://nagodede.github.io/aip/japan/documents/ROYN_full.pdf"
+    }
+  }
+}

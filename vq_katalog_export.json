@@ -1,0 +1,26 @@
+{
+  "VQPR": {
+    "_url": "https://www.doat.gov.bt/aip/",
+    "karten": {
+      "Aerodromes": "http://www.doat.gov.bt/wp-content/uploads/2026/05/AD2_1-Aerodromes-VQPR.pdf"
+    }
+  },
+  "VQBT": {
+    "_url": "https://www.doat.gov.bt/aip/",
+    "karten": {
+      "Aerodromes": "http://www.doat.gov.bt/wp-content/uploads/2025/10/AD2_1-Aerodromes-VQBT.pdf"
+    }
+  },
+  "VQGP": {
+    "_url": "https://www.doat.gov.bt/aip/",
+    "karten": {
+      "Aerodromes": "http://www.doat.gov.bt/wp-content/uploads/2026/03/AD2_1-Aerodromes-VQGP.pdf"
+    }
+  },
+  "VQTY": {
+    "_url": "https://www.doat.gov.bt/aip/",
+    "karten": {
+      "Aerodromes": "http://www.doat.gov.bt/wp-content/uploads/2025/10/AD2_1-Aerodromes-VQTY.pdf"
+    }
+  }
+}
