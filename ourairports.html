@@ -2491,6 +2491,8 @@ const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
 const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/lxnav_latest.json';
 const OPENAIP_KEY           = '2800111e267cd352c035b2df2102fbdf';
+const SHV_AIRSPACE_URL      = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/shv_airspace.geojson';
+const SHV_WILDLIFE_URL      = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/shv_wildlife.geojson';
 let nflJsonCache         = null;
 let eurocontrolCache     = null;
 
@@ -2885,6 +2887,8 @@ async function ladeKarte(icao, lat, lon) {
     requestAnimationFrame(() => requestAnimationFrame(() => map.invalidateSize()));
     ladeFlughafenLayout(map, lat, lon);
     if (OPENAIP_KEY) ladeOpenAipLuftraum(map, lat, lon);
+    // SHV-Daten nur für Schweizer Flughäfen (LS-Präfix)
+    if (icao && icao.startsWith('LS')) ladeShvLuftraum(map, lat, lon);
 }
 
 const OAIP_KLASSE_FARBE = {
@@ -2940,6 +2944,47 @@ async function ladeOpenAipLuftraum(map, lat, lon) {
             if (ctrl._layerControlInputs) ctrl.addOverlay(luftraumLayer, '🟦 OpenAIP Polygone');
         });
     } catch(e) { console.warn('OpenAIP Luftraum:', e.message); }
+}
+
+async function ladeShvLuftraum(map, lat, lon) {
+    const FILTER_RADIUS = 0.45; // ~50km in Grad
+    try {
+        const [asRes, wlRes] = await Promise.all([
+            fetch(SHV_AIRSPACE_URL), fetch(SHV_WILDLIFE_URL)
+        ]);
+        const asGeo = asRes.ok ? await asRes.json() : { features: [] };
+        const wlGeo = wlRes.ok ? await wlRes.json() : { features: [] };
+
+        const shvGroup = L.layerGroup();
+        const wlGroup  = L.layerGroup();
+
+        const addFeatures = (geo, group, defaultColor) => {
+            for (const f of geo.features || []) {
+                if (f.geometry?.type !== 'Polygon') continue;
+                const coords = f.geometry.coordinates[0];
+                // Nur Polygone in der Nähe
+                if (!coords.some(([lo, la]) =>
+                    Math.abs(la - lat) < FILTER_RADIUS && Math.abs(lo - lon) < FILTER_RADIUS)) continue;
+                const p  = f.properties || {};
+                const c  = p.color || defaultColor;
+                const ll = coords.map(([lo, la]) => [la, lo]);
+                const popup = `<strong>${p.name || '?'}</strong><br>Klasse: <b>${p.class || '–'}</b><br>${p.lower || 'GND'} – ${p.upper || '?'}`;
+                L.polygon(ll, { color: c, weight: 1.5, opacity: 0.8, fillColor: c, fillOpacity: 0.08 })
+                 .bindPopup(popup).addTo(group);
+            }
+        };
+
+        addFeatures(asGeo, shvGroup, '#2563eb');
+        addFeatures(wlGeo, wlGroup,  '#84cc16');
+
+        shvGroup.addTo(map);
+        const ctrl = map._controlContainer?.querySelector('.leaflet-control-layers-overlays');
+        // Layer-Control Einträge
+        L.control.layers({}, {
+            '🇨🇭 SHV Luftraum': shvGroup,
+            '🦅 SHV Wildschutz': wlGroup
+        }, { position: 'topright', collapsed: false }).addTo(map);
+    } catch(e) { console.warn('SHV:', e.message); }
 }
 
 async function ladeFlughafenLayout(map, lat, lon) {

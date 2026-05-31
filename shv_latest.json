@@ -1,0 +1,13 @@
+{
+  "updated": "2026-05-31T08:27:48Z",
+  "sources": {
+    "airspace": {
+      "url": "https://airspace.shv-fsvl.ch/downloads/switzerland-airspace-feet.txt",
+      "features": 284
+    },
+    "wildlife": {
+      "url": "https://airspace.shv-fsvl.ch/downloads/switzerland-wildlife-feet.txt",
+      "features": 57
+    }
+  }
+}

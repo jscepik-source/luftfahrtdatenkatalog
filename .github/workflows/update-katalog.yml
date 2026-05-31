@@ -44,6 +44,10 @@ jobs:
         run: python lxnav_bot.py
         continue-on-error: true
 
+      - name: SHV-Airspace-Bot ausführen (Schweiz)
+        run: python shv_bot.py
+        continue-on-error: true
+
       - name: FAA-Karten-Bot ausführen
         run: python faa_bot.py
 
@@ -149,6 +153,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           cp ourairports.html index.html
           git add ourairports.html index.html lxnav_latest.json \
+                  shv_airspace.geojson shv_wildlife.geojson shv_latest.json \
                   dfs_katalog_export.json notam_info.json nfl_katalog.json nfl_notams_export.json \
                   faa_katalog_export.json \
                   lo_katalog_export.json ls_katalog_export.json lk_katalog_export.json \
