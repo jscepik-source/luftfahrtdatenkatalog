@@ -5467,6 +5467,11 @@ Nutzer fragt nach Lage/Karte → IMMER [OPEN_TAB:ICAO,karte]
 Nutzer fragt "zeige X" / "öffne X" / "was ist X" → IMMER [OPEN:ICAO]
 Nutzer fragt nach Distanz → IMMER [DISTANCE:A,B]
 Nutzer fragt nach Filter → IMMER [FILTER:type]
+Nutzer will zwei Flughäfen vergleichen → IMMER [COMPARE:ICAO1,ICAO2] + eine gemeinsame Vergleichstabelle mit BEIDEN als Spalten:
+| Eigenschaft | ICAO1 (Name) | ICAO2 (Name) |
+|---|---|---|
+| Höhe | ... | ... |
+NIEMALS separate Tabellen je Flughafen — immer EIN Tisch, beide nebeneinander.
 
 WICHTIG: Erfinde NIEMALS Wetterdaten, METAR oder NOTAMs! Die App zeigt echte Live-Daten. Öffne stattdessen immer den richtigen Tab mit [OPEN_TAB:]. Sage dem Nutzer: "Die aktuellen Live-Daten siehst du jetzt in der App."
 
@@ -5665,6 +5670,29 @@ function aiExecuteFilter(type) {
     });
 }
 
+async function aiExecuteCompare(icao1, icao2) {
+    const inp = document.getElementById('suche');
+    if (!inp) return;
+    // Gemeinsamen Präfix suchen (z.B. EDD für EDDF+EDDM)
+    let prefix = '';
+    for (let i = 0; i < Math.min(icao1.length, icao2.length); i++) {
+        if (icao1[i] === icao2[i]) prefix += icao1[i]; else break;
+    }
+    inp.value = prefix.length >= 2 ? prefix : icao1.slice(0,2);
+    inp.dispatchEvent(new Event('input'));
+    await new Promise(r => setTimeout(r, 500));
+    // Beide Cards öffnen
+    for (const ic of [icao1, icao2]) {
+        const card = [...document.querySelectorAll('article.airport-card')]
+            .find(c => c.querySelector('.badge-icao')?.textContent?.trim() === ic);
+        if (card && !card.classList.contains('card-open')) {
+            card.querySelector('.card-header')?.click();
+            await new Promise(r => setTimeout(r, 250));
+        }
+    }
+    document.querySelector('article.airport-card')?.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
 function aiExecuteDistance(a, b) {
     const ia = document.getElementById('dist-a');
     const ib = document.getElementById('dist-b');
@@ -5701,6 +5729,10 @@ function aiParseActions(text) {
     out = out.replace(/\[DISTANCE:([^,\]]+),([^\]]+)\]/gi, (_, a, b) => {
         setTimeout(() => aiExecuteDistance(a, b), 150);
         return `📏 *Distanz: ${a.trim()} → ${b.trim()}*`;
+    });
+    out = out.replace(/\[COMPARE:([^,\]]+),([^\]]+)\]/gi, (_, a, b) => {
+        setTimeout(() => aiExecuteCompare(a.trim(), b.trim()), 150);
+        return `✈ *Beide Flughäfen geöffnet: ${a.trim()} & ${b.trim()}*`;
     });
     return out.trim();
 }
