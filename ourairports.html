@@ -1541,6 +1541,88 @@
             transform: none;
         }
 
+        /* ── Hero Glassmorphism-Karten ── */
+        .hero-glass-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-glass-card {
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(12px) saturate(160%);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 16px 22px;
+            text-align: center;
+            min-width: 100px;
+            position: relative;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .hero-glass-card:hover {
+            background: rgba(255,255,255,0.11);
+            border-color: rgba(245,158,11,0.35);
+        }
+        .hero-glass-card .hero-stat-num {
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+        }
+        .hero-glass-card .hero-stat-num.accent {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-live-dot {
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            margin-right: 5px;
+            vertical-align: middle;
+            position: relative;
+            animation: livePulse 2s infinite;
+        }
+        @keyframes livePulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+            50%      { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+        }
+        .hero-live-label {
+            font-size: 0.62rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: #22c55e; margin-bottom: 4px;
+        }
+        .hero-feature-row {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+        }
+        .hero-feature-chip {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 0.72rem; font-weight: 600;
+            color: rgba(255,255,255,0.8);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .hero-feature-chip .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+        }
+
+        /* ── 3D-Map btn ── */
+        .btn-3d {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem; font-weight: 700;
+            transition: opacity var(--transition), transform var(--transition);
+            border: none; cursor: pointer; font-family: var(--font);
+        }
+        .btn-3d:hover { opacity: 0.9; transform: translateY(-1px); }
+
         /* ── Flüge-Tab ── */
         .fluege-refresh-row {
             display: flex; align-items: center; justify-content: space-between;
@@ -2283,35 +2365,51 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 
                 <!-- Slide 1: Kennzahlen -->
                 <div class="hero-slide">
-                    <div class="hero-stat-group">
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">72.000</div>
+                    <div class="hero-glass-grid">
+                        <div class="hero-glass-card">
+                            <div class="hero-stat-num accent">72.000</div>
                             <div class="hero-stat-label">Flughäfen weltweit</div>
                         </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">6h</div>
-                            <div class="hero-stat-label">Aktualisierung</div>
+                        <div class="hero-glass-card">
+                            <div class="hero-stat-num">6 h</div>
+                            <div class="hero-stat-label">Datenaktualisierung</div>
                         </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">Live</div>
-                            <div class="hero-stat-label">METAR &amp; TAF</div>
+                        <div class="hero-glass-card">
+                            <div class="hero-live-label"><span class="hero-live-dot"></span>Live</div>
+                            <div class="hero-stat-num" style="font-size:1.4rem">METAR &amp; TAF</div>
+                            <div class="hero-stat-label">Aktuelles Flugwetter</div>
                         </div>
-                        <div class="hero-vdivider"></div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-num">Live</div>
-                            <div class="hero-stat-label">ADS-B Radar</div>
+                        <div class="hero-glass-card">
+                            <div class="hero-live-label"><span class="hero-live-dot"></span>Live</div>
+                            <div class="hero-stat-num" style="font-size:1.4rem">ADS-B</div>
+                            <div class="hero-stat-label">Radar &amp; Flugpositionen</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Slide 2: HS RheinMain -->
+                <!-- Slide 2: Features -->
                 <div class="hero-slide">
-                    <div class="hero-stat-group" style="flex-direction:column;gap:10px;text-align:center;padding:0 8px">
+                    <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;max-width:500px">
+                        <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.16em;color:#f59e0b;text-transform:uppercase">Was du findest</div>
+                        <div class="hero-feature-row">
+                            <div class="hero-feature-chip"><span class="dot" style="background:#3b82f6"></span>NOTAMs &amp; METAR</div>
+                            <div class="hero-feature-chip"><span class="dot" style="background:#22c55e"></span>ILS-Kategorien</div>
+                            <div class="hero-feature-chip"><span class="dot" style="background:#f59e0b"></span>AIP-Karten</div>
+                            <div class="hero-feature-chip"><span class="dot" style="background:#a855f7"></span>3D Ansicht</div>
+                            <div class="hero-feature-chip"><span class="dot" style="background:#ef4444"></span>ADS-B Radar</div>
+                            <div class="hero-feature-chip"><span class="dot" style="background:#06b6d4"></span>Runways &amp; Frequenzen</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: HS RheinMain -->
+                <div class="hero-slide">
+                    <div style="display:flex;flex-direction:column;gap:10px;text-align:center;align-items:center">
                         <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.16em;color:#f59e0b;text-transform:uppercase">Studentisches Projekt</div>
-                        <div class="hero-stat-num" style="font-size:clamp(1rem,2.8vw,1.45rem);letter-spacing:0.01em;font-weight:700">Hochschule RheinMain</div>
-                        <div class="hero-stat-label" style="font-size:0.71rem;letter-spacing:0.04em;opacity:.75">Elektro- &amp; Luftfahrttechnik &mdash; Modul Avionik</div>
+                        <div class="hero-glass-card" style="min-width:260px">
+                            <div class="hero-stat-num" style="font-size:clamp(0.95rem,2.8vw,1.35rem);font-weight:700;-webkit-text-fill-color:inherit">Hochschule RheinMain</div>
+                            <div class="hero-stat-label" style="font-size:0.71rem;letter-spacing:0.04em;opacity:.75;margin-top:6px">Elektro- &amp; Luftfahrttechnik &mdash; Modul Avionik</div>
+                        </div>
                     </div>
                 </div>
 
@@ -2320,6 +2418,7 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
         <div class="hero-dots" role="tablist">
             <button class="hero-dot active" onclick="heroGoto(0)" aria-label="Slide 1"></button>
             <button class="hero-dot" onclick="heroGoto(1)" aria-label="Slide 2"></button>
+            <button class="hero-dot" onclick="heroGoto(2)" aria-label="Slide 3"></button>
         </div>
     </div>
 
@@ -2970,6 +3069,13 @@ const OAIP_KLASSE_FARBE = {
     'OTHER':'#94a3b8'
 };
 
+function formatAlt(lim) {
+    if (!lim) return '–';
+    const v = lim.value ?? 0, u = lim.unit || '', r = lim.referenceDatum || '';
+    if (v === 0 && r.toUpperCase() === 'GND') return 'GND';
+    return `${v} ${u} ${r}`.trim();
+}
+
 async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
     try {
         const res = await fetch(
@@ -2980,18 +3086,59 @@ async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
         const data = await res.json();
         const layer = L.layerGroup();
 
-        for (const as of (data.items || [])) {
-            if (as.geometry?.type !== 'Polygon') continue;
-            const klasse = as.icaoClass || as.type || 'OTHER';
-            const farbe  = OAIP_KLASSE_FARBE[klasse.toUpperCase()] || OAIP_KLASSE_FARBE['OTHER'];
+        const PRIO = {'G':1,'E':2,'F':3,'TMZ':4,'RMZ':5,'OTHER':6,'TMA':7,'C':8,'D':9,'CTR':10,'B':11,'A':12,'DANGER':13,'RESTRICTED':14,'PROHIBITED':15};
+        const FILL = {'PROHIBITED':0.22,'RESTRICTED':0.18,'DANGER':0.15,'A':0.12,'B':0.12,'CTR':0.12,'D':0.10,'C':0.10,'TMA':0.08,'RMZ':0.08,'TMZ':0.08,'F':0.06,'E':0.06,'G':0.05};
+        const DASH = {'PROHIBITED':'4,4','RESTRICTED':'8,4','DANGER':'6,3'};
+        const KLABEL = {'A':'Klasse A','B':'Klasse B','C':'Klasse C','D':'Klasse D','E':'Klasse E','F':'Klasse F','G':'Klasse G','CTR':'CTR','TMA':'TMA','TMZ':'TMZ','RMZ':'RMZ','RESTRICTED':'Restricted','PROHIBITED':'Prohibited','DANGER':'Danger','OTHER':'Sonstige'};
+
+        const items = (data.items || []).filter(as => as.geometry?.type === 'Polygon');
+        items.sort((a, b) => {
+            const ka = (a.icaoClass || a.type || 'OTHER').toUpperCase();
+            const kb = (b.icaoClass || b.type || 'OTHER').toUpperCase();
+            return (PRIO[ka] || 6) - (PRIO[kb] || 6);
+        });
+        const seenKlassen = new Map();
+
+        for (const as of items) {
+            const klasse = (as.icaoClass || as.type || 'OTHER').toUpperCase();
+            const farbe  = OAIP_KLASSE_FARBE[klasse] || OAIP_KLASSE_FARBE['OTHER'];
             const coords = as.geometry.coordinates[0].map(([lo, la]) => [la, lo]);
-            const bot = as.altLimitBottom ? `${as.altLimitBottom.value} ${as.altLimitBottom.unit} ${as.altLimitBottom.referenceDatum}` : '–';
-            const top = as.altLimitTop   ? `${as.altLimitTop.value} ${as.altLimitTop.unit} ${as.altLimitTop.referenceDatum}` : '–';
-            L.polygon(coords, { color: farbe, weight: 1.5, opacity: 0.85, fillColor: farbe, fillOpacity: 0.09 })
-             .bindPopup(`<strong>${as.name || '?'}</strong><br>Klasse: <b>${klasse}</b><br>${bot} – ${top}`)
-             .addTo(layer);
+            const bot = formatAlt(as.altLimitBottom);
+            const top = formatAlt(as.altLimitTop);
+            const popup = `<table style="min-width:170px;border-collapse:collapse;font-size:0.8rem">
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0">Name</td><td><b>${as.name || '–'}</b></td></tr>
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0">Klasse</td><td><b style="color:${farbe}">${klasse}</b></td></tr>
+                ${as.remarks ? `<tr><td style="color:#64748b;padding:1px 8px 1px 0">Info</td><td style="font-size:0.75rem">${as.remarks}</td></tr>` : ''}
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0">Unten</td><td>${bot}</td></tr>
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0">Oben</td><td>${top}</td></tr>
+            </table>`;
+            L.polygon(coords, {
+                color: farbe, weight: 2, opacity: 0.9,
+                fillColor: farbe, fillOpacity: FILL[klasse] ?? 0.07,
+                dashArray: DASH[klasse] || null
+            }).bindPopup(popup).addTo(layer);
+            if (!seenKlassen.has(klasse)) seenKlassen.set(klasse, farbe);
             const c = coords.reduce((a, p) => [a[0]+p[0], a[1]+p[1]], [0,0]).map(v => v/coords.length);
             L.marker(c, { icon: L.divIcon({ className:'', html:`<span style="background:${farbe};color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px">${klasse}</span>`, iconSize:[28,14], iconAnchor:[14,7] }) }).addTo(layer);
+        }
+
+        if (seenKlassen.size > 0) {
+            const LuftLegend = L.Control.extend({
+                onAdd() {
+                    const div = L.DomUtil.create('div', '');
+                    div.style.cssText = 'background:rgba(255,255,255,0.92);padding:8px 10px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.25);font-size:0.75rem;line-height:1.8;min-width:110px';
+                    let html = '<b style="font-size:0.8rem">Lufträume</b><br>';
+                    [...seenKlassen.entries()]
+                        .sort((a, b) => (PRIO[a[0]] || 6) - (PRIO[b[0]] || 6))
+                        .forEach(([kl, farbe]) => {
+                            const dash = DASH[kl] ? 'dashed' : 'solid';
+                            html += `<div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:18px;height:10px;background:${farbe};opacity:0.65;border:2px ${dash} ${farbe};border-radius:2px"></span>${KLABEL[kl] || kl}</div>`;
+                        });
+                    div.innerHTML = html;
+                    return div;
+                }
+            });
+            new LuftLegend({ position: 'bottomleft' }).addTo(map);
         }
 
         layer.addTo(map);
@@ -3011,19 +3158,38 @@ async function ladeShvLuftraum(map, lat, lon, layerCtrl) {
         const shvGroup = L.layerGroup();
         const wlGroup  = L.layerGroup();
 
+        const SHV_PRIO = {'G':1,'E':2,'F':3,'TMZ':4,'RMZ':5,'OTHER':6,'TMA':7,'C':8,'D':9,'CTR':10,'B':11,'A':12,'DANGER':13,'RESTRICTED':14,'PROHIBITED':15};
+        const SHV_FILL = {'PROHIBITED':0.22,'RESTRICTED':0.18,'DANGER':0.15,'A':0.12,'B':0.12,'CTR':0.12,'D':0.10,'C':0.10,'TMA':0.08,'RMZ':0.08,'TMZ':0.08,'F':0.06,'E':0.06,'G':0.05};
+        const SHV_DASH = {'PROHIBITED':'4,4','RESTRICTED':'8,4','DANGER':'6,3'};
+
         const addFeatures = (geo, group, defaultColor) => {
-            for (const f of geo.features || []) {
-                if (f.geometry?.type !== 'Polygon') continue;
+            const features = (geo.features || []).filter(f => {
+                if (f.geometry?.type !== 'Polygon') return false;
                 const coords = f.geometry.coordinates[0];
-                // Nur Polygone in der Nähe
-                if (!coords.some(([lo, la]) =>
-                    Math.abs(la - lat) < FILTER_RADIUS && Math.abs(lo - lon) < FILTER_RADIUS)) continue;
+                return coords.some(([lo, la]) => Math.abs(la - lat) < FILTER_RADIUS && Math.abs(lo - lon) < FILTER_RADIUS);
+            });
+            features.sort((a, b) => {
+                const ka = ((a.properties || {}).class || '').toUpperCase();
+                const kb = ((b.properties || {}).class || '').toUpperCase();
+                return (SHV_PRIO[ka] || 6) - (SHV_PRIO[kb] || 6);
+            });
+            for (const f of features) {
                 const p  = f.properties || {};
-                const c  = p.color || defaultColor;
-                const ll = coords.map(([lo, la]) => [la, lo]);
-                const popup = `<strong>${p.name || '?'}</strong><br>Klasse: <b>${p.class || '–'}</b><br>${p.lower || 'GND'} – ${p.upper || '?'}`;
-                L.polygon(ll, { color: c, weight: 1.5, opacity: 0.8, fillColor: c, fillOpacity: 0.08 })
-                 .bindPopup(popup).addTo(group);
+                const kl = (p.class || '').toUpperCase();
+                const c  = OAIP_KLASSE_FARBE[kl] || p.color || defaultColor;
+                const ll = f.geometry.coordinates[0].map(([lo, la]) => [la, lo]);
+                const popup = `<table style="min-width:160px;border-collapse:collapse;font-size:0.8rem">
+                    <tr><td style="color:#64748b;padding:1px 8px 1px 0">Name</td><td><b>${p.name || '–'}</b></td></tr>
+                    <tr><td style="color:#64748b;padding:1px 8px 1px 0">Klasse</td><td><b style="color:${c}">${p.class || '–'}</b></td></tr>
+                    ${p.remarks ? `<tr><td style="color:#64748b;padding:1px 8px 1px 0">Info</td><td style="font-size:0.75rem">${p.remarks}</td></tr>` : ''}
+                    <tr><td style="color:#64748b;padding:1px 8px 1px 0">Unten</td><td>${p.lower || 'GND'}</td></tr>
+                    <tr><td style="color:#64748b;padding:1px 8px 1px 0">Oben</td><td>${p.upper || '–'}</td></tr>
+                </table>`;
+                L.polygon(ll, {
+                    color: c, weight: 2, opacity: 0.9,
+                    fillColor: c, fillOpacity: SHV_FILL[kl] ?? 0.08,
+                    dashArray: SHV_DASH[kl] || null
+                }).bindPopup(popup).addTo(group);
             }
         };
 
@@ -3894,7 +4060,7 @@ function baueKarte(icao, ap) {
         : 'https://www.windy.com/?airspace';
     // OpenAIP: kein Deep-Link möglich → Startseite, Nutzer sucht dort manuell
     const openAipUrl = hasCoords
-        ? `https://www.openaip.net/map#11/${latF}/${lonF}`
+        ? `https://www.openaip.net/map#11/${parseFloat(ap.lat).toFixed(4)}/${parseFloat(ap.lon).toFixed(4)}`
         : 'https://www.openaip.net/';
     // Overpass Turbo: sucht den Flughafen in OSM anhand ICAO-Tag — Overpass zoomt selbst hin
     const overpRawQuery = `[out:json][timeout:25];
@@ -4137,6 +4303,7 @@ out skel qt;`;
             <!-- Karte Panel -->
             ${hasCoords ? `<div class="card-tab-panel" data-panel="karte">
                 <div class="map-links">
+                    <a class="btn-3d" href="https://demo.f4map.com/#lat=${latF}&lon=${lonF}&zoom=17&camera.theta=55" target="_blank" rel="noopener">🏛 3D Ansicht</a>
                     <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy Luftraum</a>
                     <a class="btn-ext" href="${openAipUrl}" target="_blank" rel="noopener">✈ OpenAIP</a>
                     <a class="btn-ext" href="https://skyvector.com/?ll=${ap.lat},${ap.lon}&chart=301&zoom=4" target="_blank" rel="noopener">📋 SkyVector</a>
@@ -5321,7 +5488,7 @@ document.addEventListener('keydown', e => {
 
 // ── Hero Slides ──────────────────────────────────────────────────────────────
 (function() {
-    const TOTAL = 2;
+    const TOTAL = 3;
     let idx = 0;
     let timer = null;
     let pointerIsTouch = false;  // sobald Touch erkannt → Mouse-Events ignorieren
