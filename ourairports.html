@@ -1436,14 +1436,14 @@
 
         /* ── Leaflet Map ── */
         .map-container {
-            height: 380px;
+            height: 520px;
             border-radius: var(--radius-md);
             overflow: hidden;
             margin-top: var(--space-xs);
             border: 1px solid var(--color-border);
-            transition: height 0.3s ease;
+            transition: height 0.35s ease;
         }
-        .map-container.map-expanded { height: 600px; }
+        .map-container.map-expanded { height: 82vh; min-height: 600px; }
         .btn-map-expand {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 6px 12px; font-size: 0.78rem; font-weight: 600;
@@ -2188,7 +2188,7 @@
             .hero-stat-label { font-size: 0.6rem; }
 
             /* Map */
-            .map-container { height: 300px; }
+            .map-container { height: 400px; }
             .infra-map     { height: 260px; }
             .map-links { flex-wrap: wrap; }
             .infra-filter-btn { font-size: 0.67rem; padding: 4px 9px; }
