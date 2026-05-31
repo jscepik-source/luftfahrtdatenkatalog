@@ -4302,7 +4302,7 @@ out skel qt;`;
             <!-- Karte Panel -->
             ${hasCoords ? `<div class="card-tab-panel" data-panel="karte">
                 <div class="map-links">
-                    <a class="btn-3d" href="https://demo.f4map.com/#lat=${latF}&lon=${lonF}&zoom=17&camera.theta=55" target="_blank" rel="noopener">🏛 3D Ansicht</a>
+                    <a class="btn-3d" href="https://demo.f4map.com/#lat=${parseFloat(ap.lat).toFixed(4)}&lon=${parseFloat(ap.lon).toFixed(4)}&zoom=17&camera.theta=55" target="_blank" rel="noopener">🏛 3D Ansicht</a>
                     <a class="btn-ext" href="${windyUrl}" target="_blank" rel="noopener">🌬 Windy Luftraum</a>
                     <a class="btn-ext" href="${openAipUrl}" target="_blank" rel="noopener">✈ OpenAIP</a>
                     <a class="btn-ext" href="https://skyvector.com/?ll=${ap.lat},${ap.lon}&chart=301&zoom=4" target="_blank" rel="noopener">📋 SkyVector</a>
