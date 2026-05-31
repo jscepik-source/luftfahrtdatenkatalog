@@ -3108,6 +3108,28 @@ async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
         const FILL = {'PROHIBITED':0.22,'RESTRICTED':0.18,'DANGER':0.15,'A':0.12,'B':0.12,'CTR':0.12,'D':0.10,'C':0.10,'TMA':0.08,'RMZ':0.08,'TMZ':0.08,'F':0.06,'E':0.06,'G':0.05};
         const DASH = {'PROHIBITED':'4,4','RESTRICTED':'8,4','DANGER':'6,3'};
         const KLABEL = {'A':'Klasse A','B':'Klasse B','C':'Klasse C','D':'Klasse D','E':'Klasse E','F':'Klasse F','G':'Klasse G','CTR':'CTR','TMA':'TMA','TMZ':'TMZ','RMZ':'RMZ','RESTRICTED':'Restricted','PROHIBITED':'Prohibited','DANGER':'Danger','OTHER':'Sonstige'};
+        const KDESC  = {
+            'A':'Kontrollierter Luftraum · nur IFR · höchste Stufe',
+            'B':'Kontrollierter Luftraum · IFR + VFR mit Freigabe',
+            'C':'Kontrollierter Luftraum · IFR + VFR mit Freigabe · häufig um große Flughäfen',
+            'D':'Kontrollierter Luftraum · IFR + VFR mit Sprechfunk · z.B. CTR Frankfurt',
+            'E':'Kontrollierter Luftraum · IFR mit Freigabe · VFR ohne Freigabe möglich',
+            'F':'Beratungsluftfahrt · IFR empfohlen mit Freigabe · VFR frei',
+            'G':'Unkontrollierter Luftraum · VFR und IFR ohne Freigabe möglich',
+            'CTR':'Control Zone · Kontrollzone direkt um einen Flughafen (GND bis ca. 2500 ft)',
+            'TMA':'Terminal Maneuvering Area · Nahverkehrsbereich um einen Großflughafen für An-/Abflüge',
+            'TMZ':'Transponder Mandatory Zone · Transponder Mode C erforderlich',
+            'RMZ':'Radio Mandatory Zone · Sprechfunkkontakt erforderlich',
+            'TRA':'Temporary Reserved Area · temporär reserviert (z.B. Militär, Übungen)',
+            'TSA':'Temporary Segregated Area · vorübergehend gesperrter Bereich',
+            'ADIZ':'Air Defense Identification Zone · Luftverteidigungsidentifizierungszone',
+            'ATZ':'Aerodrome Traffic Zone · Platzverkehrszone kleiner Flugplätze',
+            'MATZ':'Military ATZ · militärische Platzverkehrszone',
+            'RESTRICTED':'Restricted Area · dauerhaft eingeschränkt (z.B. Kraftwerke, Militär)',
+            'DANGER':'Danger Area · Gefahrengebiet (z.B. Schießübungen, Fallschirmspringen)',
+            'PROHIBITED':'Prohibited Area · Sperrgebiet · Einflug verboten (z.B. Regierung)',
+            'OTHER':'Sonstiger Luftraum',
+        };
 
         const items = (data.items || []).filter(as => as.geometry?.type === 'Polygon');
         items.sort((a, b) => (PRIO[oaipKlasse(a)] || 6) - (PRIO[oaipKlasse(b)] || 6));
@@ -3119,12 +3141,14 @@ async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
             const coords = as.geometry.coordinates[0].map(([lo, la]) => [la, lo]);
             const bot = formatAlt(as.altLimitBottom);
             const top = formatAlt(as.altLimitTop);
-            const popup = `<table style="min-width:170px;border-collapse:collapse;font-size:0.8rem">
-                <tr><td style="color:#64748b;padding:1px 8px 1px 0">Name</td><td><b>${as.name || '–'}</b></td></tr>
-                <tr><td style="color:#64748b;padding:1px 8px 1px 0">Klasse</td><td><b style="color:${farbe}">${klasse}</b></td></tr>
-                ${as.remarks ? `<tr><td style="color:#64748b;padding:1px 8px 1px 0">Info</td><td style="font-size:0.75rem">${as.remarks}</td></tr>` : ''}
-                <tr><td style="color:#64748b;padding:1px 8px 1px 0">Unten</td><td>${bot}</td></tr>
-                <tr><td style="color:#64748b;padding:1px 8px 1px 0">Oben</td><td>${top}</td></tr>
+            const desc = KDESC[klasse] || '';
+            const popup = `<table style="min-width:200px;border-collapse:collapse;font-size:0.8rem">
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Name</td><td><b>${as.name || '–'}</b></td></tr>
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Klasse</td><td><b style="color:${farbe}">${klasse}</b></td></tr>
+                ${desc ? `<tr><td colspan="2" style="padding:3px 0 1px 0;font-size:0.72rem;color:#475569;line-height:1.4">${desc}</td></tr>` : ''}
+                ${as.remarks ? `<tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Info</td><td style="font-size:0.75rem">${as.remarks}</td></tr>` : ''}
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Unten</td><td>${bot}</td></tr>
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Oben</td><td>${top}</td></tr>
             </table>`;
             L.polygon(coords, {
                 color: farbe, weight: 2, opacity: 0.9,
@@ -3140,13 +3164,17 @@ async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
             const LuftLegend = L.Control.extend({
                 onAdd() {
                     const div = L.DomUtil.create('div', '');
-                    div.style.cssText = 'background:rgba(255,255,255,0.92);padding:8px 10px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.25);font-size:0.75rem;line-height:1.8;min-width:110px';
+                    div.style.cssText = 'background:rgba(255,255,255,0.93);padding:8px 10px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.25);font-size:0.74rem;line-height:1.6;min-width:140px;max-width:220px';
                     let html = '<b style="font-size:0.8rem">Lufträume</b><br>';
                     [...seenKlassen.entries()]
                         .sort((a, b) => (PRIO[a[0]] || 6) - (PRIO[b[0]] || 6))
                         .forEach(([kl, farbe]) => {
                             const dash = DASH[kl] ? 'dashed' : 'solid';
-                            html += `<div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:18px;height:10px;background:${farbe};opacity:0.65;border:2px ${dash} ${farbe};border-radius:2px"></span>${KLABEL[kl] || kl}</div>`;
+                            const shortDesc = (KDESC[kl] || '').split('·')[0].trim();
+                            html += `<div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px" title="${KDESC[kl] || ''}">
+                                <span style="display:inline-block;flex-shrink:0;width:18px;height:10px;margin-top:3px;background:${farbe};opacity:0.65;border:2px ${dash} ${farbe};border-radius:2px"></span>
+                                <span><b>${KLABEL[kl] || kl}</b>${shortDesc ? `<br><span style="font-size:0.67rem;color:#64748b">${shortDesc}</span>` : ''}</span>
+                            </div>`;
                         });
                     div.innerHTML = html;
                     return div;
