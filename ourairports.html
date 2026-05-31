@@ -3268,13 +3268,18 @@ const OAIP_TYPE = {
 const OAIP_SPECIAL = new Set(['RESTRICTED','DANGER','PROHIBITED','CTR','TMZ','RMZ','TMA','ADIZ','ATZ']);
 
 function formatAlt(lim) {
-    if (!lim) return '–';
-    const v = lim.value ?? 0;
-    const u = typeof lim.unit === 'number' ? (OAIP_UNIT[lim.unit] || '') : (lim.unit || '');
-    const r = typeof lim.referenceDatum === 'number' ? (OAIP_REF[lim.referenceDatum] || '') : (lim.referenceDatum || '');
-    if (v === 0 && r === 'GND') return 'GND';
+    if (!lim) return 'k.A.';
+    // Manche API-Versionen liefern den Wert direkt als String ("GND", "2500FT MSL")
+    if (typeof lim === 'string') return lim;
+    if (typeof lim === 'number') return `${lim} ft`;
+    const v = lim.value ?? lim.val ?? 0;
+    const uRaw = lim.unit ?? lim.unitType ?? 0;
+    const rRaw = lim.referenceDatum ?? lim.datumType ?? lim.datum ?? 0;
+    const u = typeof uRaw === 'number' ? (OAIP_UNIT[uRaw] || '') : (uRaw || '');
+    const r = typeof rRaw === 'number' ? (OAIP_REF[rRaw]  || '') : (rRaw  || '');
+    if (v === 0 && (r === 'GND' || rRaw === 0)) return 'GND';
     if (u === 'FL') return `FL ${v}`;
-    return `${v} ${u} ${r}`.trim();
+    return `${v}${u ? ' ' + u : ''}${r ? ' ' + r : ''}`.trim() || 'k.A.';
 }
 
 function oaipKlasse(as) {
@@ -3324,12 +3329,13 @@ async function ladeOpenAipLuftraum(map, lat, lon, layerCtrl) {
         items.sort((a, b) => (PRIO[oaipKlasse(a)] || 6) - (PRIO[oaipKlasse(b)] || 6));
         const seenKlassen = new Map();
 
+        if (items.length) console.debug('[OpenAIP] Beispiel-Luftraum:', JSON.stringify(items[0], null, 2));
         for (const as of items) {
             const klasse = oaipKlasse(as);
             const farbe  = OAIP_KLASSE_FARBE[klasse] || OAIP_KLASSE_FARBE['OTHER'];
             const coords = as.geometry.coordinates[0].map(([lo, la]) => [la, lo]);
-            const bot = formatAlt(as.altLimitBottom);
-            const top = formatAlt(as.altLimitTop);
+            const bot = formatAlt(as.altLimitBottom ?? as.altLimit?.bottom ?? as.lowerLimit);
+            const top = formatAlt(as.altLimitTop    ?? as.altLimit?.top    ?? as.upperLimit);
             const desc = KDESC[klasse] || '';
             const popup = `<table style="min-width:200px;border-collapse:collapse;font-size:0.8rem">
                 <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Name</td><td><b>${as.name || '–'}</b></td></tr>
