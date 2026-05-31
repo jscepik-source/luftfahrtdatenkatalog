@@ -2657,10 +2657,12 @@ function resetSuche() {
     document.querySelectorAll('#filter .chip[data-typ]').forEach(b => b.classList.remove('active'));
     const alleChip = document.querySelector('#filter .chip[data-typ=""]');
     if (alleChip) alleChip.classList.add('active');
-    aktiverTyp = '';
-    aktivSched = false;
-    aktivIata = false;
-    document.querySelectorAll('#filter .chip[data-sched], #filter .chip[data-iata]').forEach(b => b.classList.remove('active'));
+    aktiverTyp     = '';
+    aktivSched     = false;
+    aktivIata      = false;
+    aktivSegelflug = false;
+    document.querySelectorAll('#filter .chip[data-sched], #filter .chip[data-iata], #filter .chip[data-segelflug]')
+        .forEach(b => b.classList.remove('active'));
     const kSel = document.getElementById('kontinent-sel');
     if (kSel) { kSel.value = ''; aktivKontinent = ''; }
     zeigeHinweis();
@@ -2705,7 +2707,7 @@ const LAND_ALIASES = {
 
 function suche() {
     const q = document.getElementById('suche').value.trim().toLowerCase();
-    if (!q && !aktiverTyp && !aktivSched) { zeigeHinweis(); return; }
+    if (!q && !aktiverTyp && !aktivSched && !aktivSegelflug && !aktivIata && !aktivKontinent) { zeigeHinweis(); return; }
     const aliasIso = q ? (LAND_ALIASES[q] || null) : null;
     aktuelleEintraege = Object.entries(katalog).filter(([icao, ap]) => {
         if (aktiverTyp && ap.type !== aktiverTyp) return false;
