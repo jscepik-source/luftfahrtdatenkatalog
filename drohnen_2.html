@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="UAV / Drohnen">
+    <link rel="apple-touch-icon" href="icon.svg">
+
+    <title>Luftfahrtdatenkatalog — UAV-Tracking & Drohnendaten</title>
+    <meta name="description" content="UAV- & Drohnen-Datenquellen im Überblick: Remote-ID-Tracking, UTM-Plattformen, Geo-Zonen, EU-/DE-Regularien, Behörden und Wetter. Schwerpunkt UAV-Tracking (ASTM F3411 / Remote ID).">
+    <meta name="keywords" content="UAV, Drohne, Remote ID, ASTM F3411, Tracking, UTM, Geo-Zonen, EASA, DFS, Dipul, LBA, OpenAIP, Dronetag, Luftfahrt">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Hochschule RheinMain">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Luftfahrtdatenkatalog — UAV-Tracking & Drohnendaten">
+    <meta property="og:description" content="17 Datenquellen rund um Drohnen mit Fokus auf UAV-Tracking: Remote-ID-Erkennung, UTM, Geo-Zonen, Regularien & Behörden.">
+    <meta property="og:locale" content="de_DE">
+    <meta name="twitter:card" content="summary">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet (interaktive Karten) — identische Einbindung wie auf der Flughafen-Seite -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        /* ── Reset & Base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { overflow-x: hidden; }
+        body { overflow-x: hidden; max-width: 100%; }
+        button, a, input, select { touch-action: manipulation; }
+
+        :root {
+            --font:        'Inter', system-ui, sans-serif;
+            --radius-sm:   6px;
+            --radius-md:   10px;
+            --radius-lg:   14px;
+            --radius-pill: 999px;
+            --shadow:      0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
+            --shadow-sm:   0 1px 3px rgba(0,0,0,0.08);
+            --transition:  0.18s ease;
+            --space-xs:    6px;
+            --space-sm:    12px;
+            --space-md:    20px;
+            --space-lg:    32px;
+            --space-xl:    48px;
+
+            /* Light theme — identisch zur Flughafen-Seite */
+            --color-bg:          #f8fafc;
+            --color-surface:     #ffffff;
+            --color-surface-2:   #f1f5f9;
+            --color-border:      #e2e8f0;
+            --color-text:        #1e293b;
+            --color-text-sub:    #64748b;
+            --color-text-dim:    #94a3b8;
+            --color-primary:     #2563eb;
+            --color-primary-hov: #1d4ed8;
+            --color-primary-bg:  #eff6ff;
+            --color-header-from: #0f172a;
+            --color-accent:      #f59e0b;
+            --color-chip-bg:     #ffffff;
+            --color-chip-bd:     #e2e8f0;
+            --color-chip-text:   #94a3b8;
+            --color-chip-act-bg: #2563eb;
+            --color-chip-act-t:  #ffffff;
+            --color-chip-act-bd: #2563eb;
+            --color-load:        #2563eb;
+            --color-note-bg:     #fffbeb;
+            --color-note-bd:     #fde68a;
+            --color-note-text:   #78350f;
+        }
+
+        [data-theme="dark"] {
+            --color-bg:          #0f172a;
+            --color-surface:     #1e293b;
+            --color-surface-2:   #162032;
+            --color-border:      #334155;
+            --color-text:        #e2e8f0;
+            --color-text-sub:    #94a3b8;
+            --color-text-dim:    #94a3b8;
+            --color-primary:     #60a5fa;
+            --color-primary-hov: #93c5fd;
+            --color-primary-bg:  #172554;
+            --color-header-from: #020617;
+            --color-chip-bg:     #1e293b;
+            --color-chip-bd:     #334155;
+            --color-chip-text:   #94a3b8;
+            --color-chip-act-bg: #f59e0b;
+            --color-chip-act-t:  #0f172a;
+            --color-chip-act-bd: #f59e0b;
+            --color-load:        #f59e0b;
+            --color-note-bg:     #1c1408;
+            --color-note-bd:     #78350f;
+            --color-note-text:   #fcd34d;
+        }
+
+        /* ── Typography ── */
+        body {
+            font-family: var(--font);
+            font-size: 16px;
+            line-height: 1.5;
+            background: var(--color-bg);
+            color: var(--color-text);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+        }
+        h1 { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 700; line-height: 1.2; }
+
+        /* ── Header ── */
+        header {
+            background: var(--color-header-from);
+            color: #fff;
+            padding: 28px var(--space-lg) 24px;
+            position: relative;
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(245,158,11,0.45) 40%, rgba(245,158,11,0.45) 60%, transparent 100%);
+        }
+        .header-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        .header-wordmark {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #fff;
+            flex-shrink: 0;
+            opacity: 0.95;
+            text-decoration: none;
+        }
+        .header-divider {
+            width: 1px;
+            height: 32px;
+            background: rgba(255,255,255,0.18);
+            flex-shrink: 0;
+        }
+        .header-text { flex: 1; min-width: 0; }
+        .header-text h1 {
+            color: #fff;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        .header-text p  { font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 5px; letter-spacing: 0.01em; }
+
+        /* Navigation zwischen den Teil-Seiten (für die spätere Zusammenführung) */
+        .header-nav { display: flex; gap: 6px; flex-shrink: 0; }
+        .header-nav a {
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(255,255,255,0.14);
+            transition: border-color var(--transition), color var(--transition), background var(--transition);
+            white-space: nowrap;
+        }
+        .header-nav a:hover { color: #fff; border-color: rgba(255,255,255,0.45); }
+        .header-nav a.active {
+            color: #0f172a;
+            background: #f59e0b;
+            border-color: #f59e0b;
+        }
+
+        .btn-theme {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.7);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: border-color var(--transition), color var(--transition);
+            flex-shrink: 0;
+        }
+        .btn-theme:hover { border-color: rgba(255,255,255,0.45); color: #fff; }
+
+        /* ── Hero ── */
+        .hero-section {
+            background: linear-gradient(135deg, #07111f 0%, #0d1f38 60%, #081425 100%);
+            overflow: hidden;
+            position: relative;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 55% 90% at 30% 50%, rgba(37,99,235,0.20) 0%, transparent 65%),
+                radial-gradient(ellipse 40% 70% at 75% 40%, rgba(245,158,11,0.09) 0%, transparent 60%);
+            animation: heroPulse 6s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes heroPulse { from { opacity: 0.5; } to { opacity: 1; } }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 52px 52px;
+            pointer-events: none;
+        }
+        .hero-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 38px var(--space-lg) 30px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-glass-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: stretch;
+            justify-content: center;
+        }
+        .hero-glass-card {
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(12px) saturate(160%);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 16px 22px;
+            text-align: center;
+            min-width: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .hero-glass-card:hover {
+            background: rgba(255,255,255,0.11);
+            border-color: rgba(245,158,11,0.35);
+        }
+        .hero-stat-num {
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            color: #fff;
+            line-height: 1;
+        }
+        .hero-stat-num.accent {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-stat-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-top: 7px;
+        }
+        .hero-live-dot {
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            margin-right: 5px;
+            vertical-align: middle;
+            animation: livePulse 2s infinite;
+        }
+        @keyframes livePulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+            50%     { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+        }
+        .hero-live-label {
+            font-size: 0.62rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: #22c55e; margin-bottom: 4px;
+        }
+        .hero-feature-row {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+            margin-top: 22px;
+        }
+        .hero-feature-chip {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 0.72rem; font-weight: 600;
+            color: rgba(255,255,255,0.8);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .hero-feature-chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .hero-bottom-fade {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 48px;
+            background: linear-gradient(to top, var(--color-bg) 0%, transparent 100%);
+            z-index: 4; pointer-events: none;
+        }
+
+        /* ── Toolbar / Suche ── */
+        nav.toolbar {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 10px var(--space-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background var(--transition);
+            box-shadow: 0 4px 20px rgba(27,54,93,0.05), 0 1px 0 var(--color-border);
+        }
+        .toolbar-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+        .search-wrap { flex: 1; min-width: 200px; max-width: 380px; position: relative; }
+        #suche {
+            width: 100%;
+            padding: 8px 14px 8px 36px;
+            font-family: var(--font);
+            font-size: 0.88rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-pill);
+            background: var(--color-surface-2);
+            color: var(--color-text);
+            outline: none;
+            transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+        }
+        #suche:focus {
+            border-color: var(--color-primary);
+            background: var(--color-surface);
+            box-shadow: 0 0 0 3px var(--color-primary-bg);
+        }
+        #suche::placeholder { color: var(--color-text-dim); font-size: 0.82rem; }
+        .search-icon {
+            position: absolute; left: 12px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-dim); font-size: 0.82rem; pointer-events: none;
+        }
+        .filter-group { display: flex; gap: 5px; flex-wrap: wrap; }
+        .chip {
+            padding: 4px 11px;
+            font-family: var(--font);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--color-chip-bd);
+            background: var(--color-chip-bg);
+            color: var(--color-chip-text);
+            cursor: pointer;
+            transition: background var(--transition), color var(--transition), border-color var(--transition);
+        }
+        .chip:hover { border-color: var(--color-primary); color: var(--color-primary); }
+        .chip.active {
+            background: var(--color-chip-act-bg);
+            color: var(--color-chip-act-t);
+            border-color: var(--color-chip-act-bd);
+        }
+        .chip-sep { width: 1px; align-self: stretch; background: var(--color-border); margin: 2px 3px; }
+        #zaehler {
+            font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+            text-transform: uppercase; color: var(--color-text-dim);
+            margin-left: auto; white-space: nowrap;
+        }
+
+        /* ── Main ── */
+        main.catalog {
+            max-width: 1080px;
+            margin: var(--space-md) auto var(--space-lg);
+            padding: 0 var(--space-md);
+        }
+        .intro-line {
+            font-size: 0.82rem; color: var(--color-text-sub);
+            line-height: 1.6; margin: 0 auto var(--space-md);
+            max-width: 760px; text-align: center;
+        }
+
+        /* ── Karte (Quelle-Card) ── */
+        article.q-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 6px;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+            box-shadow: 0 2px 8px rgba(27,54,93,0.05);
+        }
+        article.q-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 20px rgba(27,54,93,0.10);
+            transform: translateY(-2px);
+        }
+        [data-theme="dark"] article.q-card:hover { box-shadow: 0 4px 20px rgba(96,165,250,0.12); }
+        article.q-card.card-open {
+            border-color: rgba(59,130,246,0.55);
+            box-shadow: 0 0 0 1px rgba(59,130,246,0.08), 0 8px 32px rgba(27,54,93,0.13);
+            transform: translateY(-1px);
+        }
+        [data-theme="dark"] article.q-card.card-open {
+            border-color: rgba(96,165,250,0.5);
+            box-shadow: 0 0 0 1px rgba(96,165,250,0.08), 0 8px 32px rgba(96,165,250,0.14);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 13px var(--space-md);
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font);
+            transition: background var(--transition);
+        }
+        .card-header:hover, .card-header.open { background: var(--color-surface-2); }
+
+        .grp-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: var(--radius-pill);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .grp-tracking  { background: #fee2e2; color: #991b1b; }
+        .grp-utm       { background: #f3e8ff; color: #6b21a8; }
+        .grp-zonen     { background: #dbeafe; color: #1e40af; }
+        .grp-regeln    { background: #fef9c3; color: #854d0e; }
+        .grp-behoerden { background: #e0f2fe; color: #0c4a6e; }
+        .grp-wetter    { background: #cffafe; color: #155e75; }
+        .grp-notam     { background: #dcfce7; color: #166534; }
+        [data-theme="dark"] .grp-tracking  { background: #450a0a; color: #fca5a5; }
+        [data-theme="dark"] .grp-utm       { background: #3b0764; color: #d8b4fe; }
+        [data-theme="dark"] .grp-zonen     { background: #1e3a5f; color: #93c5fd; }
+        [data-theme="dark"] .grp-regeln    { background: #422006; color: #fcd34d; }
+        [data-theme="dark"] .grp-behoerden { background: #0c4a6e; color: #7dd3fc; }
+        [data-theme="dark"] .grp-wetter    { background: #083344; color: #67e8f9; }
+        [data-theme="dark"] .grp-notam     { background: #14532d; color: #86efac; }
+
+        .card-info { flex: 1; min-width: 0; }
+        .card-name {
+            font-weight: 600; font-size: 0.9rem;
+            color: var(--color-text); letter-spacing: -0.01em;
+            display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+        }
+        [data-theme="dark"] .card-name { color: #e2e8f0; }
+        .card-meta {
+            font-size: 0.74rem; color: var(--color-text-dim);
+            margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .track-pill {
+            font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background: #fee2e2; color: #991b1b;
+            padding: 2px 8px; border-radius: var(--radius-pill);
+        }
+        [data-theme="dark"] .track-pill { background: #450a0a; color: #fca5a5; }
+
+        .card-badges { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+        .mini-badge {
+            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.03em;
+            padding: 3px 8px; border-radius: var(--radius-pill); white-space: nowrap;
+        }
+        .b-free { background: #dcfce7; color: #166534; }
+        .b-paid { background: #fef3c7; color: #92400e; }
+        .b-api  { background: #cffafe; color: #155e75; }
+        [data-theme="dark"] .b-free { background: #14532d; color: #86efac; }
+        [data-theme="dark"] .b-paid { background: #422006; color: #fcd34d; }
+        [data-theme="dark"] .b-api  { background: #083344; color: #67e8f9; }
+
+        .card-chevron {
+            color: var(--color-text-dim); font-size: 0.65rem; flex-shrink: 0;
+            transition: transform 0.2s ease; opacity: 0.5;
+        }
+        .card-header:hover .card-chevron, .card-header.open .card-chevron { opacity: 1; }
+        .card-header.open .card-chevron { transform: rotate(90deg); }
+
+        /* ── Card Body ── */
+        .card-body { display: none; border-top: 1px solid var(--color-border); padding: var(--space-md); }
+        .card-body.open { display: block; }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px 24px;
+        }
+        .detail-item { min-width: 0; }
+        .detail-label {
+            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.07em;
+            text-transform: uppercase; color: var(--color-text-dim); margin-bottom: 3px;
+        }
+        .detail-value { font-size: 0.85rem; color: var(--color-text); line-height: 1.5; }
+        .detail-uid {
+            font-family: 'Courier New', monospace; font-size: 0.8rem;
+            color: var(--color-primary);
+        }
+        .bemerkung {
+            margin-top: var(--space-md);
+            background: var(--color-surface-2);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            font-size: 0.82rem; line-height: 1.6; color: var(--color-text-sub);
+        }
+        .bemerkung strong { color: var(--color-text-sub); }
+        .status-note {
+            margin-top: 10px;
+            background: var(--color-note-bg);
+            border: 1px solid var(--color-note-bd);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-size: 0.8rem; line-height: 1.55; color: var(--color-note-text);
+        }
+        .card-actions { margin-top: var(--space-md); display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-source {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 18px; border-radius: var(--radius-pill);
+            background: var(--color-primary); color: #fff;
+            border: none; cursor: pointer;
+            font-family: var(--font); font-size: 0.82rem; font-weight: 600;
+            text-decoration: none;
+            transition: background var(--transition);
+        }
+        .btn-source:hover { background: var(--color-primary-hov); }
+        .no-link-hint { font-size: 0.76rem; color: var(--color-text-dim); align-self: center; }
+
+        /* ── Gruppen-Trenner ── */
+        .group-heading {
+            display: flex; align-items: center; gap: 10px;
+            margin: var(--space-lg) 0 10px;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--color-text-dim);
+        }
+        .group-heading:first-of-type { margin-top: 0; }
+        .group-heading .gh-line { flex: 1; height: 1px; background: var(--color-border); }
+        .group-heading .gh-count {
+            font-size: 0.65rem; color: var(--color-text-dim);
+            background: var(--color-surface-2); padding: 2px 8px; border-radius: var(--radius-pill);
+        }
+
+        /* ── Loading / No-Results ── */
+        .loading { text-align: center; padding: var(--space-xl); color: var(--color-text-sub); }
+        .no-results-wrap { text-align: center; padding: var(--space-xl) var(--space-md); max-width: 480px; margin: 0 auto; }
+        .no-results-icon { font-size: 2.4rem; margin-bottom: var(--space-sm); }
+        .no-results-title { font-size: 1.05rem; font-weight: 600; color: var(--color-text); margin-bottom: 6px; }
+        .no-results-sub { font-size: 0.84rem; color: var(--color-text-sub); margin-bottom: var(--space-md); line-height: 1.55; }
+        .no-results-reset {
+            padding: 9px 20px; border-radius: var(--radius-pill);
+            background: var(--color-primary); color: #fff; border: none; cursor: pointer;
+            font-family: var(--font); font-size: 0.84rem; font-weight: 600;
+            transition: background var(--transition);
+        }
+        .no-results-reset:hover { background: var(--color-primary-hov); }
+
+        /* ── Footer ── */
+        footer {
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-xl) var(--space-md) var(--space-lg);
+            text-align: center;
+            margin-top: var(--space-xl);
+        }
+        footer p {
+            font-size: 0.72rem; color: var(--color-text-dim);
+            line-height: 2.2; letter-spacing: 0.01em;
+            max-width: 800px; margin: 0 auto;
+        }
+        footer a { color: var(--color-text-sub); text-decoration: none; transition: color var(--transition); }
+        footer a:hover { color: var(--color-primary); }
+        footer .sep { margin: 0 var(--space-xs); opacity: 0.3; }
+        .footer-link-btn {
+            background: none; border: none; cursor: pointer;
+            font-family: var(--font); font-size: 0.72rem;
+            color: var(--color-text-sub); text-decoration: underline; padding: 0;
+        }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55); z-index: 9000;
+            align-items: center; justify-content: center; padding: var(--space-md);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg); max-width: 600px; width: 100%;
+            max-height: 85vh; overflow-y: auto; padding: var(--space-lg);
+            position: relative; box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+        }
+        .modal-close {
+            position: absolute; top: var(--space-sm); right: var(--space-sm);
+            background: none; border: none; font-size: 1.2rem; cursor: pointer;
+            color: var(--color-text-dim); padding: 4px 8px; border-radius: var(--radius-sm); line-height: 1;
+        }
+        .modal-close:hover { color: var(--color-text); background: var(--color-surface-2); }
+        .modal-box h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--color-text); }
+        .modal-box h3 { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-dim); margin: var(--space-md) 0 var(--space-xs); }
+        .modal-box p  { font-size: 0.85rem; color: var(--color-text-sub); line-height: 1.65; margin-bottom: var(--space-sm); }
+        .modal-box a  { color: var(--color-primary); }
+
+        /* ── Responsive ── */
+        @media (max-width: 720px) {
+            header { padding: 20px var(--space-md) 18px; }
+            .header-inner { gap: var(--space-sm); flex-wrap: wrap; }
+            .header-wordmark, .header-divider { display: none; }
+            .header-text { order: 1; flex: 1 1 auto; }
+            .header-text p { display: none; }
+            .header-nav { order: 3; flex: 1 1 100%; justify-content: flex-start; }
+            .btn-theme { order: 2; }
+            .hero-inner { padding: 26px var(--space-sm) 22px; }
+            .hero-glass-card { min-width: 44%; flex: 1 1 44%; padding: 14px 12px; }
+            nav.toolbar { padding: 8px var(--space-sm); }
+            .toolbar-inner { gap: 8px; }
+            .search-wrap { flex: 1 1 100%; max-width: 100%; order: -1; }
+            .chip { font-size: 0.68rem; padding: 4px 9px; }
+            #zaehler { margin-left: 0; }
+            main.catalog { padding: 0 var(--space-sm); }
+            .card-badges .mini-badge { display: none; }
+        }
+        @media (max-width: 380px) {
+            #suche { font-size: 16px; }
+        }
+        /* ── Interaktive Karte (Leaflet) ── */
+        .map-wrap { margin-top: var(--space-sm); }
+        .map-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+        .map-search {
+            flex: 1 1 220px; min-width: 150px; padding: 8px 12px;
+            border: 1.5px solid var(--color-border); border-radius: var(--radius-sm);
+            background: var(--color-surface); color: var(--color-text);
+            font-family: var(--font); font-size: 0.85rem;
+        }
+        .map-search::placeholder { color: var(--color-text-dim); }
+        .map-search:focus { outline: none; border-color: var(--color-primary); }
+        .map-search-btn, .map-reload-btn {
+            padding: 8px 14px; font-size: 0.82rem; font-weight: 600;
+            background: var(--color-surface); color: var(--color-text-sub);
+            border: 1.5px solid var(--color-border); border-radius: var(--radius-sm);
+            cursor: pointer; font-family: var(--font); white-space: nowrap;
+            transition: background var(--transition), border-color var(--transition), color var(--transition);
+        }
+        .map-search-btn:hover, .map-reload-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-bg); }
+        .map-search-btn:disabled { opacity: 0.6; cursor: default; }
+        .map-container {
+            height: 460px; border-radius: var(--radius-md); overflow: hidden;
+            border: 1px solid var(--color-border); background: var(--color-surface-2);
+        }
+        .map-note { margin-top: 8px; font-size: 0.72rem; color: var(--color-text-dim); line-height: 1.55; }
+        .map-note a { color: var(--color-primary); text-decoration: none; }
+        .map-note a:hover { text-decoration: underline; }
+        .leaflet-popup-content-wrapper { font-family: var(--font); font-size: 0.82rem; }
+        @media (max-width: 720px) { .map-container { height: 360px; } }
+
+    </style>
+</head>
+<body>
+<noscript><style>body::before{content:"JavaScript ist erforderlich, um den Katalog zu laden.";display:block;padding:2rem;font-family:sans-serif;text-align:center;color:#64748b}</style></noscript>
+
+<!-- ── Header ── -->
+<header>
+    <div class="header-inner">
+        <a href="index.html" class="header-wordmark">Luftfahrtdatenkatalog</a>
+        <div class="header-divider" aria-hidden="true"></div>
+        <div class="header-text">
+            <h1>UAV-Tracking &amp; Drohnendaten</h1>
+            <p>Remote ID &middot; UTM &middot; Geo-Zonen &middot; Regularien &middot; Behörden &middot; Wetter</p>
+        </div>
+        <nav class="header-nav" aria-label="Katalog-Bereiche">
+            <a href="ourairports.html">Flughäfen</a>
+            <a href="drohnen.html" class="active" aria-current="page">UAVs / Drohnen</a>
+        </nav>
+        <button class="btn-theme" id="theme-btn" onclick="toggleTheme()" aria-label="Hell/Dunkel-Modus umschalten">🌙</button>
+    </div>
+</header>
+
+<!-- ── Hero ── -->
+<section class="hero-section" aria-label="Übersicht">
+    <div class="hero-inner">
+        <div class="hero-glass-grid">
+            <div class="hero-glass-card">
+                <div class="hero-stat-num">17</div>
+                <div class="hero-stat-label">Datenquellen</div>
+            </div>
+            <div class="hero-glass-card">
+                <div class="hero-stat-num accent">3</div>
+                <div class="hero-stat-label">Tracking-Tools</div>
+            </div>
+            <div class="hero-glass-card">
+                <div class="hero-live-label"><span class="hero-live-dot"></span>Live</div>
+                <div class="hero-stat-num" style="font-size:1.35rem">Remote ID</div>
+                <div class="hero-stat-label">ASTM F3411</div>
+            </div>
+            <div class="hero-glass-card">
+                <div class="hero-stat-num" style="font-size:1.5rem">EU + DE</div>
+                <div class="hero-stat-label">Schwerpunkt</div>
+            </div>
+        </div>
+        <div class="hero-feature-row">
+            <div class="hero-feature-chip"><span class="dot" style="background:#ef4444"></span>Remote ID</div>
+            <div class="hero-feature-chip"><span class="dot" style="background:#a855f7"></span>UTM-Plattformen</div>
+            <div class="hero-feature-chip"><span class="dot" style="background:#3b82f6"></span>Geo-Zonen</div>
+            <div class="hero-feature-chip"><span class="dot" style="background:#f59e0b"></span>Regularien</div>
+            <div class="hero-feature-chip"><span class="dot" style="background:#0ea5e9"></span>Behörden</div>
+            <div class="hero-feature-chip"><span class="dot" style="background:#06b6d4"></span>Wetter</div>
+        </div>
+    </div>
+    <div class="hero-bottom-fade"></div>
+</section>
+
+<!-- ── Toolbar / Suche ── -->
+<nav class="toolbar" aria-label="Suche und Filter">
+    <div class="toolbar-inner">
+        <div class="search-wrap">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <label for="suche" class="sr-only">Quelle suchen</label>
+            <input type="search" id="suche" placeholder="Quelle, Inhalt, Format, Zielgruppe…" autocomplete="off">
+        </div>
+        <div class="filter-group" role="group" aria-label="Nach Kategorie filtern" id="filter">
+            <button class="chip active" data-gruppe="" title="Alle Quellen anzeigen">Alle</button>
+            <button class="chip" data-gruppe="tracking" title="Remote-ID-Erkennung & Live-Tracking von Drohnen">📡 Tracking &amp; Remote ID</button>
+            <button class="chip" data-gruppe="utm" title="Unmanned Traffic Management Plattformen">🛰️ UTM</button>
+            <button class="chip" data-gruppe="zonen" title="Geo-Zonen, Flugverbotszonen & Karten">🗺️ Geo-Zonen &amp; Karten</button>
+            <button class="chip" data-gruppe="regeln" title="EU- & globale Drohnenvorschriften">📋 Regeln</button>
+            <button class="chip" data-gruppe="behoerden" title="Behörden, Registrierung & Qualifikation">🏛️ Behörden</button>
+            <button class="chip" data-gruppe="wetter" title="Wetter für Drohnenflüge">🌦️ Wetter</button>
+            <button class="chip" data-gruppe="notam" title="NOTAMs für Drohnen">⚠️ NOTAMs</button>
+            <span class="chip-sep" aria-hidden="true"></span>
+            <button class="chip" data-toggle="kostenlos" title="Nur kostenlose / kostenlos nutzbare Quellen">💶 Kostenlos</button>
+            <button class="chip" data-toggle="api" title="Maschinenlesbar: API, JSON, GeoJSON, KML oder XML">⚙ Maschinenlesbar</button>
+        </div>
+        <p id="zaehler" aria-live="polite" aria-atomic="true"></p>
+    </div>
+</nav>
+
+<!-- ── Main ── -->
+<main class="catalog" aria-label="UAV-Datenquellen">
+    <p class="intro-line">
+        Marktübersicht der Datenquellen rund um UAVs / Drohnen aus dem Luftfahrtdatenkatalog —
+        mit Schwerpunkt auf <strong>UAV-Tracking</strong> (Remote-ID-Erkennung nach ASTM&nbsp;F3411).
+        Tippe auf eine Quelle für alle Details.
+    </p>
+    <div id="liste" aria-live="polite">
+        <div class="loading" id="laden">Daten werden geladen…</div>
+    </div>
+</main>
+
+<!-- ── Footer ── -->
+<footer>
+    <p>
+        Studentisches Projekt · Avionik &amp; Luftfahrttechnik ·
+        <a href="https://www.hs-rm.de" target="_blank" rel="noopener">Hochschule RheinMain</a>
+        · Teil des Luftfahrtdatenkatalogs (Bereich UAVs / Drohnen)
+    </p>
+    <p style="margin-top:6px">
+        Datengrundlage: eigene Recherche &amp; Bewertung im Rahmen des Datenkatalogs.
+        Verlinkte Anbieter (u.&nbsp;a.
+        <a href="https://www.easa.europa.eu/en/domains/civil-drones" target="_blank" rel="noopener">EASA</a>,
+        <a href="https://www.icao.int" target="_blank" rel="noopener">ICAO</a>,
+        <a href="https://www.dipul.de" target="_blank" rel="noopener">dipul</a>,
+        <a href="https://lba-openuav.de" target="_blank" rel="noopener">LBA OpenUAV</a>,
+        <a href="https://www.openaip.net" target="_blank" rel="noopener">OpenAIP</a>,
+        <a href="https://www.dronetag.com" target="_blank" rel="noopener">Dronetag</a>)
+        sind eigenständige Dritte.
+    </p>
+    <p style="margin-top:6px">
+        <button class="footer-link-btn" onclick="document.getElementById('modal-impressum').classList.add('open')">Impressum</button>
+        <span class="sep">·</span>
+        <button class="footer-link-btn" onclick="document.getElementById('modal-datenschutz').classList.add('open')">Datenschutzerklärung</button>
+    </p>
+</footer>
+
+<!-- ── Modal: Impressum ── -->
+<div class="modal-overlay" id="modal-impressum" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-label="Impressum">
+        <button class="modal-close" onclick="document.getElementById('modal-impressum').classList.remove('open')" aria-label="Schließen">✕</button>
+        <h2>Impressum</h2>
+        <h3>Angaben gemäß § 5 TMG</h3>
+        <p>
+            Jan Scepik<br>
+            Am Brückweg 26<br>
+            65428 Rüsselsheim am Main
+        </p>
+        <h3>Kontakt</h3>
+        <p>E-Mail: <a href="mailto:jan.scepik@student.hs-rm.de">jan.scepik@student.hs-rm.de</a></p>
+        <h3>Hinweis</h3>
+        <p>Diese Website ist ein privates Hochschulprojekt im Rahmen des Moduls <strong>Avionik</strong> im Studiengang <strong>Elektro- und Luftfahrttechnik</strong> an der Hochschule RheinMain. Es besteht kein kommerzieller Zweck. Angaben zu Handelsregister, USt-IdNr. oder Aufsichtsbehörden entfallen.</p>
+        <h3>Haftungsausschluss</h3>
+        <p>Die dargestellten Informationen zu Drohnen-Datenquellen dienen ausschließlich der Übersicht und ersetzen keine offizielle Flugvorbereitung oder Rechtsberatung. Für die Richtigkeit, Vollständigkeit und Aktualität der Angaben sowie der verlinkten externen Quellen wird keine Haftung übernommen.</p>
+    </div>
+</div>
+
+<!-- ── Modal: Datenschutzerklärung ── -->
+<div class="modal-overlay" id="modal-datenschutz" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-label="Datenschutzerklärung">
+        <button class="modal-close" onclick="document.getElementById('modal-datenschutz').classList.remove('open')" aria-label="Schließen">✕</button>
+        <h2>Datenschutzerklärung</h2>
+        <h3>Verantwortlicher</h3>
+        <p>Jan Scepik, Am Brückweg 26, 65428 Rüsselsheim am Main<br>
+        E-Mail: <a href="mailto:jan.scepik@student.hs-rm.de">jan.scepik@student.hs-rm.de</a></p>
+        <h3>Hosting</h3>
+        <p>Diese Website wird über <strong>GitHub Pages</strong> (GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA) bereitgestellt. GitHub kann dabei Zugriffsdaten (insbesondere IP-Adressen) in Server-Logs speichern. Weitere Informationen finden Sie in der <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>.</p>
+        <h3>Datenerhebung durch diese Website</h3>
+        <p>Diese Seite erhebt selbst <strong>keine personenbezogenen Daten</strong>. Es werden keine Cookies gesetzt und kein Tracking eingesetzt. Alle Katalogdaten sind direkt in die Seite eingebettet — es finden im Normalbetrieb <strong>keine Live-Abfragen an externe Server</strong> statt.</p>
+        <h3>Schriftart (Google Fonts)</h3>
+        <p>Zur einheitlichen Darstellung wird die Schriftart „Inter“ über <strong>Google Fonts</strong> geladen. Dabei wird Ihre IP-Adresse an Server von Google (Google Ireland Ltd.) übertragen. Anbieter: Google, weitere Informationen in der <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google-Datenschutzerklärung</a>.</p>
+        <h3>Externe Links</h3>
+        <p>Die Quellen-Karten enthalten Links zu Websites Dritter (z.&nbsp;B. EASA, ICAO, dipul, LBA, OpenAIP, Dronetag). Erst beim Anklicken eines Links werden Daten an den jeweiligen Anbieter übertragen. Für deren Inhalte und Datenschutz ist der jeweilige Anbieter verantwortlich.</p>
+        <h3>Ihre Rechte</h3>
+        <p>Sie haben gemäß DSGVO das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer Daten sowie das Recht auf Datenübertragbarkeit. Wenden Sie sich hierzu an die oben genannte E-Mail-Adresse.</p>
+        <h3>Beschwerderecht</h3>
+        <p>Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Zuständig ist der <a href="https://www.bfdi.bund.de" target="_blank" rel="noopener">Bundesbeauftragte für den Datenschutz und die Informationsfreiheit (BfDI)</a>.</p>
+    </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+//  Datengrundlage: Luftfahrtdatenkatalog, Kategorie "UAVs / Drohnen"
+//  (17 Quellen). Felder 1:1 aus dem Katalog; Tippfehler leicht bereinigt.
+//  Links auf die offiziellen Anbieter wurden ergänzt (Stand: 2026).
+// ════════════════════════════════════════════════════════════════════
+const GRUPPEN = {
+    tracking:  { label: 'Tracking & Remote ID', icon: '📡' },
+    utm:       { label: 'UTM-Plattformen',       icon: '🛰️' },
+    zonen:     { label: 'Geo-Zonen & Karten',    icon: '🗺️' },
+    regeln:    { label: 'Regeln & Vorschriften', icon: '📋' },
+    behoerden: { label: 'Behörden & Registrierung', icon: '🏛️' },
+    wetter:    { label: 'Wetter',                icon: '🌦️' },
+    notam:     { label: 'NOTAMs',                icon: '⚠️' }
+};
+const GRUPPEN_REIHENFOLGE = ['tracking','utm','zonen','regeln','behoerden','wetter','notam'];
+
+const QUELLEN = [
+    {
+        name: 'Dronetag Platform', gruppe: 'tracking', tracking: true, kostenlos: false, api: false,
+        inhalt: 'Kombinierte Plattform: Remote-ID-Erkennung, Tracking und Flottenmanagement; visualisiert eigene Flotte + fremden Verkehr.',
+        zielgruppe: 'Gewerbliche Drohnenbetreiber, Flottenmanager',
+        formate: 'Web, iOS, Android', uniqueIds: '',
+        verfuegbarkeit: 'Mit Login', lizenz: 'Proprietär', aktualitaet: 'Echtzeit',
+        abdeckung: 'Lokal / Global (je nach Paket)', kosten: 'Teils kostenpflichtig',
+        bemerkung: 'Kombiniert Erkennung, Tracking und Flottenmanagement in einer Oberfläche. Hardware (Dronetag Beacon) nötig für volle Funktionalität. Eher für gewerbliche Flottenbetreiber geeignet.',
+        link: 'https://www.dronetag.com/', statusNote: ''
+    },
+    {
+        name: 'Drone Scanner – Dronetag', gruppe: 'tracking', tracking: true, kostenlos: true, api: false,
+        inhalt: 'Erkennung aktiver Drohnen per Remote ID (Bluetooth & Wi-Fi): Position, Pilotenstandort, Flugdaten in Echtzeit.',
+        zielgruppe: 'Drohnenpiloten, Behörden, Sicherheitspersonal',
+        formate: 'iOS / Android App', uniqueIds: '',
+        verfuegbarkeit: 'Public (App)', lizenz: 'Public (Open Source)', aktualitaet: 'Echtzeit',
+        abdeckung: 'Lokal (Bluetooth/Wi-Fi-Reichweite)', kosten: 'Kostenlos',
+        bemerkung: 'Beste kostenlose App zur Erkennung fremder Drohnen per Remote ID. Open Source. Basiert auf ASTM-F3411-Standard. Keine Anmeldung nötig. Kein API, nur App-Nutzung.',
+        link: 'https://www.dronetag.com/', statusNote: ''
+    },
+    {
+        name: 'Drone Tracker – Drone Radar', gruppe: 'tracking', tracking: true, kostenlos: true, api: false,
+        inhalt: 'Erkennung anderer Drohnen im Luftraum: Position, Flugweg, Geschwindigkeit, Höhe, Operator-Daten in Echtzeit.',
+        zielgruppe: 'Drohnenpiloten, Behörden',
+        formate: 'Android App', uniqueIds: '',
+        verfuegbarkeit: 'Public (App)', lizenz: 'Proprietär', aktualitaet: 'Echtzeit',
+        abdeckung: 'Lokal (Empfangsreichweite)', kosten: 'Kostenlos',
+        bemerkung: 'Keine Anmeldung nötig. Basiert auf ASTM-F3411-Standard für Remote ID. Zeigt vollständige Flugdaten erkannter Drohnen. Nur Android, kein iOS.',
+        link: null, statusNote: ''
+    },
+    {
+        name: 'AirMap', gruppe: 'utm', tracking: false, kostenlos: true, api: true,
+        inhalt: 'UTM-Plattform: Flugverbotszonen, Flugplanung, Echtzeit-Autorisierung, Luftraummanagement für Drohnen.',
+        zielgruppe: 'Drohnenpiloten, gewerbliche Betreiber, Entwickler',
+        formate: 'REST API, JSON, iOS/Android, Web', uniqueIds: '',
+        verfuegbarkeit: 'API-Key / Registrierung', lizenz: 'Proprietär', aktualitaet: 'Echtzeit-Autorisierung',
+        abdeckung: 'Global', kosten: 'Basis kostenlos / Pro kostenpflichtig',
+        bemerkung: 'Eine der bekanntesten Plattformen für Drohnen-Luftraummanagement. Echtzeit-Autorisierung von Flügen möglich. Professionelle Features kostenpflichtig. Gut für gewerbliche Betreiber.',
+        link: null,
+        statusNote: 'Status-Hinweis (2026): Die AirMap-Verbraucher-App inkl. LAANC wurde im Juni 2023 eingestellt; AirMap wurde 2021 von DroneUp übernommen. Bitte vor Verwendung den aktuellen Status prüfen.'
+    },
+    {
+        name: 'Altitude Angel – Drone Safety Map', gruppe: 'utm', tracking: false, kostenlos: true, api: true, karte: true,
+        inhalt: 'UTM-Plattform: Geo-Zonen, Echtzeit-Luftraum, Geofencing-Daten für 155+ Länder, UTM-Integration.',
+        zielgruppe: 'Entwickler, gewerbliche Drohnenbetreiber',
+        formate: 'REST API, JSON', uniqueIds: '',
+        verfuegbarkeit: 'Registrierung erforderlich', lizenz: 'Proprietär', aktualitaet: 'Echtzeit',
+        abdeckung: 'Global (155+ Länder)', kosten: 'Basis kostenlos / Pro kostenpflichtig',
+        bemerkung: 'DJI nutzt Altitude Angel als Geofencing-Datenquelle. Sehr breite globale Abdeckung. UTM-Integration. Erweiterte Funktionen kostenpflichtig. API gut dokumentiert.',
+        link: 'https://dronesafetymap.com/',
+        statusNote: 'Status-Hinweis (Stand 2026): Altitude Angel ging im Okt. 2025 in die Insolvenzverwaltung; die Vermögenswerte inkl. der GuardianUTM-Plattform wurden Anfang 2026 von der Indra Group übernommen. Die kostenlose „Drone Safety Map\" (dronesafetymap.com) ist weiterhin online und erreichbar. Allerdings berichten Fachquellen, dass die Pflege der Live-Verbraucherdaten nach der Übernahme nicht nahtlos fortgeführt wurde — angezeigte Luftraumdaten können daher veraltet sein. Für sicherheitsrelevante Flugvorbereitung immer offizielle Quellen (DFS / Dipul) gegenprüfen. Die interaktive Karte unten nutzt unabhängige OpenAIP-Daten.'
+    },
+    {
+        name: 'DJI FlySafe Geo Zones', gruppe: 'zonen', tracking: false, kostenlos: true, api: false, karte: true,
+        inhalt: 'Herstellerspezifische Geo-Zonen für DJI-Drohnen: Verbots-, Einschränkungs- und Autorisierungszonen weltweit.',
+        zielgruppe: 'DJI-Drohnenpiloten',
+        formate: 'Web (interaktiv), proprietär', uniqueIds: '',
+        verfuegbarkeit: 'Public', lizenz: 'Proprietär', aktualitaet: 'Mehrmals jährlich',
+        abdeckung: 'Global', kosten: 'Kostenlos',
+        bemerkung: 'Nur für DJI-Drohnen relevant; direkt in der Firmware eingebaut. Gut zur Vorflug-Verifikation, aber nicht für andere Drohnensysteme nutzbar. Kein API.',
+        link: 'https://www.dji.com/flysafe', statusNote: ''
+    },
+    {
+        name: 'OpenAIP (UAV-Zonen)', gruppe: 'zonen', tracking: false, kostenlos: true, api: true, karte: true,
+        inhalt: 'Drohnenzonen und Luftraumdaten in maschinenlesbarem Format: UAV-Restriktionen, Flugplätze, Hindernisse, Navaids.',
+        zielgruppe: 'GA-Piloten, Entwickler, Hobbyisten',
+        formate: 'GeoJSON, OpenAir, KML, REST API', uniqueIds: 'OpenAIP-ID, ICAO',
+        verfuegbarkeit: 'API-Key', lizenz: 'Public (CC BY-NC)', aktualitaet: 'Kontinuierlich (Community-Pflege)',
+        abdeckung: 'Global', kosten: 'Kostenlos (NC); kommerziell auf Anfrage',
+        bemerkung: 'Beste offene, maschinenlesbare Quelle für UAV-Zonendaten. Community-gepflegt, direkt in Apps integrierbar. ACHTUNG: CC BY-NC = nicht-kommerziell — für eine nicht-kommerzielle Webseite geeignet.',
+        link: 'https://www.openaip.net/', statusNote: ''
+    },
+    {
+        name: 'EASA – Geo-Zonen (wo darf ich fliegen?)', gruppe: 'zonen', tracking: false, kostenlos: true, api: true, karte: true,
+        inhalt: 'Offizielle EU-Drohnenzonen: Verbots-, Einschränkungs- und freie Zonen je Mitgliedsstaat; maschinenlesbare Zonendaten.',
+        zielgruppe: 'Drohnenpiloten, App-Entwickler, Behörden',
+        formate: 'JSON, XML', uniqueIds: '',
+        verfuegbarkeit: 'Public', lizenz: 'Public', aktualitaet: 'AIRAC-Zyklus (28 Tage) / bei Änderungen',
+        abdeckung: 'EU-weit', kosten: 'Kostenlos',
+        bemerkung: 'Normative Grundlage aller EU-Drohnenzonen. XML-Version maschinenlesbar, direkt für die Webseite nutzbar. Unterscheidet zwischen geografischen Zonen (offene, eingeschränkte, verbotene Bereiche).',
+        link: 'https://www.easa.europa.eu/en/domains/civil-drones', statusNote: ''
+    },
+    {
+        name: 'DFS – Drohnenflug-Portal', gruppe: 'zonen', tracking: false, kostenlos: true, api: false, karte: true,
+        inhalt: 'Luftraumfreigaben, Flugverbotszonen, Genehmigungsanfragen für Drohnen in Deutschland; interaktive Karte.',
+        zielgruppe: 'Drohnenpiloten in Deutschland',
+        formate: 'Web (interaktiv), PDF', uniqueIds: '',
+        verfuegbarkeit: 'Public', lizenz: 'Proprietär', aktualitaet: 'Bei Änderungen',
+        abdeckung: 'Deutschland', kosten: 'Kostenlos',
+        bemerkung: 'Verbindliche Primärquelle für Deutschland. Kein API-Zugang, nur manuelle Nutzung möglich. Gut zur Vorflug-Verifikation. Nicht maschinenlesbar.',
+        link: 'https://www.dfs.de', statusNote: ''
+    },
+    {
+        name: 'Dipul – Map Tool', gruppe: 'zonen', tracking: false, kostenlos: true, api: false, karte: true,
+        inhalt: 'Interaktive Karte (Map Tool) der Digitalen Plattform Unbemannte Luftfahrt.',
+        zielgruppe: 'Drohnenpiloten, Hobbyisten',
+        formate: 'Web (interaktiv)', uniqueIds: '',
+        verfuegbarkeit: 'Public', lizenz: 'Public', aktualitaet: 'Echtzeit',
+        abdeckung: 'Deutschland', kosten: 'Kostenlos',
+        bemerkung: 'Alle Infos, Regeln und Abläufe für den Drohnenbetrieb in Deutschland auf einer Webseite, inkl. interaktivem Map Tool für geografische Gebiete.',
+        link: 'https://www.dipul.de/', statusNote: ''
+    },
+    {
+        name: 'EASA Easy Access Rules UAS', gruppe: 'regeln', tracking: false, kostenlos: true, api: true,
+        inhalt: 'Vollständige EU-Drohnenvorschriften: Kategorien Open/Specific/Certified, Klassen C0–C6, Betriebsregeln, Anforderungen.',
+        zielgruppe: 'Drohnenbetreiber, Entwickler, Behörden',
+        formate: 'PDF, XML', uniqueIds: '',
+        verfuegbarkeit: 'Public', lizenz: 'Public', aktualitaet: 'Ca. jährlich (bei Regeländerungen)',
+        abdeckung: 'EU / Global (Referenz)', kosten: 'Kostenlos',
+        bemerkung: 'Normative EU-Grundlage für alle Drohnenaktivitäten. XML-Version maschinenlesbar. Referenz für Regulierungsfragen — weltweit relevant, da viele Länder sich an EASA orientieren.',
+        link: 'https://www.easa.europa.eu/en/domains/civil-drones', statusNote: ''
+    },
+    {
+        name: 'ICAO RPAS / UAS Regulations', gruppe: 'regeln', tracking: false, kostenlos: true, api: false,
+        inhalt: 'Globaler Rahmen: Mustervorschriften Parts 101/102/149, UTM-Framework (Ed. 4), DOC 10019 – Manual on RPAS.',
+        zielgruppe: 'Behörden, Forscher, Entwickler, Hersteller',
+        formate: 'PDF', uniqueIds: '',
+        verfuegbarkeit: 'Public (außer DOC 10019)', lizenz: 'Proprietär', aktualitaet: 'Bei Amendments',
+        abdeckung: 'Global', kosten: 'Kostenlos / DOC 10019 kostenpflichtig',
+        bemerkung: 'ICAO setzt keine direkt bindenden Gesetze, liefert aber den globalen Rahmen. Viele Länder ohne eigene Drohnengesetze orientieren sich hieran. EASA setzt ICAO-Vorgaben für die EU um. Nur als PDF verfügbar, nicht maschinenlesbar.',
+        link: 'https://www.icao.int', statusNote: ''
+    },
+    {
+        name: 'EASA – Nationale Drohnenbehörden (NAA)', gruppe: 'behoerden', tracking: false, kostenlos: true, api: false,
+        inhalt: 'Übersicht aller nationalen Luftfahrtbehörden in der EU, zuständig für Drohnenzulassung und Luftraumfreigabe je Mitgliedsstaat.',
+        zielgruppe: 'Drohnenpiloten, Behörden, Entwickler',
+        formate: 'Web (HTML)', uniqueIds: '',
+        verfuegbarkeit: 'Public', lizenz: 'Public', aktualitaet: 'Bei Änderungen',
+        abdeckung: 'EU-weit', kosten: 'Kostenlos',
+        bemerkung: 'Offizielle Anlaufstelle je EU-Mitgliedsstaat. Kein API. Gut zur Orientierung, welche nationale Behörde zuständig ist. Kein maschinenlesbarer Datenzugang.',
+        link: 'https://www.easa.europa.eu/en/domains/civil-drones', statusNote: ''
+    },
+    {
+        name: 'LBA – UAS-Betreiberregistrierung', gruppe: 'behoerden', tracking: false, kostenlos: true, api: false,
+        inhalt: 'Deutsches Drohnenregister: Betreiberregistrierung, Kompetenznachweis (A1/A3, A2), Kennzeichnungspflicht.',
+        zielgruppe: 'Drohnenbetreiber in Deutschland',
+        formate: 'Web, PDF', uniqueIds: '',
+        verfuegbarkeit: 'Public (Registrierung nötig)', lizenz: 'Public', aktualitaet: 'Bei Änderungen',
+        abdeckung: 'Deutschland', kosten: 'Kostenlos',
+        bemerkung: 'Pflicht für alle Drohnenbetreiber in DE (ab 250 g). Kein maschinenlesbarer Datenzugang. Wichtig als Rechtsgrundlage, nicht als Datenquelle. Login erforderlich.',
+        link: 'https://www.lba.de/DE/Drohnen/', statusNote: ''
+    },
+    {
+        name: 'LBA OpenUAV – Training', gruppe: 'behoerden', tracking: false, kostenlos: true, api: false,
+        inhalt: 'Trainingsmodul mit Lehrmaterial und Infotexten zur sicheren Bedienung einer Drohne sowie zur Online-Prüfung (Kompetenznachweis).',
+        zielgruppe: 'Drohnenpiloten, Hobbyisten',
+        formate: 'Web (HTML, Videos, Multiple Choice)', uniqueIds: '',
+        verfuegbarkeit: 'Mit Login', lizenz: 'Proprietär (DE Gov / LBA)', aktualitaet: 'Anlassbezogen (mit Gesetzen)',
+        abdeckung: 'Deutschland / EU', kosten: 'Training kostenlos / Prüfung A1/A3: 25 €',
+        bemerkung: 'Streng genommen keine Datenquelle, sondern eine Lernplattform. Enthält Lehrmaterial und Infotexte zur sicheren Bedienung einer Drohne. Sinnvoll als Verweis/Anleitung.',
+        link: 'https://lba-openuav.de/', statusNote: ''
+    },
+    {
+        name: 'UAV Forecast', gruppe: 'wetter', tracking: false, kostenlos: true, api: false,
+        inhalt: 'Wetterbedingungen speziell für Drohnenflüge: Wind, GPS-Qualität, KP-Index (Magnetfeld), Sichtweite, Niederschlag.',
+        zielgruppe: 'Drohnenpiloten, Hobbyisten',
+        formate: 'iOS/Android, Web', uniqueIds: '',
+        verfuegbarkeit: 'Public', lizenz: 'Proprietär', aktualitaet: 'Echtzeit / stündlich',
+        abdeckung: 'Global', kosten: 'Kostenlos',
+        bemerkung: 'Speziell für Drohnenpiloten optimierte Wetterdarstellung. Kombiniert Wind-, GPS- und Magnetfelddaten. Kein API. Sehr pilotenfreundlich als Anwendungsbeispiel.',
+        link: 'https://www.uavforecast.com/', statusNote: ''
+    },
+    {
+        name: 'Dipul – NOTAMs', gruppe: 'notam', tracking: false, kostenlos: true, api: false,
+        inhalt: 'Drohnenrelevante NOTAMs für Deutschland.',
+        zielgruppe: 'Drohnenpiloten, Hobbyisten',
+        formate: 'Web, PDF, JPG', uniqueIds: 'NOTAM-Nummern (z. B. D0582/26)',
+        verfuegbarkeit: 'Public', lizenz: 'Public', aktualitaet: 'Kontinuierlich',
+        abdeckung: 'Deutschland', kosten: 'Kostenlos',
+        bemerkung: 'Auch Drohnen sind von NOTAMs betroffen. Einzige Quelle dieser Liste mit echter Unique ID (NOTAM-Nummer). Nicht maschinenlesbar, aber unverzichtbar zur manuellen Vorflug-Prüfung.',
+        link: 'https://www.dipul.de/', statusNote: ''
+    }
+];
+
+// ── Helpers ──
+function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let aktiveGruppe = '';
+const aktiveToggles = { kostenlos: false, api: false };
+
+function detailRow(label, value){
+    if(!value) return '';
+    return `<div class="detail-item"><div class="detail-label">${esc(label)}</div><div class="detail-value">${esc(value)}</div></div>`;
+}
+
+function cardHTML(q, index){
+    const g = GRUPPEN[q.gruppe];
+    const costBadge = q.kostenlos
+        ? `<span class="mini-badge b-free">${q.kosten.toLowerCase().includes('teils')||q.kosten.toLowerCase().includes('pro ')||q.kosten.includes('/')?'Free-Tier':'Kostenlos'}</span>`
+        : `<span class="mini-badge b-paid">Kostenpflichtig</span>`;
+    const apiBadge = q.api ? `<span class="mini-badge b-api">API</span>` : '';
+    const trackPill = q.tracking ? `<span class="track-pill">📡 Live-Tracking</span>` : '';
+
+    let uidRow = '';
+    if(q.uniqueIds){
+        uidRow = `<div class="detail-item"><div class="detail-label">Unique IDs</div><div class="detail-value detail-uid">${esc(q.uniqueIds)}</div></div>`;
+    }
+
+    const statusNote = q.statusNote
+        ? `<div class="status-note">⚠️ ${esc(q.statusNote)}</div>` : '';
+
+    const action = q.link
+        ? `<a class="btn-source" href="${esc(q.link)}" target="_blank" rel="noopener">Zur Quelle ↗</a>`
+        : `<span class="no-link-hint">Kein direkter Link hinterlegt (App-/Recherche-Quelle).</span>`;
+
+    const mapBlock = q.karte ? `
+            <div class="map-wrap">
+                <div class="map-toolbar">
+                    <input type="text" class="map-search" placeholder="Ort suchen (z. B. Wiesbaden, PLZ, Adresse)…" aria-label="Ort auf der Karte suchen">
+                    <button type="button" class="map-search-btn">Suchen</button>
+                    <button type="button" class="map-reload-btn" title="Lufträume für den aktuellen Kartenausschnitt neu laden">🔄 Lufträume hier laden</button>
+                </div>
+                <div class="map-container" id="map-${index}" data-lat="50.05" data-lon="8.50" data-zoom="9"></div>
+                <div class="map-note">Interaktive Karte: OpenStreetMap-Basiskarte + <strong>OpenAIP-Lufträume</strong> (Klassen A–G sowie drohnenrelevante Zonen wie CTR, TMA, Restricted, Prohibited, Danger). Auf eine Fläche klicken zeigt Details (Name, Klasse, Höhenband); Ausschnitt frei verschieb- und zoombar. Daten © <a href="https://www.openaip.net" target="_blank" rel="noopener">OpenAIP</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende.</div>
+            </div>` : '';
+
+    return `
+    <article class="q-card" data-gruppe="${esc(q.gruppe)}" data-track="${q.tracking?1:0}" data-free="${q.kostenlos?1:0}" data-api="${q.api?1:0}"
+             data-haystack="${esc((q.name+' '+q.inhalt+' '+q.formate+' '+q.zielgruppe+' '+q.bemerkung+' '+g.label).toLowerCase())}">
+        <button class="card-header" aria-expanded="false" onclick="toggleCard(this)">
+            <span class="grp-badge grp-${esc(q.gruppe)}">${g.icon} ${esc(g.label)}</span>
+            <span class="card-info">
+                <span class="card-name">${esc(q.name)} ${trackPill}</span>
+                <span class="card-meta">${esc(q.inhalt)}</span>
+            </span>
+            <span class="card-badges">${costBadge}${apiBadge}</span>
+            <span class="card-chevron" aria-hidden="true">▶</span>
+        </button>
+        <div class="card-body">
+            <div class="detail-grid">
+                ${detailRow('Dateninhalte', q.inhalt)}
+                ${detailRow('Zielgruppe', q.zielgruppe)}
+                ${detailRow('Formate', q.formate)}
+                ${uidRow}
+                ${detailRow('Verfügbarkeit', q.verfuegbarkeit)}
+                ${detailRow('Lizenz', q.lizenz)}
+                ${detailRow('Aktualität', q.aktualitaet)}
+                ${detailRow('Räumliche Abdeckung', q.abdeckung)}
+                ${detailRow('Kosten', q.kosten)}
+            </div>
+            ${q.bemerkung ? `<div class="bemerkung"><strong>Bemerkung:</strong> ${esc(q.bemerkung)}</div>` : ''}
+            ${statusNote}
+            ${mapBlock}
+            <div class="card-actions">${action}</div>
+        </div>
+    </article>`;
+}
+
+function render(){
+    // Quellen nach Gruppen-Reihenfolge sortieren (Tracking zuerst)
+    const sorted = [...QUELLEN].sort((a,b)=>
+        GRUPPEN_REIHENFOLGE.indexOf(a.gruppe) - GRUPPEN_REIHENFOLGE.indexOf(b.gruppe));
+    let html = '';
+    let lastGroup = null;
+    sorted.forEach((q,i)=>{
+        if(q.gruppe !== lastGroup){
+            const g = GRUPPEN[q.gruppe];
+            const count = QUELLEN.filter(x=>x.gruppe===q.gruppe).length;
+            html += `<div class="group-heading" data-group-heading="${esc(q.gruppe)}">
+                        <span>${g.icon} ${esc(g.label)}</span>
+                        <span class="gh-count">${count}</span>
+                        <span class="gh-line"></span>
+                     </div>`;
+            lastGroup = q.gruppe;
+        }
+        html += cardHTML(q,i);
+    });
+    document.getElementById('liste').innerHTML = html
+        + `<div class="no-results-wrap" id="noResults" style="display:none">
+               <div class="no-results-icon">🔍</div>
+               <div class="no-results-title">Keine Quelle gefunden</div>
+               <div class="no-results-sub">Für deine Suche oder Filter gibt es keine Treffer. Setze die Filter zurück und versuche es erneut.</div>
+               <button class="no-results-reset" onclick="resetFilter()">Filter zurücksetzen</button>
+           </div>`;
+    applyFilter();
+}
+
+function toggleCard(btn){
+    const card = btn.closest('.q-card');
+    const body = card.querySelector('.card-body');
+    const open = card.classList.toggle('card-open');
+    btn.classList.toggle('open', open);
+    body.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open ? 'true':'false');
+    if(open){
+        const mapEl = card.querySelector('.map-container');
+        if(mapEl && !mapEl.dataset.geladen) initDrohnenKarte(mapEl);
+    }
+}
+
+function applyFilter(){
+    const q = (document.getElementById('suche').value || '').trim().toLowerCase();
+    const cards = document.querySelectorAll('.q-card');
+    let visible = 0;
+    const groupHasVisible = {};
+
+    cards.forEach(card=>{
+        const grp = card.dataset.gruppe;
+        let show = true;
+        if(aktiveGruppe && grp !== aktiveGruppe) show = false;
+        if(aktiveToggles.kostenlos && card.dataset.free !== '1') show = false;
+        if(aktiveToggles.api && card.dataset.api !== '1') show = false;
+        if(show && q && !card.dataset.haystack.includes(q)) show = false;
+        card.style.display = show ? '' : 'none';
+        if(show){ visible++; groupHasVisible[grp] = true; }
+    });
+
+    // Gruppen-Überschriften nur zeigen, wenn die Gruppe sichtbare Karten hat
+    document.querySelectorAll('[data-group-heading]').forEach(h=>{
+        h.style.display = groupHasVisible[h.dataset.groupHeading] ? '' : 'none';
+    });
+
+    document.getElementById('noResults').style.display = visible ? 'none' : '';
+    const total = QUELLEN.length;
+    document.getElementById('zaehler').textContent =
+        (visible === total) ? `${total} Quellen` : `${visible} von ${total} Quellen`;
+}
+
+function resetFilter(){
+    aktiveGruppe = '';
+    aktiveToggles.kostenlos = false;
+    aktiveToggles.api = false;
+    document.getElementById('suche').value = '';
+    document.querySelectorAll('#filter .chip').forEach(c=>c.classList.remove('active'));
+    document.querySelector('#filter .chip[data-gruppe=""]').classList.add('active');
+    applyFilter();
+}
+
+// Filter-Chips
+document.getElementById('filter').addEventListener('click', e=>{
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+
+    if(chip.dataset.toggle){
+        const key = chip.dataset.toggle;
+        aktiveToggles[key] = !aktiveToggles[key];
+        chip.classList.toggle('active', aktiveToggles[key]);
+    } else {
+        aktiveGruppe = chip.dataset.gruppe;
+        document.querySelectorAll('#filter .chip[data-gruppe]').forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+    }
+    applyFilter();
+});
+
+// Suche
+let sucheTimeout;
+document.getElementById('suche').addEventListener('input', ()=>{
+    clearTimeout(sucheTimeout);
+    sucheTimeout = setTimeout(applyFilter, 120);
+});
+
+// ── Theme ──
+function toggleTheme(){
+    const html = document.documentElement;
+    const dark = html.getAttribute('data-theme') === 'dark';
+    const next = dark ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem('lk-theme', next); } catch(e){}
+}
+(function initTheme(){
+    let saved = null;
+    try { saved = localStorage.getItem('lk-theme'); } catch(e){}
+    if(saved === 'dark'){
+        document.documentElement.setAttribute('data-theme','dark');
+        document.getElementById('theme-btn').textContent = '☀️';
+    }
+})();
+
+// ESC schließt Modals
+document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+});
+
+// ── Interaktive Karte: Leaflet + OpenStreetMap + OpenAIP-Lufträume ──
+// Hinweis: öffentlicher Client-seitiger OpenAIP-Key (wie auf der Flughafen-Seite eingebunden,
+// damit beide Seiten beim Zusammenführen konsistent bleiben). Bei Bedarf eigenen kostenlosen
+// OpenAIP-Key unter openaip.net eintragen.
+const OPENAIP_KEY = '2800111e267cd352c035b2df2102fbdf';
+
+const OAIP_UNIT       = {0:'ft', 1:'FL', 2:'m'};
+const OAIP_REF        = {0:'GND', 1:'MSL', 2:'STD'};
+const OAIP_ICAO_CLASS = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G'};
+const OAIP_TYPE = {
+    0:'OTHER',1:'RESTRICTED',2:'DANGER',3:'PROHIBITED',4:'CTR',
+    5:'TMZ',6:'RMZ',7:'TMA',8:'TIA',9:'TIZ',10:'TRA',11:'TSA',
+    12:'FIR',13:'UIR',14:'ADIZ',15:'ATZ',16:'MATZ'
+};
+const OAIP_SPECIAL = new Set(['RESTRICTED','DANGER','PROHIBITED','CTR','TMZ','RMZ','TMA','ADIZ','ATZ']);
+const OAIP_KLASSE_FARBE = {
+    'A':'#dc2626','B':'#ea580c','C':'#2563eb','D':'#16a34a','E':'#ca8a04','F':'#7c3aed','G':'#64748b',
+    'RESTRICTED':'#dc2626','PROHIBITED':'#7f1d1d','DANGER':'#ea580c',
+    'TMZ':'#0891b2','RMZ':'#0e7490','TMA':'#2563eb','CTR':'#16a34a','OTHER':'#94a3b8'
+};
+const OAIP_PRIO = {'G':1,'E':2,'F':3,'TMZ':4,'RMZ':5,'OTHER':6,'TMA':7,'C':8,'D':9,'CTR':10,'B':11,'A':12,'DANGER':13,'RESTRICTED':14,'PROHIBITED':15};
+const OAIP_FILL = {'PROHIBITED':0.22,'RESTRICTED':0.18,'DANGER':0.15,'A':0.12,'B':0.12,'CTR':0.12,'D':0.10,'C':0.10,'TMA':0.08,'RMZ':0.08,'TMZ':0.08,'F':0.06,'E':0.06,'G':0.05};
+const OAIP_DASH = {'PROHIBITED':'4,4','RESTRICTED':'8,4','DANGER':'6,3'};
+const OAIP_KLABEL = {'A':'Klasse A','B':'Klasse B','C':'Klasse C','D':'Klasse D','E':'Klasse E','F':'Klasse F','G':'Klasse G','CTR':'CTR','TMA':'TMA','TMZ':'TMZ','RMZ':'RMZ','RESTRICTED':'Restricted','PROHIBITED':'Prohibited','DANGER':'Danger','OTHER':'Sonstige'};
+const OAIP_KDESC = {
+    'A':'Kontrollierter Luftraum · nur IFR · höchste Stufe',
+    'B':'Kontrollierter Luftraum · IFR + VFR mit Freigabe',
+    'C':'Kontrollierter Luftraum · IFR + VFR mit Freigabe · oft um große Flughäfen',
+    'D':'Kontrollierter Luftraum · IFR + VFR mit Sprechfunk · z. B. CTR Frankfurt',
+    'E':'Kontrollierter Luftraum · IFR mit Freigabe · VFR ohne Freigabe möglich',
+    'F':'Beratungsluftfahrt · IFR empfohlen · VFR frei',
+    'G':'Unkontrollierter Luftraum · VFR/IFR ohne Freigabe möglich',
+    'CTR':'Control Zone · Kontrollzone direkt um einen Flughafen',
+    'TMA':'Terminal Maneuvering Area · Nahverkehrsbereich um einen Großflughafen',
+    'TMZ':'Transponder Mandatory Zone · Transponder erforderlich',
+    'RMZ':'Radio Mandatory Zone · Sprechfunkkontakt erforderlich',
+    'TRA':'Temporary Reserved Area · temporär reserviert (z. B. Militär)',
+    'ATZ':'Aerodrome Traffic Zone · Platzverkehrszone kleiner Flugplätze',
+    'RESTRICTED':'Restricted Area · dauerhaft eingeschränkt (z. B. Kraftwerke, Militär)',
+    'DANGER':'Danger Area · Gefahrengebiet (z. B. Schießübungen)',
+    'PROHIBITED':'Prohibited Area · Sperrgebiet · Einflug verboten',
+    'OTHER':'Sonstiger Luftraum'
+};
+
+function oaipKlasse(as){
+    const typeStr  = typeof as.type      === 'number' ? (OAIP_TYPE[as.type]            || 'OTHER') : (as.type      || 'OTHER');
+    const classStr = typeof as.icaoClass === 'number' ? (OAIP_ICAO_CLASS[as.icaoClass] || '')      : (as.icaoClass || '');
+    return (OAIP_SPECIAL.has(String(typeStr).toUpperCase()) ? typeStr : (classStr || typeStr || 'OTHER')).toUpperCase();
+}
+function oaipFormatAlt(lim){
+    if(!lim) return 'k.A.';
+    if(typeof lim === 'string') return lim;
+    if(typeof lim === 'number') return `${lim} ft`;
+    const v = lim.value ?? lim.val ?? 0;
+    const uRaw = lim.unit ?? lim.unitType ?? 0;
+    const rRaw = lim.referenceDatum ?? lim.datumType ?? lim.datum ?? 0;
+    const u = typeof uRaw === 'number' ? (OAIP_UNIT[uRaw] || '') : (uRaw || '');
+    const r = typeof rRaw === 'number' ? (OAIP_REF[rRaw]  || '') : (rRaw  || '');
+    if(v === 0 && (r === 'GND' || rRaw === 0)) return 'GND';
+    if(u === 'FL') return `FL ${v}`;
+    return `${v}${u?' '+u:''}${r?' '+r:''}`.trim() || 'k.A.';
+}
+
+async function ladeOpenAipLuftraum(map, lat, lon){
+    if(!OPENAIP_KEY) return;
+    // Vorherige Lufträume + Legende entfernen (für Neuladen/Suche)
+    if(map._oaipLayer){ map.removeLayer(map._oaipLayer); map._oaipLayer = null; }
+    if(map._oaipLegend){ map.removeControl(map._oaipLegend); map._oaipLegend = null; }
+    try {
+        const res = await fetch(
+            `https://api.core.openaip.net/api/airspaces?page=0&limit=100&pos=${lat},${lon}&dist=50000`,
+            { headers: { 'x-openaip-api-key': OPENAIP_KEY } }
+        );
+        if(!res.ok) return;
+        const data = await res.json();
+        const layer = L.layerGroup();
+        const items = (data.items || []).filter(as => as.geometry?.type === 'Polygon');
+        items.sort((a,b)=>(OAIP_PRIO[oaipKlasse(a)]||6)-(OAIP_PRIO[oaipKlasse(b)]||6));
+        const seen = new Map();
+        for(const as of items){
+            const klasse = oaipKlasse(as);
+            const farbe  = OAIP_KLASSE_FARBE[klasse] || OAIP_KLASSE_FARBE['OTHER'];
+            const coords = as.geometry.coordinates[0].map(([lo,la])=>[la,lo]);
+            const bot = oaipFormatAlt(as.altLimitBottom ?? as.altLimit?.bottom ?? as.lowerLimit);
+            const top = oaipFormatAlt(as.altLimitTop    ?? as.altLimit?.top    ?? as.upperLimit);
+            const desc = OAIP_KDESC[klasse] || '';
+            const popup = `<table style="min-width:200px;border-collapse:collapse;font-size:0.8rem">
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Name</td><td><b>${esc(as.name || '–')}</b></td></tr>
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Klasse</td><td><b style="color:${farbe}">${esc(klasse)}</b></td></tr>
+                ${desc ? `<tr><td colspan="2" style="padding:3px 0 1px 0;font-size:0.72rem;color:#475569;line-height:1.4">${esc(desc)}</td></tr>` : ''}
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Unten</td><td>${esc(bot)}</td></tr>
+                <tr><td style="color:#64748b;padding:1px 8px 1px 0;white-space:nowrap">Oben</td><td>${esc(top)}</td></tr>
+            </table>`;
+            L.polygon(coords, {
+                color: farbe, weight: 2, opacity: 0.9,
+                fillColor: farbe, fillOpacity: OAIP_FILL[klasse] ?? 0.07,
+                dashArray: OAIP_DASH[klasse] || null
+            }).bindPopup(popup).addTo(layer);
+            if(!seen.has(klasse)) seen.set(klasse, farbe);
+        }
+        if(seen.size){
+            const Legend = L.Control.extend({
+                onAdd(){
+                    const div = L.DomUtil.create('div', '');
+                    div.style.cssText = 'background:rgba(255,255,255,0.93);padding:8px 10px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.25);font-size:0.74rem;line-height:1.55;min-width:130px;max-width:210px;color:#1e293b';
+                    let html = '<b style="font-size:0.8rem">Lufträume</b><br>';
+                    [...seen.entries()].sort((a,b)=>(OAIP_PRIO[a[0]]||6)-(OAIP_PRIO[b[0]]||6)).forEach(([kl,farbe])=>{
+                        const dash = OAIP_DASH[kl] ? 'dashed' : 'solid';
+                        const shortDesc = (OAIP_KDESC[kl] || '').split('·')[0].trim();
+                        html += `<div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px" title="${esc(OAIP_KDESC[kl]||'')}">
+                            <span style="display:inline-block;flex-shrink:0;width:18px;height:10px;margin-top:3px;background:${farbe};opacity:0.65;border:2px ${dash} ${farbe};border-radius:2px"></span>
+                            <span><b>${esc(OAIP_KLABEL[kl]||kl)}</b>${shortDesc?`<br><span style="font-size:0.67rem;color:#64748b">${esc(shortDesc)}</span>`:''}</span>
+                        </div>`;
+                    });
+                    div.innerHTML = html;
+                    return div;
+                }
+            });
+            map._oaipLegend = new Legend({ position:'bottomleft' });
+            map._oaipLegend.addTo(map);
+        }
+        layer.addTo(map);
+        map._oaipLayer = layer;
+    } catch(e){ console.warn('OpenAIP:', e.message); }
+}
+
+function initDrohnenKarte(el){
+    if(!el || el.dataset.geladen || typeof L === 'undefined') return;
+    el.dataset.geladen = '1';
+    const lat = parseFloat(el.dataset.lat) || 50.05;
+    const lon = parseFloat(el.dataset.lon) || 8.50;
+    const zoom = parseInt(el.dataset.zoom) || 9;
+
+    const map = L.map(el, { center:[lat,lon], zoom, scrollWheelZoom:false });
+    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19
+    });
+    const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '© Esri World Imagery', maxZoom: 19
+    });
+    osm.addTo(map);
+    const ctrl = L.control.layers({ 'Straßenkarte': osm, '🛰 Satellit': sat }, {}, { position:'topright', collapsed:true }).addTo(map);
+    if(OPENAIP_KEY){
+        const oaipTiles = L.tileLayer(
+            `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${OPENAIP_KEY}`,
+            { attribution:'© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom:17, opacity:0.7 }
+        );
+        ctrl.addOverlay(oaipTiles, '🌐 OpenAIP-Kacheln');
+    }
+
+    // Container war beim Init evtl. ausgeblendet → Größe neu berechnen
+    requestAnimationFrame(()=>requestAnimationFrame(()=>map.invalidateSize()));
+    setTimeout(()=>map.invalidateSize(), 400);
+
+    ladeOpenAipLuftraum(map, lat, lon);
+
+    // Ortssuche (Nominatim) + Neuladen für aktuellen Ausschnitt
+    const wrap = el.closest('.map-wrap');
+    if(wrap){
+        const input = wrap.querySelector('.map-search');
+        const sBtn  = wrap.querySelector('.map-search-btn');
+        const rBtn  = wrap.querySelector('.map-reload-btn');
+        const doSearch = async ()=>{
+            const q = (input && input.value || '').trim();
+            if(!q) return;
+            if(sBtn){ sBtn.disabled = true; sBtn.textContent = '…'; }
+            try {
+                const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`, { headers:{ 'Accept-Language':'de' } });
+                const arr = await r.json();
+                if(arr && arr.length){
+                    const la = parseFloat(arr[0].lat), lo = parseFloat(arr[0].lon);
+                    map.setView([la,lo], 12);
+                    ladeOpenAipLuftraum(map, la, lo);
+                } else {
+                    alert('Ort nicht gefunden. Bitte präziser angeben.');
+                }
+            } catch(e){ alert('Ortssuche derzeit nicht verfügbar.'); }
+            if(sBtn){ sBtn.disabled = false; sBtn.textContent = 'Suchen'; }
+        };
+        if(sBtn) sBtn.addEventListener('click', doSearch);
+        if(input) input.addEventListener('keydown', e=>{ if(e.key === 'Enter'){ e.preventDefault(); doSearch(); } });
+        if(rBtn) rBtn.addEventListener('click', ()=>{ const c = map.getCenter(); ladeOpenAipLuftraum(map, c.lat, c.lng); });
+    }
+}
+
+render();
+</script>
+</body>
+</html>
