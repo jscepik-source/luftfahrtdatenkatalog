@@ -6577,6 +6577,18 @@ function aiAskAbout(text, label) {
 
 // ── Spracheingabe ────────────────────────────────────────────────────────────
 let aiSpeechRecog = null;
+function aiRetry() {
+    const lastUser = [...aiHistory].reverse().find(m => m.role === 'user');
+    if (!lastUser) return;
+    // Letzten Bot-Fehler entfernen
+    const msgs = document.getElementById('ai-messages');
+    const lastBot = [...msgs.querySelectorAll('.ai-msg-bot')].pop();
+    if (lastBot) lastBot.remove();
+    // Letzten User-Eintrag aus History entfernen damit er nicht doppelt erscheint
+    aiHistory = aiHistory.filter(m => m !== lastUser);
+    document.getElementById('ai-input').value = lastUser.parts[0].text;
+    aiSend();
+}
 function aiMic() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) { alert('Spracheingabe wird von diesem Browser nicht unterstützt (Chrome empfohlen).'); return; }
@@ -6668,6 +6680,7 @@ async function aiSend() {
     // Kurzer Systemkontext damit Request-Body klein bleibt
     const shortCtx  = ctx ? AI_SYSTEM_SHORT + `\n\nKONTEXT:${ctx}` : AI_SYSTEM_SHORT;
     const oaiMsgs   = [{ role: 'system', content: shortCtx }, ...toOAI(aiHistory)];
+    let pollRateLimit = false;
     for (const model of pollinationsModels) {
         try {
             const res = await fetchTimed('https://text.pollinations.ai/openai', {
@@ -6675,13 +6688,19 @@ async function aiSend() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ model, messages: oaiMsgs, private: true, nolog: true })
             }, 15000);
-            if (res.status === 429) { lastErr = new Error('429'); await new Promise(r => setTimeout(r, 500)); continue; }
-            if (!res.ok)            { lastErr = new Error(`HTTP ${res.status}`); continue; }
+            if (res.status === 429) {
+                pollRateLimit = true;
+                lastErr = new Error('rate_limit');
+                await new Promise(r => setTimeout(r, 1200));
+                continue;
+            }
+            if (!res.ok) { lastErr = new Error(`HTTP ${res.status}`); continue; }
             const data = await res.json();
             const txt  = data.choices?.[0]?.message?.content;
-            if (!txt)               { lastErr = new Error('Leere Antwort'); continue; }
+            if (!txt)   { lastErr = new Error('Leere Antwort'); continue; }
             reply     = txt;
             usedModel = `${model}`;
+            pollRateLimit = false;
             break;
         } catch(e) { lastErr = e; }
     }
@@ -6731,10 +6750,18 @@ async function aiSend() {
     aiRemoveTyping();
 
     if (!reply) {
-        const isKey = /API_KEY|INVALID|403|quota/i.test(lastErr?.message || '');
-        const msg = isKey
-            ? `Quota überschritten oder ungültiger Key. Bitte neuen Key bei <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--color-primary)">aistudio.google.com/apikey</a> holen.`
-            : `Fehler: ${lastErr?.message || 'Unbekannt'}`;
+        const errMsg = lastErr?.message || '';
+        const isRateLimit = pollRateLimit || /rate_limit|429/i.test(errMsg);
+        const isQuota     = /API_KEY|INVALID|403|quota/i.test(errMsg);
+        let msg;
+        if (isRateLimit) {
+            msg = `Zu viele Anfragen — alle KI-Server sind gerade ausgelastet. `
+                + `<button onclick="aiRetry()" style="margin-left:6px;padding:3px 10px;border:1px solid var(--color-primary);border-radius:999px;background:transparent;color:var(--color-primary);cursor:pointer;font-size:0.78rem;font-family:var(--font)">↺ Nochmal</button>`;
+        } else if (isQuota) {
+            msg = `Quota überschritten oder ungültiger Key. Bitte neuen Key bei <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--color-primary)">aistudio.google.com/apikey</a> holen.`;
+        } else {
+            msg = `KI nicht erreichbar (${errMsg || 'Unbekannt'}). Bitte kurz warten und nochmal versuchen.`;
+        }
         aiAddMsg('bot', `⚠️ ${msg}`);
     } else {
         aiHistory.push({ role: 'model', parts: [{ text: reply }] });
