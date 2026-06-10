@@ -10,15 +10,15 @@
     <link rel="apple-touch-icon" href="icon.svg">
 
     <title>Luftfahrtdatenkatalog — UAV-Tracking & Drohnendaten</title>
-    <meta name="description" content="UAV- & Drohnen-Datenquellen im Überblick: Remote-ID-Tracking, UTM-Plattformen, Geo-Zonen, EU-/DE-Regularien, Behörden und Wetter. Schwerpunkt UAV-Tracking (ASTM F3411 / Remote ID).">
-    <meta name="keywords" content="UAV, Drohne, Remote ID, ASTM F3411, Tracking, UTM, Geo-Zonen, EASA, DFS, Dipul, LBA, OpenAIP, Dronetag, Luftfahrt">
+    <meta name="description" content="UAV- & Drohnen-Datenquellen im Überblick: Remote-ID-Tracking, Geo-Zonen, Flugplanung, EU-/DE-Regularien, Behörden und Wetter. Schwerpunkt UAV-Tracking (ASTM F3411 / Remote ID).">
+    <meta name="keywords" content="UAV, Drohne, Remote ID, ASTM F3411, Tracking, Geo-Zonen, Flugplanung, EASA, DFS, Dipul, LBA, OpenAIP, Dronetag, Droniq, DroneMaps24, Luftfahrt">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Hochschule RheinMain">
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Luftfahrtdatenkatalog — UAV-Tracking & Drohnendaten">
-    <meta property="og:description" content="17 Datenquellen rund um Drohnen mit Fokus auf UAV-Tracking: Remote-ID-Erkennung, UTM, Geo-Zonen, Regularien & Behörden.">
+    <meta property="og:description" content="17 Datenquellen rund um Drohnen mit Fokus auf UAV-Tracking: Remote-ID-Erkennung, Geo-Zonen, Flugplanung, Regularien & Behörden.">
     <meta property="og:locale" content="de_DE">
     <meta name="twitter:card" content="summary">
 
@@ -439,14 +439,12 @@
             white-space: nowrap;
         }
         .grp-tracking  { background: #fee2e2; color: #991b1b; }
-        .grp-utm       { background: #f3e8ff; color: #6b21a8; }
         .grp-zonen     { background: #dbeafe; color: #1e40af; }
         .grp-regeln    { background: #fef9c3; color: #854d0e; }
         .grp-behoerden { background: #e0f2fe; color: #0c4a6e; }
         .grp-wetter    { background: #cffafe; color: #155e75; }
         .grp-notam     { background: #dcfce7; color: #166534; }
         [data-theme="dark"] .grp-tracking  { background: #450a0a; color: #fca5a5; }
-        [data-theme="dark"] .grp-utm       { background: #3b0764; color: #d8b4fe; }
         [data-theme="dark"] .grp-zonen     { background: #1e3a5f; color: #93c5fd; }
         [data-theme="dark"] .grp-regeln    { background: #422006; color: #fcd34d; }
         [data-theme="dark"] .grp-behoerden { background: #0c4a6e; color: #7dd3fc; }
@@ -492,8 +490,7 @@
         .card-header.open .card-chevron { transform: rotate(90deg); }
 
         /* ── Card Body ── */
-        .card-body { display: none; border-top: 1px solid var(--color-border); padding: var(--space-md); }
-        .card-body.open { display: block; }
+        .card-body { border-top: 1px solid var(--color-border); }
         .detail-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -611,6 +608,38 @@
         .modal-box p  { font-size: 0.85rem; color: var(--color-text-sub); line-height: 1.65; margin-bottom: var(--space-sm); }
         .modal-box a  { color: var(--color-primary); }
 
+        /* ── Smooth card open/close ── */
+        .card-body {
+            display: block !important;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
+            padding: 0 var(--space-md);
+        }
+        .card-body.open {
+            max-height: 2000px;
+            opacity: 1;
+            padding: var(--space-md);
+        }
+
+        /* ── Expand-all button ── */
+        .btn-expand-all {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-family: var(--font); font-size: 0.72rem; font-weight: 600;
+            color: var(--color-primary); background: none; border: 1px solid var(--color-border);
+            padding: 5px 12px; border-radius: var(--radius-pill); cursor: pointer;
+            transition: all var(--transition); white-space: nowrap;
+        }
+        .btn-expand-all:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
+
+        /* ── Reduced motion ── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+            .card-body { transition: none; }
+            .card-body.open { transition: none; }
+        }
+
         /* ── Responsive ── */
         @media (max-width: 720px) {
             header { padding: 20px var(--space-md) 18px; }
@@ -675,7 +704,7 @@
         <div class="header-divider" aria-hidden="true"></div>
         <div class="header-text">
             <h1>UAV-Tracking &amp; Drohnendaten</h1>
-            <p>Remote ID &middot; UTM &middot; Geo-Zonen &middot; Regularien &middot; Behörden &middot; Wetter</p>
+            <p>Remote ID &middot; Geo-Zonen &middot; Flugplanung &middot; Regularien &middot; Behörden &middot; Wetter</p>
         </div>
         <nav class="header-nav" aria-label="Katalog-Bereiche">
             <a href="ourairports.html">Flughäfen</a>
@@ -709,8 +738,8 @@
         </div>
         <div class="hero-feature-row">
             <div class="hero-feature-chip"><span class="dot" style="background:#ef4444"></span>Remote ID</div>
-            <div class="hero-feature-chip"><span class="dot" style="background:#a855f7"></span>UTM-Plattformen</div>
             <div class="hero-feature-chip"><span class="dot" style="background:#3b82f6"></span>Geo-Zonen</div>
+            <div class="hero-feature-chip"><span class="dot" style="background:#a855f7"></span>Flugplanung</div>
             <div class="hero-feature-chip"><span class="dot" style="background:#f59e0b"></span>Regularien</div>
             <div class="hero-feature-chip"><span class="dot" style="background:#0ea5e9"></span>Behörden</div>
             <div class="hero-feature-chip"><span class="dot" style="background:#06b6d4"></span>Wetter</div>
@@ -730,7 +759,6 @@
         <div class="filter-group" role="group" aria-label="Nach Kategorie filtern" id="filter">
             <button class="chip active" data-gruppe="" title="Alle Quellen anzeigen">Alle</button>
             <button class="chip" data-gruppe="tracking" title="Remote-ID-Erkennung & Live-Tracking von Drohnen">📡 Tracking &amp; Remote ID</button>
-            <button class="chip" data-gruppe="utm" title="Unmanned Traffic Management Plattformen">🛰️ UTM</button>
             <button class="chip" data-gruppe="zonen" title="Geo-Zonen, Flugverbotszonen & Karten">🗺️ Geo-Zonen &amp; Karten</button>
             <button class="chip" data-gruppe="regeln" title="EU- & globale Drohnenvorschriften">📋 Regeln</button>
             <button class="chip" data-gruppe="behoerden" title="Behörden, Registrierung & Qualifikation">🏛️ Behörden</button>
@@ -740,7 +768,10 @@
             <button class="chip" data-toggle="kostenlos" title="Nur kostenlose / kostenlos nutzbare Quellen">💶 Kostenlos</button>
             <button class="chip" data-toggle="api" title="Maschinenlesbar: API, JSON, GeoJSON, KML oder XML">⚙ Maschinenlesbar</button>
         </div>
-        <p id="zaehler" aria-live="polite" aria-atomic="true"></p>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <p id="zaehler" aria-live="polite" aria-atomic="true"></p>
+            <button class="btn-expand-all" id="expandAll" onclick="toggleExpandAll()" title="Alle Quellen auf- oder zuklappen">▼ Alle aufklappen</button>
+        </div>
     </div>
 </nav>
 
@@ -771,7 +802,9 @@
         <a href="https://www.dipul.de" target="_blank" rel="noopener">dipul</a>,
         <a href="https://lba-openuav.de" target="_blank" rel="noopener">LBA OpenUAV</a>,
         <a href="https://www.openaip.net" target="_blank" rel="noopener">OpenAIP</a>,
-        <a href="https://www.dronetag.com" target="_blank" rel="noopener">Dronetag</a>)
+        <a href="https://www.dronetag.com" target="_blank" rel="noopener">Dronetag</a>,
+        <a href="https://dronemaps24.org" target="_blank" rel="noopener">DroneMaps24</a>,
+        <a href="https://www.droniq.de" target="_blank" rel="noopener">Droniq</a>)
         sind eigenständige Dritte.
     </p>
     <p style="margin-top:6px">
@@ -812,7 +845,9 @@
         <h3>Hosting</h3>
         <p>Diese Website wird über <strong>GitHub Pages</strong> (GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA) bereitgestellt. GitHub kann dabei Zugriffsdaten (insbesondere IP-Adressen) in Server-Logs speichern. Weitere Informationen finden Sie in der <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>.</p>
         <h3>Datenerhebung durch diese Website</h3>
-        <p>Diese Seite erhebt selbst <strong>keine personenbezogenen Daten</strong>. Es werden keine Cookies gesetzt und kein Tracking eingesetzt. Alle Katalogdaten sind direkt in die Seite eingebettet — es finden im Normalbetrieb <strong>keine Live-Abfragen an externe Server</strong> statt.</p>
+        <p>Diese Seite erhebt selbst <strong>keine personenbezogenen Daten</strong>. Es werden keine Cookies gesetzt und kein Tracking eingesetzt. Die Katalogdaten sind direkt in die Seite eingebettet.</p>
+        <h3>Interaktive Karten</h3>
+        <p>Beim Aufklappen bestimmter Quellenkarten werden <strong>OpenStreetMap-Kartenkacheln</strong> und <strong>OpenAIP-Luftraumdaten</strong> live nachgeladen. Dabei wird Ihre IP-Adresse an die Server von OpenStreetMap (OSMF, UK) und OpenAIP (openaip.net) übertragen. Bei Nutzung der Ortssuchfunktion wird die Suchanfrage an <strong>Nominatim</strong> (OpenStreetMap) gesendet. Diese Übertragungen finden nur statt, wenn Sie eine Karte aktiv öffnen.</p>
         <h3>Schriftart (Google Fonts)</h3>
         <p>Zur einheitlichen Darstellung wird die Schriftart „Inter“ über <strong>Google Fonts</strong> geladen. Dabei wird Ihre IP-Adresse an Server von Google (Google Ireland Ltd.) übertragen. Anbieter: Google, weitere Informationen in der <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google-Datenschutzerklärung</a>.</p>
         <h3>Externe Links</h3>
@@ -827,19 +862,18 @@
 <script>
 // ════════════════════════════════════════════════════════════════════
 //  Datengrundlage: Luftfahrtdatenkatalog, Kategorie "UAVs / Drohnen"
-//  (17 Quellen). Felder 1:1 aus dem Katalog; Tippfehler leicht bereinigt.
-//  Links auf die offiziellen Anbieter wurden ergänzt (Stand: 2026).
+//  (17 Quellen, Stand Juni 2026). AirMap und Altitude Angel entfernt (nicht
+//  public / eingestellt). DroneMaps24 und Droniq App (TraX) ergänzt.
 // ════════════════════════════════════════════════════════════════════
 const GRUPPEN = {
     tracking:  { label: 'Tracking & Remote ID', icon: '📡' },
-    utm:       { label: 'UTM-Plattformen',       icon: '🛰️' },
     zonen:     { label: 'Geo-Zonen & Karten',    icon: '🗺️' },
     regeln:    { label: 'Regeln & Vorschriften', icon: '📋' },
     behoerden: { label: 'Behörden & Registrierung', icon: '🏛️' },
     wetter:    { label: 'Wetter',                icon: '🌦️' },
     notam:     { label: 'NOTAMs',                icon: '⚠️' }
 };
-const GRUPPEN_REIHENFOLGE = ['tracking','utm','zonen','regeln','behoerden','wetter','notam'];
+const GRUPPEN_REIHENFOLGE = ['tracking','zonen','regeln','behoerden','wetter','notam'];
 
 const QUELLEN = [
     {
@@ -871,28 +905,6 @@ const QUELLEN = [
         abdeckung: 'Lokal (Empfangsreichweite)', kosten: 'Kostenlos',
         bemerkung: 'Keine Anmeldung nötig. Basiert auf ASTM-F3411-Standard für Remote ID. Zeigt vollständige Flugdaten erkannter Drohnen. Nur Android, kein iOS.',
         link: null, statusNote: ''
-    },
-    {
-        name: 'AirMap', gruppe: 'utm', tracking: false, kostenlos: true, api: true,
-        inhalt: 'UTM-Plattform: Flugverbotszonen, Flugplanung, Echtzeit-Autorisierung, Luftraummanagement für Drohnen.',
-        zielgruppe: 'Drohnenpiloten, gewerbliche Betreiber, Entwickler',
-        formate: 'REST API, JSON, iOS/Android, Web', uniqueIds: '',
-        verfuegbarkeit: 'API-Key / Registrierung', lizenz: 'Proprietär', aktualitaet: 'Echtzeit-Autorisierung',
-        abdeckung: 'Global', kosten: 'Basis kostenlos / Pro kostenpflichtig',
-        bemerkung: 'Eine der bekanntesten Plattformen für Drohnen-Luftraummanagement. Echtzeit-Autorisierung von Flügen möglich. Professionelle Features kostenpflichtig. Gut für gewerbliche Betreiber.',
-        link: null,
-        statusNote: 'Status-Hinweis (2026): Die AirMap-Verbraucher-App inkl. LAANC wurde im Juni 2023 eingestellt; AirMap wurde 2021 von DroneUp übernommen. Bitte vor Verwendung den aktuellen Status prüfen.'
-    },
-    {
-        name: 'Altitude Angel – Drone Safety Map', gruppe: 'utm', tracking: false, kostenlos: true, api: true, karte: true,
-        inhalt: 'UTM-Plattform: Geo-Zonen, Echtzeit-Luftraum, Geofencing-Daten für 155+ Länder, UTM-Integration.',
-        zielgruppe: 'Entwickler, gewerbliche Drohnenbetreiber',
-        formate: 'REST API, JSON', uniqueIds: '',
-        verfuegbarkeit: 'Registrierung erforderlich', lizenz: 'Proprietär', aktualitaet: 'Echtzeit',
-        abdeckung: 'Global (155+ Länder)', kosten: 'Basis kostenlos / Pro kostenpflichtig',
-        bemerkung: 'DJI nutzt Altitude Angel als Geofencing-Datenquelle. Sehr breite globale Abdeckung. UTM-Integration. Erweiterte Funktionen kostenpflichtig. API gut dokumentiert.',
-        link: 'https://dronesafetymap.com/',
-        statusNote: 'Status-Hinweis (Stand 2026): Altitude Angel ging im Okt. 2025 in die Insolvenzverwaltung; die Vermögenswerte inkl. der GuardianUTM-Plattform wurden Anfang 2026 von der Indra Group übernommen. Die kostenlose „Drone Safety Map\" (dronesafetymap.com) ist weiterhin online und erreichbar. Allerdings berichten Fachquellen, dass die Pflege der Live-Verbraucherdaten nach der Übernahme nicht nahtlos fortgeführt wurde — angezeigte Luftraumdaten können daher veraltet sein. Für sicherheitsrelevante Flugvorbereitung immer offizielle Quellen (DFS / Dipul) gegenprüfen. Die interaktive Karte unten nutzt unabhängige OpenAIP-Daten.'
     },
     {
         name: 'DJI FlySafe Geo Zones', gruppe: 'zonen', tracking: false, kostenlos: true, api: false, karte: true,
@@ -943,6 +955,26 @@ const QUELLEN = [
         abdeckung: 'Deutschland', kosten: 'Kostenlos',
         bemerkung: 'Alle Infos, Regeln und Abläufe für den Drohnenbetrieb in Deutschland auf einer Webseite, inkl. interaktivem Map Tool für geografische Gebiete.',
         link: 'https://www.dipul.de/', statusNote: ''
+    },
+    {
+        name: 'DroneMaps24', gruppe: 'zonen', tracking: false, kostenlos: true, api: false, karte: true,
+        inhalt: 'Interaktive Community-Karte zur Ermittlung standortbezogener Einschränkungen für Drohnenflüge — inkl. zuständiger Ansprechpartner und vorformulierter Anträge je Zone.',
+        zielgruppe: 'Drohnenpiloten, Hobbyisten, Behörden',
+        formate: 'Web (interaktiv), iOS, Android', uniqueIds: '',
+        verfuegbarkeit: 'Public / App (ohne Anmeldung)', lizenz: 'Public / proprietär (Zusatzdienste)', aktualitaet: 'Bei Änderungen & Community-Pflege',
+        abdeckung: 'Deutschland, Österreich, Luxemburg, Schweiz (DACH)', kosten: 'Flugzonen kostenlos / Genehmigungsservice kostenpflichtig',
+        bemerkung: 'Von Piloten für Piloten gepflegte Karte (nicopter GmbH). Zeigt am markierten Standort Flugverbots-/Einschränkungszonen samt zuständiger Behörde und Kontaktformularen. Die Flugzonen bleiben kostenlos; ein optionaler automatisierter Genehmigungsservice ist kostenpflichtig.',
+        link: 'https://dronemaps24.org/', statusNote: ''
+    },
+    {
+        name: 'Droniq App (TraX)', gruppe: 'zonen', tracking: false, kostenlos: true, api: false, karte: true,
+        inhalt: 'Offizielle App zur Flugplanung & -durchführung: Standort-/Geozonen-Prüfung, „Jetzt fliegen“, Wetter und Flugbuch. Nachfolger von Droniq Maps.',
+        zielgruppe: 'Hobbyisten, Drohnenpiloten',
+        formate: 'iOS / Android / Web-App', uniqueIds: '',
+        verfuegbarkeit: 'Public (Login für erweiterte Funktionen)', lizenz: 'Proprietär (Droniq / DFS)', aktualitaet: 'Tagesaktuell / bei Änderungen',
+        abdeckung: 'Deutschland', kosten: 'TraX kostenlos / Plus, Pro, Enterprise kostenpflichtig',
+        bemerkung: 'Drohnen-App von Droniq mit offiziellen DFS-Infos. Basisversion „TraX“ kostenlos (Validierung, Geozonen, Wetter, Flugbuch, „Jetzt fliegen“ = eigene Drohne für andere sichtbar machen). Erweiterte Live-Luftlage, Warnungen und KML-Import in den kostenpflichtigen Stufen.',
+        link: 'https://droniq.de/drohnenapp-trax', statusNote: ''
     },
     {
         name: 'EASA Easy Access Rules UAS', gruppe: 'regeln', tracking: false, kostenlos: true, api: true,
@@ -1130,6 +1162,32 @@ function toggleCard(btn){
         const mapEl = card.querySelector('.map-container');
         if(mapEl && !mapEl.dataset.geladen) initDrohnenKarte(mapEl);
     }
+}
+
+let alleOffen = false;
+function toggleExpandAll(){
+    alleOffen = !alleOffen;
+    const btn = document.getElementById('expandAll');
+    btn.textContent = alleOffen ? '▲ Alle zuklappen' : '▼ Alle aufklappen';
+    document.querySelectorAll('.q-card').forEach(card=>{
+        if(card.style.display === 'none') return; // skip filtered-out
+        const header = card.querySelector('.card-header');
+        const body = card.querySelector('.card-body');
+        const isOpen = card.classList.contains('card-open');
+        if(alleOffen && !isOpen){
+            card.classList.add('card-open');
+            header.classList.add('open');
+            body.classList.add('open');
+            header.setAttribute('aria-expanded','true');
+            const mapEl = card.querySelector('.map-container');
+            if(mapEl && !mapEl.dataset.geladen) initDrohnenKarte(mapEl);
+        } else if(!alleOffen && isOpen){
+            card.classList.remove('card-open');
+            header.classList.remove('open');
+            body.classList.remove('open');
+            header.setAttribute('aria-expanded','false');
+        }
+    });
 }
 
 function applyFilter(){
