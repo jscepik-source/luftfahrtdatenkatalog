@@ -848,6 +848,23 @@
 
         .wx-quelle { font-size: 0.7rem; color: var(--color-text-dim); margin-top: var(--space-xs); }
 
+        /* ── TAF Decoder ── */
+        .taf-decode { margin-top: 10px; font-size: 0.82rem; }
+        .taf-decode-header { font-weight: 700; margin-bottom: 8px; color: var(--color-text); }
+        .taf-decode-icao { font-family: 'Courier New', monospace; font-size: 0.95rem; }
+        .taf-decode-meta { font-weight: 400; color: var(--color-text-dim); font-size: 0.77rem; }
+        .taf-decode-group { border-left: 3px solid var(--color-border); padding: 4px 0 4px 10px; margin-bottom: 6px; }
+        .taf-decode-base  { border-left-color: #64748b; }
+        .taf-decode-becmg { border-left-color: #2563eb; }
+        .taf-decode-tempo { border-left-color: #f59e0b; }
+        .taf-decode-prob  { border-left-color: #ef4444; }
+        .taf-decode-prob-tempo { border-left-color: #f97316; }
+        .taf-decode-fm    { border-left-color: #8b5cf6; }
+        .taf-decode-label { font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-dim); margin-bottom: 3px; }
+        .taf-decode-period { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--color-text); font-size: 0.78rem; }
+        .taf-decode-list { margin: 2px 0 0 0; padding: 0 0 0 14px; }
+        .taf-decode-list li { margin-bottom: 2px; color: var(--color-text); line-height: 1.45; list-style: disc; }
+
         /* ── METAR Decoder ── */
         .metar-decode {
             margin-top: 8px;
@@ -3311,6 +3328,173 @@ function decodeMETAR(raw) {
     return `<div class="metar-decode">${lines.map(l=>`<div class="metar-decode-line">${l}</div>`).join('')}</div>`;
 }
 
+function decodeTAF(raw) {
+    if (!raw) return '';
+    const coverDesc = { FEW:'vereinzelt', SCT:'aufgelockert', BKN:'aufgebrochen', OVC:'bedeckt', VV:'Sicht vertikal' };
+    const noSigWx = ['SKC','NSC','NCD','CLR'];
+
+    function formatPeriod(from, to) {
+        const fd = from.slice(0,2), fh = from.slice(2,4);
+        if (!to) return `ab Tag ${fd}, ${fh}:00 UTC`;
+        const td = to.slice(0,2), th = to.slice(2,4);
+        if (fd === td) return `Tag ${fd}, ${fh}:00–${th}:00 UTC`;
+        return `Tag ${fd} ${fh}:00 – Tag ${td} ${th}:00 UTC`;
+    }
+
+    function decodeWind(t) {
+        const m = t.match(/^(VRB|\d{3})(\d{2,3})(?:G(\d{2,3}))?(KT|MPS|KMH)$/);
+        if (!m) return null;
+        const dir = m[1] === 'VRB' ? 'variabel' : `${m[1]}°`;
+        const unit = m[4];
+        const toKt = (v) => unit === 'MPS' ? Math.round(parseFloat(v)*1.944)+' kt' : parseInt(v)+' '+unit;
+        const gust = m[3] ? `, Böen ${toKt(m[3])}` : '';
+        return `Wind ${dir} / ${toKt(m[2])}${gust}`;
+    }
+
+    function decodeWxTok(t) {
+        let pfx = '', s = t;
+        if (s.startsWith('+')) { pfx = 'starker '; s = s.slice(1); }
+        else if (s.startsWith('-')) { pfx = 'leichter '; s = s.slice(1); }
+        if (s.startsWith('VC')) { pfx += 'in der Nähe '; s = s.slice(2); }
+        let qual = '';
+        for (const [code, name] of [['SH','Schauer'],['TS','Gewitter'],['FZ','gefrierend'],['BL','fegend'],['DR','treibend'],['MI','flach'],['BC','stellenweise'],['PR','teils']]) {
+            if (s.startsWith(code)) { qual = name+' '; s = s.slice(2); break; }
+        }
+        const precip = { DZ:'Sprühregen', RA:'Regen', SN:'Schnee', SG:'Schneegriesel', PL:'Eiskörner', GR:'Hagel', GS:'Graupel', IC:'Eisnadeln' };
+        const obs    = { BR:'Dunst', FG:'Nebel', FU:'Rauch', HZ:'Dunst', VA:'Vulkanasche', SA:'Sand', DU:'Staub' };
+        const other  = { SQ:'Böenfront', FC:'Tornado/Wasserhose', SS:'Sandsturm', DS:'Staubsturm', PO:'Staubteufel' };
+        const all = { ...precip, ...obs, ...other };
+        const parts = [];
+        while (s.length >= 2) {
+            const code = s.slice(0,2);
+            if (all[code]) { parts.push(all[code]); s = s.slice(2); }
+            else break;
+        }
+        return (pfx + qual + parts.join('+')) || t;
+    }
+
+    function decodeGroup(tokens) {
+        const parts = [];
+        let i = 0;
+        while (i < tokens.length) {
+            const t = tokens[i];
+            if (t === 'CAVOK') { parts.push('CAVOK: Sicht > 10 km, keine wesentlichen Wolken, kein Niederschlag'); i++; continue; }
+            if (t === 'NSW') { parts.push('kein signifikantes Wetter mehr'); i++; continue; }
+            if (noSigWx.includes(t)) { parts.push('wolkenlos'); i++; continue; }
+            if (/^(VRB|\d{3})\d{2,3}(G\d+)?(KT|MPS|KMH)$/.test(t)) {
+                const w = decodeWind(t); if (w) parts.push(w); i++; continue;
+            }
+            if (t === '9999' || t === 'P6SM') { parts.push('Sicht > 10 km'); i++; continue; }
+            if (/^\d{4}$/.test(t)) {
+                const v = parseInt(t);
+                parts.push(`Sicht ${v >= 1000 ? (v/1000).toFixed(v%1000===0?0:1)+' km' : v+' m'}`);
+                i++; continue;
+            }
+            if (/^\d+SM$/.test(t)) { parts.push(`Sicht ${t.replace('SM','')} SM`); i++; continue; }
+            if (/^[+-]?(VC)?(MI|BC|PR|DR|BL|SH|TS|FZ|RA|DZ|SN|SG|IC|PL|GR|GS|BR|FG|FU|VA|DU|SA|HZ|PO|SQ|FC|SS|DS)/.test(t)) {
+                const wx = []; let j = i;
+                while (j < tokens.length && /^[+-]?(VC)?(MI|BC|PR|DR|BL|SH|TS|FZ|RA|DZ|SN|SG|IC|PL|GR|GS|BR|FG|FU|VA|DU|SA|HZ|PO|SQ|FC|SS|DS)/.test(tokens[j])) wx.push(tokens[j++]);
+                parts.push(wx.map(decodeWxTok).join(', ')); i = j; continue;
+            }
+            if (/^(FEW|SCT|BKN|OVC|VV)\d{3}/.test(t)) {
+                const clouds = []; let j = i;
+                while (j < tokens.length && /^(FEW|SCT|BKN|OVC|VV)\d{3}/.test(tokens[j])) clouds.push(tokens[j++]);
+                const cl = clouds.map(c => {
+                    const m = c.match(/^(FEW|SCT|BKN|OVC|VV)(\d{3})(CB|TCU)?/);
+                    if (!m) return c;
+                    const base = parseInt(m[2])*100;
+                    const extra = m[3]==='CB' ? ' (Cumulonimbus ⚡)' : m[3]==='TCU' ? ' (Towering Cu)' : '';
+                    return `${coverDesc[m[1]]||m[1]} ${base.toLocaleString('de')} ft${extra}`;
+                }).join(', ');
+                parts.push(`Wolken: ${cl}`); i = j; continue;
+            }
+            if (/^QNH\d{4}/.test(t)) { const m = t.match(/QNH(\d{4})/); if (m) parts.push(`QNH ${m[1]} hPa`); i++; continue; }
+            i++;
+        }
+        return parts;
+    }
+
+    const normalized = raw.trim().replace(/\r?\n/g, ' ').replace(/=\s*$/, '').replace(/\s+/g, ' ');
+    const allT = normalized.split(' ');
+    let idx = 0;
+    while (idx < allT.length && allT[idx] === 'TAF') idx++;
+    if (allT[idx] === 'AMD' || allT[idx] === 'COR') idx++;
+    const hIcao = allT[idx++] || '';
+    let issued = '', validPeriod = '';
+    if (/^\d{6}Z$/.test(allT[idx])) {
+        const t = allT[idx++];
+        issued = `Tag ${t.slice(0,2)}, ${t.slice(2,4)}:${t.slice(4,6)} UTC`;
+    }
+    if (/^\d{4}\/\d{4}$/.test(allT[idx])) {
+        const [f,t] = allT[idx++].split('/');
+        validPeriod = formatPeriod(f, t);
+    }
+
+    const changeRe = /^(BECMG|TEMPO|INTER|PROB\d+|FM\d{6})$/;
+    const baseT = [];
+    while (idx < allT.length && !changeRe.test(allT[idx])) baseT.push(allT[idx++]);
+
+    let html = '<div class="taf-decode">';
+    html += `<div class="taf-decode-header"><span class="taf-decode-icao">${hIcao}</span>`;
+    if (issued)      html += ` <span class="taf-decode-meta">ausgegeben ${issued}</span>`;
+    if (validPeriod) html += ` · <span class="taf-decode-meta">gültig ${validPeriod}</span>`;
+    html += '</div>';
+
+    const baseParts = decodeGroup(baseT);
+    if (baseParts.length) {
+        html += '<div class="taf-decode-group taf-decode-base">';
+        html += '<div class="taf-decode-label">Basiswetterlage</div>';
+        html += '<ul class="taf-decode-list">' + baseParts.map(p=>`<li>${p}</li>`).join('') + '</ul>';
+        html += '</div>';
+    }
+
+    while (idx < allT.length) {
+        let ind = allT[idx++];
+        let label = '', cls = '', period = '';
+        let probVal = '';
+
+        if (/^PROB(\d+)$/.test(ind)) {
+            probVal = ind.match(/^PROB(\d+)$/)[1];
+            if (/^(TEMPO|INTER)$/.test(allT[idx])) ind = `PROB${probVal} ${allT[idx++]}`;
+            else ind = `PROB${probVal}`;
+        }
+
+        if (/^FM\d{6}$/.test(ind)) {
+            const t = ind.slice(2);
+            period = `ab Tag ${t.slice(0,2)}, ${t.slice(2,4)}:${t.slice(4,6)} UTC`;
+            label = 'Dauernd ab'; cls = 'taf-decode-fm';
+        } else if (ind.startsWith('PROB') && ind.includes('TEMPO')) {
+            const p = ind.match(/PROB(\d+)/)[1];
+            if (/^\d{4}\/\d{4}$/.test(allT[idx])) { const [f,t] = allT[idx++].split('/'); period = formatPeriod(f,t); }
+            label = `${p}% Wahrscheinl., vorübergehend`; cls = 'taf-decode-prob-tempo';
+        } else if (ind.startsWith('PROB')) {
+            const p = ind.match(/PROB(\d+)/)[1];
+            if (/^\d{4}\/\d{4}$/.test(allT[idx])) { const [f,t] = allT[idx++].split('/'); period = formatPeriod(f,t); }
+            label = `${p}% Wahrscheinlich`; cls = 'taf-decode-prob';
+        } else if (ind === 'BECMG') {
+            if (/^\d{4}\/\d{4}$/.test(allT[idx])) { const [f,t] = allT[idx++].split('/'); period = formatPeriod(f,t); }
+            label = 'Übergehend (BECMG)'; cls = 'taf-decode-becmg';
+        } else if (ind === 'TEMPO' || ind === 'INTER') {
+            if (/^\d{4}\/\d{4}$/.test(allT[idx])) { const [f,t] = allT[idx++].split('/'); period = formatPeriod(f,t); }
+            label = ind === 'INTER' ? 'Intermittierend' : 'Vorübergehend (TEMPO)'; cls = 'taf-decode-tempo';
+        } else {
+            continue;
+        }
+
+        const grpT = [];
+        while (idx < allT.length && !changeRe.test(allT[idx])) grpT.push(allT[idx++]);
+        const grpParts = decodeGroup(grpT);
+
+        html += `<div class="taf-decode-group ${cls}">`;
+        html += `<div class="taf-decode-label">${label}${period ? ` <span class="taf-decode-period">· ${period}</span>` : ''}</div>`;
+        if (grpParts.length) html += '<ul class="taf-decode-list">' + grpParts.map(p=>`<li>${p}</li>`).join('') + '</ul>';
+        html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+}
+
 async function ladeKarte(icao, lat, lon) {
     const el = document.getElementById(`karte-${icao}`);
     if (!el || el.dataset.geladen) return;
@@ -4862,9 +5046,11 @@ async function ladeWetter(icao, lat, lon) {
     try {
         const tRes = await fetchProxy(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`);
         if (Array.isArray(tRes.data) && tRes.data.length > 0 && tRes.data[0].rawTAF) {
+            const rawTAF = tRes.data[0].rawTAF;
             html += `<section class="card-section">
                 <h3 class="section-title">TAF</h3>
-                <pre class="taf-pre">${tRes.data[0].rawTAF}</pre>
+                <pre class="taf-pre">${rawTAF}</pre>
+                ${decodeTAF(rawTAF)}
             </section>`;
         }
     } catch(e) {}
