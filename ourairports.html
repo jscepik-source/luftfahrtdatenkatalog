@@ -1758,7 +1758,7 @@
 
         /* Karte */
         .infra-map {
-            height: 360px; border-radius: var(--radius-md);
+            height: 300px; border-radius: var(--radius-md);
             overflow: hidden; margin-bottom: 12px;
             border: 1px solid var(--color-border);
         }
@@ -4959,17 +4959,15 @@ async function ladeInfrastruktur(icao, force = false) {
 
     el.innerHTML = '<span class="status-loading">OSM-Infrastrukturdaten werden geladen…</span>';
 
-    // Helipad + navigationaid bewusst ausgelassen:
-    // - helipad: meist abseits des Flughafens oder irrelevant
-    // - navigationaid: OSM taggt jede einzelne Anfluglampe → hunderte Punkte
-    // Radar kommt über man_made=radar separat
+    // Nur wichtige Kategorien: Navaids, Terminals, Gates, Tower, Fuel, Radar
+    // Entfernt: parking_position (100+ Stands), holding_position, windsock, apron, hangar
     const r1 = 8000;   // Flughafen-Infrastruktur
-    const r2 = 30000;  // Navaids (VOR/NDB können weit vom Flughafen entfernt sein)
-    const r3 = 50000;  // Radar (Approach/Area-Radar typisch 10–40 km entfernt)
+    const r2 = 30000;  // Navaids (VOR/NDB können weit entfernt sein)
+    const r3 = 50000;  // Radar
     const query = `[out:json][timeout:30];
 (
-  node["aeroway"~"terminal|gate|parking_position|tower|hangar|holding_position|windsock|fuel"](around:${r1},${ap.lat},${ap.lon});
-  way["aeroway"~"terminal|gate|parking_position|tower|hangar|apron|fuel"](around:${r1},${ap.lat},${ap.lon});
+  node["aeroway"~"terminal|gate|tower|fuel"](around:${r1},${ap.lat},${ap.lon});
+  way["aeroway"~"terminal|gate|fuel"](around:${r1},${ap.lat},${ap.lon});
   relation["aeroway"="terminal"](around:${r1},${ap.lat},${ap.lon});
   node["man_made"="radar"](around:${r3},${ap.lat},${ap.lon});
   way["man_made"="radar"](around:${r3},${ap.lat},${ap.lon});
@@ -4978,17 +4976,12 @@ async function ladeInfrastruktur(icao, force = false) {
 out center tags;`;
 
     const typeMeta = {
-        _navaids:         { icon: '📡', label: 'ILS · VOR · NDB',   color: '#3b82f6', radius: 9,  order: 0,  open: false, style: 'navaids'       },
-        terminal:         { icon: '🏛️', label: 'Terminals',         color: '#6366f1', radius: 9,  order: 1,  open: false, style: 'anlage-cards'  },
-        gate:             { icon: '🚪', label: 'Gates',              color: '#22c55e', radius: 6,  order: 2,  open: false, style: 'prefix'        },
-        parking_position: { icon: '🅿️', label: 'Abstellpositionen', color: '#f59e0b', radius: 5,  order: 3,  open: false, style: 'prefix'        },
-        apron:            { icon: '🛬', label: 'Vorfelder',          color: '#94a3b8', radius: 5,  order: 4,  open: false, style: 'chips'         },
-        hangar:           { icon: '🏗️', label: 'Hangars',            color: '#8b5cf6', radius: 6,  order: 5,  open: false, style: 'anlage-cards'  },
-        tower:            { icon: '🗼', label: 'Tower',              color: '#ef4444', radius: 9,  order: 6,  open: false, style: 'anlage-cards'  },
-        holding_position: { icon: '🛑', label: 'Haltepositionen',   color: '#f43f5e', radius: 5,  order: 7,  open: false, style: 'detail-chips'  },
-        windsock:         { icon: '🌬️', label: 'Windsäcke',         color: '#38bdf8', radius: 6,  order: 8,  open: false, style: 'anlage-cards'  },
-        fuel:             { icon: '⛽', label: 'Betankung',          color: '#84cc16', radius: 7,  order: 9,  open: false, style: 'anlage-cards'  },
-        _radar:           { icon: '📡', label: 'Radar (50 km)',      color: '#dc2626', radius: 10, order: 10, open: false, style: 'anlage-cards'  },
+        _navaids: { icon: '📡', label: 'ILS · VOR · NDB', color: '#3b82f6', radius: 9,  order: 0, open: true,  style: 'navaids'      },
+        terminal: { icon: '🏛️', label: 'Terminals',       color: '#6366f1', radius: 9,  order: 1, open: true,  style: 'anlage-cards' },
+        gate:     { icon: '🚪', label: 'Gates',            color: '#22c55e', radius: 6,  order: 2, open: false, style: 'prefix'       },
+        tower:    { icon: '🗼', label: 'Tower',            color: '#ef4444', radius: 9,  order: 3, open: false, style: 'anlage-cards' },
+        fuel:     { icon: '⛽', label: 'Betankung',        color: '#84cc16', radius: 7,  order: 4, open: false, style: 'anlage-cards' },
+        _radar:   { icon: '📡', label: 'Radar (50 km)',    color: '#dc2626', radius: 10, order: 5, open: false, style: 'anlage-cards' },
     };
 
     // Navaid-Farbe nach Typ
