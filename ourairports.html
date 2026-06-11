@@ -1861,6 +1861,24 @@
         .infra-empty { text-align: center; padding: 28px 16px; color: var(--color-text-sub); font-size: 0.83rem; }
         .infra-empty a { color: var(--color-primary); }
 
+        /* ILS-Karten */
+        .infra-ils-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 8px; }
+        .infra-ils-card {
+            background: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-md); overflow: hidden;
+        }
+        .infra-ils-head {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 11px; background: rgba(37,99,235,0.08);
+            border-bottom: 1px solid rgba(37,99,235,0.15);
+        }
+        .infra-ils-rwy { font-weight: 700; font-size: 0.9rem; font-family: 'Courier New', monospace; letter-spacing: 0.05em; }
+        .infra-ils-body { padding: 8px 11px; }
+        .infra-ils-type { font-size: 0.68rem; color: var(--color-text-sub); margin-bottom: 4px; }
+        .infra-ils-freq { font-size: 0.88rem; font-weight: 600; color: var(--color-text); margin-bottom: 5px; }
+        .infra-ils-min { display: flex; gap: 6px; flex-wrap: wrap; font-size: 0.7rem; color: var(--color-text-dim); }
+        .infra-ils-min span { background: var(--color-surface-2); border-radius: 4px; padding: 2px 6px; }
+
         /* Navaid-Karten (neu) */
         .infra-navaid-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(175px,1fr)); gap: 8px;
@@ -2403,7 +2421,7 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
             <h1>72.000 Flughäfen weltweit</h1>
             <p>Live METAR &middot; TAF &middot; NOTAMs &middot; ILS-Kategorien &middot; AIP-Karten &middot; ADS-B Radar</p>
         </div>
-        <a href="drohnen_2.html" class="btn-theme" style="text-decoration:none;font-size:0.8rem;width:auto;padding:0 12px;display:inline-flex;align-items:center;gap:6px" aria-label="UAV und Drohnen-Datenkatalog von Ayman Harper">UAV / Drohnen</a> <a href="https://valeryconstant9-ux.github.io/luftfahrt-katalog/Luftfahrt_Katalog_FINAL_CLEAN_5.html" target="_blank" rel="noopener" class="btn-theme" style="text-decoration:none;font-size:0.8rem;width:auto;padding:0 12px;display:inline-flex;align-items:center;gap:6px" aria-label="Luftfahrt-Datenkatalog von Valery Constant">Flugzeuge</a> <button class="btn-theme" id="theme-btn" onclick="toggleTheme()" aria-label="Hell/Dunkel-Modus umschalten">🌙</button>
+        <a href="drohnen_2.html" class="btn-theme" style="text-decoration:none;font-size:0.8rem;width:auto;padding:0 12px;display:inline-flex;align-items:center;gap:6px" aria-label="UAV und Drohnen-Datenkatalog von Ayman Harper">UAV / Drohnen</a> <button class="btn-theme" id="theme-btn" onclick="toggleTheme()" aria-label="Hell/Dunkel-Modus umschalten">🌙</button>
     </div>
 </header>
 
@@ -4976,12 +4994,13 @@ async function ladeInfrastruktur(icao, force = false) {
 out center tags;`;
 
     const typeMeta = {
-        _navaids: { icon: '📡', label: 'ILS · VOR · NDB', color: '#3b82f6', radius: 9,  order: 0, open: true,  style: 'navaids'      },
-        terminal: { icon: '🏛️', label: 'Terminals',       color: '#6366f1', radius: 9,  order: 1, open: true,  style: 'anlage-cards' },
-        gate:     { icon: '🚪', label: 'Gates',            color: '#22c55e', radius: 6,  order: 2, open: false, style: 'prefix'       },
-        tower:    { icon: '🗼', label: 'Tower',            color: '#ef4444', radius: 9,  order: 3, open: false, style: 'anlage-cards' },
-        fuel:     { icon: '⛽', label: 'Betankung',        color: '#84cc16', radius: 7,  order: 4, open: false, style: 'anlage-cards' },
-        _radar:   { icon: '📡', label: 'Radar (50 km)',    color: '#dc2626', radius: 10, order: 5, open: false, style: 'anlage-cards' },
+        _ils:     { icon: '🛬', label: 'ILS',             color: '#2563eb', radius: 9,  order: 0, open: true,  style: 'ils-cards'    },
+        _navaids: { icon: '📡', label: 'VOR · NDB · DME', color: '#3b82f6', radius: 9,  order: 1, open: true,  style: 'navaids'      },
+        terminal: { icon: '🏛️', label: 'Terminals',       color: '#6366f1', radius: 9,  order: 2, open: true,  style: 'anlage-cards' },
+        gate:     { icon: '🚪', label: 'Gates',            color: '#22c55e', radius: 6,  order: 3, open: false, style: 'prefix'       },
+        tower:    { icon: '🗼', label: 'Tower',            color: '#ef4444', radius: 9,  order: 4, open: false, style: 'anlage-cards' },
+        fuel:     { icon: '⛽', label: 'Betankung',        color: '#84cc16', radius: 7,  order: 5, open: false, style: 'anlage-cards' },
+        _radar:   { icon: '📡', label: 'Radar (50 km)',    color: '#dc2626', radius: 10, order: 6, open: false, style: 'anlage-cards' },
     };
 
     // Navaid-Farbe nach Typ
@@ -5139,6 +5158,40 @@ out center tags;`;
             groups['_navaids'] = [...(groups['_navaids'] || []), ...rawNavaids];
         }
 
+        // ── ILS-Gruppe aufbauen (aus _navaids ILS/LOC/GS + ILS_KAT_DE) ───────
+        const ILS_MIN = { 'I':{dh:200,rvr:550},'II':{dh:100,rvr:300},'III':{dh:50,rvr:200},'IIIa':{dh:50,rvr:200},'IIIb':{dh:15,rvr:50},'IIIc':{dh:0,rvr:0} };
+        const ilsNavs = (groups['_navaids'] || []).filter(n => /ILS|LOC|GS|LDA/.test(n.type || ''));
+        groups['_navaids'] = (groups['_navaids'] || []).filter(n => !/ILS|LOC|GS|LDA/.test(n.type || ''));
+        if (!groups['_navaids'].length) delete groups['_navaids'];
+
+        const ilsKatData = ILS_KAT_DE[icao] || {};
+        const ilsDesigSet = new Set([
+            ...Object.keys(ilsKatData),
+            ...ilsNavs.map(n => {
+                const m = (n.name||n.ident||'').match(/\b(0[1-9]|[12]\d|3[0-6])[LRC]?\b/i);
+                return m ? m[0].toUpperCase() : null;
+            }).filter(Boolean)
+        ]);
+        const usedNavIdxs = new Set();
+        const ilsEntries = [...ilsDesigSet].sort().map(desig => {
+            const kat = ilsKatData[desig] || null;
+            const navIdx = ilsNavs.findIndex((n, i) => {
+                if (usedNavIdxs.has(i)) return false;
+                const m = (n.name||n.ident||'').match(/\b(0[1-9]|[12]\d|3[0-6])[LRC]?\b/i);
+                return m && m[0].toUpperCase() === desig;
+            });
+            if (navIdx >= 0) usedNavIdxs.add(navIdx);
+            return { desig, kat, nav: navIdx >= 0 ? ilsNavs[navIdx] : null, min: ILS_MIN[kat] || null };
+        });
+        // Restliche ILS-Navaids ohne Desig-Match anhängen
+        ilsNavs.forEach((n, i) => {
+            if (!usedNavIdxs.has(i)) {
+                const f = parseFloat(n.freq); const freqStr = n.freq ? (f>1000?(f/1000).toFixed(2)+' MHz':f.toFixed(0)+' kHz') : '';
+                ilsEntries.push({ desig: n.ident || '?', kat: null, nav: n, min: null });
+            }
+        });
+        if (ilsEntries.length > 0) groups['_ils'] = ilsEntries;
+
         if (Object.keys(groups).length === 0) {
             el.innerHTML = `<div class="infra-empty">
                 <p>Keine Infrastrukturdaten verfügbar.</p>
@@ -5168,7 +5221,33 @@ out center tags;`;
             const m = typeMeta[type];
             let bodyHtml = '';
 
-            if (type === '_navaids') {
+            if (type === '_ils') {
+                bodyHtml = `<div class="infra-ils-grid">`;
+                for (const entry of items) {
+                    const { desig, kat, nav, min } = entry;
+                    const cls = kat === 'III' || kat?.startsWith('III') ? 'ils-3' : kat === 'II' ? 'ils-2' : kat === 'I' ? 'ils-1' : 'ils-nc';
+                    const label = kat ? `CAT ${kat}` : 'ILS';
+                    const f = nav?.freq ? parseFloat(nav.freq) : null;
+                    const freqStr = f ? (f > 1000 ? (f/1000).toFixed(2)+' MHz' : f.toFixed(0)+' kHz') : '';
+                    const navType = nav ? (nav.type||'').toUpperCase().replace('ILS-DME','ILS/DME').replace('LOC-DME','LOC/DME') : '';
+                    bodyHtml += `<div class="infra-ils-card">
+                        <div class="infra-ils-head">
+                            <span class="infra-ils-rwy">RWY ${desig}</span>
+                            <span class="ils-badge ${cls}" style="font-size:0.7rem;padding:3px 9px">${label}</span>
+                        </div>
+                        <div class="infra-ils-body">
+                            ${navType ? `<div class="infra-ils-type">${navType}${nav.ident && nav.ident !== desig ? ' · '+nav.ident : ''}</div>` : ''}
+                            ${freqStr ? `<div class="infra-ils-freq">📡 ${freqStr}</div>` : ''}
+                            ${min ? `<div class="infra-ils-min">
+                                ${min.dh > 0 ? `<span>DH ${min.dh} ft</span>` : '<span>No DH</span>'}
+                                <span>RVR ${min.rvr > 0 ? min.rvr+' m' : '0 m'}</span>
+                            </div>` : ''}
+                        </div>
+                    </div>`;
+                }
+                bodyHtml += `</div>`;
+
+            } else if (type === '_navaids') {
                 bodyHtml = `<div class="infra-navaid-grid">`;
                 // Sortierung: ILS zuerst, dann VOR, NDB, DME
                 const navOrder = t => /ILS|LOC|GS|LDA/.test(t) ? 0 : /VOR|TACAN|DVOR/.test(t) ? 1 : /NDB/.test(t) ? 2 : 3;
@@ -5324,7 +5403,19 @@ out center tags;`;
             const group = L.layerGroup().addTo(imap);
             infraLayerGroups[icao][type] = group;
 
-            if (type === '_navaids') {
+            if (type === '_ils') {
+                for (const entry of items) {
+                    const { desig, kat, nav } = entry;
+                    if (!nav?.lat || !nav?.lon) continue;
+                    const f = parseFloat(nav.freq); const freqStr = nav.freq ? (f>1000?(f/1000).toFixed(2)+' MHz':f.toFixed(0)+' kHz') : '';
+                    const label = kat ? `CAT ${kat}` : 'ILS';
+                    L.circleMarker([nav.lat, nav.lon], {
+                        radius: 9, color: '#fff', fillColor: '#2563eb', fillOpacity: 0.9, weight: 2
+                    }).bindPopup(`<b>ILS RWY ${desig}</b><br><span style="font-size:0.8rem">${label}${freqStr?' · '+freqStr:''}</span>`).addTo(group);
+                    bounds.push([nav.lat, nav.lon]);
+                }
+
+            } else if (type === '_navaids') {
                 // Navaids aus OurAirports
                 for (const n of items) {
                     const col  = navaidColor(n.type || '');
