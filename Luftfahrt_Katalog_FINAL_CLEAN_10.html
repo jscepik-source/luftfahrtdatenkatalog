@@ -344,6 +344,15 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 </head>
 <body>
 
+<style>
+/* Einheitliche Themen-Navigation (in die bestehende Topbar integriert) */
+.tb .avx-links{display:flex;align-items:center;gap:6px;margin-left:8px;flex:0 0 auto}
+.tb .avx-pill{font-size:12px;font-weight:600;color:#93c5fd;text-decoration:none;padding:5px 11px;border-radius:20px;border:1px solid rgba(59,130,246,0.18);background:rgba(59,130,246,0.06);white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
+.tb .avx-pill:hover{border-color:#60a5fa;color:#dbeafe}
+.tb .avx-pill.avx-active{background:#2563eb;border-color:#2563eb;color:#fff}
+@media(max-width:760px){.tb .tb-badge{display:none}}
+</style>
+
 <nav class="tb">
   <span class="tb-logo" onclick="goHome()">
     <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -352,6 +361,12 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   <div class="tb-div"></div>
   <div class="tb-cr" id="tbCr">Übersicht</div>
   <span class="tb-badge">HS RheinMain · Avionik</span>
+  <span class="avx-links">
+    <a class="avx-pill" href="index.html">Start</a>
+    <a class="avx-pill" href="ourairports.html">Flughäfen</a>
+    <a class="avx-pill avx-active" href="Luftfahrt_Katalog_FINAL_CLEAN_10.html">Flugzeuge</a>
+    <a class="avx-pill" href="drohnen.html">Drohnen</a>
+  </span>
 </nav>
 
 <!-- HOME -->
