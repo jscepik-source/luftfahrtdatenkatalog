@@ -314,7 +314,7 @@
             border-bottom: 1px solid var(--color-border);
             padding: 10px var(--space-lg);
             position: sticky;
-            top: 0;
+            top: 48px;   /* unter der einheitlichen Themen-Topleiste */
             z-index: 100;
             transition: background var(--transition);
             box-shadow: 0 4px 20px rgba(27,54,93,0.05), 0 1px 0 var(--color-border);
@@ -697,6 +697,25 @@
 <body>
 <noscript><style>body::before{content:"JavaScript ist erforderlich, um den Katalog zu laden.";display:block;padding:2rem;font-family:sans-serif;text-align:center;color:#64748b}</style></noscript>
 
+<!-- ── Themen-Navigation (einheitlich auf allen Seiten) ── -->
+<style>
+.avx-topnav{position:sticky;top:0;z-index:10000;box-sizing:border-box;min-height:48px;display:flex;align-items:center;gap:14px;background:#0f172a;border-bottom:1px solid #334155;padding:7px 16px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.avx-topnav a{text-decoration:none}
+.avx-topnav .avx-brand{color:#fff;font-weight:800;font-size:.9rem;flex:0 0 auto}
+.avx-topnav .avx-links{display:flex;gap:8px;flex:0 0 auto;margin-left:auto}
+.avx-topnav .avx-pill{color:#cbd5e1;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid #334155;transition:background .15s,color .15s,border-color .15s}
+.avx-topnav .avx-pill:hover{color:#fff;border-color:#4fc3f7}
+.avx-topnav .avx-pill.avx-active{background:#2563eb;border-color:#2563eb;color:#fff}
+</style>
+<nav class="avx-topnav" aria-label="Themenbereiche">
+  <a class="avx-brand" href="index.html">&#9992; Start</a>
+  <span class="avx-links">
+    <a class="avx-pill" href="ourairports.html">Flughäfen</a>
+    <a class="avx-pill" href="https://valeryconstant9-ux.github.io/luftfahrt-katalog/Luftfahrt_Katalog_FINAL_CLEAN_5.html" target="_blank" rel="noopener">Flugzeuge &#8599;</a>
+    <a class="avx-pill avx-active" href="drohnen.html">Drohnen</a>
+  </span>
+</nav>
+
 <!-- ── Header ── -->
 <header>
     <div class="header-inner">
@@ -706,10 +725,6 @@
             <h1>UAV-Tracking &amp; Drohnendaten</h1>
             <p>Remote ID &middot; Geo-Zonen &middot; Flugplanung &middot; Regularien &middot; Behörden &middot; Wetter</p>
         </div>
-        <nav class="header-nav" aria-label="Katalog-Bereiche">
-            <a href="ourairports.html">Flughäfen</a>
-            <a href="drohnen.html" class="active" aria-current="page">UAVs / Drohnen</a>
-        </nav>
         <button class="btn-theme" id="theme-btn" onclick="toggleTheme()" aria-label="Hell/Dunkel-Modus umschalten">🌙</button>
     </div>
 </header>
