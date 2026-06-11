@@ -5894,6 +5894,87 @@ function switchTab(btn, panel, icao) {
 // ── Flüge (ADS-B Live) ────────────────────────────────────────────────────────
 const _flugTimer = {};
 
+// Anreicherung: ICAO-Typcode → lesbarer Modellname (gängige Muster)
+const TYPE_NAMES = {
+  A19N:'Airbus A319neo', A20N:'Airbus A320neo', A21N:'Airbus A321neo',
+  A318:'Airbus A318', A319:'Airbus A319', A320:'Airbus A320', A321:'Airbus A321',
+  A306:'Airbus A300-600', A30B:'Airbus A300', A310:'Airbus A310',
+  A332:'Airbus A330-200', A333:'Airbus A330-300', A338:'Airbus A330-800neo', A339:'Airbus A330-900neo',
+  A342:'Airbus A340-200', A343:'Airbus A340-300', A345:'Airbus A340-500', A346:'Airbus A340-600',
+  A359:'Airbus A350-900', A35K:'Airbus A350-1000', A388:'Airbus A380-800',
+  BCS1:'Airbus A220-100', BCS3:'Airbus A220-300', A400:'Airbus A400M', A124:'Antonov An-124', A225:'Antonov An-225',
+  B712:'Boeing 717', B722:'Boeing 727-200',
+  B732:'Boeing 737-200', B733:'Boeing 737-300', B734:'Boeing 737-400', B735:'Boeing 737-500',
+  B736:'Boeing 737-600', B737:'Boeing 737-700', B738:'Boeing 737-800', B739:'Boeing 737-900',
+  B37M:'Boeing 737 MAX 7', B38M:'Boeing 737 MAX 8', B39M:'Boeing 737 MAX 9', B3XM:'Boeing 737 MAX 10',
+  B741:'Boeing 747-100', B742:'Boeing 747-200', B743:'Boeing 747-300', B744:'Boeing 747-400', B748:'Boeing 747-8',
+  B752:'Boeing 757-200', B753:'Boeing 757-300',
+  B762:'Boeing 767-200', B763:'Boeing 767-300', B764:'Boeing 767-400',
+  B772:'Boeing 777-200', B77L:'Boeing 777-200LR', B773:'Boeing 777-300', B77W:'Boeing 777-300ER',
+  B778:'Boeing 777-8', B779:'Boeing 777-9',
+  B788:'Boeing 787-8', B789:'Boeing 787-9', B78X:'Boeing 787-10',
+  E135:'Embraer ERJ-135', E145:'Embraer ERJ-145', E45X:'Embraer ERJ-145',
+  E170:'Embraer E170', E75S:'Embraer E175', E75L:'Embraer E175', E190:'Embraer E190', E195:'Embraer E195',
+  E290:'Embraer E190-E2', E295:'Embraer E195-E2', E120:'Embraer EMB-120',
+  CRJ1:'Bombardier CRJ100', CRJ2:'Bombardier CRJ200', CRJ7:'Bombardier CRJ700', CRJ9:'Bombardier CRJ900', CRJX:'Bombardier CRJ1000',
+  DH8A:'Dash 8-100', DH8B:'Dash 8-200', DH8C:'Dash 8-300', DH8D:'Dash 8-400 (Q400)',
+  AT43:'ATR 42-300', AT45:'ATR 42-500', AT46:'ATR 42-600', AT72:'ATR 72', AT75:'ATR 72-500', AT76:'ATR 72-600',
+  F70:'Fokker 70', F100:'Fokker 100', F50:'Fokker 50', SF34:'Saab 340', SB20:'Saab 2000', D328:'Dornier 328', J328:'Dornier 328JET',
+  B190:'Beechcraft 1900', SW4:'Fairchild Metro',
+  IL76:'Ilyushin Il-76', IL96:'Ilyushin Il-96', AN12:'Antonov An-12', AN26:'Antonov An-26', AN72:'Antonov An-72',
+  SU95:'Sukhoi Superjet 100', T204:'Tupolev Tu-204',
+  B461:'BAe 146-100', B462:'BAe 146-200', B463:'BAe 146-300', RJ85:'Avro RJ85', RJ1H:'Avro RJ100',
+  C172:'Cessna 172', C152:'Cessna 152', C182:'Cessna 182', C206:'Cessna 206', C208:'Cessna 208 Caravan', C210:'Cessna 210',
+  P28A:'Piper PA-28', PA28:'Piper PA-28', PA34:'Piper Seneca', PA46:'Piper Malibu',
+  DA40:'Diamond DA40', DA42:'Diamond DA42', DA62:'Diamond DA62', SR20:'Cirrus SR20', SR22:'Cirrus SR22',
+  PC12:'Pilatus PC-12', PC24:'Pilatus PC-24', TBM9:'Daher TBM 900', BE20:'King Air 200', B350:'King Air 350',
+  C25A:'Cessna Citation CJ2', C25B:'Cessna Citation CJ3', C25C:'Cessna Citation CJ4', C525:'Cessna CitationJet',
+  C56X:'Cessna Citation Excel', C68A:'Cessna Citation Latitude', C700:'Cessna Citation Longitude',
+  CL30:'Bombardier Challenger 300', CL35:'Bombardier Challenger 350', CL60:'Bombardier Challenger 600',
+  GLEX:'Bombardier Global Express', GL5T:'Bombardier Global 5000', GL7T:'Bombardier Global 7500',
+  GLF4:'Gulfstream IV', GLF5:'Gulfstream V', GLF6:'Gulfstream G650', G280:'Gulfstream G280',
+  E50P:'Embraer Phenom 100', E55P:'Embraer Phenom 300', E545:'Embraer Legacy 450', E550:'Embraer Legacy 500',
+  FA7X:'Dassault Falcon 7X', FA8X:'Dassault Falcon 8X', FA50:'Dassault Falcon 50', F2TH:'Dassault Falcon 2000', F900:'Dassault Falcon 900',
+  LJ35:'Learjet 35', LJ45:'Learjet 45', LJ60:'Learjet 60', LJ75:'Learjet 75', H25B:'Hawker 800', HDJT:'HondaJet',
+  EC35:'Airbus H135', EC45:'Airbus H145', H135:'Airbus H135', H145:'Airbus H145', H160:'Airbus H160',
+  EC30:'Airbus H130', AS50:'Airbus AS350', A139:'Leonardo AW139', A169:'Leonardo AW169', B06:'Bell 206', B412:'Bell 412',
+  S76:'Sikorsky S-76', S92:'Sikorsky S-92', R44:'Robinson R44', R66:'Robinson R66',
+  C30J:'Lockheed C-130J', C130:'Lockheed C-130 Hercules', C17:'Boeing C-17', K35R:'Boeing KC-135', E3TF:'Boeing E-3 Sentry',
+  P8:'Boeing P-8 Poseidon', EUFI:'Eurofighter Typhoon', F16:'Lockheed F-16', F35:'F-35 Lightning II', C295:'Airbus C295',
+};
+
+// Anreicherung: 3-Buchstaben-ICAO-Callsign-Präfix → Airline
+const AIRLINE_NAMES = {
+  DLH:'Lufthansa', CLH:'Lufthansa CityLine', GEC:'Lufthansa Cargo', EWG:'Eurowings', EWE:'Eurowings Discover',
+  CFG:'Condor', TUI:'TUI fly', BER:'Air Berlin', GWI:'Germanwings', SWR:'Swiss', EDW:'Edelweiss Air',
+  AUA:'Austrian Airlines', LDM:'Lauda', EJU:'easyJet Europe',
+  BAW:'British Airways', SHT:'British Airways', EZY:'easyJet', EZS:'easyJet Switzerland', RUK:'Ryanair UK',
+  EXS:'Jet2', TOM:'TUI Airways', VIR:'Virgin Atlantic', EIN:'Aer Lingus', RYR:'Ryanair',
+  AFR:'Air France', KLM:'KLM', KLC:'KLM Cityhopper', TRA:'Transavia', TVF:'Transavia France',
+  IBE:'Iberia', IBS:'Iberia Express', VLG:'Vueling', AEA:'Air Europa', VOE:'Volotea',
+  TAP:'TAP Air Portugal', ITY:'ITA Airways', DLA:'Air Dolomiti', SWT:'Swiftair',
+  SAS:'SAS', FIN:'Finnair', NAX:'Norwegian', NOZ:'Norwegian', NSZ:'Norse Atlantic', IBK:'Norwegian',
+  LOT:'LOT Polish', CSA:'Czech Airlines', TVS:'Smartwings', WZZ:'Wizz Air', WMT:'Wizz Air Malta',
+  AEE:'Aegean', OAL:'Olympic Air', ROT:'TAROM', BTI:'airBaltic', LZB:'Bulgaria Air',
+  THY:'Turkish Airlines', PGT:'Pegasus', SXS:'SunExpress', UAE:'Emirates', ETD:'Etihad', QTR:'Qatar Airways',
+  GFA:'Gulf Air', SVA:'Saudia', OMA:'Oman Air', KAC:'Kuwait Airways', RJA:'Royal Jordanian', MEA:'Middle East Airlines',
+  ELY:'El Al', MSR:'EgyptAir', RAM:'Royal Air Maroc', DAH:'Air Algérie', TAR:'Tunisair',
+  SIA:'Singapore Airlines', CPA:'Cathay Pacific', CCA:'Air China', CES:'China Eastern', CSN:'China Southern',
+  ANA:'All Nippon Airways', JAL:'Japan Airlines', KAL:'Korean Air', AAR:'Asiana Airlines', THA:'Thai Airways',
+  MAS:'Malaysia Airlines', AIC:'Air India', IGO:'IndiGo', QFA:'Qantas', ANZ:'Air New Zealand',
+  AAL:'American Airlines', DAL:'Delta Air Lines', UAL:'United Airlines', SWA:'Southwest', JBU:'JetBlue',
+  ASA:'Alaska Airlines', ACA:'Air Canada', WJA:'WestJet', NKS:'Spirit', FFT:'Frontier',
+  LAN:'LATAM', TAM:'LATAM Brasil', AVA:'Avianca', AMX:'Aeroméxico', ETH:'Ethiopian Airlines', SAA:'South African',
+  KQA:'Kenya Airways',
+  FDX:'FedEx', UPS:'UPS', BOX:'AeroLogic', BCS:'DHL (EAT)', GTI:'Atlas Air', CLX:'Cargolux', ABW:'AirBridgeCargo',
+};
+
+function acTypeName(code){ return TYPE_NAMES[code] || code || ''; }
+function acAirline(cs){
+  const m = (cs || '').trim().toUpperCase().match(/^([A-Z]{3})\d/);  // ICAO-Callsign: 3 Buchstaben + Ziffer
+  return m ? (AIRLINE_NAMES[m[1]] || '') : '';
+}
+
 async function ladeFluege(icao, forceRefresh = false) {
     const el = document.getElementById(`fluege-${icao}`);
     if (!el) return;
@@ -6041,14 +6122,17 @@ async function ladeFluege(icao, forceRefresh = false) {
             const ph   = phase(a);
             const reg  = a.r || '';
             const type = a.t || '';
+            const model   = acTypeName(type);   // voller Modellname (Fallback: Code)
+            const airline = acAirline(cs);      // Airline aus Callsign-Präfix
             const alt  = a.alt_baro != null ? `${Math.round(a.alt_baro).toLocaleString()} ft` : '';
             const spd  = a.gs ? `${Math.round(a.gs)} kt` : '';
             const dist = a.dst != null ? `${a.dst.toFixed(1)} nm` : '';
             const arr  = trackArrow(a.track);
             const route = (a.orig_iata && a.dest_iata) ? `${a.orig_iata}→${a.dest_iata}`
                 : (a.from_icao && a.to_icao) ? `${a.from_icao}→${a.to_icao}` : '';
-            const regType = [reg, type].filter(Boolean).join(' · ');
-            const subParts = [regType, route, dist].filter(Boolean);
+            const airlineHtml = airline ? `<span style="color:var(--color-text);font-weight:600">${airline}</span>` : '';
+            const regType = [reg, model].filter(Boolean).join(' · ');
+            const subParts = [airlineHtml, regType, route, dist].filter(Boolean);
             const chipMap = {
                 'flug-ph-land':   ['flug-chip-land',   'Ankunft'],
                 'flug-ph-dep':    ['flug-chip-dep',    'Abflug'],
@@ -6073,13 +6157,15 @@ async function ladeFluege(icao, forceRefresh = false) {
             const cs  = (a.flight || '').trim();
             const reg = a.r || '';
             const type= a.t || '';
+            const model   = acTypeName(type);
+            const airline = acAirline(cs);
             const alt = a.alt_baro != null ? Math.round(a.alt_baro) : null;
             const spd = a.gs ? `${Math.round(a.gs)} kt` : '';
             const dist= a.dst != null ? `${a.dst.toFixed(1)} nm` : '';
             const altPct = alt != null ? Math.min(100, Math.max(2, alt / 450)) : 0;
             const altStr = alt != null ? `${alt.toLocaleString()} ft` : '';
-            const regType= [reg, type ? `(${type})` : ''].filter(Boolean).join(' ');
-            const meta   = [regType, spd, dist].filter(Boolean).join(' · ');
+            const regType= [reg, model ? `(${model})` : ''].filter(Boolean).join(' ');
+            const meta   = [airline, regType, spd, dist].filter(Boolean).join(' · ');
             return `<div class="flug-range-item">
                 <span class="flug-range-cs">${cs}</span>
                 <div class="flug-range-bar-wrap">
