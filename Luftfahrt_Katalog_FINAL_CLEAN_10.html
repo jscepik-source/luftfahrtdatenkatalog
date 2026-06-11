@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#05091a">
+<title>Luftfahrt Datenkatalog – HS RheinMain</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05091a;--s1:#0c1329;--s2:#111d3d;--s3:#172348;
+  --b0:rgba(255,255,255,0.05);--b1:rgba(255,255,255,0.1);--b2:rgba(255,255,255,0.18);
+  --tx:#dde5f5;--mu:#6e85a8;--fa:#2d4060;
+  --ac:#3b82f6;--pl:#06b6d4;--en:#f59e0b;--st:#10b981;--te:#8b5cf6;
+  --r:12px;--rs:8px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--b0) 1px,transparent 1px),linear-gradient(90deg,var(--b0) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(59,130,246,0.07) 0%,transparent 65%);pointer-events:none;z-index:0}
+
+/* ── TOPBAR ── */
+.tb{position:fixed;top:0;left:0;right:0;z-index:200;height:54px;background:rgba(5,9,26,0.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 clamp(1rem,4vw,2.5rem);gap:10px}
+.tb-logo{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:var(--tx);cursor:pointer;text-decoration:none}
+.tb-logo svg{width:20px;height:20px;stroke:#60a5fa;fill:none;stroke-width:2;flex-shrink:0}
+.tb-div{width:1px;height:16px;background:var(--b1)}
+.tb-cr{font-size:12px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
+.tb-cr b{color:var(--tx);font-weight:500}
+.tb-badge{margin-left:auto;font-size:11px;padding:3px 11px;border-radius:20px;background:rgba(59,130,246,0.09);border:1px solid rgba(59,130,246,0.18);color:#93c5fd;letter-spacing:.03em;white-space:nowrap}
+
+/* ── VIEWS ── */
+.view{position:relative;z-index:1;padding-top:54px}
+.hide{display:none!important}
+
+/* ── HOME ── */
+.hh{text-align:center;padding:4.5rem clamp(1rem,4vw,2.5rem) 2.5rem;max-width:700px;margin:0 auto}
+.ey{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#60a5fa;margin-bottom:1.4rem;padding:5px 14px;border-radius:20px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.14)}
+.ey svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.hh h1{font-size:clamp(1.9rem,4.5vw,2.9rem);font-weight:700;line-height:1.1;letter-spacing:-.03em;color:#f0f5ff;margin-bottom:.9rem}
+.hh h1 em{font-style:normal;color:#60a5fa}
+.hh p{font-size:14.5px;color:var(--mu);line-height:1.7;max-width:500px;margin:0 auto 2.2rem}
+.hs{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b1);border-radius:var(--r);overflow:hidden;border:1px solid var(--b1);max-width:480px;margin:0 auto 3.5rem}
+.hsc{background:var(--s1);padding:1.1rem .8rem;text-align:center}
+.hsc-n{font-size:24px;font-weight:700;font-family:'Space Mono',monospace;color:#f0f5ff}
+.hsc-l{font-size:10px;color:var(--mu);margin-top:2px;letter-spacing:.02em}
+
+/* ── CAT GRID ── */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:12px;padding:0 clamp(1rem,4vw,2.5rem) 5rem;max-width:1080px;margin:0 auto}
+.cc{background:var(--s1);border:1px solid var(--b0);border-radius:var(--r);padding:1.6rem;cursor:pointer;transition:all .18s;text-align:left;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}
+.cc::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;pointer-events:none}
+.cc:hover{border-color:var(--b2);transform:translateY(-3px)}.cc:hover::after{opacity:1}
+.cc.pl::after{background:radial-gradient(ellipse 110% 70% at 50% 0%,rgba(6,182,212,.07),transparent 70%)}
+.cc.en::after{background:radial-gradient(ellipse 110% 70% at 50% 0%,rgba(245,158,11,.07),transparent 70%)}
+.cc.st::after{background:radial-gradient(ellipse 110% 70% at 50% 0%,rgba(16,185,129,.07),transparent 70%)}
+.cc.te::after{background:radial-gradient(ellipse 110% 70% at 50% 0%,rgba(139,92,246,.07),transparent 70%)}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1}
+.cc-ic{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cc-ic svg{width:21px;height:21px;fill:none;stroke-width:1.8}
+.cc-cnt{font-size:11px;font-weight:700;font-family:'Space Mono',monospace;padding:3px 9px;border-radius:5px}
+.cc h3{font-size:18px;font-weight:700;color:#f0f5ff;letter-spacing:-.01em;position:relative;z-index:1}
+.cc p{font-size:12.5px;color:var(--mu);line-height:1.6;flex:1;position:relative;z-index:1}
+.cc-tags{display:flex;flex-wrap:wrap;gap:4px;position:relative;z-index:1}
+.ct{font-size:10.5px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.03);border:1px solid var(--b1);color:var(--mu)}
+.cc-cta{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.cc-cta span{font-size:12.5px;font-weight:600}
+.cc-cta svg{width:16px;height:16px;fill:none;stroke-width:2;transition:transform .18s}
+.cc:hover .cc-cta svg{transform:translateX(5px)}
+.pl .cc-ic{background:rgba(6,182,212,.1)}.pl .cc-ic svg{stroke:var(--pl)}.pl .cc-cnt{background:rgba(6,182,212,.1);color:var(--pl)}.pl .cc-cta{color:var(--pl)}.pl .cc-cta svg{stroke:var(--pl)}
+.en .cc-ic{background:rgba(245,158,11,.1)}.en .cc-ic svg{stroke:var(--en)}.en .cc-cnt{background:rgba(245,158,11,.1);color:var(--en)}.en .cc-cta{color:var(--en)}.en .cc-cta svg{stroke:var(--en)}
+.st .cc-ic{background:rgba(16,185,129,.1)}.st .cc-ic svg{stroke:var(--st)}.st .cc-cnt{background:rgba(16,185,129,.1);color:var(--st)}.st .cc-cta{color:var(--st)}.st .cc-cta svg{stroke:var(--st)}
+.te .cc-ic{background:rgba(139,92,246,.1)}.te .cc-ic svg{stroke:var(--te)}.te .cc-cnt{background:rgba(139,92,246,.1);color:var(--te)}.te .cc-cta{color:var(--te)}.te .cc-cta svg{stroke:var(--te)}
+
+/* ── DETAIL ── */
+.dh{border-bottom:1px solid var(--b0);padding:1.8rem clamp(1rem,4vw,2.5rem);max-width:1080px;margin:0 auto}
+.bk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--mu);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:.7rem;transition:color .15s}
+.bk:hover{color:var(--tx)}.bk svg{width:14px;height:14px;stroke:currentColor;fill:none}
+.dh h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.02em;color:#f0f5ff;margin-bottom:.35rem}
+.dh p{font-size:13.5px;color:var(--mu);max-width:580px;line-height:1.6}
+.dh-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.2rem}
+.ds{padding:8px 16px;background:var(--s1);border:1px solid var(--b0);border-radius:var(--rs);display:flex;flex-direction:column;align-items:center;min-width:80px}
+.ds-n{font-size:19px;font-weight:700;font-family:'Space Mono',monospace}
+.ds-l{font-size:10px;color:var(--mu);margin-top:1px}
+
+/* ── TOOLBAR ── */
+.dtb{position:sticky;top:54px;z-index:100;background:rgba(5,9,26,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--b0);padding:.7rem clamp(1rem,4vw,2.5rem)}
+.dtb-in{max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sw{position:relative;flex:1;min-width:150px;max-width:280px}
+.sw svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;stroke:var(--fa);fill:none}
+.si{width:100%;padding:7px 9px 7px 30px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);color:var(--tx);font-family:inherit;font-size:12.5px;outline:none;transition:border-color .15s}
+.si:focus{border-color:var(--b2)}.si::placeholder{color:var(--fa)}
+.sl{padding:7px 10px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);color:var(--tx);font-family:inherit;font-size:12px;outline:none;cursor:pointer}
+.ri{margin-left:auto;font-size:11.5px;color:var(--mu);white-space:nowrap}.ri b{color:var(--tx)}
+
+/* ── ACCORDION ── */
+.acc-wrap{max-width:1080px;margin:0 auto;padding:1.2rem clamp(1rem,4vw,2.5rem) 5rem}
+
+/* Main section */
+.asec{background:var(--s1);border:1px solid var(--b0);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.asec-hd{display:flex;align-items:center;gap:12px;padding:1.1rem 1.4rem;cursor:pointer;transition:background .15s;user-select:none}
+.asec-hd:hover{background:rgba(255,255,255,.025)}
+.asec-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.asec-ico svg{width:18px;height:18px;fill:none;stroke-width:1.8}
+.asec-label{flex:1;font-size:15px;font-weight:600;color:#f0f5ff}
+.asec-meta{font-size:11px;color:var(--mu);white-space:nowrap}
+.asec-arr{width:16px;height:16px;stroke:var(--mu);fill:none;transition:transform .2s;flex-shrink:0}
+.asec-hd.open .asec-arr{transform:rotate(180deg)}
+.asec-body{display:none;padding:0 1.4rem 1.4rem}
+.asec-body.open{display:block}
+.asec-desc{font-size:12.5px;color:var(--mu);line-height:1.6;margin-bottom:1rem;padding:.7rem 1rem;background:rgba(255,255,255,.02);border-radius:6px;border-left:2px solid var(--b1)}
+
+/* Subsection */
+.asub{border:1px solid var(--b0);border-radius:var(--rs);margin-bottom:8px;overflow:hidden}
+.asub-hd{display:flex;align-items:center;gap:10px;padding:.85rem 1.2rem;cursor:pointer;background:rgba(255,255,255,.01);transition:background .15s;user-select:none}
+.asub-hd:hover{background:rgba(255,255,255,.03)}
+.asub-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.asub-name{flex:1;font-size:13.5px;font-weight:600;color:#dde5f5}
+.asub-cnt{font-size:11px;color:var(--mu);font-family:'Space Mono',monospace;white-space:nowrap}
+.asub-arr{width:14px;height:14px;stroke:var(--fa);fill:none;transition:transform .2s;flex-shrink:0}
+.asub-hd.open .asub-arr{transform:rotate(180deg)}
+.asub-body{display:none;padding:.8rem 1.2rem 1rem}
+.asub-body.open{display:block}
+.asub-desc{font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:.9rem;font-style:italic}
+
+/* Source Cards */
+.src-grid{display:flex;flex-direction:column;gap:8px}
+.src{background:var(--bg);border:1px solid var(--b0);border-radius:8px;overflow:hidden;transition:border-color .15s;animation:sli .18s ease both}
+@keyframes sli{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.src:hover{border-color:var(--b1)}
+.src-top{display:flex;align-items:flex-start;gap:12px;padding:.9rem 1.1rem}
+.src-num{font-size:10px;font-weight:700;font-family:'Space Mono',monospace;color:var(--fa);min-width:22px;padding-top:2px}
+.src-main{flex:1;min-width:0}
+.src-name{font-size:14px;font-weight:700;color:#f0f5ff;line-height:1.3;margin-bottom:3px}
+.src-aud{font-size:11.5px;color:var(--mu)}
+.src-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.stars{display:flex;align-items:center;gap:1px}
+.star{font-size:13px;line-height:1}
+.star.f{color:#f59e0b}
+.star.h{color:#f59e0b;opacity:.5}
+.star.e{color:var(--fa)}
+.rat-val{font-size:10px;font-weight:700;font-family:'Space Mono',monospace;color:var(--mu);margin-left:4px}
+.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.bfr{background:rgba(16,185,129,.09);color:#34d399;border:1px solid rgba(16,185,129,.18)}
+.bpa{background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.16)}
+.bmi{background:rgba(245,158,11,.09);color:#fbbf24;border:1px solid rgba(245,158,11,.18)}
+
+/* Expandable body */
+.src-bod{display:none;padding:.8rem 1.1rem;border-top:1px solid var(--b0)}
+.src-bod.open{display:block}
+.src-toggle{width:100%;background:none;border:none;border-top:1px solid var(--b0);padding:.6rem 1.1rem;color:var(--mu);font-family:inherit;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s}
+.src-toggle:hover{background:rgba(255,255,255,.02)}
+.src-toggle svg{width:12px;height:12px;stroke:currentColor;fill:none;transition:transform .2s}
+.src-toggle.open svg{transform:rotate(180deg)}
+
+.src-desc{font-size:13px;color:var(--tx);line-height:1.65;padding:.8rem 1rem;background:var(--s2);border-radius:6px;border-left:2px solid var(--b2);margin-bottom:.8rem}
+.mg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--b0);border-radius:6px;overflow:hidden;border:1px solid var(--b0);margin-bottom:.8rem}
+.mc{background:var(--s1);padding:.6rem .8rem}
+.ml{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--fa);font-weight:700;margin-bottom:2px}
+.mv{font-size:12px;color:var(--tx);font-weight:500;line-height:1.3}
+.rat-bars{margin-bottom:.8rem}
+.rat-bars-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--fa);font-weight:700;margin-bottom:.5rem}
+.rb{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.rb-name{font-size:11px;color:var(--mu);width:90px;flex-shrink:0}
+.rb-track{flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden}
+.rb-fill{height:100%;border-radius:2px;transition:width .4s}
+.rb-val{font-size:10px;color:var(--mu);font-family:'Space Mono',monospace;width:24px;text-align:right;flex-shrink:0}
+.src-note{font-size:12px;color:var(--mu);line-height:1.6;padding:.65rem .8rem;background:rgba(255,255,255,.018);border-radius:6px;border:1px solid var(--b0);margin-bottom:.8rem;position:relative}
+.src-note::before{content:'Hinweis';display:block;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fa);margin-bottom:3px}
+.fmts{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:.8rem}
+.fmts svg{width:12px;height:12px;stroke:var(--fa);fill:none}
+.ftag{display:inline-block;padding:2px 6px;border-radius:3px;background:var(--s2);border:1px solid var(--b1);font-size:10.5px;color:var(--mu);font-family:'Space Mono',monospace}
+.lbtn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-family:inherit;font-size:12.5px;font-weight:600;text-decoration:none;cursor:pointer;border:1px solid;transition:all .15s;white-space:nowrap}
+.lbtn svg{width:12px;height:12px;stroke:currentColor;fill:none;transition:transform .15s}
+.lbtn:hover svg{transform:translate(2px,-2px)}
+.lpl{background:rgba(6,182,212,.09);color:var(--pl);border-color:rgba(6,182,212,.2)}.lpl:hover{background:rgba(6,182,212,.15)}
+.len{background:rgba(245,158,11,.09);color:var(--en);border-color:rgba(245,158,11,.2)}.len:hover{background:rgba(245,158,11,.15)}
+.lst{background:rgba(16,185,129,.09);color:var(--st);border-color:rgba(16,185,129,.2)}.lst:hover{background:rgba(16,185,129,.15)}
+.lte{background:rgba(139,92,246,.09);color:var(--te);border-color:rgba(139,92,246,.2)}.lte:hover{background:rgba(139,92,246,.15)}
+.lna{background:var(--s2);color:var(--fa);border-color:var(--b0);cursor:not-allowed}
+
+.nores{text-align:center;padding:3rem 2rem;color:var(--mu)}
+.nores svg{width:36px;height:36px;stroke:var(--fa);fill:none;margin-bottom:.7rem}
+
+@media(max-width:600px){
+  .hs{grid-template-columns:repeat(2,1fr)}
+  .src-top{flex-wrap:wrap}
+  .src-right{flex-direction:row;align-items:center}
+  .mg{grid-template-columns:1fr 1fr}
+}
+
+/* ── MENSEN BADGE ── */
+.mensen-ref{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;color:#f59e0b;padding:3px 9px;border-radius:4px;
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.18);margin-bottom:.6rem}
+.mensen-ref svg{width:11px;height:11px;stroke:currentColor;fill:none}
+/* ── AIRCRAFT GRID ── */
+.ac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:10px}
+.ac-card{background:var(--bg);border:1px solid var(--b0);border-radius:8px;overflow:hidden;
+  animation:sli .18s ease both;display:flex;flex-direction:column;transition:border-color .2s}
+.ac-card:hover{border-color:var(--b2)}
+/* image wrapper */
+.ac-img-w{position:relative;width:100%;height:150px;background:var(--s2);overflow:hidden;flex-shrink:0}
+.ac-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.ac-card:hover .ac-img{transform:scale(1.04)}
+.ac-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--fa)}
+.ac-ph svg{width:38px;height:38px;stroke:var(--fa);fill:none;opacity:.25}
+.ac-ph-txt{font-size:9px;color:var(--fa);opacity:.5;text-transform:uppercase;letter-spacing:.06em}
+.ac-ph.loading .ac-ph-txt::after{content:'…'}
+/* badges */
+.ac-bdg{position:absolute;top:7px;left:7px;display:flex;flex-direction:column;gap:3px}
+.ac-b{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:2px 7px;border-radius:3px;backdrop-filter:blur(10px);display:inline-block}
+.ac-b-mfr{background:rgba(5,9,26,.85);color:var(--tx);border:1px solid rgba(255,255,255,.14)}
+.ac-b-yr{background:rgba(59,130,246,.28);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+.ac-cs-tag{position:absolute;top:7px;right:7px;font-size:9px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:3px;
+  backdrop-filter:blur(10px);background:rgba(245,158,11,.25);color:#fbbf24;
+  border:1px solid rgba(245,158,11,.3)}
+/* body */
+.ac-body{padding:.8rem .95rem;flex:1;display:flex;flex-direction:column}
+.ac-name{font-size:13px;font-weight:700;color:#f0f5ff;margin-bottom:.55rem;line-height:1.3}
+.ac-ksr{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b0);
+  border-radius:5px;overflow:hidden;border:1px solid var(--b0);margin-bottom:.55rem}
+.ac-ks{background:var(--s1);padding:.4rem .2rem;text-align:center}
+.ac-ksv{font-size:10px;font-weight:700;font-family:'Space Mono',monospace;color:#f0f5ff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac-ksl{font-size:8px;color:var(--mu);margin-top:1px;text-transform:uppercase;letter-spacing:.04em}
+.ac-rat-r{display:flex;align-items:center;gap:5px;margin-top:auto;padding-top:.4rem}
+.ac-st{display:flex;gap:1px}
+.ac-rv{font-size:10px;font-weight:700;font-family:'Space Mono',monospace;color:var(--mu)}
+/* toggle */
+.ac-tog{width:100%;background:none;border:none;border-top:1px solid var(--b0);
+  padding:.5rem .95rem;color:var(--mu);font-family:inherit;font-size:11px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s}
+.ac-tog:hover{background:rgba(255,255,255,.02)}
+.ac-tog svg{width:11px;height:11px;stroke:currentColor;fill:none;transition:transform .2s}
+.ac-tog.open svg{transform:rotate(180deg)}
+/* expanded detail */
+.ac-det{display:none;padding:.75rem .95rem;border-top:1px solid var(--b0)}
+.ac-det.open{display:block}
+.tab62{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--pl);padding:2px 7px;
+  border-radius:3px;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.18);
+  margin-bottom:.6rem}
+.ac-ddesc{font-size:12.5px;color:var(--tx);line-height:1.65;padding:.65rem .85rem;
+  background:var(--s2);border-radius:6px;border-left:2px solid var(--b2);margin-bottom:.65rem}
+.ac-specs{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--b0);
+  border-radius:6px;overflow:hidden;border:1px solid var(--b0);margin-bottom:.65rem}
+.ac-sp{background:var(--s1);padding:.45rem .7rem}
+.ac-sl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--fa);font-weight:700;margin-bottom:2px}
+.ac-sv{font-size:11.5px;color:var(--tx);font-weight:500;line-height:1.3}
+.ac-rsec{margin-bottom:.65rem}
+.ac-rlbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--fa);font-weight:700;margin-bottom:.4rem}
+@media(max-width:600px){.ac-grid{grid-template-columns:1fr}}
+
+
+/* ── 3D PHOTO MODAL ─────────────────────────────────────────────────── */
+.pmodal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;
+  justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.pmodal.open{opacity:1;pointer-events:all}
+.pmodal-bg{position:absolute;inset:0;background:rgba(0,0,0,.88);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.pmodal-wrap{position:relative;z-index:1;display:flex;flex-direction:column;
+  align-items:center;gap:14px;padding:20px;max-width:95vw}
+.pmodal-title{font-size:13px;font-weight:700;color:#f0f5ff;letter-spacing:.04em;
+  text-align:center;max-width:600px}
+.p3d-stage{perspective:900px;cursor:grab;user-select:none;
+  border-radius:10px;overflow:hidden}
+.p3d-stage:active{cursor:grabbing}
+.p3d-img{display:block;width:min(82vw,680px);height:auto;border-radius:10px;
+  box-shadow:0 40px 100px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.06);
+  transform-origin:center center;will-change:transform;
+  -webkit-user-drag:none;pointer-events:none;
+  transition:box-shadow .2s}
+.pmodal-hint{font-size:10.5px;color:rgba(255,255,255,.35);text-align:center;
+  letter-spacing:.05em;line-height:1.7}
+.pmodal-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.pmodal-btn{padding:7px 16px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);border-radius:6px;color:rgba(255,255,255,.8);
+  font-size:11px;cursor:pointer;font-family:inherit;transition:background .15s;
+  letter-spacing:.04em}
+.pmodal-btn:hover{background:rgba(255,255,255,.13)}
+.pmodal-close{position:absolute;top:0;right:0;width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;transition:background .15s;z-index:2;line-height:1}
+.pmodal-close:hover{background:rgba(255,255,255,.2)}
+.p3d-indicator{display:flex;gap:10px;align-items:center}
+.p3d-axis{font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.07em;
+  font-family:'Space Mono',monospace}
+/* ── CARD 3D TILT ────────────────────────────────────────────────────── */
+.ac-card,.src{transform-style:preserve-3d;will-change:transform;
+  transition:transform .12s ease,border-color .2s,box-shadow .2s}
+.ac-card:hover,.src:hover{box-shadow:0 8px 30px rgba(0,0,0,.35)}
+/* Image zoom cursor hint */
+.ac-img-w{cursor:zoom-in}
+.ac-img-w::after{content:'🔍';position:absolute;bottom:7px;right:7px;
+  font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.ac-img-w:hover::after{opacity:.8}
+/* Loading shimmer */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.ac-ph{background:linear-gradient(90deg,var(--s2) 25%,var(--s3) 50%,var(--s2) 75%);
+  background-size:200% 100%;animation:shimmer 1.8s infinite}
+
+
+/* Category icon 3D hover */
+.cc{transform-style:preserve-3d;transition:transform .15s,box-shadow .15s}
+.cc:hover{transform:perspective(500px) translateZ(8px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.cat-icon-3d{transition:transform .3s}
+.cc:hover .cat-icon-3d{transform:rotate3d(1,1,0,15deg)}
+
+
+.src-photo{width:100%;height:100px;background:var(--s2);overflow:hidden;
+  border-radius:var(--rs) var(--rs) 0 0;flex-shrink:0;cursor:zoom-in;position:relative;
+  background-size:cover;background-position:center;transition:transform .3s}
+.src:hover .src-photo{transform:scale(1.02)}
+.src-photo-ph{width:100%;height:100%;display:flex;align-items:center;
+  justify-content:center;opacity:.25}
+.src-photo-ph svg{width:32px;height:32px;stroke:var(--mu)}
+.ac-photo{width:100%;height:100%;background-size:cover;background-position:center;
+  transition:opacity .4s;border-radius:0}
+
+
+/* ── VIDEO PANEL ── */
+.ac-video-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.8rem}
+.vid-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;
+  font-weight:600;padding:7px 13px;border-radius:6px;cursor:pointer;
+  border:1px solid;text-decoration:none;transition:all .15s;font-family:inherit}
+.vid-yt{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.3);color:#fca5a5}
+.vid-yt:hover{background:rgba(220,38,38,.22);color:#fff}
+.vid-px{background:rgba(5,150,105,.1);border-color:rgba(5,150,105,.3);color:#6ee7b7}
+.vid-px:hover{background:rgba(5,150,105,.22);color:#fff}
+.vid-px2{background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.3);color:#a5b4fc}
+.vid-px2:hover{background:rgba(99,102,241,.22);color:#fff}
+.vid-frame-wrap{position:relative;width:100%;padding-top:56.25%;
+  margin-bottom:.8rem;border-radius:8px;overflow:hidden;display:none}
+.vid-frame-wrap.open{display:block}
+.vid-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid-frame-close{position:absolute;top:6px;right:6px;z-index:10;
+  background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:4px;
+  padding:3px 8px;font-size:11px;cursor:pointer}
+
+</style>
+</head>
+<body>
+
+<nav class="tb">
+  <span class="tb-logo" onclick="goHome()">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    Luftfahrt Datenkatalog
+  </span>
+  <div class="tb-div"></div>
+  <div class="tb-cr" id="tbCr">Übersicht</div>
+  <span class="tb-badge">HS RheinMain · Avionik</span>
+</nav>
+
+<!-- HOME -->
+<div class="view" id="vHome">
+  <div class="hh">
+    <div class="ey"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Studentisches Projekt · Fachbereich Ingenieurwissenschaften</div>
+    <h1>Luftfahrt <em>Datenkatalog</em></h1>
+    <p>Flugzeugkatalog nach <em>H. Mensen, Handbuch der Luftfahrt</em> (HS RheinMain, Springer 2013) — alle Flugzeuge aus Tab. 6.2 mit Bildern, Daten & Bewertung. Plus Triebwerke, Statistiken und technische Quellen.</p>
+    <div class="hs">
+      <div class="hsc"><div class="hsc-n">5</div><div class="hsc-l">Kategorien</div></div>
+      <div class="hsc"><div class="hsc-n">34</div><div class="hsc-l">Untergruppen</div></div>
+      <div class="hsc"><div class="hsc-n">120+</div><div class="hsc-l">Quellen</div></div>
+      <div class="hsc"><div class="hsc-n">★</div><div class="hsc-l">Bewertet</div></div>
+    </div>
+  </div>
+  <div class="cg">
+    <div class="cc pl" onclick="loadCat('Flugzeuge')">
+      <div class="cc-top">
+        <div class="cc-ic"><svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></div>
+        <span class="cc-cnt">4 Gruppen · 10 Untergruppen · 40+ Flugzeuge</span>
+      </div>
+      <h3>Flugzeuge</h3>
+      <p>Exakt nach H. Mensen Tab. 6.2: §6.4.1 Passagierflugzeuge (Wide-Body + Narrow-Body), §6.4.2 Belly Freight, §6.4.3 Frachtflugzeuge, §6.2 Militärtransport — mit Wikipedia-Fotos, Tabellendaten und Bewertung.</p>
+      <div class="cc-tags"><span class="ct">Passagierflugzeuge</span><span class="ct">Frachtflugzeuge</span><span class="ct">Militärflugzeuge</span></div>
+      <div class="cc-cta"><span>Quellen ansehen</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </div>
+    <div class="cc te" onclick="loadCat('Hubschrauber')">
+      <div class="cc-top">
+        <div class="cc-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke="currentColor"><path d="M12 2v4M2 8h20M5 8v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M3 8l2-4h14l2 4"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg></div>
+        <span class="cc-cnt">3 Kategorien · 8 Untergruppen · 38 Quellen</span>
+      </div>
+      <h3>Hubschrauber</h3>
+      <p>Zivile und militärische Drehflügler — Rettung, Offshore, Kampf, Transport. Zertifizierung nach EASA CS-29/27.</p>
+      <div class="cc-tags"><span class="tab62">EASA CS-29</span><span class="tab62">SAR/HEMS</span><span class="tab62">Mil-Heli</span></div>
+    </div>
+    <div class="cc en" onclick="loadCat('Triebwerke')">
+      <div class="cc-top">
+        <div class="cc-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+        <span class="cc-cnt">5 Typen · 7 Untergruppen</span>
+      </div>
+      <h3>Triebwerke</h3>
+      <p>Einteilung nach Triebwerksart: Kolbenmotor, Turboprop, Turbojet, Turbofan, Raketentriebwerke, Elektro- und Hybridantriebe.</p>
+      <div class="cc-tags"><span class="ct">Turbofan</span><span class="ct">Turboprop</span><span class="ct">Elektroantrieb</span></div>
+      <div class="cc-cta"><span>Quellen ansehen</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </div>
+    <div class="cc st" onclick="loadCat('Statistik')">
+      <div class="cc-top">
+        <div class="cc-ic"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <span class="cc-cnt">9 Kriterien</span>
+      </div>
+      <h3>Statistik</h3>
+      <p>Verkehr, Technik, Wirtschaft, Sicherheit, Umwelt, Geografie, Zeitreihen, Flugzeugtypen und Betriebsformen.</p>
+      <div class="cc-tags"><span class="ct">Verkehrsstatistiken</span><span class="ct">Sicherheit</span><span class="ct">Umwelt</span></div>
+      <div class="cc-cta"><span>Quellen ansehen</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </div>
+    <div class="cc te" onclick="loadCat('Technische Infos')">
+      <div class="cc-top">
+        <div class="cc-ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <span class="cc-cnt">10 Kriterien</span>
+      </div>
+      <h3>Technische Infos</h3>
+      <p>Systembereich, Funktion, Physik, Flugphase, Flugzeugtyp, Antrieb, Wartung, Leistung, Werkstoffe, Automatisierung.</p>
+      <div class="cc-tags"><span class="ct">Avionik</span><span class="ct">Zertifizierung</span><span class="ct">Fly-by-Wire</span></div>
+      <div class="cc-cta"><span>Quellen ansehen</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div class="view hide" id="vDetail">
+  <div class="dh">
+    <button class="bk" onclick="goHome()"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Zurück zur Übersicht</button>
+    <h2 id="dTitle"></h2>
+    <p id="dDesc"></p>
+    <div class="dh-stats" id="dStats"></div>
+  </div>
+  <div class="dtb">
+    <div class="dtb-in">
+      <div class="sw"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="si" id="dSrch" type="text" placeholder="Quelle, Thema, Norm suchen …" oninput="filterAll()"></div>
+      <select class="sl" id="dSort" onchange="filterAll()">
+        <option value="def">Standard</option>
+        <option value="az">A → Z</option>
+        <option value="rat">Beste Bewertung</option>
+        <option value="fre">Kostenlos zuerst</option>
+      </select>
+      <span class="ri"><b id="dCnt">0</b> Quellen</span>
+    </div>
+  </div>
+  <div class="acc-wrap" id="accWrap"></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// DATA
+// Source format: {n,d,z,f[],v,a,fm,k,l,b,u}
+// Rating fields 1-5: v=Verfügbarkeit, a=Aktualität, fm=Format, k=Kosten, l=Lizenz
+// avg = (v+a+fm+k+l)/5
+// ─────────────────────────────────────────────────────────────────
+function src(v,a,fm,k,l,n,d,z,f,b,u,wiki){
+  return{v,a,fm,k,l,n,d,z,f,b,u,wiki:wiki||n,avg:Math.round(((v+a+fm+k+l)/5)*10)/10}
+}
+function ac(bed,tech,eff,verb,sich,n,h,erstflug,cs,wiki,d,specs,ks,u,yt){
+  return{bed,tech,eff,verb,sich,n,h,erstflug,cs,wiki,d,specs,ks,u,yt:yt||"",avg:Math.round(((bed+tech+eff+verb+sich)/5)*10)/10}
+}
+
+const CAT={
+
+
+"Flugzeuge":{cls:'pl',clr:'var(--pl)',
+desc:'Vollständiger historischer Flugzeugkatalog — klassifiziert nach Verwendungszweck (H. Mensen, Handbuch der Luftfahrt, Springer 2013). Zivilflugzeuge & Militärflugzeuge mit historischen Beispielen von 1903 bis heute.',
+sections:[
+
+{id:'zivil',name:'Zivilflugzeuge',
+icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>`,
+desc:'Kommerzielle und private Luftfahrzeuge ohne militärischen Auftrag — nach H. Mensen §6.4.',
+subs:[
+
+{id:'pax',name:'Passagierflugzeuge',desc:'Schmal- und Großraumflugzeuge für den kommerziellen Passagiertransport — von den ersten Strahllinern bis zu modernen Widebodies.',
+aircraft:[
+ac(4,5,4,4,3,'De Havilland Comet','De Havilland','1949','CS 25','','Erstes Passagier-Strahlflugzeug der Welt (BOAC, 1952). Metallmüdungsrisse → grundlegendes Sicherheitsumdenken.',[['Spannweite','35,00 m'],['Antrieb','4× DH Ghost 50'],['Vmax','788 km/h'],['Pax','44']],['35,00 m','788 km/h','44 Pax'],'https://en.wikipedia.org/wiki/De_Havilland_Comet'),
+ac(5,5,4,5,4,'Boeing 707','Boeing','1957','CS 25','','Erste erfolgreiche US-Strahlverkehrsmaschine. Eröffnete das Jet-Zeitalter (Pan Am, 1958).',[['Spannweite','44,42 m'],['Antrieb','4× P&W JT3D'],['Vmax','977 km/h'],['Pax','189']],['44,42 m','977 km/h','189 Pax'],'https://en.wikipedia.org/wiki/Boeing_707'),
+ac(5,4,4,5,4,'Boeing 727','Boeing','1963','CS 25','','Dreistrahliger Mittelstreckenjet, T-Leitwerk. 1.832 gebaut.',[['Spannweite','32,92 m'],['Antrieb','3× P&W JT8D'],['Vmax','964 km/h'],['Pax','189']],['32,92 m','964 km/h','149 Pax'],'https://en.wikipedia.org/wiki/Boeing_727'),
+ac(5,5,5,5,4,'Boeing 737','Boeing','1967','CS 25','','Meistgebaute Verkehrsflugzeugfamilie der Geschichte. Erste Auslieferung: Lufthansa 1968.',[['Spannweite','28,35 m'],['Antrieb','2× P&W JT8D'],['Vmax','943 km/h'],['Pax','103–128']],['28,35 m','943 km/h','103 Pax'],'https://www.boeing.com/commercial/737/'),
+ac(5,5,5,5,4,'Airbus A320','Airbus','1987','CS 25','','Erster Linienjet mit Fly-by-Wire und Side-Stick. Meistbestellte Verkehrsflugzeug-Familie der Geschichte.',[['Spannweite','34,10 m'],['Antrieb','2× CFM56 / IAE V2500'],['Vmax','Mach 0,82'],['Pax','150–180']],['34,10 m','Mach 0,82','150 Pax'],'https://www.airbus.com/en/products-services/commercial-aircraft/a320','Airbus+A320+fly-by-wire'),
+ac(5,5,4,5,4,'Boeing 747','Boeing','1969','CS 25','','„Jumbo Jet" — revolutionierte den Massenluftverkehr. Erstes Großraumflugzeug. Pan Am-Erstflug 22. Jan. 1970.',[['Spannweite','59,64 m'],['MTOW','333.390 kg'],['Antrieb','4× P&W JT9D'],['Vmax','907 km/h'],['Pax','366–452']],['59,64 m','907 km/h','452 Pax'],'https://www.boeing.com/commercial/747/'),
+ac(5,5,3,4,4,'Concorde','Aérospatiale / BAC','1969','n/a','','Einziges in Serie gebautes Überschall-Passagierflugzeug des Westens. Mach 2,04. 27 Jahre im Dienst.',[['Spannweite','25,60 m'],['Antrieb','4× Olympus 593 (169 kN AB)'],['Vmax','Mach 2,04'],['Pax','100']],['Mach 2,04','6.300 km','100 Pax'],'https://en.wikipedia.org/wiki/Concorde'),
+ac(5,5,5,5,4,'Airbus A380','Airbus','2005','CS 25','','Größtes Passagierflugzeug der Welt. Doppelstock-Kabine. 251 Auslieferungen, Produktion 2021 eingestellt.',[['Spannweite','79,75 m'],['MTOW','575.000 kg'],['Antrieb','4× RR Trent 970'],['Vmax','Mach 0,85'],['Pax','555']],['79,75 m','575 t','555 Pax'],'https://www.airbus.com/en/products-services/commercial-aircraft/a380'),
+ac(5,5,5,5,4,'Boeing 787 Dreamliner','Boeing','2009','CS 25','','Erster Widebody mit >50 % CFK. GEnx oder Trent 1000. Revolutionäre Passagierkomfort-Standards.',[['Spannweite','60,12 m'],['Antrieb','2× GEnx / Trent 1000'],['Vmax','Mach 0,85'],['Reichweite','14.140 km'],['Pax','296']],['60,12 m','Mach 0,85','296 Pax'],'https://www.boeing.com/commercial/787/'),
+ac(5,5,5,5,5,'Airbus A350 XWB','Airbus','2013','CS 25','','53 % CFK. Trent XWB-84 (OPR ≈ 47:1). >1.000 Bestellungen. Modernster Airbus-Langstreckenjet.',[['Spannweite','64,75 m'],['Antrieb','2× RR Trent XWB-84'],['Vmax','Mach 0,85'],['Reichweite','15.000 km'],['Pax','369']],['64,75 m','Mach 0,85','369 Pax'],'https://www.airbus.com/en/products-services/commercial-aircraft/a350'),
+ac(5,5,5,5,4,'Airbus A320neo','Airbus','2014','CS 25','','New Engine Option. CFM LEAP-1A oder PW1100G GTF. 20 % weniger Treibstoff. Meistbestelltes Flugzeug (>10.000).',[['Spannweite','35,80 m'],['Antrieb','2× CFM LEAP / PW1100G'],['Vmax','Mach 0,78'],['Reichweite','6.300 km'],['Pax','165']],['35,80 m','Mach 0,78','165 Pax'],'https://www.airbus.com/en/products-services/commercial-aircraft/a320'),
+ac(5,4,4,5,5,'ATR 72-600','ATR','2009','CS 25','','Weltmarktführer Turboprop-Regional. PW127M. 70–78 Pax. In >100 Nationen im Einsatz.',[['Spannweite','27,05 m'],['Antrieb','2× P&WC PW127M (Turboprop)'],['Vmax','510 km/h'],['Pax','70–78']],['27,05 m','510 km/h','70 Pax'],'https://www.atr-aircraft.com','ATR+72+turboprop+regional')
+]},
+
+{id:'fracht',name:'Frachtflugzeuge',desc:'Speziell für den Luftfrachttransport ausgelegte Flugzeuge — Belly-Freight, Dedicated Freighter und Kombiflugzeuge.',
+aircraft:[
+ac(5,5,4,5,4,'Boeing 747 Freighter','Boeing','1971','CS 25','','Die 747F revolutionierte den Luftfrachtverkehr. Nasenöffnung für Ladeoperationen. UPS, FedEx, Lufthansa Cargo.',[['Spannweite','59,64 m'],['MTOW','412.000 kg'],['Antrieb','4× GE CF6 / P&W JT9D'],['Nutzlast','113.000 kg'],['Reichweite','8.230 km']],['59,64 m','412 t MTOW','113 t NL'],'https://www.boeing.com/commercial/747/'),
+ac(5,5,5,5,4,'Boeing 787 Dreamliner','Boeing','2013','CS 25','','787 auch als Frachter im Belly-Betrieb und in einer reinen Frachterversion geplant. CFK-Rumpf, geringes Leergewicht.',[['Spannweite','60,12 m'],['Antrieb','2× GEnx / Trent 1000'],['Vmax','Mach 0,85'],['Belly-Kapazität','ca. 45 m³']],['60,12 m','Mach 0,85','Belly+Frachter'],'https://www.boeing.com/commercial/787/'),
+ac(5,4,4,5,5,'Airbus A400M Atlas','Airbus DS','2009','Mil','','Militärischer Strategietransporter — auch im humanitären Einsatz. TP400-D6: stärkster Turboprop in Serie. Auch Bundeswehr.',[['Spannweite','42,40 m'],['Antrieb','4× TP400-D6 (11.000 shp)'],['Vmax','780 km/h'],['Nutzlast','37.000 kg']],['42,40 m','780 km/h','37 t NL'],'https://www.airbus.com','Airbus+A400M+Atlas+cargo')
+]},
+
+{id:'biz',name:'Geschäftsreiseflugzeuge',desc:'Business Jets und Executive-Flugzeuge für den kommerziellen Geschäftsreiseverkehr — von Turboprops bis Langstrecken-Jets.',
+aircraft:[
+ac(5,5,5,5,4,'Airbus A320neo','Airbus','2014','CS 25','','A320neo auch als Corporate-Jet-Basisplattform (ACJ320neo). Langstrecken-Konfiguration mit VIP-Kabine möglich.',[['Spannweite','35,80 m'],['Antrieb','2× CFM LEAP / PW1100G'],['Reichweite','6.300 km (pax) / 11.100 km (ACJ)'],['Config','VIP Kabine möglich']],['35,80 m','Mach 0,78','VIP Config'],'https://www.airbus.com/en/products-services/commercial-aircraft/a320/acj320neo'),
+ac(5,3,3,5,4,'Cessna 172 Skyhawk','Cessna','1955','CS 23','','Weltweit meistgenutztes General Aviation Schulflugzeug — Basis für Geschäftsreise- und Privatflug-Ausbildung.',[['Spannweite','11,00 m'],['Antrieb','1× Lycoming IO-360 (134 kW)'],['Vmax','226 km/h'],['Pax','4']],['11,00 m','226 km/h','4 Pax'],'https://cessna.txtav.com','Cessna+172+Skyhawk+flight')
+]},
+
+{id:'sport',name:'Sport- und Privatflugzeuge',desc:'Allgemeine Luftfahrt, Sportfliegerei und historische Pionierflugzeuge — CS-23 und EASA CS VLA.',
+aircraft:[
+ac(5,5,3,5,3,'Wright Flyer','Wright Brothers','1903','n/a','','Erstes motorisiertes Flugzeug der Geschichte. 17. Dez. 1903, Kitty Hawk. 12 Sekunden, 36 Meter.',[['Spannweite','12,3 m'],['Masse','274 kg'],['Antrieb','1× Wright 4-Zyl. (9 kW)'],['Vmax','48 km/h'],['Erstflug','17. Dez. 1903']],['12,3 m','48 km/h','1 Pilot'],'https://airandspace.si.edu'),
+ac(4,4,3,5,3,'Blériot XI','Louis Blériot','1909','n/a','','Überquerte als erstes Flugzeug den Ärmelkanal (25. Juli 1909). Eindecker, 25-PS-Motor.',[['Spannweite','7,79 m'],['Antrieb','1× Anzani (18 kW)'],['Vmax','75 km/h']],['7,79 m','75 km/h','1 Pilot'],'https://en.wikipedia.org/wiki/Blériot_XI'),
+ac(5,4,4,5,4,'Junkers Ju 52/3m','Junkers','1930','n/a','','„Tante Ju" — wichtigstes deutsches Verkehrsflugzeug der 1930er. Dreimotorig, Wellblech.',[['Spannweite','29,25 m'],['Antrieb','3× BMW 132 (450 kW)'],['Vmax','265 km/h'],['Pax','17']],['29,25 m','265 km/h','17 Pax'],'https://en.wikipedia.org/wiki/Junkers_Ju_52'),
+ac(5,5,5,5,4,'Douglas DC-3','Douglas Aircraft','1935','n/a','','Meistgenutztes Flugzeug der Geschichte — bis heute im Dienst. ~16.000 gebaut.',[['Spannweite','28,96 m'],['Antrieb','2× P&W R-1830 (895 kW)'],['Vmax','333 km/h'],['Pax','28–32']],['28,96 m','333 km/h','28 Pax'],'https://en.wikipedia.org/wiki/Douglas_DC-3','Douglas+DC-3+flight'),
+ac(5,5,5,5,4,'Lockheed Constellation','Lockheed','1943','n/a','','„Connie" — elegantester Propellerliner mit Delfin-Rumpfprofil. Größter kommerzieller Druckkabinen-Propellerflieger.',[['Spannweite','37,62 m'],['Antrieb','4× Wright R-3350 (1.340 kW)'],['Vmax','480 km/h'],['Pax','60–100']],['37,62 m','480 km/h','60 Pax'],'https://en.wikipedia.org/wiki/Lockheed_Constellation'),
+ac(5,3,3,5,4,'Cessna 172 Skyhawk','Cessna','1955','CS 23','','Meistgebautes Flugzeug der Welt (>44.000). Standard-Schulflugzeug weltweit.',[['Spannweite','11,00 m'],['Antrieb','1× Lycoming IO-360 (134 kW)'],['Vmax','226 km/h'],['Pax','4']],['11,00 m','226 km/h','4 Pax'],'https://cessna.txtav.com','Cessna+172+Skyhawk+flight')
+]}
+]},
+
+{id:'mil',name:'Militärflugzeuge',
+icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>`,
+desc:'Staatlich genutzte Militärluftfahrzeuge für Kampf, Transport, Aufklärung und Unterstützung — nach H. Mensen §6.2.',
+subs:[
+
+{id:'jaeger',name:'Jagdflugzeuge',desc:'Kampfflugzeuge für Luftüberlegenheit, Erdangriff und Mehrzweckaufgaben — von WWI bis zur 5. Generation.',
+aircraft:[
+ac(5,4,3,4,3,'Fokker Dr.I Dreidecker','Fokker','1917','Mil','','Legendärer Dreidecker des „Roten Barons" von Richthofen (80 Luftsiege). 320 gebaut.',[['Spannweite','7,19 m'],['Antrieb','1× Oberursel Ur.II (82 kW)'],['Vmax','185 km/h'],['Bewaffnung','2× LMG 08/15']],['7,19 m','185 km/h','WWI'],'https://en.wikipedia.org/wiki/Fokker_Dr.I'),
+ac(5,5,4,5,4,'Supermarine Spitfire','Supermarine','1936','Mil','','Ikonischstes brit. Jagdflugzeug des WWII. Elliptischer Flügel, RR Merlin. >20.000 Stück. Battle of Britain.',[['Spannweite','11,23 m'],['Antrieb','1× RR Merlin 45 (1.478 PS)'],['Vmax','594 km/h'],['Gebaut','>20.000']],['11,23 m','594 km/h','WWII'],'https://en.wikipedia.org/wiki/Supermarine_Spitfire'),
+ac(5,5,4,5,4,'Messerschmitt Bf 109','Messerschmitt','1935','Mil','','Meistgebautes Jagdflugzeug der Geschichte (33.984). Hauptjäger der Luftwaffe 1939–45.',[['Spannweite','9,92 m'],['Antrieb','1× DB 605A (1.475 PS)'],['Vmax','640 km/h'],['Gebaut','33.984']],['9,92 m','640 km/h','WWII'],'https://en.wikipedia.org/wiki/Messerschmitt_Bf_109'),
+ac(5,5,4,5,4,'North American P-51 Mustang','North American','1940','Mil','','Bestes Langstrecken-Jagdflugzeug des WWII. Merlin-Motor + Tanks → Eskorte bis Berlin.',[['Spannweite','11,28 m'],['Antrieb','1× Packard Merlin (1.490 PS)'],['Vmax','703 km/h'],['Reichweite','3.700 km']],['11,28 m','703 km/h','WWII'],'https://en.wikipedia.org/wiki/North_American_P-51_Mustang','P-51+Mustang+WWII'),
+ac(5,5,4,4,4,'Messerschmitt Me 262','Messerschmitt','1942','Mil','','Erster Serienstrahljäger der Geschichte. Jumo 004B. 900 km/h — 150 km/h schneller als alle Propellerjäger.',[['Spannweite','12,51 m'],['Antrieb','2× Jumo 004B (8,8 kN)'],['Vmax','900 km/h'],['Bewaffnung','4× 30mm MK 108']],['12,51 m','900 km/h','1. Strahljäger'],'https://en.wikipedia.org/wiki/Messerschmitt_Me_262'),
+ac(4,5,4,5,4,'North American F-86 Sabre','North American','1947','Mil','','Erster gepfeilter Strahljäger der USAF. Korea: erste Strahlduelle gegen MiG-15. 792 Luftsiege.',[['Spannweite','11,31 m'],['Antrieb','1× GE J47 (26,3 kN)'],['Vmax','Mach 0,9'],['Korea','792 Luftsiege']],['11,31 m','Mach 0,9','Korea'],'https://en.wikipedia.org/wiki/North_American_F-86_Sabre','F-86+Sabre+Korea'),
+ac(5,5,4,5,4,'MiG-21','Mikoyan-Gurevich','1955','Mil','','Meistgebauter Überschalljäger (11.000+). Mach 2,05. 60+ Nationen. Noch heute aktiv.',[['Spannweite','7,15 m'],['Antrieb','1× R-25-300 (69,6 kN AB)'],['Vmax','Mach 2,05'],['Gebaut','>11.000']],['7,15 m','Mach 2,05','Kalter Krieg'],'https://en.wikipedia.org/wiki/Mikoyan-Gurevich_MiG-21','MiG-21+supersonic+fighter'),
+ac(5,5,4,4,5,'F-15 Eagle','McDonnell Douglas / Boeing','1972','Mil','','Unbesiegt in 104 Luftkämpfen (bis 2022). 4. Gen. Zwei F100-Triebwerke.',[['Spannweite','13,05 m'],['Antrieb','2× F100-PW-100 (105,7 kN AB)'],['Vmax','Mach 2,5+'],['Bilanz','104–0 (unbesiegt)']],['13,05 m','Mach 2,5','104–0'],'https://www.boeing.com/defense/f-15/','F-15+Eagle+afterburner'),
+ac(5,5,5,5,4,'F-16 Fighting Falcon','Lockheed Martin','1974','Mil','','Meistgebauter westl. Kampfjet. 4.604 Stück, 25 Nationen. 9-G-manövrierfähig.',[['Spannweite','9,45 m'],['Antrieb','1× F100/GE F110 (128 kN AB)'],['Vmax','Mach 2,0'],['Gebaut','4.604, 25 Nationen']],['9,45 m','Mach 2,0','4.604 geb.'],'https://www.lockheedmartin.com/en-us/products/f-16.html','F-16+Fighting+Falcon+airshow'),
+ac(4,5,4,4,4,'Eurofighter Typhoon','Eurofighter GmbH','1994','Mil','','Europäischer 4.5-Gen. Delta-Canard. EJ200, CAPTOR-E AESA. 623+ in 10 Nationen inkl. Luftwaffe.',[['Spannweite','10,95 m'],['Antrieb','2× EJ200 (90 kN AB)'],['Vmax','Mach 2,0'],['Nationen','10 inkl. Luftwaffe']],['10,95 m','Mach 2,0','4.5 Gen.'],'https://www.eurofighter.com'),
+ac(4,5,4,3,5,'Dassault Rafale','Dassault Aviation','1986','Mil','','Französischer Omnirole-Kampfjet. RBE2-AA AESA, METEOR. Export: Indien, Ägypten, Katar, Griechenland, EAU.',[['Spannweite','10,90 m'],['Antrieb','2× M88-4E (75 kN AB)'],['Vmax','Mach 1,8'],['Einsätze','Libyen, Syrien, Mali']],['10,90 m','Mach 1,8','4.5 Gen.'],'https://www.dassaultaviation.com'),
+ac(5,5,4,2,4,'F-22A Raptor','Lockheed Martin','1997','Mil','','5.-Gen. Supercruise-Stealth-Jäger. Mach 1,82 ohne AB. 3D-Schubvektor. RCS <0,001 m². Nur 187 gebaut.',[['Spannweite','13,56 m'],['Antrieb','2× F119-PW-100 (3D-VT)'],['Supercruise','Mach 1,82 (kein AB)'],['Gebaut','187 Stück']],['13,56 m','Mach 2,25','5. Gen.'],'https://www.lockheedmartin.com/en-us/products/f-22.html','F-22+Raptor+stealth'),
+ac(5,5,4,4,4,'F-35A Lightning II','Lockheed Martin','2006','Mil','','5.-Gen. Stealth-Kampfjet. AN/APG-81 AESA. F135 (191 kN). >900 ausgeliefert, 17 Nationen.',[['Spannweite','10,67 m'],['Antrieb','1× F135-PW-100 (191 kN AB)'],['Vmax','Mach 1,6'],['Nationen','17']],['10,67 m','Mach 1,6','5. Gen.'],'https://www.lockheedmartin.com/en-us/products/f-35.html','F-35+Lightning+II+stealth')
+]},
+
+{id:'bomber',name:'Bomber',desc:'Strategische und taktische Bomber — von WWII-Schwerbombern bis zu modernen Stealth-Bombern.',
+aircraft:[
+ac(5,5,3,5,3,'Boeing B-17 Flying Fortress','Boeing','1935','Mil','','Berühmtester US-Schwerbomber des WWII. 13 MGs, Angriffe bis Berlin. 12.731 gebaut.',[['Spannweite','31,62 m'],['Antrieb','4× Wright R-1820 (895 kW)'],['Vmax','462 km/h'],['Bombenlast','2.700–7.800 kg']],['31,62 m','462 km/h','WWII'],'https://en.wikipedia.org/wiki/Boeing_B-17_Flying_Fortress','B-17+Flying+Fortress+WWII'),
+ac(5,3,3,3,4,'Boeing B-52H Stratofortress','Boeing','1952','Mil','','Im Dienst seit 1955 — 70+ Jahre. 8 TF33-Turbofans. Nukleare Triade der USA.',[['Spannweite','56,39 m'],['Antrieb','8× P&W TF33-PW-103C'],['Vmax','1.046 km/h'],['Dienst','1955 – laufend']],['56,39 m','1.046 km/h','70+ Jahre'],'https://www.af.mil','B-52+Stratofortress+flight'),
+ac(5,5,4,2,5,'Northrop Grumman B-2 Spirit','Northrop Grumman','1989','Mil','','Einziger operativer Stealth-Bomber. Flying-Wing. RCS ≈ 0,1 m². 2,1 Mrd. USD/Stk.',[['Spannweite','52,43 m'],['Antrieb','4× GE F118-GE-100'],['Vmax','Mach 0,95'],['Stückpreis','2,1 Mrd. USD']],['52,43 m','Mach 0,95','Stealth'],'https://en.wikipedia.org/wiki/Northrop_Grumman_B-2_Spirit','B-2+Spirit+stealth+bomber')
+]},
+
+{id:'miltrans',name:'Militärische Transportflugzeuge',desc:'Taktische und strategische Militärtransporter für Truppen, Fahrzeuge und humanitäre Einsätze.',
+aircraft:[
+ac(5,4,4,5,5,'Lockheed C-130J Hercules','Lockheed Martin','1996','Mil','','Meistverbreiteter Taktiktransporter (63 Nationen). AE2100D3-Turboprop. STOL < 915 m. Seit 1954 in Produktion.',[['Spannweite','40,41 m'],['Antrieb','4× RR AE2100D3 (Turboprop)'],['Vmax','671 km/h'],['Nutzlast','19.958 kg']],['40,41 m','671 km/h','63 Nationen'],'https://www.lockheedmartin.com/en-us/products/c-130.html','C-130J+Super+Hercules+STOL'),
+ac(5,5,4,4,5,'Airbus A400M Atlas','Airbus DS','2009','Mil','','Europäischer Strategietransporter. TP400-D6: stärkster Turboprop in Serie. 37 t Nutzlast. Auch Bundeswehr.',[['Spannweite','42,40 m'],['Antrieb','4× TP400-D6 (11.000 shp)'],['Vmax','780 km/h'],['Nutzlast','37.000 kg']],['42,40 m','780 km/h','37 t NL'],'https://www.airbus.com'),
+ac(5,4,4,5,4,'Douglas DC-3 (C-47 Dakota)','Douglas Aircraft','1935','Mil','','Als C-47 Dakota wichtigstes Transportflugzeug des WWII — D-Day Fallschirmjäger-Abwurf, Versorgungsflüge Berlin.',[['Spannweite','28,96 m'],['Antrieb','2× P&W R-1830 (895 kW)'],['Vmax','333 km/h'],['Nutzlast','2.700 kg'],['Einsatz','D-Day, Berlin-Blockade']],['28,96 m','333 km/h','WWII Transport'],'https://en.wikipedia.org/wiki/Douglas_DC-3','Douglas+C-47+Dakota+WWII')
+]},
+
+{id:'aufkl',name:'Aufklärungsflugzeuge',desc:'Strategische und taktische Aufklärungsflugzeuge — von U-2 bis SR-71.',
+aircraft:[
+ac(5,5,4,4,3,'Lockheed SR-71 Blackbird','Lockheed Skunk Works','1964','Mil','','Schnellstes je in Serie gebautes Flugzeug. Mach 3,32 (3.540 km/h), 26.000 m Höhe. Titanrumpf. Kein Abfangen möglich.',[['Spannweite','16,94 m'],['Antrieb','2× P&W J58 (150 kN AB)'],['Vmax','Mach 3,32 (3.540 km/h)'],['Betriebshöhe','>26.000 m'],['Rekord','3.540 km/h (ungebrochen seit 1976)']],['16,94 m','Mach 3,32','26.000 m'],'https://en.wikipedia.org/wiki/Lockheed_SR-71_Blackbird','SR-71+Blackbird+fastest+aircraft')
+]}
+]}
+]},
+
+
+// ─────────────────────────────────────────────────────────────────────────
+
+"Hubschrauber":{cls:'te',clr:'var(--te)',
+desc:'Datenquellen zu Hubschraubern (Drehflügler) — nach Verwendungszweck. Klassifizierung nach ICAO Annex 6 und H. Mensen, Handbuch der Luftfahrt.',
+sections:[
+
+{id:'zivil_h',name:'Zivile Hubschrauber',
+icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 8v4m0 0v4m0-4h4m-4 0H8"/><circle cx="12" cy="12" r="10"/></svg>`,
+desc:'Kommerzielle und private Hubschrauberanwendungen — Passagiertransport, Rettungsdienste, Industrie.',
+subs:[
+
+{id:'pax_h',name:'Passagier- und Offshore-Hubschrauber',desc:'Kommerzieller Passagiertransport, Offshore-Plattformversorgung und Heliport-Betrieb.',
+sources:[
+src(5,5,5,5,5,'EASA CS-29 — Large Rotorcraft','Zertifizierungsspezifikationen für große Hubschrauber (MTOW > 3.175 kg). Anforderungen an Struktur, Antrieb, Flugleistung und Notfallsysteme.','Ingenieure, Behörden, Hersteller',['PDF','Web'],'Kostenfrei · easa.europa.eu','https://www.easa.europa.eu/en/document-library/certification-specifications/cs-29-large-rotorcraft','Sikorsky_S-92'),
+src(5,5,5,5,5,'FAA FAR Part 29 — Transport Category Rotorcraft','US-Lufttüchtigkeitsstandards für Transporthubschrauber. Grundlage für FAA-Zulassungen und Validierungen.','Ingenieure, Behörden',['PDF','Web'],'Kostenfrei · ecfr.gov','https://www.ecfr.gov/current/title-14/chapter-I/subchapter-G/part-29'),
+src(5,4,4,5,4,'Airbus Helicopters — Produktdaten','Datenblätter zu H125, H135, H145, H160, H175, H225. Leistungsdiagramme und Konfigurationsoptionen.','Piloten, Betreiber, Ingenieure',['Web','PDF'],'Kostenfrei · airbus.com','https://www.airbus.com/en/products-services/helicopters'),
+src(5,4,4,5,4,'Leonardo Helicopters — AW139, AW169, AW189','Technische Daten der AgustaWestland/Leonardo-Hubschrauberfamilie. AW139 meistgenutzter Offshore-Hubschrauber weltweit.','Betreiber, Ingenieure',['Web'],'Kostenfrei · leonardocompany.com','https://www.leonardocompany.com/en/helicopter'),
+src(5,5,5,5,4,'IOGP Report 590 — Offshore Helicopter Guidelines','International Oil & Gas Producers: Sicherheitsstandards für Offshore-Hubschrauber. Weltweiter Branchenstandard.','Betreiber, Sicherheitsbeauftragte',['PDF'],'Kostenfrei · iogp.org','https://www.iogp.org/bookstore/product/helicopter-guidelines-for-offshore-operations/'),
+src(4,4,4,4,4,'Bell Helicopter — Bell 429, 412, 525','Bell-Hubschrauber im Offshore- und Rettungseinsatz. Technische Daten und Konfigurationen.','Betreiber, Piloten',['Web'],'Kostenfrei · bellflight.com','https://www.bellflight.com','Bell_429')
+]},
+
+{id:'rettung',name:'Rettungshubschrauber (HEMS / SAR)',desc:'Hubschrauber-Notarzteinsatz, Search and Rescue und medizinische Evakuierung.',
+sources:[
+src(5,5,5,5,5,'EASA AMC-20 — HEMS-Betriebsvorschriften','EASA-Anforderungen für Hubschrauber-Notarzteinsatzfahrzeuge. Crew-Qualifikation, Ausrüstung, Nachtflug, Single-Pilot-IFR.','HEMS-Betreiber, Piloten, Behörden',['PDF','Web'],'Kostenfrei · easa.europa.eu','https://www.easa.europa.eu/en/document-library/acceptable-means-of-compliance-and-guidance-material/commission-regulation-eu-no-9652012'),
+src(5,5,4,5,5,'ADAC Luftrettung — Flottendaten & Statistiken','Größter Rettungsdienst Europas. Jahresberichte mit Einsatzzahlen, Flottendaten (H135, H145) und Versorgungsgebieten.','Betreiber, Forscher, Presse',['Web','PDF'],'Kostenfrei · adac.de','https://www.adac.de/der-adac/verein/luftrettung/'),
+src(5,4,4,5,4,'DRF Luftrettung — Technik & Einsatzbericht','DRF Stiftung Luftrettung: Technische Daten, Einsatzberichte und medizinische Outcomes.','Betreiber, Mediziner',['Web','PDF'],'Kostenfrei · drf-luftrettung.de','https://www.drf-luftrettung.de'),
+src(4,4,4,4,4,'ICAO Doc 9868 — SAR-Verfahren','ICAO: Internationale Such- und Rettungsverfahren. Koordination Luft/See/Land, SAR-Zonen, Hubschrauber-spezifische Abschnitte.','Behörden, Koordinatoren',['PDF'],'Kostenpflichtig · icao.int','https://www.icao.int/safety/search-and-rescue/Pages/default.aspx'),
+src(5,5,5,5,5,'Rettungshubschrauber.de — Standorte Deutschland','Übersicht aller Rettungshubschrauber-Standorte in Deutschland (DRF, ADAC, Bundeswehr). Radius und Nachtzulassung.','Allgemein, Einsatzkräfte',['Web'],'Kostenfrei · rettungshubschrauber.de','https://www.rettungshubschrauber.de')
+]},
+
+{id:'agrar',name:'Agrar-, Industrie- und Spezialaufgaben',desc:'Hubschrauber für Landwirtschaft, Forstwirtschaft, Energieversorgung und Filmproduktion.',
+sources:[
+src(4,4,3,5,4,'EASA CS-27 — Small Rotorcraft','Standards für kleine Hubschrauber (MTOW ≤ 3.175 kg). Basis für Robinson R22/R44, Bell 206, Schweizer, Guimbal Cabri.','Ingenieure, Behörden',['PDF'],'Kostenfrei · easa.europa.eu','https://www.easa.europa.eu/en/document-library/certification-specifications/cs-27-small-rotorcraft'),
+src(4,4,4,4,4,'Robinson Helicopter — R44 / R66 Daten','Meistgebaute zivile Hubschrauber der Welt. Technik, Ausbildungsunterlagen, Sicherheitsbriefings.','Piloten, Schüler, Betreiber',['Web','PDF'],'Kostenfrei · robinsonheli.com','https://www.robinsonheli.com'),
+src(3,3,3,4,4,'HAI — Helicopter Association International','Weltweiter Branchenverband. Statistiken, Sicherheitsdaten und Marktberichte für alle zivilen Anwendungen.','Industrie, Forscher',['Web'],'Kostenfrei (teils Mitglied) · rotor.org','https://www.rotor.org')
+]}
+]},
+
+{id:'mil_h',name:'Militärhubschrauber',
+icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>`,
+desc:'Militärische Drehflügler für Kampf, Transport, Aufklärung und U-Jagd.',
+subs:[
+
+{id:'kampf_h',name:'Kampfhubschrauber',desc:'Angriffshubschrauber und bewaffnete Mehrzweckhubschrauber — AH-64 Apache, Tiger, Mangusta.',
+sources:[
+src(5,5,4,4,4,'Boeing AH-64 Apache — Technische Daten','Meistgenutzter Kampfhubschrauber der Welt. Lonbow-Radar, Hellfire, 30mm-Kanone. 15+ Nationen.','Militär, Ingenieure',['Web'],'Kostenfrei · boeing.com','https://www.boeing.com/defense/ah-64-apache/','Boeing_AH-64_Apache'),
+src(5,5,4,4,4,'Airbus H145M / Tiger — Militärversionen','H145M (Special Operations) und Tiger (Kampfhubschrauber Bundeswehr/Frankreich). Waffensysteme und Konfigurationen.','Militär, Behörden',['Web'],'Kostenfrei · airbus.com','https://www.airbus.com/en/products-services/helicopters/military-helicopters'),
+src(4,4,4,4,3,'Leonardo AW129 Mangusta','Einziger rein europäisch entwickelter Kampfhubschrauber. Technische Daten, Bewaffnungsoptionen.','Militär, Ingenieure',['Web'],'Kostenfrei · leonardocompany.com','https://www.leonardocompany.com/en/helicopter/aw129-mangusta'),
+src(4,4,3,4,3,'Sikorsky UH-60 Black Hawk — Varianten','UH-60, SH-60 Seahawk, HH-60 Pave Hawk. Meistgebauter Militärhubschrauber des Westens.','Militär, Ingenieure',['Web'],'Kostenfrei · lockheedmartin.com','https://www.lockheedmartin.com/en-us/products/black-hawk.html','Sikorsky_UH-60_Black_Hawk'),
+src(4,3,4,3,3,'SKYbrary — Attack Helicopter Articles','Technische und operative Artikel zu Kampfhubschraubern, NVG-Betrieb und Niedrigflugoperationen.','Piloten, Ausbilder',['Web'],'Kostenfrei · skybrary.aero','https://www.skybrary.aero')
+]},
+
+{id:'trans_h',name:'Transporthubschrauber',desc:'Mittlere und schwere Transporthubschrauber für Truppentransport und Versorgung.',
+sources:[
+src(5,5,5,5,4,'Sikorsky CH-53K King Stallion','Schwerster westlicher Transporthubschrauber (16 t Außenlast). Drei GE T408-Triebwerke. Bundeswehr STH.','Militär, Behörden',['Web'],'Kostenfrei · lockheedmartin.com','https://www.lockheedmartin.com/en-us/products/ch-53k-king-stallion.html','Sikorsky_CH-53K_King_Stallion'),
+src(5,4,4,5,4,'Boeing CH-47 Chinook — Technische Daten','Tandemrotor-Transporthubschrauber. Bis 12,7 t Außenlast. 20+ Nationen. Aktiv seit 1962.','Militär, Ingenieure',['Web'],'Kostenfrei · boeing.com','https://www.boeing.com/defense/ch-47-chinook/','Boeing_CH-47_Chinook'),
+src(5,5,4,5,4,'NHIndustries NH90 — Multinationale Beschaffung','Europ. Mitteltransporthubschrauber. TTH und NFH Variante. Bundeswehr, Bundespolizei, 14 Nationen.','Militär, Behörden',['Web'],'Kostenfrei · nhindustries.com','https://www.nhindustries.com'),
+src(4,4,3,4,3,'NATO STANAG 3150 — Helicopter Operations','NATO-Standard für Hubschrauberoperationen. Interoperabilität, Codes, Landeplätze.','Militär, NATO-Personal',['PDF'],'Kostenfrei · nato.int','https://www.nato.int/cps/en/natolive/topics_50086.htm')
+]},
+
+{id:'aufkl_h',name:'Aufklärungs- und U-Boot-Jagd-Hubschrauber',desc:'ISR- und U-Jagd-Hubschrauber — maritime und landgestützte Aufklärungssysteme.',
+sources:[
+src(5,5,4,4,4,'Sikorsky MH-60R Seahawk — Maritime Strike','Primärer U-Jagd-Hubschrauber der US Navy. HELRAS-Sonar, Torpedos, AGM-114 Hellfire.','Militär, Marine',['Web'],'Kostenfrei · lockheedmartin.com','https://www.lockheedmartin.com/en-us/products/mh-60r-seahawk.html','Sikorsky_SH-60_Seahawk'),
+src(5,4,4,4,4,'Leonardo AW101 Merlin — ASW-Konfiguration','Dreistrahliger Mehrzweckhubschrauber. Royal Navy (Merlin HM2), Dänemark, Portugiesische Marine. Sonar, Torpedos.','Militär, Marine',['Web'],'Kostenfrei · leonardocompany.com','https://www.leonardocompany.com/en/helicopter/aw101'),
+src(4,4,3,4,3,'NATO — Maritime Patrol & Helicopter ASW','NATO-Doktrin für maritime Hubschrauber-U-Jagd, Standardisierung und Taktik.','NATO-Personal, Militär',['Web'],'Kostenfrei · nato.int','https://www.nato.int')
+]}
+]},
+
+{id:'tech_h',name:'Technik & Zertifizierung',
+icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.1 5A9 9 0 0 1 21 12a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 1.9-7M12 3V1"/></svg>`,
+desc:'Technische Grundlagen, Aerodynamik und Zertifizierungsvorschriften für Drehflügler.',
+subs:[
+
+{id:'aero_h',name:'Aerodynamik & Rotorsysteme',desc:'Rotortheorie, Schwebeflug, Vorwärtsflug, Autorotation und Sicherheitsphänomene.',
+sources:[
+src(5,5,5,5,5,'NASA Technical Report — Helicopter Aerodynamics','NASA-Grundlagenwerk zur Hubschrauber-Aerodynamik. Rotortheorie, Leistungsbedarf. Standard-Referenz.','Ingenieure, Wissenschaftler',['PDF'],'Kostenfrei · ntrs.nasa.gov','https://ntrs.nasa.gov/citations/19630011694'),
+src(5,5,5,5,5,'SKYbrary — Helicopter Aerodynamics','Artikelsammlung: Torkeffekt, Retreating Blade Stall, Vortex Ring State, Autorotation, Ground Resonance.','Piloten, Ausbilder, Studenten',['Web'],'Kostenfrei · skybrary.aero','https://www.skybrary.aero/articles/helicopters'),
+src(5,4,4,5,4,'DLR — Hubschrauber Aerodynamik & CFD','DLR-Forschungsberichte zu Hubschrauber-Aerodynamik, Lärm, aktiver Rotorsteuerung und Simulationen.','Ingenieure, Forscher',['Web','PDF'],'Kostenfrei · dlr.de','https://www.dlr.de/as/de'),
+src(4,4,4,4,4,'EASA Easy Access Rules — Helicopter Operations','Konsolidierte Betriebsvorschriften für Hubschrauber: CAT, SPO, NCC, HEMS, Offshore, Bergrettung.','Betreiber, Piloten',['PDF','Web'],'Kostenfrei · easa.europa.eu','https://www.easa.europa.eu/en/document-library/easy-access-rules')
+]},
+
+{id:'zerti_h',name:'Zertifizierung & Typenblätter',desc:'Musterzulassungen, TCDS und regulatorische Datenblätter für Hubschrauber.',
+sources:[
+src(5,5,5,5,5,'EASA TCDS — Rotorcraft Type Certificates','Typenblätter für alle EASA-zugelassenen Hubschrauber. Masse, Leistung, Zulassungsbasis, Varianten.','Ingenieure, Behörden',['Web'],'Kostenfrei · easa.europa.eu','https://www.easa.europa.eu/en/domains/aircraft-products/aircraft-type-designators','Sikorsky_S-76'),
+src(5,5,5,5,5,'FAA TCDS — Rotorcraft','FAA-Typenblätter für alle US-zugelassenen Hubschrauber. Robinson, Sikorsky, Bell, MD Helicopters.','Ingenieure, Behörden',['Web'],'Kostenfrei · faa.gov','https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/'),
+src(5,4,4,5,4,'ICAO Doc 9110 — Helicopter IFR Procedures','ICAO-Verfahren für Hubschrauber-IFR. PinS-Approaches, Offshore-IFR, Hubschrauber-RNAV.','Piloten, Verfahrensdesigner',['PDF'],'Kostenpflichtig · icao.int','https://www.icao.int/publications/pages/publication.aspx?docnum=9110'),
+src(4,4,3,4,4,'BFU — Hubschrauber-Unfallberichte Deutschland','Endberichte zu Hubschrauber-Unfällen in Deutschland. Ursachenanalyse, Sicherheitsempfehlungen.','Sicherheitsexperten, Betreiber',['Web','PDF'],'Kostenfrei · bfu-web.de','https://www.bfu-web.de')
+]}
+]}
+]},
+
+
+// ─────────────────────────────────────────────────────────────────
+"Triebwerke":{cls:'en',clr:'var(--en)',
+desc:'Datenquellen zu Flugtriebwerken, gegliedert nach Triebwerksart: Kolbenmotor, Turboprop, Turbojet, Turbofan, Rakete, Elektro, Hybrid.',
+sections:[
+{id:'prop',name:'Propellerflugzeuge',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="2"/><path d="M12 2a4 4 0 0 1 4 4c0 2-1 4-4 6-3-2-4-4-4-6a4 4 0 0 1 4-4z"/><path d="M2 12a4 4 0 0 1 4-4c2 0 4 1 6 4-2 3-4 4-6 4a4 4 0 0 1-4-4z"/><path d="M12 22a4 4 0 0 1-4-4c0-2 1-4 4-6 3 2 4 4 4 6a4 4 0 0 1-4 4z"/><path d="M22 12a4 4 0 0 1-4 4c-2 0-4-1-6-4 2-3 4-4 6-4a4 4 0 0 1 4 4z"/></svg>`,
+desc:'Flugzeuge, bei denen ein Propeller den Schub erzeugt – angetrieben durch Kolbenmotor oder Gasturbine.',
+subs:[
+{id:'kolben',name:'a) Kolbenmotorflugzeuge',desc:'Verbrennungsmotoren ähnlich wie Automotoren – häufig bei Sportflugzeugen und Schulflugzeugen (z.B. Cessna 172).',
+sources:[
+src(5,3,2,5,5,'EASA TCDS – Piston Engines','Offizielle Zulassungsdatenblätter für alle EASA-zugelassenen Kolbentriebwerke (Lycoming, Continental, Rotax etc.).','Ingenieure, Zulassungsbehörden',['PDF'],'Primärquelle für Zulassungsparameter; für jeden zertifizierten Kolbenmotor vorhanden.','https://www.easa.europa.eu/en/domains/aircraft-products/engines'),
+src(5,3,2,5,5,'FAA TCDS – Reciprocating Engines','US-Zulassungsdatenblätter für Kolbenmotoren der Allgemeinen Luftfahrt.','Ingenieure, GA-Piloten',['PDF'],'US-Primärquelle für GA-Triebwerke; frei zugänglich.','https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/'),
+src(5,4,3,5,3,'Lycoming Engines','O-235, O-320, O-360, IO-540 usw. – Leistungsdaten, Maintenance Manuals (Auszüge), Specifications.','Techniker, Ingenieure, GA-Piloten',['PDF','HTML'],'Marktführer für GA-Kolbenmotoren; technische Daten und Service Bulletins zugänglich.','https://www.lycoming.com/engines'),
+src(5,4,3,5,3,'Continental Aerospace Technologies','O-200, IO-360, TSIO-550 – Leistungsdaten, Compression Specs, Overhaul Manual Auszüge.','Techniker, Ingenieure',['PDF','HTML'],'Zweiter großer GA-Kolbenmotorenhersteller; gut dokumentiert.','https://www.continentalmotors.aero/engines'),
+src(5,4,3,5,3,'Rotax Aircraft Engines (BRP)','Rotax 912, 914, 915iS, 916iS – Technische Daten für Ultraleicht- und LSA-Flugzeuge; moderne Motoren.','Ingenieure, UL-Piloten, Hersteller',['PDF','HTML'],'Marktführer bei modernen Leichtflugzeug-Motoren; ausführliche technische Dokumentation; besonders für moderne LSA-Flugzeuge.','https://www.flyrotax.com/engines','BRP-Rotax')
+]},
+{id:'turbo',name:'b) Turbopropflugzeuge',desc:'Gasturbine treibt den Propeller an – effizient bei mittleren Geschwindigkeiten und Höhen (z.B. ATR 72, Q400).',
+sources:[
+src(5,4,3,5,3,'Pratt & Whitney Canada – PW100/127/150 (Turboprop)','PW100, PW127, PW150A – Wellenleistung, SFC, Anwendungen (ATR, Q400, SAAB 2000).','Ingenieure, Studierende',['PDF','HTML'],'Spezialist für Turboprop- und Turbowellen; PW150A ist leistungsstärkstes ziviles Turboprop; gute Datensheets.','https://www.pwc.ca/en/products-and-services/products'),
+src(4,4,3,5,3,'GE Aviation – CT7 / H80 Turboprop','CT7 für CN-235, CASA 212; H80 für mittlere GA-Flugzeuge – technische Datensheets.','Ingenieure',['PDF','HTML'],'Ergänzende Turboprop-Plattform zu P&WC; CT7 weit verbreitet in Militär und GA.','https://www.geaviation.com/regional/products'),
+src(4,3,3,5,3,'Rolls-Royce – AE 2100 / T56','AE 2100 (C-130J, SAAB 2000) und T56 (C-130A-H) – Wellenleistung, technische Parameter.','Ingenieure, Militärplaner',['PDF','HTML'],'Weit verbreitetes Militär-Turboprop; AE 2100 modernste Version; Specs auf Herstellerseite.','https://www.rolls-royce.com/products-and-services/defence.aspx'),
+src(5,2,4,5,5,'ICAO EEDB – Turboprop Entries','Emissionsparameter auch für Turboprop-Triebwerke (soweit ICAO-zertifiziert) – NOx, CO, HC, Fuel Flow.','Ingenieure, Umweltbehörden',['Excel (XLS)'],'Einzige vollständig offene maschinenlesbare Datenbank; für Emissionsvergleiche unverzichtbar.','https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank')
+]}
+]},
+{id:'strahl',name:'Strahlflugzeuge (Jetflugzeuge)',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 16v-2a4 4 0 0 0-4-4H5"/><polyline points="9 18 3 12 9 6"/><path d="M3 12h13a4 4 0 0 1 4 4v2"/></svg>`,
+desc:'Schub entsteht direkt durch ausgestoßene heiße Gase (Turbojet) oder durch einen großen Fan + Kerntriebwerk (Turbofan).',
+subs:[
+{id:'turbojet',name:'a) Turbojet',desc:'Einfacher Düsenantrieb – hohe Geschwindigkeit, heute selten im Zivilbereich, noch bei Militärjets.',
+sources:[
+src(5,2,4,5,5,'ICAO EEDB – Turbojet Entries','Historische und aktuelle Emissionsparameter für Turbojet-Triebwerke (J57, J79, Olympus 593 etc.).','Ingenieure, Historiker, Umweltbehörden',['Excel (XLS)'],'Einzige maschinenlesbare Quelle für Turbojet-Emissionsdaten; unverzichtbar für historische Vergleiche.','https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank'),
+src(5,3,2,5,5,'EASA TCDS – Turbojet Engines','Zulassungsdatenblätter für noch aktive Turbojet-Triebwerke.','Ingenieure, Zulassungsbehörden',['PDF'],'Primärquelle; für historische/militärische Typen relevant.','https://www.easa.europa.eu/en/domains/aircraft-products/engines'),
+src(5,4,3,5,5,'SKYbrary – Turbojet Engine','Konzeptionelle Erklärung des Turbojet-Prinzips, Geschichte, Betriebsgrenzen, Vergleich mit Turbofan.','Piloten, Studierende, Ingenieure',['Web (HTML)'],'Hervorragend für konzeptionelles Verständnis; nicht für detaillierte Leistungsparameter.','https://skybrary.aero/articles/jet-engine')
+]},
+{id:'turbofan',name:'b) Turbofan',desc:'Modernes Verkehrsflugzeugtriebwerk – großer Fan vorne erzeugt zusätzlichen Schub; leiser und sparsamer als Turbojet (z.B. Airbus A320).',
+sources:[
+src(5,2,4,5,5,'ICAO Aircraft Engine Emissions Databank (EEDB)','Emissionsparameter (NOx, CO, HC, Smoke) aller zertifizierten Turbofan-Triebwerke; BPR, Rated Thrust, Fuel Flow.','Ingenieure, Umweltbehörden, Forscher',['Excel (XLS)'],'Einzige vollständig offene maschinenlesbare Triebwerksdatenbank; unverzichtbar für Emissionsanalysen.','https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank'),
+src(5,3,2,5,5,'EASA Engine Type Certificate Data Sheets (TCDS)','Offizielle Triebwerkszulassungen: Schubklassen, Zertifizierungsbasis, Betriebsgrenzen.','Ingenieure, Zulassungsbehörden',['PDF'],'Verbindliche Primärquelle; enthält alle formalen Leistungsparameter.','https://www.easa.europa.eu/en/domains/aircraft-products/engines'),
+src(5,3,2,5,5,'FAA Engine Type Certificate Data Sheets','US-Triebwerkszulassungen – bilateral mit EASA abgestimmt.','Ingenieure, Zulassungsbehörden',['PDF'],'US-Primärquelle; bilateral mit EASA abgestimmt; frei über FAA-Datenbank.','https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/'),
+src(5,4,3,5,3,'CFM International – LEAP & CFM56','LEAP-1A (A320neo), LEAP-1B (737 MAX), LEAP-1C (C919), CFM56-5B/7B – BPR, OPR, Schub, TSFC.','Ingenieure, Studierende',['PDF','HTML'],'Hersteller-Datasheets frei; Leistungsdaten teils vereinfacht; weltweiter Marktführer bei Schmalrumpf-Triebwerken.','https://www.cfmaeroengines.com/engines/'),
+src(5,4,3,5,3,'GE Aviation – Commercial Engines','GE9X (777X): BPR 22:1, GEnx (787/747-8), GE90 (777), CF6, CF34 – Schub, BPR, OPR, Anwendungen.','Ingenieure, Studierende',['PDF','HTML'],'GE9X mit BPR 22:1 ist Technologie-Vorreiter; detaillierte Produktseiten.','https://www.geaviation.com/commercial/engines'),
+src(5,4,3,5,3,'Rolls-Royce – Trent-Familie','Trent XWB (A350), Trent 7000 (A330neo), Trent 1000 (787), Trent 900 (A380) – Specs, BPR, OPR.','Ingenieure, Studierende',['PDF','HTML'],'Gut strukturierte Produktseiten; technische Daten teils begrenzt öffentlich zugänglich.','https://www.rolls-royce.com/products-and-services/civil-aerospace.aspx'),
+src(5,4,3,5,3,'Pratt & Whitney – Geared Turbofan (GTF)','PW1100G-JM (A320neo), PW1500G (A220), PW1700G (E175-E2), PW1900G – BPR ~12:1, OPR ~50:1, TSFC ~14,5 g/kN/s.','Ingenieure, Studierende',['PDF','HTML'],'GTF-Getriebe zwischen Fan und Niederdruckkompressor; ~16% Kraftstoffeinsparung vs. CFM56; innovativster ziviler Turbofan.','https://www.prattwhitney.com/en/products/commercial-engines/geared-turbofan'),
+src(4,4,3,5,3,'Safran Aircraft Engines – LEAP & SaM146','CFM Joint Venture mit GE; SaM146 (Sukhoi Superjet), Silvercrest (Falcon 5X).','Ingenieure, Studierende',['PDF','HTML'],'Ergänzend zur CFM-Seite; SaM146 für Superjet relevant; LEAP-Daten deckungsgleich mit CFM.','https://www.safran-aircraft-engines.com/commercial-aircraft'),
+src(4,4,3,5,3,'Honeywell Aerospace – HTF7000 & APU','HTF7000/7500E (Business Jets), TPE331 (Turboprop), APU 131-9A (A320neo) – Leistungsdaten, Anwendungen.','Ingenieure, Studierende',['PDF','HTML'],'APU-Daten besonders relevant für Avionik-Anwendungen (Bodenversorgung, Startvorgang).','https://aerospace.honeywell.com/us/en/products-and-services/product/hardware-and-systems/engines')
+]}
+]},
+{id:'rakete',name:'Raketentriebwerke',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>`,
+desc:'Raketentriebwerke benötigen keinen Luftsauerstoff – sehr hohe Geschwindigkeiten, vor allem Raumfahrt (z.B. Space Shuttle).',
+subs:[{id:'rak',name:'Raketentriebwerke',desc:'',sources:[
+src(5,3,3,5,5,'NASA Glenn Research Center – Propulsion Systems','Physikalische Grundlagen, Typenübersicht aller Raketentriebwerksarten, aktuelle NASA-Programme.','Studierende, Ingenieure, Forscher',['Web','PDF'],'Exzellente technische Grundlagen; frei zugänglich; von NASA-Wissenschaftlern kuratiert.','https://www.grc.nasa.gov/www/k-12/airplane/rocket.html'),
+src(5,3,3,5,5,'ESA – Propulsion Technology','ESA-Raketentriebwerke: Vulcain 2.1 (Ariane 6), P120C, Vinci – Specs, Entwicklungsstand.','Ingenieure, Forscher',['Web','PDF'],'Offizielle ESA-Quelle; gut dokumentierte europäische Triebwerksprogramme.','https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Propulsion'),
+src(3,4,2,5,3,'SpaceX – Merlin, Raptor Engine Specs','Öffentlich bekannte Leistungsdaten Merlin 1D (Falcon 9): Isp=311s SL; Raptor Vac: Isp=380s.','Ingenieure, Enthusiasten',['Web'],'Specs aus offiziellen SpaceX-Publikationen und FAA-Unterlagen; teils nicht vollständig publiziert.','https://www.spacex.com/vehicles/falcon-9/')
+]}]},
+{id:'elektro',name:'Elektrische Antriebe',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+desc:'Elektromotor + Batterie oder Brennstoffzelle – aktuell vor allem bei kleinen Flugzeugen und in der Forschung (z.B. Pipistrel Velis Electro).',
+subs:[{id:'el',name:'Elektrische Antriebe',desc:'',sources:[
+src(5,4,3,5,3,'Pipistrel – Velis Electro (Erste EASA-zugelassene Elektro-GA)','Velis Electro: 57,6 kWh Akku, 60 kW Motor, endurance ~50 min, Leistungsdaten, Zertifizierungsstatus.','Ingenieure, Piloten, Forscher',['PDF','HTML'],'Weltweit erstes EASA-zugelassenes Elektroflugzeug; Marktpremiere 2020; sehr gut dokumentiert.','https://www.pipistrel-aircraft.com/aircraft/electric-flight/velis-electro-easa-tc/'),
+src(4,4,3,5,3,'MagniX – Magni250 & Magni500 Electric Propulsion','Elektrische Flugmotoren bis 560 kW; Einsatz in Cessna Caravan ePlane, Alice.','Ingenieure, Forscher',['PDF','HTML'],'Führender Hersteller elektrischer Flugmotoren; Datasheets frei abrufbar; reale Flugtests dokumentiert.','https://www.magniX.aero/'),
+src(4,4,2,5,3,'Eviation – Alice All-Electric Commuter','Alice: 9 Passagiere, 3× MagniX-Motoren, Reichweite 460 nm, Erstflug 2022.','Ingenieure, Studierende',['Web','PDF'],'Erster rein elektrischer Regionalflieger; Erstflug Sept. 2022; begrenzte öffentliche Spec-Tiefe.','https://www.eviation.com/aircraft/alice/'),
+src(5,4,3,5,5,'EASA – Certification of Electric/Hybrid Propulsion','EASA CS-E Amendment + Special Conditions für Elektrische Antriebe; Zertifizierungsrahmen.','Ingenieure, Zulassungsbehörden',['PDF','Web'],'Wichtig für Verständnis des Zertifizierungswegs; regulatorisches Grundlagendokument.','https://www.easa.europa.eu/en/newsroom-and-events/news/easa-issues-first-certification-specifications-electric-propulsion'),
+src(5,3,3,5,5,'DLR – Elektrisches Fliegen','DLR-Forschungsprogramme zu Elektromotoren, Batterie-Systemen und Elektroantriebs-Konzepten.','Forscher, Ingenieure',['Web','PDF'],'Umfangreiche Forschungsberichte; frei zugänglich; deutschen Forschungsstand abdeckend.','https://www.dlr.de/de/forschung-und-transfer/projekte-und-missionen/elektrisches-fliegen')
+]}]},
+{id:'hybrid',name:'Hybridantriebe',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>`,
+desc:'Kombination aus Verbrennungs- und Elektroantrieb – Ziel: geringerer Treibstoffverbrauch und CO₂-Ausstoß.',
+subs:[{id:'hy',name:'Hybridantriebe',desc:'',sources:[
+src(4,4,2,5,3,'Airbus – ZEROe Hydrogen Aircraft Concepts','ZEROe: drei Konzepte (Turbofan, Turboprop, Blended Wing Body) mit Wasserstoff-Hybrid-Antrieb.','Ingenieure, Forscher, Studierende',['Web','PDF'],'Zukunftsvision 2035; gut kommunizierte Konzeptdaten; Technologiereifegrad noch niedrig.','https://www.airbus.com/en/innovation/zero-emission-aviation/hydrogen/zeroe'),
+src(4,4,2,5,3,'ZeroAvia – HyperTech Hydrogen-Electric','ZA-600, ZA-2000: Brennstoffzellen-Elektroantrieb für Commuter und Regionalflugzeuge.','Ingenieure, Forscher',['Web','PDF'],'Erste erfolgreiche Testflüge; britisches Unternehmen mit FAA/EASA-Kooperation; begrenzte Spec-Öffentlichkeit.','https://www.zeroavia.com/technology/'),
+src(3,3,2,5,3,'Ampaire – Hybrid-Electric Otter','Serielle Hybrid-Nachrüstung für DHC-6 Twin Otter; Testergebnisse und Kraftstoffersparnis.','Ingenieure, Studierende',['Web'],'Real-World-Testdaten; Kraftstoffersparnis bis 70% berichtet; Nischenanwendung für Kurzstrecken.','https://www.ampaire.com/'),
+src(5,3,3,5,5,'DLR – Hybrid- und Wasserstoffantriebe','Forschungsberichte zu Hybrid-Antriebssystemen, Brennstoffzellen und alternativen Kraftstoffen für die Luftfahrt.','Forscher, Ingenieure',['Web','PDF'],'Umfangreiche Forschungsberichte; frei zugänglich.','https://www.dlr.de/de/forschung-und-transfer/projekte-und-missionen/elektrisches-fliegen'),
+src(5,3,3,5,4,'IATA – Net Zero 2050 & SAF Report','Roadmap zur CO₂-Neutralität bis 2050: SAF, Hybrid, Wasserstoff – Potentiale und Ziele.','Industrie, Behörden, Forscher',['PDF'],'Strategisches Dokument der gesamten Luftfahrtindustrie; frei als PDF verfügbar.','https://www.iata.org/contentassets/77685d02f1ed4779b5bc4f49bb1e4bf7/iata-net-zero-2050.pdf')
+]}]}
+]},
+
+// ─────────────────────────────────────────────────────────────────
+"Statistik":{cls:'st',clr:'var(--st)',
+desc:'Luftfahrt-Statistikquellen gegliedert nach neun Kriterien: Verkehr, Technik, Wirtschaft, Sicherheit, Umwelt, Geografie, Zeit, Flugzeugtyp, Betrieb.',
+sections:[
+{id:'verk',name:'1. Verkehrsstatistiken',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+desc:'Beschreiben den Flugverkehr selbst: Passagierzahlen, Flüge, Starts/Landungen, Flugstunden.',
+subs:[{id:'vs',name:'Verkehrsstatistiken',desc:'',sources:[
+src(2,3,3,1,2,'ICAO World Air Transport Statistics (WATS)','Globale Passagierzahlen, Frachtmengen, Flugbewegungen; 20-Jahres-Trendanalysen.','Airlines, Behörden, Forscher',['PDF','Excel'],'Goldstandard; aber kostenpflichtig; Grunddaten teils über ICAO-Reports kostenlos verfügbar.','https://www.icao.int/sustainability/Pages/air-transport-statistics.aspx'),
+src(4,4,3,5,5,'Eurostat – Air Transport Statistics','EU-Passagier-, Fracht- und Flugbewegungsstatistiken nach Flughafen und Strecke; Quartalsdaten; REST API.','Behörden, Forscher, Analysten',['CSV','Excel','API'],'Exzellente Open-Data-Quelle; maschinenlesbar via Eurostat REST API; keine Registrierung nötig.','https://ec.europa.eu/eurostat/statistics-explained/index.php/Air_transport_statistics'),
+src(5,5,4,5,5,'DESTATIS – Luftverkehr Deutschland','Deutsche Flughafen-Statistiken: Passagiere, Fracht, Starts/Landungen monatlich.','Behörden, Forscher',['CSV','Excel'],'Offizielle Bundesstatistik; sehr zuverlässig; monatlich aktualisiert; Open Data.','https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Transport-Verkehr/Personenverkehr/luftverkehr.html'),
+src(4,5,3,5,3,'Eurocontrol STATFOR – Traffic Statistics','Europäische historische Flugbewegungen, Prognosen; interaktives Dashboard.','Airlines, Flugsicherungen, Behörden',['PDF','Excel','Web'],'Strategische Primärquelle für europäische Luftraumplanung; Dashboard sehr nützlich.','https://www.eurocontrol.int/forecasting'),
+src(3,4,2,3,3,'ACI World – Airport Traffic Statistics','Weltweite Flughafenverkehrsstatistiken: Passagiere, Fracht, Bewegungen nach Flughafen.','Airlines, Airports, Analysten',['PDF','Excel'],'ACI weltweit; teils kostenlos verfügbar; Kerndaten in Jahresberichten.','https://aci.aero/data-centre/annual-traffic-data/')
+]}]},
+{id:'tech',name:'2. Technische Statistiken',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>`,
+desc:'Triebwerksarten, Treibstoffverbrauch, Reichweite, Geschwindigkeit, Systemausfallraten.',
+subs:[{id:'ts',name:'Technische Statistiken',desc:'',sources:[
+src(5,2,4,5,5,'ICAO EEDB – Engine Technical Statistics','BPR, OPR, Rated Thrust, TSFC aller zertifizierten Triebwerke; Grundlage für Vergleichsanalysen.','Ingenieure, Forscher, Umweltbehörden',['Excel (XLS)'],'Einzige maschinenlesbare Triebwerksdatenbank; technische Parameter vollständig.','https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank'),
+src(4,3,2,5,4,'EASA Annual Safety Review – Technical Statistics','Technische Ausfallstatistiken nach System, Unfallursachen durch technische Defekte.','Ingenieure, Behörden',['PDF'],'Sehr gut aufbereitete technische Sicherheitsstatistiken.','https://www.easa.europa.eu/en/domains/safety-management/safety-analysis/annual-safety-review'),
+src(3,3,2,5,3,'Boeing Commercial Market Outlook (CMO) – Techniktrends','Technologische Effizienzgewinne, Kraftstoffverbrauchstrends nach Flugzeuggeneration.','Ingenieure, Analysten',['PDF'],'Frei als PDF; Marktprognose mit technischen Trendaussagen; jährlich aktualisiert.','https://www.boeing.com/commercial/market/commercial-market-outlook/'),
+src(5,3,3,5,5,'NASA Technical Reports Server (NTRS)','Umfangreiche technische Berichte zu Aerodynamik, Antrieb, Materialien, Avionik.','Forscher, Ingenieure, Studierende',['PDF'],'Goldstandard für technische Luftfahrtforschung; Open Access; über 1 Mio. Dokumente.','https://ntrs.nasa.gov/')
+]}]},
+{id:'wirt',name:'3. Wirtschaftliche Statistiken',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+desc:'Umsatz von Fluggesellschaften, Ticketpreise, Gewinne/Verluste, Beschäftigte.',
+subs:[{id:'ws',name:'Wirtschaftliche Statistiken',desc:'',sources:[
+src(3,4,2,3,3,'IATA Economics – Airline Industry Statistics','Airline-Profitabilität, Umsätze, RPK/ASK, Ticketpreise, Gewinne/Verluste.','Airlines, Investoren, Analysten',['PDF','Excel'],'Monatliche Free-Reports verfügbar; detaillierte Daten hinter Paywall.','https://www.iata.org/en/publications/economics/'),
+src(4,4,3,5,3,'Boeing Orders & Deliveries','Monatlich: Bestellungen und Auslieferungen nach Typ/Kunde; Backlog-Daten.','Airlines, Investoren, Analysten',['Excel','HTML'],'Referenzquelle für Produktionszahlen; direkt von Hersteller; frei und monatlich aktualisiert.','https://www.boeing.com/orders-deliveries'),
+src(4,4,3,5,3,'Airbus Orders & Deliveries','Monatlich: Bestellungen und Auslieferungen nach Typ/Kunde; Backlog-Analyse.','Airlines, Investoren, Analysten',['Excel','HTML'],'Referenzquelle; direkt von Hersteller; frei und monatlich aktualisiert.','https://www.airbus.com/en/investors/orders-and-deliveries'),
+src(3,3,2,5,3,'Boeing Commercial Market Outlook (CMO)','20-Jahres-Marktprognose: 43.975 Neuflugzeuge bis 2043; Segmentverteilung, Investitionsvolumen.','Airlines, Investoren, Forscher',['PDF'],'Frei als PDF; Referenz für Marktvolumen; jährlich aktualisiert.','https://www.boeing.com/commercial/market/commercial-market-outlook/'),
+src(3,3,2,5,3,'Airbus Global Market Forecast (GMF)','20-Jahres-Prognose: ~42.430 Neuflugzeuge bis 2042; Passagierwachstum, Flottenentwicklung.','Airlines, Investoren, Forscher',['PDF'],'Frei als PDF; Gegenstück zum Boeing CMO; jährlich aktualisiert.','https://www.airbus.com/en/products-services/commercial-aircraft/market/global-market-forecast'),
+src(4,4,4,5,5,'Our World in Data – Air Transport','Langzeittrends zu Flugpassagieren, Frachtvolumen und Produktivität; sehr gut visualisiert.','Forscher, Studierende, Journalisten',['Web','CSV'],'Open Data; sehr gut visualisierte Zeitreihen; CC-Lizenz.','https://ourworldindata.org/transport')
+]}]},
+{id:'sich',name:'4. Sicherheitsstatistiken',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+desc:'Unfallraten, Zwischenfälle, technische Defekte, Wetterunfälle.',
+subs:[{id:'ss',name:'Sicherheitsstatistiken',desc:'',sources:[
+src(5,5,4,5,5,'NTSB Aviation Accident Database','US-Luftfahrtunfälle seit 1962: Unfallursachen, Flugzeugtyp, Verletzungsstatistiken (>80.000 Einträge).','Sicherheitsforscher, Behörden, Ingenieure',['CSV','XML','Web'],'Vollständigste frei zugängliche Unfallstatistik; CSV-Export ideal für Analysen.','https://www.ntsb.gov/investigations/AccidentReports/Pages/aviation.aspx'),
+src(5,3,2,5,5,'EASA Annual Safety Review','EU-Luftfahrtsicherheitsstatistik: Unfallraten nach Kategorie, Trendanalysen, Risikobereiche.','Behörden, Ingenieure, Forscher',['PDF'],'Offizielle EU-Sicherheitsstatistik; gut visualisiert; jährlich; frei.','https://www.easa.europa.eu/en/domains/safety-management/safety-analysis/annual-safety-review'),
+src(5,5,4,5,3,'Aviation Safety Network (ASN)','Weltweite historische Unfallstatistik, Unfallberichte, Fatal-Accident-Daten seit 1919.','Forscher, Journalisten, Enthusiasten',['Web','API'],'Sehr gute historische Datenbasis; API verfügbar (kostenpflichtig); frei im Web nutzbar.','https://aviation-safety.net/database/'),
+src(5,4,3,5,5,'BFU – Bundesstelle für Flugunfalluntersuchung','Deutsche Flugunfallberichte, Sicherheitsempfehlungen, Statistiken für Deutschland.','Forscher, Behörden, Ingenieure',['PDF','Web'],'Offizielle deutsche Unfalluntersuchungsbehörde; alle Berichte frei zugänglich.','https://www.bfu-web.de/'),
+src(3,4,2,3,3,'ICAO ADREP – Accident/Incident Reporting','Globales ICAO-Unfallberichtssystem; aggregierte internationale Daten.','Behörden, internationale Forscher',['Web'],'Offiziellste internationale Quelle; Zugang teils eingeschränkt.','https://www.icao.int/safety/airnavigation/AIG/Pages/ADREP.aspx')
+]}]},
+{id:'umw',name:'5. Umweltstatistiken',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M2 20c2-3 4.5-3 6.5-1s4.5 2 6.5-1 4.5-3 6.5-1"/><path d="M2 10c2-3 4.5-3 6.5-1s4.5 2 6.5-1 4.5-3 6.5-1"/></svg>`,
+desc:'CO₂-Ausstoß, Lärmbelastung, Kerosinverbrauch, nachhaltige Kraftstoffe (SAF).',
+subs:[{id:'us',name:'Umweltstatistiken',desc:'',sources:[
+src(5,2,4,5,5,'ICAO EEDB – Emissionsparameter','NOx, CO, HC, Smoke Number, Fuel Flow aller zertifizierten Triebwerke.','Ingenieure, Umweltbehörden, Forscher',['Excel'],'Einzige maschinenlesbare Emissionsdatenbank; Goldstandard für Emissionsanalysen.','https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank'),
+src(5,2,2,5,5,'ICAO Environmental Report – Aviation & Climate Change','CO₂-Ziele, SAF-Potentiale, Technologietrends; umfassender 4-Jahres-Bericht.','Ingenieure, Umweltbehörden, Forscher',['PDF'],'Frei als PDF; sehr guter Überblick; alle 4 Jahre + Zwischenberichte.','https://www.icao.int/environmental-protection/Pages/env2022.aspx'),
+src(5,3,2,5,5,'EASA European Aviation Environmental Report','EU-spezifische Umweltauswirkungen: CO₂, NOx, Lärm, SAF, Klimawirkung.','Behörden, Industrie, Forscher',['PDF'],'Offiziell von EASA; sehr gut strukturiert; frei verfügbar.','https://www.easa.europa.eu/en/domains/environment/eaer'),
+src(5,4,4,5,5,'Our World in Data – CO₂ from Aviation','Langzeittrends zu CO₂-Emissionen der Luftfahrt; international vergleichbar.','Forscher, Journalisten, Studierende',['Web','CSV'],'Open Data; hervorragende Visualisierungen; CC-Lizenz.','https://ourworldindata.org/co2-emissions-from-aviation'),
+src(4,4,3,5,5,'Eurocontrol – Aviation Sustainability Dashboard','CO₂-Emissionen nach Fluggesellschaft, Route, Flugzeugtyp in Europa.','Airlines, Forscher, Behörden',['Web','CSV'],'Interaktives Dashboard; sehr gute Datengranularität; frei zugänglich.','https://www.eurocontrol.int/publication/eurocontrol-think-paper-17-sustainable-aviation-fuels')
+]}]},
+{id:'geo',name:'6. Geografische Kriterien',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+desc:'Statistiken nach Ort oder Region: Europa, Deutschland, einzelne Flughäfen, internationale Vergleiche.',
+subs:[{id:'gs',name:'Geografische Kriterien',desc:'',sources:[
+src(4,4,3,5,5,'Eurostat – Eurostat Air Transport by Airport','Passagiere und Fracht pro europäischem Flughafen; NUTS-Regionen; Quartalsdaten.','Forscher, Analysten, Behörden',['CSV','Excel','API'],'Hervorragende regionale Auflösung; Open Data; API verfügbar.','https://ec.europa.eu/eurostat/databrowser/view/AVIA_PAOA/default/table'),
+src(5,5,4,5,5,'DESTATIS – Flughafen-Statistiken Deutschland','Starts/Landungen, Passagiere, Fracht pro deutschem Flughafen monatlich.','Behörden, Forscher',['CSV','Excel'],'Höchste Verlässlichkeit für Deutschland; Open Data; monatlich.','https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Transport-Verkehr/Personenverkehr/luftverkehr.html'),
+src(3,3,3,3,3,'ACI World Airport Traffic Report','Weltweite Top-Flughäfen nach Passagierzahlen, Fracht, Bewegungen; jährlich.','Airports, Analysten',['PDF'],'Weit verbreitet; teils kostenpflichtig; Kerndaten in Pressemitteilungen frei.','https://aci.aero/data-centre/annual-traffic-data/'),
+src(5,4,4,5,3,'OurAirports – Worldwide Airport Data','Koordinaten, Klassifizierung, Runways, Frequenzen, Nav-Aids für ~70.000 Flughäfen.','Entwickler, Forscher, Aviatiker',['CSV'],'Exzellente Open-Data-Quelle; ideal für Karten und GIS-Anwendungen.','https://ourairports.com/data/')
+]}]},
+{id:'zeit',name:'7. Zeitliche Kriterien',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+desc:'Vergleich über Zeiträume: pro Jahr, pro Monat, vor/nach Corona, Entwicklung über Jahrzehnte.',
+subs:[{id:'zs',name:'Zeitliche Kriterien',desc:'',sources:[
+src(4,5,3,5,3,'Eurocontrol STATFOR – Historical Data','Historische europäische Flugbewegungen ab 1990; Vor/Nach-Corona-Vergleiche.','Airlines, Forscher, Planer',['PDF','Excel'],'Beste Quelle für europäische Langzeittrends; monatlich und jährlich.','https://www.eurocontrol.int/forecasting'),
+src(5,5,4,5,5,'Our World in Data – Long-term Air Travel Trends','Passagiertrends seit 1970 bis heute; internationale Vergleiche über Jahrzehnte.','Forscher, Journalisten, Studierende',['Web','CSV'],'Hervorragende Langzeitdaten; Open Data; sehr gute Visualisierungen.','https://ourworldindata.org/transport'),
+src(5,5,4,5,5,'NTSB – Accident Trends seit 1962','Unfallraten-Entwicklung über Jahrzehnte; Vergleiche nach Flugzeugtyp und Betriebsart.','Sicherheitsforscher',['CSV','Web'],'Längste verfügbare Zeitreihe für US-Unfallstatistiken.','https://www.ntsb.gov/investigations/AccidentReports/Pages/aviation.aspx'),
+src(3,3,3,2,2,'ICAO WATS – 20-Year Trends','20-Jahres-Trendanalysen zu globalem Luftverkehr.','Airlines, Behörden',['PDF','Excel'],'Goldstandard aber kostenpflichtig; Kerndaten oft in kostenlosen ICAO-Publikationen.','https://www.icao.int/sustainability/Pages/air-transport-statistics.aspx')
+]}]},
+{id:'flzg',name:'8. Flugzeugbezogene Kriterien',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+desc:'Statistiken sortiert nach Flugzeugtyp: Passagier, Militar, Drohnen, Fracht.',
+subs:[{id:'fb',name:'Flugzeugbezogene Kriterien',desc:'',sources:[
+src(5,5,4,5,3,'Planespotters.net – Fleet Statistics','Flottenstatistiken nach Airline: aktive Flugzeuge, Durchschnittsalter, Typenzusammensetzung.','Analysten, Enthusiasten',['Web','JSON API'],'Täglich aktualisiert; sehr gute Flottenübersichten; API mit Key.','https://www.planespotters.net/airline'),
+src(5,4,4,5,3,'ICAO Doc 8643 – Aircraft Type Designators','Komplette Typenübersicht aller Luftfahrzeuge mit Wake-Turbulenz-Kategorie und Triebwerksanzahl.','Flugsicherung, Forscher',['Web','PDF'],'Primärquelle für Klassifizierung aller Luftfahrzeugmuster.','https://www.icao.int/publications/doc8643/Pages/default.aspx'),
+src(4,4,3,5,3,'Boeing Orders & Deliveries – By Aircraft Type','Bestellungen und Auslieferungen nach Flugzeugtyp monatlich.','Analysten, Investoren',['Excel','HTML'],'Direkt vom Hersteller; monatlich aktualisiert; frei.','https://www.boeing.com/orders-deliveries'),
+src(4,4,3,5,3,'Airbus Orders & Deliveries – By Aircraft Type','Bestellungen und Auslieferungen nach Flugzeugtyp monatlich.','Analysten, Investoren',['Excel','HTML'],'Direkt vom Hersteller; monatlich aktualisiert; frei.','https://www.airbus.com/en/investors/orders-and-deliveries')
+]}]},
+{id:'betr',name:'9. Betriebsbezogene Kriterien',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+desc:'Wie das Flugzeug eingesetzt wird: Kurzstrecke, Langstrecke, Linienflug, Charterflug.',
+subs:[{id:'bs',name:'Betriebsbezogene Kriterien',desc:'',sources:[
+src(3,4,3,3,3,'IATA Air Passenger Market Analysis – Load Factor & Routes','Load Factor, Auslastung nach Streckentyp (Kurz-/Langstrecke), Linienflug vs. Charter.','Airlines, Analysten',['PDF'],'Monatliche Free-Reports; operative Auslastungsdaten gut aufbereitet.','https://www.iata.org/en/iata-repository/publications/economic-reports/'),
+src(4,4,3,5,3,'Eurocontrol STATFOR – Traffic by Flight Phase','Daten nach Streckentyp, Flugphasen, Betriebsarten in Europa.','Flugsicherungen, Airlines',['Excel','PDF'],'Gut für europäische Betriebsstruktur-Analysen.','https://www.eurocontrol.int/forecasting'),
+src(3,4,2,3,3,'OAG – Airline Schedule Data','Linienflugpläne, Frequenzen, Kapazitäten nach Strecke und Betriebstyp.','Airlines, Analysten',['Excel','API'],'Industriestandard für Schedules; teils kostenpflichtig; Free-Tier verfügbar.','https://www.oag.com/airline-schedules-data'),
+src(5,5,3,5,5,'FlightAware – Historical Flight Data','Historische Flugdaten, Pünktlichkeit, Verspätungsursachen, Betriebsmuster.','Analysten, Forscher',['Web','API'],'Sehr gute Datentiefe; API verfügbar (kostenpflichtig); Web-Daten frei.','https://www.flightaware.com/analysis/')
+]}]}
+]},
+
+// ─────────────────────────────────────────────────────────────────
+"Technische Infos":{cls:'te',clr:'var(--te)',
+desc:'Technische Informationsquellen nach 10 Kriterien: Systembereich, Funktion, Physik, Flugphase, Flugzeugtyp, Antrieb, Wartung, Leistung, Werkstoffe, Automatisierung.',
+sections:[
+{id:'sys',name:'1. Nach dem Systembereich',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+desc:'Welches technische System betrachtet wird: Antrieb, Hydraulik, Elektrik, Avionik, Flugsteuerung, Fahrwerk, Klima.',
+subs:[{id:'sy',name:'Systembereich',desc:'',sources:[
+src(5,3,2,5,5,'EASA CS-25 – Certification Specifications Large Aeroplanes','Alle Flugzeug-Systemanforderungen: Struktur, Avionik, Hydraulik, Elektrik, Kabine.','Ingenieure, Zulassungsbehörden',['PDF'],'Verbindliches Regelwerk; Basis für jede Flugzeugzulassung; Amendment 28 aktuell.','https://www.easa.europa.eu/en/document-library/certification-specifications/cs-25-amendment-28'),
+src(5,3,2,5,5,'FAA FAR Part 25 – Airworthiness Standards','US-Zertifizierungsstandards für Transporflugzeuge; bilateral mit EASA CS-25 harmonisiert.','Ingenieure, Zulassungsbehörden',['Web (eCFR)'],'Frei über eCFR; bilateral mit EASA CS-25 abgestimmt; laufend aktualisiert.','https://www.ecfr.gov/current/title-14/chapter-I/subchapter-C/part-25'),
+src(5,4,3,5,5,'SKYbrary – Aviation Safety Knowledge Base','Technische Artikel zu allen Luftfahrtsystemen, Avionik-Grundlagen, Betriebsverfahren.','Piloten, Ingenieure, Ausbildung',['Web (HTML)'],'Von EUROCONTROL kuratiert; exzellentes Nachschlagewerk; frei zugänglich.','https://skybrary.aero/'),
+src(5,3,3,5,5,'NASA Technical Reports Server (NTRS)','Forschungsberichte zu allen Flugsystemen: Aerodynamik, Avionik, Strukturen, Werkstoffe.','Forscher, Ingenieure',['PDF'],'Goldstandard; Open Access; > 1 Mio. Dokumente.','https://ntrs.nasa.gov/')
+]}]},
+{id:'funk',name:'2. Nach der Funktion',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>`,
+desc:'Steuerung, Energieversorgung, Navigation, Kommunikation, Schuberzeugung, Stabilisierung.',
+subs:[{id:'fu',name:'Funktion',desc:'',sources:[
+src(5,4,3,5,5,'FAA Aeronautical Information Manual (AIM)','Navigation, Kommunikation, Betriebsverfahren – vollständiges US-Luftfahrthandbuch.','Piloten, Ingenieure, Ausbildung',['PDF','Web'],'Offizielles FAA-Handbuch; jährlich aktualisiert; vollständig frei.','https://www.faa.gov/air_traffic/publications/atpubs/aim_html/'),
+src(5,3,2,5,5,'ICAO Annex 10 – Aeronautical Telecommunications','Kommunikationsstandards (VHF, HF, ACARS, SATCOM, ADS-B, Mode S) für die Luftfahrt.','Ingenieure, Flugsicherung, Avionik-Entwickler',['PDF'],'Internationaler Standard; teils kostenpflichtig; Grundlagenwissen in SKYbrary aufbereitet.','https://www.icao.int/Pages/default.aspx'),
+src(5,3,2,5,5,'ICAO Annex 11 – Air Traffic Services','ATC-Verfahren, Separation, Kommunikationsregeln; Grundlage aller ATC-Systeme.','Ingenieure, Flugsicherung, Piloten',['PDF'],'Internationaler Standard; über SKYbrary gut zusammengefasst.','https://www.icao.int/Pages/default.aspx'),
+src(5,4,3,5,5,'EUROCONTROL – Navigation & Communication Standards','europäische Navigation (PBN, RNP, RNAV), Kommunikation (VDL Mode 2).','Flugsicherungen, Ingenieure',['PDF','Web'],'Offizielle europäische Implementierungsdokumente; frei zugänglich.','https://www.eurocontrol.int/aviation-standards')
+]}]},
+{id:'phys',name:'3. Nach physikalischen Größen',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+desc:'Geschwindigkeit, Druck, Temperatur, Schub, Spannung, Strom, Drehzahl.',
+subs:[{id:'ph',name:'Physikalische Größen',desc:'',sources:[
+src(5,2,4,5,5,'ICAO EEDB – Schub, TSFC, BPR, OPR Daten','Technische Parameter: Rated Thrust [kN], TSFC [g/kN/s], BPR, OPR aller zertifizierten Triebwerke.','Ingenieure, Forscher',['Excel'],'Einzige offene maschinenlesbare Quelle für Triebwerks-Physikdaten.','https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank'),
+src(5,4,4,5,5,'NASA Glenn – Propulsion & Physical Data','Thermodynamik der Gasturbine, Strömungsmechanik, Schubgleichungen; frei zugänglich.','Studierende, Ingenieure',['Web','PDF'],'Exzellente Grundlagen-Ressource; von NASA-Experten erstellt; kostenlos.','https://www.grc.nasa.gov/www/k-12/airplane/'),
+src(3,3,2,2,3,'Jane\'s Aero Engines – Physical Parameters','BPR, OPR, Schub, TSFC, Abmessungen, Gewichte aller Triebwerke; umfangreichste Datenbank.','Ingenieure, Behörden, Forscher',['Print','Online'],'Goldstandard; höchste Datentiefe; aber sehr kostspielig; Hochschulbibliothek prüfen.','https://janes.com/janes-aero-engines'),
+src(5,3,3,5,5,'DLR Institut für Antriebstechnik – Forschungsberichte','Thermodynamische Analysen, Effizienzstudien, Emissionsforschung zu Triebwerken.','Forscher, Ingenieure',['PDF'],'Hochwertige deutsche Forschungsberichte; meist frei zugänglich.','https://www.dlr.de/at/')
+]}]},
+{id:'phase',name:'4. Nach der Flugphase',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`,
+desc:'Start, Steigflug, Reiseflug, Sinkflug, Landung.',
+subs:[{id:'fp',name:'Flugphase',desc:'',sources:[
+src(5,4,3,5,5,'FAA AIM – Pilot\'s Handbook of Aeronautical Knowledge','Ausführliche Erklärung aller Flugphasen, Systeme und Verfahren; Standardreferenz.','Piloten, Studierende, Ausbildung',['PDF','Web'],'Offiziell; jährlich aktualisiert; vollständig kostenlos.','https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/phak'),
+src(5,3,2,5,5,'ICAO Doc 8168 – PANS-OPS','Standardverfahren für Instrumentenanflüge, Abflugverfahren, Warteräume; alle Flugphasen.','Flugsicherung, Airlines, Piloten',['PDF'],'Internationaler Standard; kostenpflichtig zu kaufen; Grundlagen in AIM und SKYbrary.','https://store.icao.int/en/pans-ops-doc-8168'),
+src(5,3,2,5,5,'EASA CS-25 – Flight Performance Requirements','Anforderungen an Start-/Landeleistung, Steiggradienten, Reiseflugparameter.','Ingenieure, Zulassungsbehörden',['PDF'],'Verbindliche europäische Leistungsanforderungen nach Flugphase.','https://www.easa.europa.eu/en/document-library/certification-specifications/cs-25-amendment-28'),
+src(5,4,3,5,5,'SKYbrary – Flight Phases Articles','Technische Artikel zu jeder Flugphase: Besonderheiten, typische Fehler, Statistiken.','Piloten, Ingenieure, Ausbildung',['Web'],'Von EUROCONTROL kuratiert; sehr gut verlinkt mit Unfallberichten.','https://skybrary.aero/')
+]}]},
+{id:'ftyp',name:'5. Nach dem Flugzeugtyp',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+desc:'Technische Unterschiede verschiedener Flugzeugtypen: Verkehr, Militär, Segelflugzeuge, Hubschrauber, Drohnen.',
+subs:[{id:'ft',name:'Flugzeugtyp',desc:'',sources:[
+src(5,3,2,5,5,'EASA Type Certificate Data Sheets – Aircraft','Technische Zulassungsparameter für jeden EASA-zugelassenen Flugzeugtyp.','Ingenieure, Behörden',['PDF'],'Primärquelle; ein Dokument pro Flugzeugtyp; frei.','https://www.easa.europa.eu/en/domains/aircraft-products/aircraft/type-certificates'),
+src(5,3,2,5,5,'FAA TCDS – Aircraft','US-Zulassungsparameter; bilateral mit EASA für die meisten Verkehrsflugzeuge.','Ingenieure, Behörden',['PDF'],'US-Primärquelle; frei.','https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/'),
+src(5,4,3,5,3,'ICAO Doc 8643 – All Aircraft Types','Komplette Liste aller bekannten Luftfahrzeugmuster mit ICAO-Code und Klassifizierung.','Flugsicherung, Forscher',['Web','PDF'],'Umfassendste Typen-Übersicht; für alle Klassen (zivil, militärisch, GA).','https://www.icao.int/publications/doc8643/Pages/default.aspx'),
+src(3,3,2,2,3,'Jane\'s All the World\'s Aircraft','Umfassendste Datenbank aller Luftfahrzeugtypen weltweit; jährlich aktualisiert.','Ingenieure, Forscher, Behörden',['Print','Online'],'Goldstandard; höchste Vollständigkeit; kostenpflichtig; Hochschulbibliothek.','https://janes.com/janes-all-the-worlds-aircraft-development-production'),
+src(5,3,2,5,5,'EASA CS-29 / CS-27 – Rotorcraft','Zertifizierungsstandards speziell für große und kleine Hubschrauber.','Ingenieure, Hubschrauber-Hersteller',['PDF'],'Wichtige Ergänzung zu CS-25 für Rotorcraft.','https://www.easa.europa.eu/en/document-library/certification-specifications','Sikorsky_S-92')
+]}]},
+{id:'ant',name:'6. Nach dem Antrieb',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>`,
+desc:'Kolbenmotor, Turbofan, Turboprop, Elektroantrieb, Raketentriebwerk.',
+subs:[{id:'an',name:'Antrieb',desc:'',sources:[
+src(5,2,4,5,5,'ICAO EEDB – Alle Triebwerkstypen','Emissionen und techn. Parameter für alle Triebwerksklassen (Kolben, Turboprop, Turbofan, Turbojet).','Ingenieure, Umweltbehörden',['Excel'],'Einzige Quelle die alle zertifizierten Typen abdeckt; maschinenlesbar.','https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank'),
+src(5,3,2,5,5,'EASA CS-E – Triebwerkszertifizierung','Technische Anforderungen für alle Triebwerksarten (Turbofan, Turboprop, Kolben, Elektro).','Ingenieure, Hersteller',['PDF'],'Verbindliches Regelwerk; alle Triebwerksklassen abgedeckt.','https://www.easa.europa.eu/en/document-library/certification-specifications/cs-e-amendment-6'),
+src(5,3,2,5,5,'FAA FAR Part 33 – Aircraft Engines','US-Triebwerkszertifizierungsstandards für alle Triebwerkstypen.','Ingenieure, Hersteller',['Web (eCFR)'],'Frei über eCFR; bilateral mit EASA CS-E harmonisiert.','https://www.ecfr.gov/current/title-14/chapter-I/subchapter-C/part-33'),
+src(5,4,3,5,5,'SKYbrary – Engine Types Overview','Technische Erklärungen und Vergleiche aller Triebwerkstypen; sehr zugänglich.','Piloten, Studierende, Ingenieure',['Web'],'Hervorragender Einstiegspunkt; alle Typen verglichen; frei.','https://skybrary.aero/articles/jet-engine')
+]}]},
+{id:'wart',name:'7. Nach der Wartung',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+desc:'Verschleißdaten, Fehlerdiagnose, Inspektionsintervalle, Ausfallwahrscheinlichkeit.',
+subs:[{id:'wa',name:'Wartung',desc:'',sources:[
+src(5,4,4,5,5,'FAA Advisory Circular AC 43.13 – Aircraft Inspection & Repair','Standardwerk für Inspektion, Reparatur und Änderung von Luftfahrzeugen; vollständig frei.','Techniker, Ingenieure',['PDF'],'Wichtigstes US-Wartungshandbuch-Referenzwerk; vollständig kostenlos.','https://www.faa.gov/regulations_policies/advisory_circulars/index.cfm/go/document.information/documentID/99861'),
+src(5,3,2,5,5,'EASA Part-145 – Maintenance Organisation Requirements','Anforderungen an Wartungsorganisationen in Europa; Grundlage für alle MRO-Betriebe.','Wartungsorganisationen, Ingenieure',['PDF'],'Verbindlich für alle europäischen MRO-Betriebe; frei zugänglich.','https://www.easa.europa.eu/en/document-library/regulations/commission-regulation-eu-no-13212014'),
+src(3,3,2,2,3,'Airbus – Aircraft Characteristics for Maintenance','Technische Datendokumente zur Instandhaltung für alle Airbus-Muster.','Wartungstechniker, Ingenieure',['PDF'],'Teils öffentlich zugänglich; detaillierte Wartungsdaten für Airbus-Flotten.','https://www.airbus.com/en/aircraft/support-and-services/aircraft-maintenance'),
+src(3,3,2,2,3,'Boeing – Maintenance Planning Data (MPD)','Inspektionsintervalle, Aufgabenkarten, Schwellenwerte für alle Boeing-Muster.','Wartungstechniker',['PDF'],'Offiziellste Boeing-Wartungsquelle; Zugang teils registrierungspflichtig.','https://www.boeing.com/services/maintenance'),
+src(5,3,3,5,5,'NTSB – Maintenance-Related Accident Reports','Unfallberichte mit Wartungsmängeln als Ursache; Lernmaterial für die Industrie.','Sicherheitsforscher, Ingenieure',['PDF','Web'],'Wertvolle Praxisbeispiele aus Wartungsfehlern; frei zugänglich.','https://www.ntsb.gov/investigations/AccidentReports/Pages/aviation.aspx')
+]}]},
+{id:'leist',name:'8. Nach Leistungsdaten',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>`,
+desc:'Reichweite, maximale Geschwindigkeit, Nutzlast, Flughöhe, Gleitzahl.',
+subs:[{id:'le',name:'Leistungsdaten',desc:'',sources:[
+src(5,3,2,5,5,'EASA TCDS – Performance Data','MTOW, MLW, Betriebsgrenzen, Triebwerksleistung aus Zulassungsdatenblättern.','Ingenieure, Behörden',['PDF'],'Verbindliche Primärquelle; ein Dokument pro zugelassenem Flugzeugmuster.','https://www.easa.europa.eu/en/domains/aircraft-products/aircraft/type-certificates'),
+src(5,4,3,5,3,'Airbus Airport & Technical Data','Payload-Range-Diagramme, Startleistungen, Runway-Anforderungen für alle Airbus-Muster.','Ingenieure, Airport Planner',['PDF'],'Sehr gute Performance-Dokumentation; frei zugänglich; Aircraft Characteristics.','https://www.airbus.com/en/products-services/commercial-aircraft/the-life-of-an-aircraft/airport-operations-and-technical-data'),
+src(5,4,3,5,3,'Boeing Airplane Characteristics for Airport Planning','Payload-Range, Startleistungen, Wenderadien, Rollbahn-Anforderungen.','Ingenieure, Airport Planner',['PDF'],'Exzellente Dokumentation; frei; detaillierter als manche TCDS-Angaben.','https://www.boeing.com/commercial/airports/plan_manuals.page'),
+src(3,3,2,2,3,'Jane\'s All the World\'s Aircraft – Performance Data','Reichweite, Geschwindigkeit, Flughöhe, Nutzlast aller Muster; jährlich aktualisiert.','Ingenieure, Forscher',['Print','Online'],'Vollständigste Leistungsdatenbank; aber sehr kostspielig.','https://janes.com/janes-all-the-worlds-aircraft-development-production')
+]}]},
+{id:'werk',name:'9. Nach Werkstoffen & Struktur',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>`,
+desc:'Aluminium, Titan, CFK (Kohlefaser), Tragflächenstruktur, Rumpfaufbau.',
+subs:[{id:'wk',name:'Werkstoffe & Struktur',desc:'',sources:[
+src(5,3,2,5,5,'EASA CS-25 – Structural Requirements','Europäische Strukturanforderungen: Festigkeit, Ermüdung, Damage Tolerance, Druckrumpf.','Ingenieure, Zulassungsbehörden',['PDF'],'Verbindliches Regelwerk; Basis für alle Strukturnachweise.','https://www.easa.europa.eu/en/document-library/certification-specifications/cs-25-amendment-28'),
+src(5,4,3,5,5,'NASA Materials and Structures Research','Forschungsberichte zu Verbundwerkstoffen, Aluminium-Legierungen, Ermüdungsverhalten in Luftfahrtanwendungen.','Forscher, Ingenieure',['PDF'],'Open Access; umfangreiche Materialforschung aus NASA-Programmen.','https://ntrs.nasa.gov/'),
+src(5,3,2,5,5,'DLR Institut für Faserverbundleichtbau und Adaptronik','CFK-Forschung, Strukturentwicklung, Leichtbau für Luft- und Raumfahrt.','Forscher, Ingenieure',['Web','PDF'],'Deutsche Spitzenforschung zu CFK und Leichtbauwerkstoffen; frei zugänglich.','https://www.dlr.de/fa/'),
+src(3,3,2,2,3,'Beuth Verlag – DIN Luft- und Raumfahrt-Normen','Werkstoffnormen (DIN 65xxx), Fertigungsnormen für Luft- und Raumfahrtbauteile.','Ingenieure, QA',['Print','Online'],'Verbindliche Werkstoffnormen; kostenpflichtig; in Hochschulbibliotheken zugänglich.','https://www.beuth.de/')
+]}]},
+{id:'auto',name:'10. Nach dem Automatisierungsgrad',icon:`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8l3 3-3 3M13 11h4"/></svg>`,
+desc:'Manuelle Steuerung, Fly-by-Wire, Autopilot, autonome Systeme.',
+subs:[{id:'au',name:'Automatisierungsgrad',desc:'',sources:[
+src(3,3,2,2,3,'RTCA DO-178C – Software Considerations in Airborne Systems','Zertifizierungsstandard für Luftfahrtsoftware: DAL A–E, Softwareentwicklungsprozesse.','Softwareingenieure, Avionik-Entwickler',['PDF'],'Goldstandard für sicherheitskritische Luftfahrtsoftware; kostenpflichtig.','https://www.rtca.org/content/do-178c','DO-178C'),
+src(3,3,2,2,3,'RTCA DO-160G – Environmental Conditions Airborne Equipment','Umgebungsbedingungen und Prüfverfahren für Avionik: Vibration, Temperatur, EMV.','Avionik-Ingenieure, Hersteller',['PDF'],'Standard für Hardware-Qualifikation; komplementär zu DO-178C; kostenpflichtig.','https://www.rtca.org/content/do-160g','RTCA_DO-160'),
+src(3,3,2,2,3,'ARINC 429 – Digital Information Transfer System','Avionik-Datenbusstandard: 32-Bit-Wörter, Simplex, 12,5/100 kBit/s; in allen Airlinern.','Avionik-Ingenieure, Entwickler',['Dokument'],'Dominierende Datenbus-Architektur in kommerzieller Avionik; kostenpflichtig.','https://www.aviation-ia.com/arinc/specifications'),
+src(5,4,3,5,5,'MIL-STD-1553B – Military Avionics Data Bus','Militärischer Avionik-Datenbusstandard: 1 Mbit/s, Command/Response; frei zugänglich.','Avionik-Ingenieure, Militär',['PDF'],'Frei zugänglich; Standard für militärische Avionik weltweit; Vergleich mit ARINC 429.','https://quicksearch.dla.mil/qsDocDetails.aspx?ident_number=36512','MIL-STD-1553'),
+src(5,3,2,5,5,'FAA AC 25.1309 – System Safety Assessment','Methoden für Systemsicherheitsbewertung und Fehleranalyse (FTA, FMEA) in Flugzeugen.','Ingenieure, Zulassungsbehörden',['PDF'],'Wichtigstes Dokument für Systemsicherheitsanalysen; frei zugänglich.','https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgAdvisoryCircular.nsf/0/'),
+src(5,3,2,5,5,'EASA CS-25 – FBW & Automated Systems Requirements','Anforderungen an Fly-by-Wire, Autopilot, automatische Flugsteuerungssysteme in CS-25.','Ingenieure, Entwickler',['PDF'],'Verbindliches Regelwerk; FBW-Anforderungen in Subpart B/C/F.','https://www.easa.europa.eu/en/document-library/certification-specifications/cs-25-amendment-28')
+]}]}
+]}
+};
+
+// ─────────────────────────────────────────────────────────────────
+// UI STATE
+var activeCat=null;
+
+function goHome(){
+  document.getElementById('vHome').classList.remove('hide');
+  document.getElementById('vDetail').classList.add('hide');
+  document.getElementById('tbCr').textContent='Übersicht';
+  document.getElementById('dSrch').value='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function loadCat(cat){
+  activeCat=cat;
+  const d=CAT[cat];
+  document.getElementById('vHome').classList.add('hide');
+  document.getElementById('vDetail').classList.remove('hide');
+  document.getElementById('dTitle').textContent=cat;
+  document.getElementById('dDesc').textContent=d.desc;
+  document.getElementById('tbCr').innerHTML=`<b>${cat}</b>`;
+  document.getElementById('dSrch').value='';
+  document.getElementById('dSort').value='def';
+
+  // count stats
+  const isAcCat=(activeCat==='Flugzeuge');
+  let total=0,free=0,pub=0;
+  d.sections.forEach(sec=>{
+    sec.subs.forEach(sub=>{
+      (sub.aircraft||sub.sources).forEach(s=>{
+        total++;
+        if(s.k>=4)free++;
+        if(s.l>=4)pub++;
+      });
+    });
+  });
+  const cv=d.clr;
+  if(isAcCat){
+    document.getElementById('dStats').innerHTML=`
+      <div class="ds"><div class="ds-n" style="color:${cv}">${total}</div><div class="ds-l">Flugzeuge</div></div>
+      <div class="ds"><div class="ds-n" style="color:var(--en)">Tab.6.2</div><div class="ds-l">Quelle</div></div>
+      <div class="ds"><div class="ds-n" style="color:var(--st)">★</div><div class="ds-l">Bewertet</div></div>`;
+  } else {
+    document.getElementById('dStats').innerHTML=`
+      <div class="ds"><div class="ds-n" style="color:${cv}">${total}</div><div class="ds-l">Quellen</div></div>
+      <div class="ds"><div class="ds-n" style="color:var(--st)">${free}</div><div class="ds-l">Kostenlos</div></div>
+      <div class="ds"><div class="ds-n" style="color:var(--ac)">${pub}</div><div class="ds-l">Open / Public</div></div>`;
+  }
+
+  renderAccordion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function filterAll(){
+  renderAccordion();
+}
+
+function renderAccordion(){
+  if(!activeCat)return;
+  const d=CAT[activeCat];
+  const srch=document.getElementById('dSrch').value.toLowerCase();
+  const srt=document.getElementById('dSort').value;
+  const cls=d.cls;
+  const dotClr=d.clr;
+  var totalShown=0;
+
+  const html=d.sections.map((sec,si)=>{
+    const subsHtml=sec.subs.map((sub,sbi)=>{
+      const isAC=!!sub.aircraft;
+      let sources=[...(sub.aircraft||sub.sources)];
+      if(srch)sources=sources.filter(s=>[s.n,s.d,s.h||'',s.z||'',s.b||'',(s.f||[]).join(' ')].join(' ').toLowerCase().includes(srch));
+      if(srt==='az')sources.sort((a,b)=>a.n.localeCompare(b.n));
+      else if(srt==='rat')sources.sort((a,b)=>b.avg-a.avg);
+      else if(!isAC&&srt==='fre')sources.sort((a,b)=>b.k-a.k);
+      if(!sources.length&&srch)return'';
+      totalShown+=sources.length;
+      if(isAC){
+        const acHtml=sources.map((ac,i)=>{
+          const id=`ac-${si}-${sbi}-${i}`;
+          const stars=starsHtml(ac.avg);
+          const spHtml=(ac.specs||[]).map(([l,v])=>`<div class="ac-sp"><div class="ac-sl">${l}</div><div class="ac-sv">${v}</div></div>`).join('');
+          return`<div class="ac-card" style="animation-delay:${Math.min(i*.05,.5)}s">
+  <div class="ac-img-w" style="background:linear-gradient(140deg,var(--s2),var(--s3))">
+    <div class="ac-ph">
+      <svg viewBox="0 0 24 24" stroke-width="1.3" fill="none" stroke="var(--pl)" opacity="0.35" width="36" height="36"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+      <span style="font-size:12px;font-weight:700;color:var(--tx);text-align:center;max-width:90%;line-height:1.3">${ac.n}</span>
+      <span style="font-size:9px;color:var(--mu);letter-spacing:.1em">${ac.erstflug}</span>
+    </div>
+    <div class="ac-bdg"><span class="ac-b ac-b-mfr">${ac.h}</span><span class="ac-b ac-b-yr">✈ ${ac.erstflug}</span></div>
+    ${ac.cs?`<span class="ac-cs-tag">${ac.cs}</span>`:''}
+  </div>
+  <div class="ac-body">
+    <div class="ac-name">${ac.n}</div>
+    <div class="ac-ksr">
+      <div class="ac-ks"><div class="ac-ksv">${ac.ks[0]}</div><div class="ac-ksl">Spannw.</div></div>
+      <div class="ac-ks"><div class="ac-ksv">${ac.ks[1]}</div><div class="ac-ksl">MTOW</div></div>
+      <div class="ac-ks"><div class="ac-ksv">${ac.ks[2]}</div><div class="ac-ksl">Kap.</div></div>
+    </div>
+    <div class="ac-rat-r"><div class="ac-st">${stars}</div><span class="ac-rv">${ac.avg.toFixed(1)}</span></div>
+  </div>
+  <button class="ac-tog" id="btn-${id}" onclick="toggleAc('${id}')">
+    Daten aus Mensen Tab. 6.2 <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="ac-det" id="bod-${id}">
+    <span class="tab62">📖 Mensen Tab. 6.2 / §${sub.id.includes('nb')||sub.id.includes('wb')?'6.4.1':sub.id.includes('fracht')||sub.id.includes('freighter')||sub.id.includes('belly')?'6.4.2/6.4.3':'6.2'}</span>
+    <div class="ac-ddesc">${ac.d}</div>
+    <div class="ac-specs">${spHtml}</div>
+    <div class="ac-rsec">
+      <div class="ac-rlbl">Bewertung</div>
+      ${rBar('Bedeutung',ac.bed,dotClr)}
+      ${rBar('Technologie',ac.tech,dotClr)}
+      ${rBar('Effizienz',ac.eff,dotClr)}
+      ${rBar('Verbreitung',ac.verb,dotClr)}
+      ${rBar('Sicherheit',ac.sich,dotClr)}
+    </div>
+    ${ac.yt?`<div class="ac-video-row">
+      <button class="vid-chip vid-yt" onclick="openYT(this,'${ac.yt}','documentary')">▶ Dokumentation</button>
+      <button class="vid-chip vid-yt" onclick="openYT(this,'${ac.yt}','cockpit view')">🎮 Cockpit</button>
+      <button class="vid-chip vid-yt" onclick="openYT(this,'${ac.yt}','takeoff landing')">✈ Takeoff/Landing</button>
+      <a href="https://www.pexels.com/search/videos/${encodeURIComponent(ac.yt.split('+')[0])}/" target="_blank" rel="noopener" class="vid-chip vid-px">🎬 Pexels Videos</a>
+      <a href="https://pixabay.com/videos/search/${encodeURIComponent(ac.yt.split('+')[0])}/" target="_blank" rel="noopener" class="vid-chip vid-px2">🎥 Pixabay</a>
+    </div>
+    <div class="vid-frame-wrap"></div>`:''}
+    ${ac.u?`<a href="${ac.u}" target="_blank" rel="noopener" class="lbtn l${cls}">Zur offiziellen Website <svg viewBox="0 0 24 24" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`:''}
+  </div>
+</div>`;
+        }).join('');
+        const grid=acHtml?`<div class="ac-grid">${acHtml}</div>`:`<div class="nores"><p>Keine Treffer.</p></div>`;
+        return`<div class="asub">
+  <div class="asub-hd" onclick="toggleSub(this)">
+    <span class="asub-dot" style="background:${dotClr}"></span>
+    <span class="asub-name">${sub.name}</span>
+    <span class="asub-cnt">${sources.length} Flugzeuge</span>
+    <svg class="asub-arr" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="asub-body">
+    ${sub.desc?`<div class="asub-desc"><span class="mensen-ref"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Mensen §6/Tab.6.2</span> ${sub.desc}</div>`:''}
+    <div>${grid}</div>
+  </div>
+</div>`;
+      }
+      const srcHtml=sources.map((s,i)=>{
+        const stars=starsHtml(s.avg);
+        const cost=s.k>=4?`<span class="bdg bfr">✓ Kostenlos</span>`:(s.k===3?`<span class="bdg bmi">~ Teils frei</span>`:`<span class="bdg bpa">€ Kostenpflichtig</span>`);
+        const fmts=(s.f||[]).map(x=>`<span class="ftag">${x}</span>`).join('');
+        const id=`src-${si}-${sbi}-${i}`;
+        const hasLink=s.u&&s.u.startsWith('http');
+        return`<div class="src" style="animation-delay:${Math.min(i*.04,.5)}s">
+  <div class="src-photo" data-wiki="${s.wiki}" onclick="event.stopPropagation();window._pendingPhoto='${s.wiki}'" title="${s.n}">
+    <div class="src-photo-ph"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+  </div>
+  <div class="src-top">
+    <div class="src-num">${String(i+1).padStart(2,'0')}</div>
+    <div class="src-main">
+      <div class="src-name">${s.n}</div>
+      <div class="src-aud">${s.z}</div>
+    </div>
+    <div class="src-right">
+      <div class="stars">${stars}<span class="rat-val">${s.avg.toFixed(1)}</span></div>
+      ${cost}
+    </div>
+  </div>
+  <button class="src-toggle" id="btn-${id}" onclick="toggleSrc('${id}')">
+    Details & Bewertung ansehen <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="src-bod" id="bod-${id}">
+    <div class="src-desc">${s.d}</div>
+    <div class="mg">
+      <div class="mc"><div class="ml">Verfügbarkeit</div><div class="mv">${verfLabel(s.v)}</div></div>
+      <div class="mc"><div class="ml">Aktualität</div><div class="mv">${aktLabel(s.a)}</div></div>
+      <div class="mc"><div class="ml">Format</div><div class="mv">${fmtLabel(s.fm)}</div></div>
+      <div class="mc"><div class="ml">Lizenz</div><div class="mv">${lizLabel(s.l)}</div></div>
+    </div>
+    <div class="rat-bars">
+      <div class="rat-bars-lbl">Bewertung im Detail</div>
+      ${rBar('Verfügbarkeit',s.v,dotClr)}
+      ${rBar('Aktualität',s.a,dotClr)}
+      ${rBar('Format',s.fm,dotClr)}
+      ${rBar('Kosten',s.k,dotClr)}
+      ${rBar('Lizenz',s.l,dotClr)}
+    </div>
+    ${s.b?`<div class="src-note">${s.b}</div>`:''}
+    <div class="fmts"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${fmts}</div>
+    ${hasLink?`<a href="${s.u}" target="_blank" rel="noopener" class="lbtn l${cls}">Zur offiziellen Website <svg viewBox="0 0 24 24" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`:`<span class="lbtn lna">Kein Link verfügbar</span>`}
+  </div>
+</div>`;
+      }).join('');
+      if(!srcHtml&&srch)return'';
+      return`<div class="asub">
+  <div class="asub-hd" onclick="toggleSub(this)">
+    <span class="asub-dot" style="background:${dotClr}"></span>
+    <span class="asub-name">${sub.name}</span>
+    <span class="asub-cnt">${sources.length} Quellen</span>
+    <svg class="asub-arr" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="asub-body">${sub.desc?`<div class="asub-desc">${sub.desc}</div>`:''}<div class="src-grid">${srcHtml||'<div class="nores"><p>Keine Treffer.</p></div>'}</div></div>
+</div>`;
+    }).join('');
+
+    if(!subsHtml.trim()&&srch)return'';
+    return`<div class="asec">
+  <div class="asec-hd" onclick="toggleSec(this)">
+    <div class="asec-ico" style="background:rgba(${clrRgb(d.cls)},0.08)">${sec.icon.replace('fill="none"','fill="none" stroke="'+d.clr+'"')}</div>
+    <span class="asec-label">${sec.name}</span>
+    <span class="asec-meta">${sec.subs.length} Untergruppe${sec.subs.length!==1?'n':''}</span>
+    <svg class="asec-arr" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="asec-body">${sec.desc?`<div class="asec-desc">${sec.desc}</div>`:''}<div>${subsHtml}</div></div>
+</div>`;
+  }).join('');
+
+  document.getElementById('accWrap').innerHTML=html;
+  setTimeout(loadAllPhotos, 150);
+  if(activeCat==='Flugzeuge')setTimeout(initWikiImages,50);
+  setTimeout(initTilt,80)||(srch?`<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Quellen gefunden.</p></div>`:'');
+  document.getElementById('dCnt').textContent=totalShown;
+}
+
+function clrRgb(cls){return{pl:'6,182,212',en:'245,158,11',st:'16,185,129',te:'139,92,246'}[cls]||'59,130,246'}
+
+function starsHtml(avg){
+  let h='';
+  for(let i=1;i<=5;i++){
+    if(avg>=i)h+=`<span class="star f">★</span>`;
+    else if(avg>=i-.5)h+=`<span class="star h">★</span>`;
+    else h+=`<span class="star e">☆</span>`;
+  }
+  return h;
+}
+
+function rBar(name,val,clr){
+  const pct=Math.round((val/5)*100);
+  return`<div class="rb"><span class="rb-name">${name}</span><div class="rb-track"><div class="rb-fill" style="width:${pct}%;background:${clr}"></div></div><span class="rb-val">${val}/5</span></div>`;
+}
+
+function verfLabel(v){return['','Sehr eingeschränkt','Eingeschränkt (B2B)','Teils öffentlich','Öffentlich zugänglich','Vollständig Open Data'][v]||v}
+function aktLabel(a){return['','Selten aktualisiert','Jährlich','Quartal / AIRAC','Monatlich','Täglich'][a]||a}
+function fmtLabel(f){return['','Nur Print','Nur PDF','PDF + Web','Excel / CSV / API','API / Open Data'][f]||f}
+function lizLabel(l){return['','Streng proprietär','Proprietär','Proprietär, freier Zugang','Public/offen','Public Domain / CC'][l]||l}
+
+function toggleAc(id){
+  const bod=document.getElementById('bod-'+id);
+  const btn=document.getElementById('btn-'+id);
+  bod.classList.toggle('open');
+  btn.classList.toggle('open');
+  btn.innerHTML=bod.classList.contains('open')
+    ?'Daten ausblenden <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'
+    :'Daten aus Mensen Tab. 6.2 <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+}
+function toggleSec(el){
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+function toggleSub(el){
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+function toggleSrc(id){
+  const bod=document.getElementById('bod-'+id);
+  const btn=document.getElementById('btn-'+id);
+  bod.classList.toggle('open');
+  btn.classList.toggle('open');
+  btn.innerHTML=bod.classList.contains('open')
+    ?'Details ausblenden <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'
+    :'Details & Bewertung ansehen <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+}
+
+// ── Wikipedia dynamic image loading ──────────────────────────────────────
+async function loadWikiImg(el){
+  const wiki = el.dataset.wiki;
+  if(!wiki) return;
+  try{
+    const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`);
+    if(!r.ok) return;
+    const d = await r.json();
+    const src = d.thumbnail?.source;
+    if(!src) return;
+    const bigSrc = src.replace(/\/\d+px-/, '/500px-');
+    const img = document.createElement('img');
+    img.className = 'ac-img';
+    img.alt = wiki;
+    img.src = bigSrc;
+    img.onerror = ()=>{};
+    el.innerHTML = '';
+    img.style.cursor = 'zoom-in';
+    el.appendChild(img);
+    el.onclick = function(){ openPhoto3D(img.src, el.closest('.ac-card')?.querySelector('.ac-name')?.textContent||''); };
+    // re-add badges
+    if(el.dataset.mfr){
+      const bdg = document.createElement('div');
+      bdg.className='ac-bdg';
+      bdg.innerHTML=`<span class="ac-b ac-b-mfr">${el.dataset.mfr}</span><span class="ac-b ac-b-yr">✈ ${el.dataset.yr}</span>`;
+      el.appendChild(bdg);
+    }
+    if(el.dataset.cs){
+      const cs = document.createElement('span');
+      cs.className='ac-cs-tag';
+      cs.textContent=el.dataset.cs;
+      el.appendChild(cs);
+    }
+  }catch(e){}
+}
+function initWikiImages(){
+  document.querySelectorAll('.ac-img-w[data-wiki]').forEach(el=>{
+    el.querySelector('.ac-ph')?.classList.add('loading');
+    loadWikiImg(el);
+  });
+}
+
+
+// ══ 3D PHOTO MODAL ══════════════════════════════════════════════════════
+var _pmodal = null;
+
+function openPhoto3D(src, title) {
+  if (!src || src === '') return;
+  closePhoto3D();
+  var m = document.createElement('div');
+  m.className = 'pmodal';
+  m.id = '_pmod';
+  m.innerHTML =
+    '<div class="pmodal-bg" onclick="closePhoto3D()"></div>' +
+    '<div class="pmodal-wrap">' +
+      '<div class="pmodal-title">' + (title||'') + '</div>' +
+      '<div class="p3d-stage" id="_p3s">' +
+        '<img class="p3d-img" id="_p3i" src="' + src + '" alt="' + (title||'') + '">' +
+      '</div>' +
+      '<div class="pmodal-hint">' +
+        '🖱 Ziehen → 3D-Rotation &nbsp;|&nbsp; Scroll → Zoom &nbsp;|&nbsp; Doppelklick → Reset &nbsp;|&nbsp; Touch unterstützt' +
+      '</div>' +
+      '<div class="p3d-indicator">' +
+        '<span class="p3d-axis" id="_pX">X: 0°</span>' +
+        '<span class="p3d-axis" id="_pY">Y: 0°</span>' +
+        '<span class="p3d-axis" id="_pZ">Zoom: 1.0×</span>' +
+      '</div>' +
+      '<div class="pmodal-btns">' +
+        '<button class="pmodal-btn" onclick="resetPhoto3D()">↺ Reset</button>' +
+        '<button class="pmodal-btn" onclick="autoSpin()">▶ Auto-Spin</button>' +
+        '<button class="pmodal-btn" onclick="closePhoto3D()">✕ Schließen</button>' +
+      '</div>' +
+      '<button class="pmodal-close" onclick="closePhoto3D()">×</button>' +
+    '</div>';
+  document.body.appendChild(m);
+  _pmodal = m;
+  setTimeout(function(){ m.classList.add('open'); }, 10);
+
+  var img = document.getElementById('_p3i');
+  var rotX = 0, rotY = 0, scale = 1;
+  var drag = false, lx = 0, ly = 0;
+  var vx = 0, vy = 0, rafId = null, spinning = false, spinRaf = null;
+
+  function upd() {
+    img.style.transform = 'perspective(900px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale(' + scale + ')';
+    var xEl = document.getElementById('_pX');
+    var yEl = document.getElementById('_pY');
+    var zEl = document.getElementById('_pZ');
+    if(xEl) xEl.textContent = 'X: ' + Math.round(rotX) + '°';
+    if(yEl) yEl.textContent = 'Y: ' + Math.round(rotY) + '°';
+    if(zEl) zEl.textContent = 'Zoom: ' + scale.toFixed(1) + '×';
+  }
+
+  function momentum() {
+    if (Math.abs(vx) < 0.01 && Math.abs(vy) < 0.01) return;
+    rotY += vx; rotX -= vy;
+    vx *= 0.93; vy *= 0.93;
+    upd(); rafId = requestAnimationFrame(momentum);
+  }
+
+  var stage = document.getElementById('_p3s');
+
+  stage.addEventListener('mousedown', function(e) {
+    drag = true; lx = e.clientX; ly = e.clientY;
+    vx = 0; vy = 0;
+    cancelAnimationFrame(rafId);
+    if(spinning){ spinning = false; cancelAnimationFrame(spinRaf); }
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!drag) return;
+    var dx = e.clientX - lx, dy = e.clientY - ly;
+    vx = dx * 0.45; vy = dy * 0.45;
+    rotY += vx; rotX -= vy;
+    lx = e.clientX; ly = e.clientY;
+    upd();
+  });
+  document.addEventListener('mouseup', function() {
+    if (!drag) return;
+    drag = false;
+    rafId = requestAnimationFrame(momentum);
+  });
+
+  stage.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    scale = Math.max(0.4, Math.min(6, scale * (e.deltaY > 0 ? 0.92 : 1.09)));
+    upd();
+  }, {passive: false});
+
+  img.addEventListener('dblclick', resetPhoto3D);
+
+  // Touch
+  var lt0 = 0, lt1 = 0, ltd = 0;
+  stage.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    spinning = false; cancelAnimationFrame(spinRaf);
+    if(e.touches.length === 1){ lt0 = e.touches[0].clientX; lt1 = e.touches[0].clientY; }
+    else if(e.touches.length === 2){
+      ltd = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    }
+  }, {passive:false});
+  stage.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    if(e.touches.length === 1){
+      var dx = e.touches[0].clientX-lt0, dy = e.touches[0].clientY-lt1;
+      rotY += dx*0.5; rotX -= dy*0.5;
+      lt0 = e.touches[0].clientX; lt1 = e.touches[0].clientY;
+      upd();
+    } else if(e.touches.length === 2){
+      var d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+      scale = Math.max(0.4, Math.min(6, scale*(d/ltd)));
+      ltd = d; upd();
+    }
+  }, {passive:false});
+
+  window.resetPhoto3D = function() { rotX=0; rotY=0; scale=1; vx=0; vy=0; spinning=false; cancelAnimationFrame(spinRaf); upd(); };
+  window.autoSpin = function() {
+    if(spinning){ spinning=false; cancelAnimationFrame(spinRaf); return; }
+    spinning = true;
+    (function step(){ if(!spinning) return; rotY+=0.5; upd(); spinRaf=requestAnimationFrame(step); })();
+  };
+  upd();
+}
+
+window.closePhoto3D = function() {
+  if(!_pmodal) return;
+  _pmodal.classList.remove('open');
+  var m = _pmodal; _pmodal = null;
+  setTimeout(function(){ m && m.remove(); }, 300);
+};
+
+// Keyboard: Escape
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closePhoto3D(); });
+
+// ══ CARD 3D TILT ════════════════════════════════════════════════════════
+function applyTilt(card, e) {
+  var r = card.getBoundingClientRect();
+  var x = (e.clientX - r.left) / r.width  - 0.5;
+  var y = (e.clientY - r.top)  / r.height - 0.5;
+  card.style.transform = 'perspective(700px) rotateX(' + (-y*10) + 'deg) rotateY(' + (x*10) + 'deg) translateZ(6px)';
+}
+function removeTilt(card) { card.style.transform = ''; }
+
+function initTilt() {
+  document.querySelectorAll('.ac-card, .src').forEach(function(c) {
+    c.addEventListener('mousemove', function(e){ applyTilt(c, e); });
+    c.addEventListener('mouseleave', function(){ removeTilt(c); });
+  });
+}
+
+
+
+// ═══════════════════════════════════════════════════════════════════
+// AUTO PHOTO LOADER — Wikipedia pageimages API (CORS: origin=*)
+// Works when served from any web server (GitHub Pages, localhost, etc.)
+// ═══════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════
+// IMAGES: Wikimedia Commons Special:FilePath + API-Suche
+// Funktioniert von jeder Domain (file://, GitHub Pages, localhost)
+// ═══════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════
+// BILDER: Wikipedia pageimages API
+// → Gibt immer das richtige Bild zurück (kein Dateiname raten)
+// → Funktioniert von GitHub Pages und localhost
+// ═══════════════════════════════════════════════════════
+var _imgCache = {};
+
+var WIKI_TITLES = {
+  'Wright Flyer': 'Wright_Flyer',
+  'Blériot XI': 'Blériot_XI',
+  'Junkers Ju 52/3m': 'Junkers_Ju_52',
+  'Douglas DC-3': 'Douglas_DC-3',
+  'Douglas DC-3 (C-47 Dakota)': 'Douglas_DC-3',
+  'Lockheed Constellation': 'Lockheed_Constellation',
+  'De Havilland Comet': 'De_Havilland_Comet',
+  'Boeing 707': 'Boeing_707',
+  'Boeing 727': 'Boeing_727',
+  'Boeing 737': 'Boeing_737',
+  'Airbus A320': 'Airbus_A320',
+  'Boeing 747': 'Boeing_747',
+  'Boeing 747 Freighter': 'Boeing_747',
+  'Concorde': 'Concorde',
+  'Airbus A380': 'Airbus_A380',
+  'Boeing 787 Dreamliner': 'Boeing_787_Dreamliner',
+  'Airbus A350 XWB': 'Airbus_A350',
+  'Airbus A320neo': 'Airbus_A320neo_family',
+  'Cessna 172 Skyhawk': 'Cessna_172',
+  'ATR 72-600': 'ATR_72',
+  'Fokker Dr.I Dreidecker': 'Fokker_Dr.I',
+  'Supermarine Spitfire': 'Supermarine_Spitfire',
+  'Messerschmitt Bf 109': 'Messerschmitt_Bf_109',
+  'North American P-51 Mustang': 'North_American_P-51_Mustang',
+  'Boeing B-17 Flying Fortress': 'Boeing_B-17_Flying_Fortress',
+  'Messerschmitt Me 262': 'Messerschmitt_Me_262',
+  'North American F-86 Sabre': 'North_American_F-86_Sabre',
+  'MiG-21': 'Mikoyan-Gurevich_MiG-21',
+  'Lockheed SR-71 Blackbird': 'Lockheed_SR-71_Blackbird',
+  'F-15 Eagle': 'McDonnell_Douglas_F-15_Eagle',
+  'F-16 Fighting Falcon': 'General_Dynamics_F-16_Fighting_Falcon',
+  'Eurofighter Typhoon': 'Eurofighter_Typhoon',
+  'Dassault Rafale': 'Dassault_Rafale',
+  'F-22A Raptor': 'Lockheed_Martin_F-22_Raptor',
+  'F-35A Lightning II': 'Lockheed_Martin_F-35_Lightning_II',
+  'Boeing B-52H Stratofortress': 'Boeing_B-52_Stratofortress',
+  'Northrop Grumman B-2 Spirit': 'Northrop_Grumman_B-2_Spirit',
+  'Lockheed C-130J Hercules': 'Lockheed_C-130_Hercules',
+  'Airbus A400M Atlas': 'Airbus_A400M_Atlas',
+};
+
+function loadWikiImg(articleTitle, onLoad) {
+  if (_imgCache[articleTitle]) { onLoad(_imgCache[articleTitle]); return; }
+  fetch('https://en.wikipedia.org/w/api.php'
+    + '?action=query'
+    + '&titles=' + encodeURIComponent(articleTitle)
+    + '&prop=pageimages'
+    + '&pithumbsize=500'
+    + '&format=json&origin=*')
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var pages = (d.query || {}).pages || {};
+    var page  = Object.values(pages)[0];
+    var src   = page && page.thumbnail && page.thumbnail.source;
+    if (!src) return;
+    _imgCache[articleTitle] = src;
+    onLoad(src);
+  }).catch(function(){});
+}
+
+function applyImgCard(imgW, src, name) {
+  imgW.style.backgroundImage    = 'url("' + src + '")';
+  imgW.style.backgroundSize     = 'cover';
+  imgW.style.backgroundPosition = 'center';
+  var ph = imgW.querySelector('.ac-ph');
+  if (ph) { ph.style.opacity = '0'; ph.style.transition = 'opacity .5s'; }
+  imgW.style.cursor = 'zoom-in';
+  imgW.onclick = function(){ openPhoto3D(src, name || ''); };
+}
+
+function applyImgSrc(el, src, label) {
+  el.style.backgroundImage    = 'url("' + src + '")';
+  el.style.backgroundSize     = 'cover';
+  el.style.backgroundPosition = 'center';
+  var ph = el.querySelector('.src-photo-ph');
+  if (ph) ph.style.display = 'none';
+  el.style.cursor = 'zoom-in';
+  el.onclick = function(e){ e.stopPropagation(); openPhoto3D(src, label || ''); };
+}
+
+function loadAllPhotos() {
+  // Aircraft cards
+  document.querySelectorAll('.ac-card').forEach(function(card) {
+    var imgW  = card.querySelector('.ac-img-w');
+    var nameEl= card.querySelector('.ac-name');
+    if (!imgW || !nameEl) return;
+    var name    = nameEl.textContent.trim();
+    var article = WIKI_TITLES[name] || name.replace(/ /g,'_');
+    loadWikiImg(article, function(src){ applyImgCard(imgW, src, name); });
+  });
+
+  // Source cards: search by source name
+  document.querySelectorAll('.src-photo[data-wiki]').forEach(function(el) {
+    var wiki  = el.dataset.wiki;
+    var title = el.title || wiki;
+    if (!wiki || wiki.length < 3) return;
+    // Try Wikipedia article directly, then fall back to Commons search
+    fetch('https://en.wikipedia.org/w/api.php'
+      + '?action=query&titles=' + encodeURIComponent(wiki)
+      + '&prop=pageimages&pithumbsize=400&format=json&origin=*')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var page = Object.values(((d.query)||{}).pages||{})[0];
+      var src  = page && page.thumbnail && page.thumbnail.source;
+      if (src) applyImgSrc(el, src, title);
+    }).catch(function(){});
+  });
+}
+
+
+
+
+var _photoCache = {};
+
+function loadWikiPhoto(wikiTitle, onSuccess) {
+  if (!wikiTitle) return;
+  var key = wikiTitle;
+  if (_photoCache[key] === 'none') return;
+  if (_photoCache[key]) { onSuccess(_photoCache[key]); return; }
+  fetch('https://en.wikipedia.org/w/api.php?action=query&titles='
+    + encodeURIComponent(wikiTitle)
+    + '&prop=pageimages&format=json&pithumbsize=600&origin=*')
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var page = Object.values((d.query||{}).pages||{})[0];
+    var src  = page && page.thumbnail && page.thumbnail.source;
+    _photoCache[key] = src || 'none';
+    if (src) onSuccess(src);
+  }).catch(function(){});
+}
+
+function applyPhoto(el, src, title) {
+  el.style.backgroundImage = 'url(' + src + ')';
+  var ph = el.querySelector('.src-photo-ph, .ac-ph');
+  if (ph) ph.style.display = 'none';
+  el.onclick = function(e) {
+    e.stopPropagation();
+    openPhoto3D(src, title || '');
+  };
+}
+
+function loadAllPhotos() {
+  // Source cards — use s.wiki field stored in data-wiki attribute
+  document.querySelectorAll('.src-photo[data-wiki]').forEach(function(el) {
+    var wiki = el.dataset.wiki;
+    var title = el.title || wiki;
+    if (!wiki || wiki.length < 3) return;
+    loadWikiPhoto(wiki, function(src) { applyPhoto(el, src, title); });
+  });
+  // Aircraft cards — use aircraft name
+  document.querySelectorAll('.ac-card').forEach(function(card) {
+    var imgW  = card.querySelector('.ac-img-w');
+    var nameEl= card.querySelector('.ac-name');
+    if (!imgW || !nameEl) return;
+    var name = nameEl.textContent.trim();
+    loadWikiPhoto(name, function(src) {
+      imgW.style.backgroundImage = 'url(' + src + ')';
+      imgW.style.backgroundSize  = 'cover';
+      imgW.style.backgroundPosition = 'center';
+      var ph = imgW.querySelector('.ac-ph');
+      if (ph) ph.style.opacity = '0';
+      imgW.onclick = function() { openPhoto3D(src, name); };
+    });
+  });
+}
+
+
+
+// Known YouTube VIDEO_IDs (official/documentary channels)
+var YT_IDS = {
+  'Wright Flyer':'GwkRE0XNLM4',
+  'Concorde':'EtTUAJMIflg',
+  'Supermarine Spitfire':'f6pWEGAe_GY',
+  'Lockheed SR-71 Blackbird':'rVa4KBGaSM4',
+  'Boeing B-52H Stratofortress':'xFd5P9UFUPI',
+  'Northrop Grumman B-2 Spirit':'WKdivFAXWE8',
+  'F-22A Raptor':'_0K8jFUdFoo',
+  'F-35A Lightning II':'XTuJG9OHsGg',
+  'Eurofighter Typhoon':'WS5LGDfhJBk',
+  'Boeing 747':'IKjcqrPuPDc',
+  'Airbus A380':'v1kHocCFKDo',
+  'Boeing 787 Dreamliner':'A8cJtPRvzqA',
+  'Airbus A350 XWB':'OxrP_aSwFXU',
+  'Messerschmitt Me 262':'9g_mFBXaCe8',
+  'Lockheed C-130J Hercules':'XnxY0-I31aA',
+};
+
+function openYT(el, query, type) {
+  var wrap = el.closest('.ac-det').querySelector('.vid-frame-wrap');
+  if (!wrap) return;
+  var cacheKey = query + '|' + type;
+  if (wrap.classList.contains('open') && wrap.dataset.q === cacheKey) {
+    wrap.classList.remove('open'); wrap.innerHTML = ''; return;
+  }
+  // Get aircraft name for real VIDEO_ID lookup
+  var acName = '';
+  var nameEl = el.closest('.ac-card') && el.closest('.ac-card').querySelector('.ac-name');
+  if (nameEl) acName = nameEl.textContent.trim();
+  var realId = YT_IDS[acName];
+  var embedSrc;
+  if (realId && type === 'documentary') {
+    // Use real video ID for documentary type
+    embedSrc = 'https://www.youtube-nocookie.com/embed/' + realId + '?rel=0&autoplay=0';
+  } else {
+    // Use search embed for other types
+    var q = encodeURIComponent(query + ' ' + type);
+    embedSrc = 'https://www.youtube-nocookie.com/embed?listType=search&list=' + q + '&rel=0';
+  }
+  wrap.innerHTML = '<iframe src="' + embedSrc
+    + '" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope"></iframe>'
+    + '<button class="vid-frame-close" onclick="this.closest(\'.vid-frame-wrap\').classList.remove(\'open\');this.closest(\'.vid-frame-wrap\').innerHTML=\'\'">✕ Schließen</button>';
+  wrap.dataset.q = cacheKey;
+  wrap.classList.add('open');
+  wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+
+</script>
+</body>
+</html>
