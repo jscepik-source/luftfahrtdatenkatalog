@@ -5426,6 +5426,23 @@ out center tags;`;
             (groups[t] = groups[t] || []).push(item);
         }
 
+        // ── Terminal-Bereinigung: Duplikate, reine Ref-Einträge & Concourses ───
+        if (groups['terminal']) {
+            const seen = new Set();
+            groups['terminal'] = groups['terminal'].filter(item => {
+                const tags = item.tags || {};
+                const rawName = (tags.name || '').trim();
+                if (!rawName) return false;                          // kein Name
+                if (/^[\d;,\s]+$/.test(rawName)) return false;      // reine Nummern (z.B. "222;223")
+                if (/\b(Flugsteig|Pier|Concourse|Finger)\b/i.test(rawName)) return false; // Concourses
+                const key = rawName.toLowerCase();
+                if (seen.has(key)) return false;                     // Duplikat
+                seen.add(key);
+                return true;
+            });
+            if (!groups['terminal'].length) delete groups['terminal'];
+        }
+
         // ── OurAirports-Navaids ergänzen (keine Duplikate) ───────────────────
         const rawNavaids = (ap.navaids || []).filter(n => n.lat && n.lon &&
             !osmNavIdents.has((n.ident || '').toUpperCase()));
