@@ -2650,7 +2650,7 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
 
-// ── ILS-Kategorien Deutschland (Quelle: Wikipedia / DFS / AIP) ───────────────
+// ── ILS-Kategorien weltweit (Quelle: AIP/Wikipedia/NOTAM) ────────────────────
 const ILS_KAT_DE = {
   // ── Internationale Verkehrsflughäfen (DFS) ────────────────────────────────
   EDDB:{'06L':'III','06R':'III','24L':'III','24R':'III'},          // Berlin-Brandenburg
@@ -2702,6 +2702,94 @@ const ILS_KAT_DE = {
   EDHI:{'23':'II'},  // Hamburg-Finkenwerder
   EDTL:{'21':'I'},   // Lahr
   EDMO:{'22':'I'},   // Oberpfaffenhofen
+  // ── Österreich ───────────────────────────────────────────────────────────────
+  LOWW:{'11':'I','16':'IIIb','29':'I','34':'IIIb'},               // Wien Schwechat
+  LOWI:{'08':'I','26':'I'},                                        // Innsbruck
+  LOWS:{'15':'I','33':'II'},                                       // Salzburg
+  LOWL:{'09':'I','27':'I'},                                        // Linz-Hörsching
+  LOWK:{'10':'I','28':'I'},                                        // Klagenfurt
+  LOWG:{'17C':'I'},                                                // Graz
+  // ── Schweiz ──────────────────────────────────────────────────────────────────
+  LSZH:{'14':'III','16':'II','28':'III','34':'II'},                // Zürich
+  LSGG:{'04R':'II','22L':'I'},                                     // Genf
+  LSZA:{'01':'I','19':'I'},                                        // Lugano
+  LSZB:{'14':'I','32':'I'},                                        // Bern-Belp
+  // ── UK ───────────────────────────────────────────────────────────────────────
+  EGLL:{'09L':'III','09R':'III','27L':'III','27R':'III'},          // London Heathrow
+  EGKK:{'08L':'III','08R':'III','26L':'III','26R':'II'},           // London Gatwick
+  EGCC:{'05L':'III','05R':'II','23L':'II','23R':'III'},            // Manchester
+  EGPH:{'06':'II','24':'II'},                                      // Edinburgh
+  EGPF:{'09':'II','27':'II'},                                      // Glasgow
+  EGGD:{'09':'I','27':'II'},                                       // Bristol
+  EGBB:{'15':'III','33':'III'},                                    // Birmingham
+  EGNX:{'09':'III','27':'II'},                                     // East Midlands
+  EGSS:{'22':'III'},                                               // London Stansted
+  EGGW:{'08':'III','26':'II'},                                     // London Luton
+  // ── Niederlande ──────────────────────────────────────────────────────────────
+  EHAM:{'06':'III','18C':'III','18L':'III','18R':'III','24':'III','27':'III','36C':'III','36L':'III','36R':'III'}, // Amsterdam Schiphol
+  // ── Frankreich ───────────────────────────────────────────────────────────────
+  LFPG:{'09L':'III','09R':'III','27L':'III','27R':'III','08L':'III','08R':'III','26L':'III','26R':'III'}, // Paris CDG
+  LFPO:{'06':'III','08':'II','24':'III','26':'II'},                // Paris Orly
+  LFMN:{'04R':'II','22L':'II'},                                    // Nizza
+  LFLL:{'17L':'III','35R':'III'},                                  // Lyon
+  LFTW:{'21':'I'},                                                 // Nîmes
+  LFML:{'13L':'III','31R':'III'},                                  // Marseille
+  // ── Spanien ──────────────────────────────────────────────────────────────────
+  LEMD:{'14L':'III','14R':'III','32L':'III','32R':'III','18L':'II','36R':'II'}, // Madrid Barajas
+  LEBL:{'02':'II','06L':'II','20':'II','24R':'II'},                // Barcelona
+  LEPA:{'06L':'II','24R':'I'},                                     // Palma de Mallorca
+  GCTS:{'07':'I','25':'I'},                                        // Teneriffa Süd
+  LEMG:{'13':'I','31':'II'},                                       // Málaga
+  // ── Italien ──────────────────────────────────────────────────────────────────
+  LIRF:{'16L':'II','16R':'III','34L':'II','34R':'II'},             // Rom Fiumicino
+  LIMC:{'17L':'III','17R':'I','35L':'I','35R':'III'},              // Mailand Malpensa
+  LIML:{'18L':'II','36R':'II'},                                    // Mailand Linate
+  LIPZ:{'04L':'II','04R':'II','22L':'I','22R':'II'},               // Venedig Marco Polo
+  LIRA:{'16':'I','34':'II'},                                       // Rom Ciampino
+  // ── Belgien / Luxemburg ───────────────────────────────────────────────────────
+  EBBR:{'07L':'III','07R':'III','25L':'III','25R':'III'},          // Brüssel
+  ELLX:{'06':'II','24':'II'},                                      // Luxemburg
+  // ── Skandinavien ─────────────────────────────────────────────────────────────
+  EKCH:{'04L':'III','04R':'III','22L':'III','22R':'III'},          // Kopenhagen
+  ENGM:{'01L':'III','01R':'III','19L':'III','19R':'III'},          // Oslo Gardermoen
+  ESSA:{'01L':'III','01R':'III','26':'III'},                       // Stockholm Arlanda
+  EFHK:{'04L':'III','04R':'III','15':'III','22L':'III','22R':'III','33':'III'}, // Helsinki
+  // ── Portugal ─────────────────────────────────────────────────────────────────
+  LPPT:{'03':'II','21':'III'},                                     // Lissabon
+  LPFR:{'10':'I','28':'I'},                                        // Faro
+  // ── Griechenland / Türkei / Osteuropa ────────────────────────────────────────
+  LGAV:{'03L':'II','21R':'III'},                                   // Athen
+  LTFM:{'17L':'III','17R':'III','35L':'III','35R':'III'},          // Istanbul (neu)
+  LTBA:{'06':'II','24':'II'},                                      // Istanbul Atatürk
+  EPWA:{'11':'III','15':'II','29':'III','33':'II'},                // Warschau
+  OKBK:{'15L':'III','15R':'III','33L':'III','33R':'III'},          // Kuwait
+  // ── USA (größte Hubs) ─────────────────────────────────────────────────────────
+  KJFK:{'04L':'III','04R':'I','13L':'III','13R':'I','22L':'III','22R':'I','31L':'III','31R':'I'}, // New York JFK
+  KLAX:{'06L':'III','06R':'III','24L':'III','24R':'III'},          // Los Angeles
+  KORD:{'04R':'III','09C':'III','09R':'III','10C':'III','10L':'III','14R':'III','22L':'III','27L':'III','27R':'III','28C':'III','28R':'III'}, // Chicago O'Hare
+  KATL:{'08L':'III','08R':'III','09L':'III','09R':'III','10':'III','26L':'III','26R':'III','27L':'III','27R':'III','28':'III'}, // Atlanta
+  KDFW:{'17C':'III','17L':'III','17R':'III','18L':'III','18R':'III','35C':'III','35L':'III','35R':'III','36L':'III','36R':'III'}, // Dallas/Fort Worth
+  KDEN:{'07':'III','08':'III','16L':'III','16R':'III','17L':'III','17R':'III','25':'III','26':'III','34L':'III','34R':'III','35L':'III','35R':'III'}, // Denver
+  KSFO:{'10L':'III','10R':'III','28L':'III','28R':'III'},          // San Francisco
+  KBOS:{'04R':'III','15R':'II','22L':'III','27':'II','33L':'III'}, // Boston
+  KEWR:{'04L':'III','11':'II','22R':'III','29':'II'},              // Newark
+  KMIA:{'08L':'III','08R':'III','09':'III','26L':'III','26R':'III','27':'III'}, // Miami
+  KSEA:{'16C':'III','16L':'II','16R':'III','34C':'III','34L':'II','34R':'III'}, // Seattle
+  // ── Kanada ────────────────────────────────────────────────────────────────────
+  CYYZ:{'05':'III','06L':'III','06R':'III','23':'III','24L':'III','24R':'III'}, // Toronto Pearson
+  CYVR:{'08L':'III','08R':'III','26L':'III','26R':'III'},          // Vancouver
+  CYUL:{'06R':'III','10':'II','24L':'III','28':'II'},              // Montréal
+  // ── Asien / Pazifik ───────────────────────────────────────────────────────────
+  RJTT:{'16L':'III','16R':'III','22':'III','34L':'III','34R':'III'}, // Tokyo Haneda
+  RJAA:{'16L':'III','16R':'III','34L':'III','34R':'III'},          // Tokyo Narita
+  ZBAA:{'01':'III','18L':'III','18R':'III','36L':'III','36R':'III'}, // Peking Capital
+  ZSPD:{'16L':'III','16R':'III','34L':'III','34R':'III'},          // Shanghai Pudong
+  VHHH:{'07L':'III','07R':'III','25L':'III','25R':'III'},          // Hongkong
+  WSSS:{'02C':'III','02L':'III','02R':'III','20C':'III','20L':'III','20R':'III'}, // Singapur Changi
+  OMDB:{'12L':'III','12R':'III','30L':'III','30R':'III'},          // Dubai
+  YSSY:{'16L':'III','16R':'III','34L':'III','34R':'III'},          // Sydney
+  YMML:{'09':'III','16':'III','27':'III','34':'III'},              // Melbourne
+  RKSI:{'15L':'III','15R':'III','33L':'III','33R':'III'},          // Seoul Incheon
 };
 
 function ilsBadge(icao, desig) {
@@ -5137,10 +5225,11 @@ out center tags;`;
                     const f = parseFloat(rawFreq);
                     freqKhz = (!isNaN(f) && f < 10000) ? String(Math.round(f * 1000)) : String(Math.round(f));
                 }
+                const osmIlsCat = item.tags['ils:category'] || item.tags['navaid:ils_category'] || '';
                 const navObj = {
                     ident, name: item.tags.name || '', type: navType,
-                    freq: freqKhz, lat, lon,
-                    _src: 'osm'
+                    freq: freqKhz, lat, lon, _src: 'osm',
+                    ...(osmIlsCat ? { osmCat: osmIlsCat.toUpperCase().replace('CAT','').trim() } : {})
                 };
                 osmNavIdents.add(ident.toUpperCase());
                 (groups['_navaids'] = groups['_navaids'] || []).push(navObj);
@@ -5192,7 +5281,6 @@ out center tags;`;
         ]);
         const usedNavIdxs = new Set();
         const ilsEntries = [...ilsDesigSet].sort().map(desig => {
-            const kat = ilsKatData[desig] || null;
             const navIdx = ilsNavs.findIndex((n, i) => {
                 if (usedNavIdxs.has(i)) return false;
                 const m = (n.name||n.ident||'').match(/\b(0[1-9]|[12]\d|3[0-6])[LRC]?\b/i);
@@ -5200,7 +5288,8 @@ out center tags;`;
             });
             if (navIdx >= 0) usedNavIdxs.add(navIdx);
             const nav = navIdx >= 0 ? ilsNavs[navIdx] : null;
-            // Koordinaten: erst OSM-Navaid, dann Runway-Schwelle
+            // Kategorie: statische Tabelle → OSM-Tag → null
+            const kat = ilsKatData[desig] || nav?.osmCat || null;
             const coords = (nav?.lat && nav?.lon) ? { lat: nav.lat, lon: nav.lon } : getRwyCoords(desig);
             return { desig, kat, nav, coords, min: ILS_MIN[kat] || null };
         });
@@ -5208,7 +5297,8 @@ out center tags;`;
         ilsNavs.forEach((n, i) => {
             if (!usedNavIdxs.has(i)) {
                 const coords = (n.lat && n.lon) ? { lat: n.lat, lon: n.lon } : getRwyCoords(n.ident || '');
-                ilsEntries.push({ desig: n.ident || '?', kat: null, nav: n, coords, min: null });
+                const kat = n.osmCat || null;
+                ilsEntries.push({ desig: n.ident || '?', kat, nav: n, coords, min: ILS_MIN[kat] || null });
             }
         });
         if (ilsEntries.length > 0) groups['_ils'] = ilsEntries;
