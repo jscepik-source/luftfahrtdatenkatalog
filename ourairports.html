@@ -6907,6 +6907,22 @@ function aiWelcome() {
         aiShowSuggestions(['Zeige EDDF', 'Wetter Frankfurt', 'Was ist ILS CAT III?', 'Vergleiche EDDF und EDDM']);
         aiAddMsg('bot', 'Hallo! Ich bin **AeroGuide** ✈ — ich kann Flughäfen öffnen, METAR/TAF erklären, NOTAMs deuten, Distanzen berechnen und durch alle App-Features führen. Was darf es sein?');
     }
+    aiOnboardKey();
+}
+
+// Onboarding: neue Besucher ohne eigenen Key zum Eintragen führen
+function aiOnboardKey() {
+    if (localStorage.getItem('user_groq_key')) return;   // hat schon einen eigenen Key → nichts tun
+    aiAddMsg('bot',
+        '🔑 **Einmal kurz einrichten:** Damit die KI zuverlässig für dich läuft, nutze deinen '
+      + '**eigenen kostenlosen** Groq-API-Key — 100.000 Tokens/Tag, keine Kreditkarte. Hol ihn auf '
+      + '<a href="https://console.groq.com/keys" target="_blank" style="color:var(--color-primary);text-decoration:underline">console.groq.com</a> '
+      + 'und trag ihn hier ein: '
+      + '<button onclick="aiSettingsToggle()" style="background:var(--color-primary);border:none;border-radius:999px;padding:4px 13px;color:#fff;cursor:pointer;font-size:0.76rem;font-family:var(--font);margin-top:4px">⚙ Key eintragen</button>'
+      + '<br><span style="font-size:0.72rem;opacity:0.75">Der Key bleibt nur in deinem Browser. Ohne Key läuft die KI auch, kann aber bei vielen Nutzern ausgelastet sein.</span>');
+    // Key-Feld für neue Besucher direkt sichtbar öffnen
+    const sp = document.getElementById('ai-settings-panel');
+    if (sp && sp.style.display === 'none') aiSettingsToggle();
 }
 
 function aiOnWeatherLoaded(icao) {
