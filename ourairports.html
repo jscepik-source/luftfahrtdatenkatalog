@@ -5903,9 +5903,23 @@ function globusZoomAuf(lat, lon, icao) {
         <span class="ai-panel-head-icon">✈</span>
         <div style="flex:1">
             <div class="ai-panel-head-title">AeroGuide KI</div>
-            <div class="ai-panel-head-sub" id="ai-ctx-label">Powered by Gemini</div>
+            <div class="ai-panel-head-sub" id="ai-ctx-label">Powered by Groq/Pollinations</div>
         </div>
+        <button class="ai-panel-close" onclick="aiSettingsToggle()" title="API-Key einrichten" style="font-size:0.9rem;opacity:0.75;margin-right:2px">⚙</button>
         <button class="ai-panel-close" onclick="aiToggle()" aria-label="Schließen">✕</button>
+    </div>
+    <div id="ai-settings-panel" style="display:none;padding:10px 14px 12px;border-bottom:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.25)">
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.95);font-weight:700;margin-bottom:4px">Groq API-Key (kostenlos)</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.65);margin-bottom:7px">
+            Gratis bei <a href="https://console.groq.com" target="_blank" style="color:#fff;text-decoration:underline">console.groq.com</a> — 100 000 Tokens/Tag, kein Code-Commit nötig
+        </div>
+        <div style="display:flex;gap:6px">
+            <input id="ai-groq-key-input" type="password" placeholder="gsk_…"
+                style="flex:1;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);border-radius:6px;padding:5px 9px;color:#fff;font-size:0.78rem;outline:none;font-family:var(--font)">
+            <button onclick="aiSaveGroqKey()"
+                style="background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.3);border-radius:6px;padding:5px 12px;color:#fff;cursor:pointer;font-size:0.78rem;white-space:nowrap">Speichern</button>
+        </div>
+        <div id="ai-key-status" style="font-size:0.68rem;color:rgba(255,255,255,0.6);margin-top:5px"></div>
     </div>
     <div id="ai-messages"></div>
     <div class="ai-panel-suggestions" id="ai-suggestions"></div>
@@ -6589,6 +6603,23 @@ function aiRetry() {
     document.getElementById('ai-input').value = lastUser.parts[0].text;
     aiSend();
 }
+function aiSettingsToggle() {
+    const panel = document.getElementById('ai-settings-panel');
+    const show  = panel.style.display === 'none';
+    panel.style.display = show ? 'block' : 'none';
+    if (show) {
+        const k = localStorage.getItem('user_groq_key') || '';
+        document.getElementById('ai-groq-key-input').value = k;
+        document.getElementById('ai-key-status').textContent = k ? '✓ Key gespeichert' : '';
+    }
+}
+function aiSaveGroqKey() {
+    const key = document.getElementById('ai-groq-key-input').value.trim();
+    if (key) localStorage.setItem('user_groq_key', key);
+    else localStorage.removeItem('user_groq_key');
+    document.getElementById('ai-key-status').textContent = key ? '✓ Gespeichert — wird beim nächsten Send verwendet' : 'Key gelöscht';
+    setTimeout(() => { document.getElementById('ai-settings-panel').style.display = 'none'; }, 1200);
+}
 function aiMic() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) { alert('Spracheingabe wird von diesem Browser nicht unterstützt (Chrome empfohlen).'); return; }
@@ -6657,7 +6688,7 @@ async function aiSend() {
 
     // ── Cloudflare Worker → Groq (Key sicher, 100k/Tag) ─────────────────────
     if (!reply && WORKER_URL) {
-        const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'];
+        const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
         for (const model of groqModels) {
             try {
                 const messages = [{ role:'system', content: systemWithCtx }, ...toOAI(aiHistory)];
@@ -6665,23 +6696,44 @@ async function aiSend() {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ payload: { model, messages, max_tokens: 1200, temperature: 0.65 } })
-                }, 15000);
+                }, 12000);
                 if (!res.ok) { lastErr = new Error(`Worker HTTP ${res.status}`); continue; }
                 const data = await res.json();
                 const txt  = data.choices?.[0]?.message?.content;
                 if (!txt)  { lastErr = new Error('Worker: Leere Antwort'); continue; }
-                reply = txt; usedModel = model; break;
+                reply = txt; usedModel = `Groq ${model}`; break;
+            } catch(e) { lastErr = e; }
+        }
+    }
+
+    // ── Direkt Groq (falls User-Key in localStorage hinterlegt) ──────────────
+    const localGroqKey = localStorage.getItem('user_groq_key');
+    if (!reply && localGroqKey) {
+        const groqDirect = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
+        for (const model of groqDirect) {
+            try {
+                const messages = [{ role:'system', content: systemWithCtx }, ...toOAI(aiHistory)];
+                const res = await fetchTimed('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localGroqKey}` },
+                    body: JSON.stringify({ model, messages, max_tokens: 1200, temperature: 0.65 })
+                }, 15000);
+                if (!res.ok) { lastErr = new Error(`Groq ${res.status}`); continue; }
+                const data = await res.json();
+                const txt  = data.choices?.[0]?.message?.content;
+                if (!txt)  { lastErr = new Error('Groq: Leere Antwort'); continue; }
+                reply = txt; usedModel = `Groq ${model} (lokal)`; break;
             } catch(e) { lastErr = e; }
         }
     }
 
     // ── Pollinations.ai (kein Key nötig) ─────────────────────────────────────
     const pollinationsModels = ['openai', 'mistral', 'llama', 'mistral-large', 'openai-large'];
-    // Kurzer Systemkontext damit Request-Body klein bleibt
     const shortCtx  = ctx ? AI_SYSTEM_SHORT + `\n\nKONTEXT:${ctx}` : AI_SYSTEM_SHORT;
     const oaiMsgs   = [{ role: 'system', content: shortCtx }, ...toOAI(aiHistory)];
     let pollRateLimit = false;
     for (const model of pollinationsModels) {
+        if (pollRateLimit) break; // Alle Pollinations-Server rate-limited — nicht weiter versuchen
         try {
             const res = await fetchTimed('https://text.pollinations.ai/openai', {
                 method: 'POST',
@@ -6691,8 +6743,7 @@ async function aiSend() {
             if (res.status === 429) {
                 pollRateLimit = true;
                 lastErr = new Error('rate_limit');
-                await new Promise(r => setTimeout(r, 1200));
-                continue;
+                break; // Alle Pollinations-Server rate-limited — weitere Versuche sinnlos
             }
             if (!res.ok) { lastErr = new Error(`HTTP ${res.status}`); continue; }
             const data = await res.json();
@@ -6705,8 +6756,8 @@ async function aiSend() {
         } catch(e) { lastErr = e; }
     }
 
-    // ── Pollinations GET-Fallback (noch einfacher, anderer Pfad) ─────────────
-    if (!reply) {
+    // ── Pollinations GET-Fallback (überspringen wenn rate-limited) ─────────────
+    if (!reply && !pollRateLimit) {
         try {
             const lastMsg = aiHistory[aiHistory.length - 1]?.parts[0]?.text || text;
             const sysEnc  = encodeURIComponent(AI_SYSTEM_SHORT + (ctx ? '\nKONTEXT:' + ctx.substring(0, 300) : ''));
@@ -6755,8 +6806,10 @@ async function aiSend() {
         const isQuota     = /API_KEY|INVALID|403|quota/i.test(errMsg);
         let msg;
         if (isRateLimit) {
-            msg = `Zu viele Anfragen — alle KI-Server sind gerade ausgelastet. `
-                + `<button onclick="aiRetry()" style="margin-left:6px;padding:3px 10px;border:1px solid var(--color-primary);border-radius:999px;background:transparent;color:var(--color-primary);cursor:pointer;font-size:0.78rem;font-family:var(--font)">↺ Nochmal</button>`;
+            const hasKey = !!localStorage.getItem('user_groq_key');
+            msg = `Zu viele Anfragen — KI-Server ausgelastet. `
+                + `<button onclick="aiRetry()" style="margin-left:4px;padding:3px 10px;border:1px solid var(--color-primary);border-radius:999px;background:transparent;color:var(--color-primary);cursor:pointer;font-size:0.78rem;font-family:var(--font)">↺ Nochmal</button>`
+                + (!hasKey ? `<br><span style="font-size:0.72rem;opacity:0.8">Tipp: Kostenlosen <button onclick="aiSettingsToggle()" style="background:none;border:none;color:var(--color-primary);cursor:pointer;text-decoration:underline;padding:0;font-size:0.72rem">Groq API-Key</button> einrichten für zuverlässige KI (⚙ oben)</span>` : '');
         } else if (isQuota) {
             msg = `Quota überschritten oder ungültiger Key. Bitte neuen Key bei <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--color-primary)">aistudio.google.com/apikey</a> holen.`;
         } else {
