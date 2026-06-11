@@ -1109,11 +1109,14 @@
         .ai-choice-other:hover { border-color:var(--color-text-sub); background:var(--color-surface); color:var(--color-text); }
 
         /* ── KI Nachricht Formatierung ── */
-        .ai-msg-bot .ai-table { width:100%; border-collapse:collapse; font-size:0.78rem; margin:6px 0; }
-        .ai-msg-bot .ai-table th { background:var(--color-primary); color:#fff; padding:5px 8px; text-align:left; font-weight:600; }
-        .ai-msg-bot .ai-table td { padding:4px 8px; border-bottom:1px solid var(--color-border); }
+        .ai-table-wrap { overflow-x:auto; margin:7px 0; border-radius:8px; border:1px solid var(--color-border); }
+        .ai-msg-bot .ai-table { width:100%; border-collapse:collapse; font-size:0.76rem; }
+        .ai-msg-bot .ai-table th { background:var(--color-primary); color:#fff; padding:6px 10px; text-align:left; font-weight:600; white-space:nowrap; }
+        .ai-msg-bot .ai-table td { padding:5px 10px; border-bottom:1px solid var(--color-border); white-space:nowrap; }
         .ai-msg-bot .ai-table tr:last-child td { border-bottom:none; }
+        .ai-msg-bot .ai-table tr:nth-child(odd) td { background:var(--color-surface); }
         .ai-msg-bot .ai-table tr:nth-child(even) td { background:var(--color-surface-2); }
+        .ai-msg-bot .ai-table tbody tr:hover td { background:var(--color-primary-bg); }
         .ai-msg-bot .ai-h1 { font-size:0.92rem; font-weight:700; margin:8px 0 3px; color:var(--color-primary); }
         .ai-msg-bot .ai-h2 { font-size:0.88rem; font-weight:700; margin:6px 0 2px; color:var(--color-text); border-bottom:1px solid var(--color-border); padding-bottom:2px; }
         .ai-msg-bot .ai-h3 { font-size:0.82rem; font-weight:600; margin:5px 0 2px; color:var(--color-text-sub); }
@@ -6455,11 +6458,11 @@ function aiToggle() {
 }
 
 function aiUpdateCtxLabel() {
-    const ctx = getAiContext();
     const label = document.getElementById('ai-ctx-label');
     if (!label) return;
-    if (aiCurrentIcao) label.textContent = `Kontext: ${aiCurrentIcao} · Gemini`;
-    else label.textContent = 'Powered by Gemini';
+    const hasKey = !!localStorage.getItem('user_groq_key');
+    const engine = hasKey ? 'Groq' : 'Groq/Pollinations';
+    label.textContent = aiCurrentIcao ? `Kontext: ${aiCurrentIcao} · ${engine}` : `Powered by ${engine}`;
 }
 
 function aiInit() {
@@ -6495,19 +6498,22 @@ function aiRenderMarkdown(raw) {
     // Zeichen escapen
     let t = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-    // Tabellen (| col | col |)
+    // Tabellen (| col | col |) — mit Scroll-Wrapper
     t = t.replace(/((?:^\|.+\|\n?)+)/gm, tableBlock => {
         const rows = tableBlock.trim().split('\n').filter(r => r.trim());
-        let html = '<table class="ai-table"><tbody>';
-        let isHead = true;
+        let html = '<div class="ai-table-wrap"><table class="ai-table"><thead>';
+        let inHead = true;
         for (const row of rows) {
-            if (/^\|[-| ]+\|$/.test(row.trim())) { isHead = false; continue; }
+            if (/^\|[\s\-:|]+\|/.test(row.trim())) { // Trennzeile (--- oder :--:)
+                html += '</thead><tbody>';
+                inHead = false;
+                continue;
+            }
             const cells = row.split('|').filter((_, i, a) => i > 0 && i < a.length - 1);
-            const tag = isHead ? 'th' : 'td';
+            const tag = inHead ? 'th' : 'td';
             html += `<tr>${cells.map(c => `<${tag}>${c.trim()}</${tag}>`).join('')}</tr>`;
-            isHead = false;
         }
-        return html + '</tbody></table>';
+        return html + (inHead ? '</thead>' : '</tbody>') + '</table></div>';
     });
 
     // Überschriften
@@ -6674,6 +6680,30 @@ async function aiSend() {
 
     aiHistory.push({ role: 'user', parts: [{ text }] });
     aiAddTyping();
+
+    // ── Schnell-Aktionen (kein KI-Aufruf nötig) ──────────────────────────────
+    const quickOpen = text.match(/^(?:zeige?|öffne?|show|open|was\s+ist|starte?)\s+([A-Z]{3,4})\s*$/i);
+    if (quickOpen) {
+        const icao = quickOpen[1].toUpperCase();
+        aiRemoveTyping();
+        aiHistory.push({ role: 'model', parts: [{ text: `✈ Öffne ${icao}.` }] });
+        aiAddMsg('bot', `✈ **${icao}** wird geöffnet.`);
+        setTimeout(() => aiExecuteOpen(icao), 100);
+        document.getElementById('ai-send').disabled = false;
+        return;
+    }
+    const quickTab = text.match(/^(?:wetter|metar|taf|notam|karte|flüge?|fluege?|infra(?:struktur)?)\s*(?:für|fuer|von|bei)?\s*([A-Z]{3,4})?\s*$/i);
+    if (quickTab && (quickTab[1] || aiCurrentIcao)) {
+        const icao = (quickTab[1] || aiCurrentIcao).toUpperCase();
+        const tabMap = { wetter:'wetter', metar:'wetter', taf:'wetter', notam:'notam', karte:'karte', flüge:'fluege', fluege:'fluege', flüge:'fluege', infra:'infra', infrastruktur:'infra' };
+        const tab = tabMap[text.split(/\s/)[0].toLowerCase()] || 'wetter';
+        aiRemoveTyping();
+        aiHistory.push({ role: 'model', parts: [{ text: `Tab ${tab} bei ${icao}.` }] });
+        aiAddMsg('bot', `📂 Öffne **${icao} → ${tab}**`);
+        setTimeout(() => aiExecuteOpenTab(icao, tab), 100);
+        document.getElementById('ai-send').disabled = false;
+        return;
+    }
 
     let reply = null, lastErr = null, usedModel = '';
 
