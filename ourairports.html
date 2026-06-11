@@ -7142,27 +7142,7 @@ async function aiSend() {
         } finally { clearTimeout(t); }
     }
 
-    // ── Cloudflare Worker → Groq (Key sicher, 100k/Tag) ─────────────────────
-    if (!reply && WORKER_URL) {
-        const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
-        for (const model of groqModels) {
-            try {
-                const messages = [{ role:'system', content: systemWithCtx }, ...toOAI(aiHistory)];
-                const res = await fetchTimed(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ payload: { model, messages, max_tokens: 1200, temperature: 0.65 } })
-                }, 12000);
-                if (!res.ok) { lastErr = new Error(`Worker HTTP ${res.status}`); continue; }
-                const data = await res.json();
-                const txt  = data.choices?.[0]?.message?.content;
-                if (!txt)  { lastErr = new Error('Worker: Leere Antwort'); continue; }
-                reply = txt; usedModel = `Groq ${model}`; break;
-            } catch(e) { lastErr = e; }
-        }
-    }
-
-    // ── Direkt Groq (falls User-Key in localStorage hinterlegt) ──────────────
+    // ── 1) Eigener Groq-Key des Nutzers ZUERST → jeder nutzt sein eigenes 100k/Tag-Limit ──
     const localGroqKey = localStorage.getItem('user_groq_key');
     if (!reply && localGroqKey) {
         const groqDirect = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
@@ -7178,7 +7158,27 @@ async function aiSend() {
                 const data = await res.json();
                 const txt  = data.choices?.[0]?.message?.content;
                 if (!txt)  { lastErr = new Error('Groq: Leere Antwort'); continue; }
-                reply = txt; usedModel = `Groq ${model} (lokal)`; break;
+                reply = txt; usedModel = `Groq ${model} (eigener Key)`; break;
+            } catch(e) { lastErr = e; }
+        }
+    }
+
+    // ── 2) Geteilter Cloudflare-Worker (Fallback, nur wenn kein eigener Key gesetzt) ──
+    if (!reply && WORKER_URL) {
+        const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
+        for (const model of groqModels) {
+            try {
+                const messages = [{ role:'system', content: systemWithCtx }, ...toOAI(aiHistory)];
+                const res = await fetchTimed(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ payload: { model, messages, max_tokens: 1200, temperature: 0.65 } })
+                }, 12000);
+                if (!res.ok) { lastErr = new Error(`Worker HTTP ${res.status}`); continue; }
+                const data = await res.json();
+                const txt  = data.choices?.[0]?.message?.content;
+                if (!txt)  { lastErr = new Error('Worker: Leere Antwort'); continue; }
+                reply = txt; usedModel = `Groq ${model}`; break;
             } catch(e) { lastErr = e; }
         }
     }
