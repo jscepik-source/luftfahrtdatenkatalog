@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luftraumkarte — weltweit</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <style>
+        :root {
+            --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0;
+            --text: #1e293b; --text-dim: #64748b;
+            --primary: #2563eb; --primary-bg: #eff6ff;
+            --header-bg: #1e3a8a; --radius: 8px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.12);
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a; --surface: #1e293b; --border: #334155;
+            --text: #f1f5f9; --text-dim: #94a3b8;
+            --primary: #3b82f6; --primary-bg: #1e3a5f;
+            --header-bg: #0c1a3a; --shadow: 0 2px 12px rgba(0,0,0,0.4);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text);
+            display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
+        }
+
+        /* ── Header ── */
+        header {
+            background: var(--header-bg); color: #fff;
+            padding: 9px 14px; display: flex; align-items: center; gap: 8px;
+            flex-shrink: 0; box-shadow: var(--shadow); z-index: 1001;
+        }
+        .back-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.82rem; }
+        .back-link:hover { color: #fff; }
+        .header-title { font-weight: 700; font-size: 0.98rem; flex: 1; }
+        .header-btn {
+            background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22);
+            color: #fff; padding: 5px 11px; border-radius: 6px; cursor: pointer;
+            font-size: 0.8rem; white-space: nowrap; transition: background 0.15s;
+        }
+        .header-btn:hover { background: rgba(255,255,255,0.24); }
+        .header-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #load-btn { background: rgba(37,99,235,0.7); }
+        #load-btn:hover:not(:disabled) { background: rgba(37,99,235,0.9); }
+
+        /* ── Settings Panel ── */
+        #settings-panel {
+            display: none; background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 10px 14px; gap: 8px; align-items: center; flex-wrap: wrap;
+            font-size: 0.8rem; flex-shrink: 0;
+        }
+        #settings-panel.open { display: flex; }
+        .settings-label { font-weight: 600; color: var(--text-dim); white-space: nowrap; }
+        .settings-input {
+            flex: 1; min-width: 220px; max-width: 360px;
+            border: 1px solid var(--border); border-radius: 6px;
+            padding: 6px 10px; font-size: 0.82rem; background: var(--bg); color: var(--text);
+            font-family: 'Courier New', monospace;
+        }
+        .settings-save {
+            background: var(--primary); color: #fff; border: none;
+            padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.82rem;
+        }
+        .settings-link { color: var(--primary); text-decoration: none; font-size: 0.76rem; }
+        .settings-link:hover { text-decoration: underline; }
+        #key-status { color: var(--text-dim); font-size: 0.75rem; }
+
+        /* ── Toolbar ── */
+        #toolbar {
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 7px 12px; display: flex; gap: 6px; flex-wrap: wrap;
+            align-items: center; flex-shrink: 0; min-height: 40px;
+        }
+        .toolbar-sep { width: 1px; height: 18px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
+        .toolbar-label { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.04em; }
+        .chip {
+            padding: 3px 9px; border-radius: 20px; font-size: 0.73rem; font-weight: 500;
+            border: 1px solid var(--border); cursor: pointer; user-select: none;
+            background: var(--bg); color: var(--text); transition: all 0.15s;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .chip.active { color: #fff !important; border-color: transparent; }
+        .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+        /* ── Map ── */
+        #map { flex: 1; z-index: 0; }
+
+        /* ── Legend ── */
+        #legend {
+            position: absolute; bottom: 28px; right: 12px; z-index: 500;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 10px 13px;
+            box-shadow: var(--shadow); font-size: 0.73rem; min-width: 145px;
+        }
+        .legend-title { font-weight: 700; font-size: 0.76rem; margin-bottom: 7px; }
+        .legend-row { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
+        .legend-swatch { width: 22px; height: 12px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.15); }
+
+        /* ── Stats bar ── */
+        #stats-bar {
+            position: absolute; bottom: 28px; left: 12px; z-index: 500;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 7px 12px; font-size: 0.75rem;
+            box-shadow: var(--shadow); display: none;
+        }
+        #stats-bar.show { display: block; }
+
+        /* ── Loading overlay ── */
+        #loading {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 600;
+            background: rgba(0,0,0,0.35); display: none; align-items: center; justify-content: center;
+        }
+        #loading.show { display: flex; }
+        .loading-box {
+            background: var(--surface); border-radius: var(--radius); padding: 20px 28px;
+            text-align: center; box-shadow: var(--shadow); min-width: 220px;
+        }
+        .spinner {
+            width: 28px; height: 28px; border: 3px solid var(--border);
+            border-top-color: var(--primary); border-radius: 50%;
+            animation: spin 0.75s linear infinite; margin: 0 auto 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loading-text { font-size: 0.83rem; color: var(--text-dim); }
+        #loading-progress { margin-top: 6px; font-size: 0.76rem; color: var(--text-dim); }
+
+        /* ── No-key message ── */
+        #no-key-msg {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 550;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(15,23,42,0.5);
+        }
+        .no-key-box {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 28px 36px; text-align: center;
+            box-shadow: var(--shadow); max-width: 400px; width: 90%;
+        }
+        .no-key-box h2 { font-size: 1.05rem; margin-bottom: 10px; }
+        .no-key-box p { font-size: 0.83rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 10px; }
+        .no-key-box a { color: var(--primary); font-weight: 600; }
+        .no-key-btn {
+            display: inline-block; margin-top: 6px; background: var(--primary); color: #fff;
+            border: none; padding: 8px 18px; border-radius: 7px; cursor: pointer; font-size: 0.85rem;
+        }
+
+        /* ── Popup ── */
+        .airspace-popup { font-size: 0.79rem; line-height: 1.55; min-width: 195px; }
+        .airspace-popup h3 { font-size: 0.87rem; margin-bottom: 6px; font-weight: 700; }
+        .ap-badge {
+            display: inline-block; padding: 1px 8px; border-radius: 10px; color: #fff;
+            font-size: 0.69rem; font-weight: 700; margin-bottom: 7px; margin-right: 4px;
+        }
+        .ap-grid { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
+        .ap-key { color: #64748b; font-size: 0.75rem; }
+        .ap-val { font-weight: 600; font-size: 0.79rem; }
+        .ap-remark { font-size: 0.71rem; color: #94a3b8; margin-top: 6px; line-height: 1.4; }
+
+        /* ── Error toast ── */
+        #toast {
+            position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+            z-index: 700; background: #dc2626; color: #fff; border-radius: 6px;
+            padding: 8px 16px; font-size: 0.8rem; box-shadow: var(--shadow);
+            display: none; white-space: nowrap;
+        }
+        #toast.show { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="back-link">← Start</a>
+    <span class="header-title">✈ Luftraumkarte</span>
+    <button class="header-btn" id="load-btn" onclick="ladeAirspaces()">▶ Laden</button>
+    <button class="header-btn" onclick="toggleSettings()">⚙ OpenAIP Key</button>
+    <button class="header-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+</header>
+
+<div id="settings-panel">
+    <span class="settings-label">OpenAIP API-Key:</span>
+    <input id="key-input" type="password" class="settings-input" placeholder="gsk_… (kostenlos bei openaip.net)">
+    <button class="settings-save" onclick="saveKey()">Speichern</button>
+    <a href="https://www.openaip.net/register" target="_blank" rel="noopener" class="settings-link">→ Kostenlos registrieren</a>
+    <span id="key-status"></span>
+</div>
+
+<div id="toolbar">
+    <span class="toolbar-label">Länder</span>
+    <div id="country-chips" style="display:flex;flex-wrap:wrap;gap:6px;max-height:72px;overflow-y:auto;align-content:flex-start"></div>
+    <div class="toolbar-sep"></div>
+    <span class="toolbar-label">Typen</span>
+    <div id="type-chips"></div>
+</div>
+
+<div id="map"></div>
+
+<div id="legend">
+    <div class="legend-title">Legende</div>
+    <div id="legend-items"></div>
+</div>
+
+<div id="stats-bar"></div>
+
+<div id="loading">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <div id="loading-text">Lade Lufträume…</div>
+        <div id="loading-progress"></div>
+    </div>
+</div>
+
+<div id="no-key-msg">
+    <div class="no-key-box">
+        <h2>🗺 Luftraumkarte</h2>
+        <p>Für Luftraumdaten wird ein kostenloser <strong>OpenAIP API-Key</strong> benötigt.<br>
+        Registrierung dauert ca. 1 Minute — es fallen keine Kosten an.</p>
+        <p><a href="https://www.openaip.net/register" target="_blank" rel="noopener">→ Kostenlos registrieren (openaip.net)</a></p>
+        <p style="font-size:0.74rem;margin-top:4px">Nach Registrierung: <strong>⚙ OpenAIP Key</strong> → Key eingeben → <strong>▶ Laden</strong></p>
+        <button class="no-key-btn" onclick="toggleSettings(); document.getElementById('no-key-msg').style.display='none'">⚙ API-Key eingeben</button>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── Konfiguration ─────────────────────────────────────────────────────────────
+
+const COUNTRIES = [
+    // Europa
+    { code:'DE', label:'DE 🇩🇪', default:true  },
+    { code:'AT', label:'AT 🇦🇹', default:true  },
+    { code:'CH', label:'CH 🇨🇭', default:true  },
+    { code:'FR', label:'FR 🇫🇷', default:false },
+    { code:'NL', label:'NL 🇳🇱', default:false },
+    { code:'BE', label:'BE 🇧🇪', default:false },
+    { code:'LU', label:'LU 🇱🇺', default:false },
+    { code:'GB', label:'GB 🇬🇧', default:false },
+    { code:'IE', label:'IE 🇮🇪', default:false },
+    { code:'DK', label:'DK 🇩🇰', default:false },
+    { code:'NO', label:'NO 🇳🇴', default:false },
+    { code:'SE', label:'SE 🇸🇪', default:false },
+    { code:'FI', label:'FI 🇫🇮', default:false },
+    { code:'IS', label:'IS 🇮🇸', default:false },
+    { code:'PL', label:'PL 🇵🇱', default:false },
+    { code:'CZ', label:'CZ 🇨🇿', default:false },
+    { code:'SK', label:'SK 🇸🇰', default:false },
+    { code:'HU', label:'HU 🇭🇺', default:false },
+    { code:'SI', label:'SI 🇸🇮', default:false },
+    { code:'HR', label:'HR 🇭🇷', default:false },
+    { code:'IT', label:'IT 🇮🇹', default:false },
+    { code:'ES', label:'ES 🇪🇸', default:false },
+    { code:'PT', label:'PT 🇵🇹', default:false },
+    { code:'GR', label:'GR 🇬🇷', default:false },
+    { code:'RO', label:'RO 🇷🇴', default:false },
+    { code:'BG', label:'BG 🇧🇬', default:false },
+    { code:'RS', label:'RS 🇷🇸', default:false },
+    { code:'UA', label:'UA 🇺🇦', default:false },
+    { code:'EE', label:'EE 🇪🇪', default:false },
+    { code:'LV', label:'LV 🇱🇻', default:false },
+    { code:'LT', label:'LT 🇱🇹', default:false },
+    { code:'TR', label:'TR 🇹🇷', default:false },
+    // Nordamerika
+    { code:'US', label:'US 🇺🇸', default:false },
+    { code:'CA', label:'CA 🇨🇦', default:false },
+    { code:'MX', label:'MX 🇲🇽', default:false },
+    // Südamerika
+    { code:'BR', label:'BR 🇧🇷', default:false },
+    { code:'AR', label:'AR 🇦🇷', default:false },
+    { code:'CL', label:'CL 🇨🇱', default:false },
+    { code:'CO', label:'CO 🇨🇴', default:false },
+    // Asien
+    { code:'JP', label:'JP 🇯🇵', default:false },
+    { code:'CN', label:'CN 🇨🇳', default:false },
+    { code:'IN', label:'IN 🇮🇳', default:false },
+    { code:'KR', label:'KR 🇰🇷', default:false },
+    { code:'TH', label:'TH 🇹🇭', default:false },
+    { code:'SG', label:'SG 🇸🇬', default:false },
+    { code:'ID', label:'ID 🇮🇩', default:false },
+    { code:'MY', label:'MY 🇲🇾', default:false },
+    { code:'PH', label:'PH 🇵🇭', default:false },
+    // Naher Osten
+    { code:'AE', label:'AE 🇦🇪', default:false },
+    { code:'SA', label:'SA 🇸🇦', default:false },
+    { code:'IL', label:'IL 🇮🇱', default:false },
+    // Ozeanien
+    { code:'AU', label:'AU 🇦🇺', default:false },
+    { code:'NZ', label:'NZ 🇳🇿', default:false },
+    // Afrika
+    { code:'ZA', label:'ZA 🇿🇦', default:false },
+    { code:'EG', label:'EG 🇪🇬', default:false },
+    { code:'MA', label:'MA 🇲🇦', default:false },
+    { code:'KE', label:'KE 🇰🇪', default:false },
+];
+
+// OpenAIP Typ-Codes
+const TYPE_META = {
+    0:  { label:'Sonstige',   color:'#94a3b8', fill:0.08, weight:1   },
+    1:  { label:'Restricted', color:'#7c3aed', fill:0.22, weight:1.5 },
+    2:  { label:'Danger',     color:'#dc2626', fill:0.22, weight:1.5 },
+    3:  { label:'Prohibited', color:'#991b1b', fill:0.35, weight:2   },
+    4:  { label:'CTR',        color:'#ef4444', fill:0.13, weight:2   },
+    5:  { label:'TMZ',        color:'#f59e0b', fill:0.13, weight:1.5 },
+    6:  { label:'RMZ',        color:'#84cc16', fill:0.13, weight:1.5 },
+    7:  { label:'TMA',        color:'#f97316', fill:0.10, weight:1.5 },
+    8:  { label:'TRA',        color:'#a78bfa', fill:0.18, weight:1.5 },
+    9:  { label:'TSA',        color:'#6366f1', fill:0.18, weight:1.5 },
+    10: { label:'FIR',        color:'#64748b', fill:0.04, weight:1   },
+    11: { label:'UIR',        color:'#475569', fill:0.04, weight:1   },
+    14: { label:'MATZ',       color:'#0891b2', fill:0.13, weight:1.5 },
+    20: { label:'HTZ',        color:'#d946ef', fill:0.13, weight:1   },
+    21: { label:'Segelflug',  color:'#0ea5e9', fill:0.13, weight:1   },
+    26: { label:'Klasse',     color:'#3b82f6', fill:0.08, weight:1   },
+    29: { label:'Sport',      color:'#10b981', fill:0.13, weight:1   },
+};
+// Wichtige Typen für Chip-Filter
+const IMPORTANT_TYPES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 21, 29];
+
+// OpenAIP Klassen-Codes
+const CLASS_LABEL = { 0:'–', 1:'A', 2:'B', 3:'C', 4:'D', 5:'E', 6:'F', 7:'G', 8:'E(SFC)' };
+const UNIT_LABEL  = { 1:'FL', 6:'ft', 3:'m' };
+const DATUM_LABEL = { 1:'GND', 2:'MSL', 3:'STD' };
+
+// ── Zustand ───────────────────────────────────────────────────────────────────
+
+let map, geoLayer;
+let activeCountries = new Set(COUNTRIES.filter(c => c.default).map(c => c.code));
+let activeTypes = new Set(Object.keys(TYPE_META).map(Number));
+let allFeatures = [];
+
+// ── Hilfsfunktionen ───────────────────────────────────────────────────────────
+
+function fmtAlt(lim) {
+    if (!lim) return '?';
+    if (lim.unit === 1) return `FL ${lim.value}`;
+    if (lim.value === 0 && lim.referenceDatum === 1) return 'GND';
+    const u = UNIT_LABEL[lim.unit] || '';
+    const d = lim.referenceDatum === 2 ? '' : ` ${DATUM_LABEL[lim.referenceDatum] || ''}`;
+    return `${lim.value.toLocaleString('de')} ${u}${d}`.trim();
+}
+
+function featureStyle(feature) {
+    const p = feature.properties;
+    const m = TYPE_META[p.type] || TYPE_META[0];
+    return { fillColor: m.color, fillOpacity: m.fill, color: m.color, weight: m.weight, opacity: 0.85 };
+}
+
+function showToast(msg, ms = 4000) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), ms);
+}
+
+// ── Leaflet ───────────────────────────────────────────────────────────────────
+
+function initMap() {
+    map = L.map('map', { center: [51.2, 10.5], zoom: 6, preferCanvas: true });
+
+    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 18
+    });
+    const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '© Esri, Maxar', maxZoom: 18
+    });
+    osm.addTo(map);
+    L.control.layers({ 'Karte (OSM)': osm, 'Satellit': sat }, {}, { position: 'topright' }).addTo(map);
+
+    geoLayer = L.geoJSON([], {
+        style: featureStyle,
+        onEachFeature(feature, layer) {
+            const p = feature.properties;
+            const m = TYPE_META[p.type] || TYPE_META[0];
+            const cls = p.icaoClass ?? p.class ?? 0;
+
+            layer.on('click', () => {
+                const html = `<div class="airspace-popup">
+                    <h3>${p.name || '–'}</h3>
+                    <span class="ap-badge" style="background:${m.color}">${m.label}</span>
+                    ${cls > 0 ? `<span class="ap-badge" style="background:#475569">Klasse ${CLASS_LABEL[cls]||cls}</span>` : ''}
+                    <div class="ap-grid">
+                        <span class="ap-key">Oben</span><span class="ap-val">${fmtAlt(p.upperLimit)}</span>
+                        <span class="ap-key">Unten</span><span class="ap-val">${fmtAlt(p.lowerLimit)}</span>
+                        ${p.country ? `<span class="ap-key">Land</span><span class="ap-val">${p.country}</span>` : ''}
+                    </div>
+                    ${p.remarks ? `<div class="ap-remark">${p.remarks.slice(0,160)}${p.remarks.length>160?'…':''}</div>` : ''}
+                </div>`;
+                layer.bindPopup(html, { maxWidth: 290 }).openPopup();
+            });
+            layer.on('mouseover', () => layer.setStyle({ fillOpacity: Math.min((m.fill || 0.1) + 0.12, 0.6) }));
+            layer.on('mouseout',  () => geoLayer.resetStyle(layer));
+        }
+    }).addTo(map);
+}
+
+// ── Daten laden ───────────────────────────────────────────────────────────────
+
+async function fetchCountry(country, key) {
+    const items = [];
+    let page = 1, total = Infinity;
+    while (items.length < total) {
+        const r = await fetch(
+            `https://api.core.openaip.net/api/airspaces?country=${country}&limit=1000&page=${page}`,
+            { headers: { 'x-openaip-api-key': key, 'Accept': 'application/json' } }
+        );
+        if (!r.ok) {
+            if (r.status === 401 || r.status === 403) throw new Error('Ungültiger API-Key — bitte prüfen');
+            if (r.status === 429) throw new Error('Rate-Limit erreicht — bitte kurz warten und erneut versuchen');
+            throw new Error(`HTTP ${r.status} beim Laden von ${country}`);
+        }
+        const data = await r.json();
+        const batch = data.items || data.data || [];
+        items.push(...batch);
+        total = data.totalCount ?? data.total ?? items.length;
+        if (batch.length < 1000) break;
+        page++;
+    }
+    return items;
+}
+
+async function ladeAirspaces() {
+    const key = localStorage.getItem('openaip_key');
+    if (!key) { toggleSettings(); return; }
+
+    document.getElementById('no-key-msg').style.display = 'none';
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('load-btn').disabled = true;
+    allFeatures = [];
+
+    const selected = [...activeCountries];
+    let loaded = 0, total = 0;
+
+    for (const country of selected) {
+        document.getElementById('loading-text').textContent = `Lade ${country}…`;
+        document.getElementById('loading-progress').textContent = `${loaded}/${selected.length} Länder`;
+        try {
+            const items = await fetchCountry(country, key);
+            for (const item of items) {
+                if (!item.geometry) continue;
+                allFeatures.push({
+                    type: 'Feature',
+                    geometry: item.geometry,
+                    properties: {
+                        name: item.name || '',
+                        type: item.type ?? 0,
+                        icaoClass: item.icaoClass ?? item.class ?? 0,
+                        upperLimit: item.upperLimit ?? null,
+                        lowerLimit: item.lowerLimit ?? null,
+                        country: item.country || country,
+                        remarks: item.remarks || ''
+                    }
+                });
+                total++;
+            }
+            loaded++;
+        } catch(e) {
+            showToast(`${country}: ${e.message}`);
+            if (e.message.includes('API-Key') || e.message.includes('Rate-Limit')) break;
+        }
+    }
+
+    renderFeatures();
+    updateStats();
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('load-btn').disabled = false;
+    document.getElementById('load-btn').textContent = '↺ Neu laden';
+}
+
+function renderFeatures() {
+    geoLayer.clearLayers();
+    const filtered = allFeatures.filter(f => activeTypes.has(f.properties.type));
+    if (filtered.length > 0) {
+        geoLayer.addData({ type: 'FeatureCollection', features: filtered });
+    }
+}
+
+function updateStats() {
+    const bar = document.getElementById('stats-bar');
+    if (allFeatures.length === 0) { bar.classList.remove('show'); return; }
+    bar.classList.add('show');
+    const shown = allFeatures.filter(f => activeTypes.has(f.properties.type)).length;
+    bar.textContent = `${shown.toLocaleString('de')} Lufträume angezeigt · ${allFeatures.length.toLocaleString('de')} geladen`;
+}
+
+// ── Settings ──────────────────────────────────────────────────────────────────
+
+function toggleSettings() {
+    const panel = document.getElementById('settings-panel');
+    const open = !panel.classList.contains('open');
+    panel.classList.toggle('open', open);
+    if (open) {
+        const k = localStorage.getItem('openaip_key') || '';
+        document.getElementById('key-input').value = k;
+        document.getElementById('key-status').textContent = k ? '✓ Key vorhanden' : '';
+    }
+}
+
+function saveKey() {
+    const key = document.getElementById('key-input').value.trim();
+    if (key) { localStorage.setItem('openaip_key', key); document.getElementById('key-status').textContent = '✓ Gespeichert'; }
+    else { localStorage.removeItem('openaip_key'); document.getElementById('key-status').textContent = 'Key gelöscht'; }
+    setTimeout(() => document.getElementById('settings-panel').classList.remove('open'), 1000);
+}
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+
+function toggleTheme() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('theme-btn').textContent = dark ? '🌙' : '☀️';
+    localStorage.setItem('luftraeume_theme', dark ? 'light' : 'dark');
+}
+
+// ── Chips ─────────────────────────────────────────────────────────────────────
+
+function buildChips() {
+    // Länder-Chips
+    const cc = document.getElementById('country-chips');
+    cc.innerHTML = '';
+    for (const { code, label } of COUNTRIES) {
+        const active = activeCountries.has(code);
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (active ? ' active' : '');
+        btn.style.background = active ? '#2563eb' : '';
+        btn.textContent = label;
+        btn.onclick = () => {
+            if (activeCountries.has(code)) activeCountries.delete(code);
+            else activeCountries.add(code);
+            buildChips();
+        };
+        cc.appendChild(btn);
+    }
+
+    // Typ-Chips (nur wichtige)
+    const tc = document.getElementById('type-chips');
+    tc.innerHTML = '';
+    for (const typeId of IMPORTANT_TYPES) {
+        const m = TYPE_META[typeId];
+        if (!m) continue;
+        const active = activeTypes.has(typeId);
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (active ? ' active' : '');
+        btn.style.background = active ? m.color : '';
+
+        const dot = document.createElement('span');
+        dot.className = 'chip-dot';
+        dot.style.background = m.color;
+        dot.style.border = '1px solid rgba(0,0,0,0.2)';
+        btn.appendChild(dot);
+        btn.appendChild(document.createTextNode(m.label));
+        btn.onclick = () => {
+            if (activeTypes.has(typeId)) activeTypes.delete(typeId);
+            else activeTypes.add(typeId);
+            buildChips();
+            renderFeatures();
+            updateStats();
+        };
+        tc.appendChild(btn);
+    }
+}
+
+// ── Legende ───────────────────────────────────────────────────────────────────
+
+function buildLegend() {
+    const entries = [
+        { color: '#991b1b', label: 'Prohibited (ED-P)' },
+        { color: '#dc2626', label: 'Danger (ED-D)' },
+        { color: '#7c3aed', label: 'Restricted (ED-R)' },
+        { color: '#ef4444', label: 'CTR' },
+        { color: '#f97316', label: 'TMA' },
+        { color: '#f59e0b', label: 'TMZ' },
+        { color: '#84cc16', label: 'RMZ' },
+        { color: '#a78bfa', label: 'TRA / TSA' },
+        { color: '#0ea5e9', label: 'Segelflug' },
+        { color: '#10b981', label: 'Sport' },
+    ];
+    document.getElementById('legend-items').innerHTML = entries.map(e =>
+        `<div class="legend-row">
+            <span class="legend-swatch" style="background:${e.color}"></span>
+            <span>${e.label}</span>
+        </div>`
+    ).join('');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+
+(function init() {
+    const theme = localStorage.getItem('luftraeume_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('theme-btn').textContent = theme === 'dark' ? '☀️' : '🌙';
+
+    initMap();
+    buildChips();
+    buildLegend();
+
+    if (!localStorage.getItem('openaip_key')) {
+        document.getElementById('no-key-msg').style.display = 'flex';
+    } else {
+        document.getElementById('no-key-msg').style.display = 'none';
+    }
+})();
+</script>
+</body>
+</html>
