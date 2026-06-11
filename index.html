@@ -168,5 +168,11 @@
     <a href="austrocontrol.html">Austrocontrol</a>
   </footer>
 
+  <script>
+    // Service Worker registrieren (gleiches PWA-Verhalten wie die übrigen Seiten)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    }
+  </script>
 </body>
 </html>

@@ -151,8 +151,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          cp ourairports.html index.html
-          git add ourairports.html index.html lxnav_latest.json \
+          # index.html ist die Themen-Startseite (NICHT mehr ein Klon von ourairports.html) -> nicht ueberschreiben
+          git add ourairports.html lxnav_latest.json \
                   shv_airspace.geojson shv_wildlife.geojson shv_latest.json \
                   dfs_katalog_export.json notam_info.json nfl_katalog.json nfl_notams_export.json \
                   faa_katalog_export.json \
