@@ -59,6 +59,15 @@
       "Aerodrome Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/AD_CHART-HCMH.pdf"
     }
   },
+  "HCMI": {
+    "_url": "https://aip.scaa.gov.so/eAIP/HC-AD-2.HCMI-en-GB.html",
+    "karten": {
+      "Aerodrome Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/AD_HCMI-ADC.pdf",
+      "Aircraft Parking and Docking Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/AD_HCMI-APDC.pdf",
+      "visual Approach Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/AD_HCMI-VAC.pdf",
+      "Aerodrome Obstacle Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/AD_ADOC_HCMI.pdf"
+    }
+  },
   "HCMK": {
     "_url": "https://aip.scaa.gov.so/eAIP/HC-AD-2.HCMK-en-GB.html",
     "karten": {
