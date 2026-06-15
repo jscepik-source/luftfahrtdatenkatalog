@@ -325,6 +325,11 @@ const DATUM_LABEL = { 1:'GND', 2:'MSL', 3:'STD' };
 // ── Zustand ───────────────────────────────────────────────────────────────────
 
 let map, geoLayer;
+
+// Geteilter Standard-OpenAIP-Key, damit die Karte OHNE eigenen Key funktioniert.
+// Ein eigener Key (⚙) hat Vorrang und nutzt das eigene Limit.
+const DEFAULT_OPENAIP_KEY = '2800111e267cd352c035b2df2102fbdf';
+function getOpenAipKey(){ return localStorage.getItem('openaip_key') || DEFAULT_OPENAIP_KEY; }
 let activeCountries = new Set(COUNTRIES.filter(c => c.default).map(c => c.code));
 let activeTypes = new Set(Object.keys(TYPE_META).map(Number));
 let allFeatures = [];
@@ -366,7 +371,19 @@ function initMap() {
         attribution: '© Esri, Maxar', maxZoom: 18
     });
     osm.addTo(map);
-    L.control.layers({ 'Karte (OSM)': osm, 'Satellit': sat }, {}, { position: 'topright' }).addTo(map);
+
+    // Weltweite Luftraum-Kacheln von OpenAIP (kein eigener Key nötig) – sofort sichtbar
+    const airspaceTiles = L.tileLayer(
+        `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${DEFAULT_OPENAIP_KEY}`,
+        { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.85 }
+    );
+    airspaceTiles.addTo(map);
+
+    L.control.layers(
+        { 'Karte (OSM)': osm, 'Satellit': sat },
+        { 'Lufträume (OpenAIP, weltweit)': airspaceTiles },
+        { position: 'topright' }
+    ).addTo(map);
 
     geoLayer = L.geoJSON([], {
         style: featureStyle,
@@ -421,8 +438,7 @@ async function fetchCountry(country, key) {
 }
 
 async function ladeAirspaces() {
-    const key = localStorage.getItem('openaip_key');
-    if (!key) { toggleSettings(); return; }
+    const key = getOpenAipKey();   // eigener Key falls vorhanden, sonst geteilter Default
 
     document.getElementById('no-key-msg').style.display = 'none';
     document.getElementById('loading').classList.add('show');
@@ -595,11 +611,8 @@ function buildLegend() {
     buildChips();
     buildLegend();
 
-    if (!localStorage.getItem('openaip_key')) {
-        document.getElementById('no-key-msg').style.display = 'flex';
-    } else {
-        document.getElementById('no-key-msg').style.display = 'none';
-    }
+    // Lufträume sind dank Default-Key + Tile-Layer sofort sichtbar – keine Sperre nötig.
+    document.getElementById('no-key-msg').style.display = 'none';
 })();
 </script>
 </body>
