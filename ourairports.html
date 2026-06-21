@@ -6012,7 +6012,9 @@ function switchTab(btn, panel, icao) {
 // ── Flüge (ADS-B Live) ────────────────────────────────────────────────────────
 const _flugTimer = {};
 const _adsbMapInst = {};   // Leaflet-Instanz je ICAO (Live-ADS-B-Karte)
-const _adsbMapData = {};   // {lat, lon, aircraft} je ICAO für die Karte
+const _adsbMapData = {};   // {lat, lon, aircraft, globeUrl} je ICAO für die Karte
+const _adsbMarkers = {};   // Flugzeug-Marker-LayerGroup je ICAO
+const _adsbView    = {};   // aktive Ansicht je ICAO: 'liste' | 'karte' | 'exchange'
 
 // Anreicherung: ICAO-Typcode → lesbarer Modellname (gängige Muster)
 const TYPE_NAMES = {
@@ -6095,31 +6097,65 @@ function acAirline(cs){
   return m ? (AIRLINE_NAMES[m[1]] || '') : '';
 }
 
-// Liste/Karte-Umschalter im Live-ADS-B-Header
+// Umschalter Liste / Karte / Exchange im Live-ADS-B-Header
 function setAdsbView(btn, view) {
     const panel = btn.closest('.adsb-panel');
     if (!panel) return;
+    const icao = panel.dataset.icao;
+    _adsbView[icao] = view;   // Ansicht merken, damit Auto-Refresh sie nicht zurücksetzt
     panel.querySelectorAll('.adsb-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
     panel.querySelectorAll('.adsb-view').forEach(v => { v.hidden = (v.dataset.view !== view); });
-    if (view === 'karte') initAdsbMap(panel.dataset.icao);
+    if (view === 'karte')    initAdsbMap(icao);
+    if (view === 'exchange') initAdsbExchange(icao);
 }
 
-// Plane-Symbol (zeigt nach Norden, wird per CSS um den Kurs gedreht)
+// adsbexchange-Globe als Option – lazy laden (nur beim ersten Öffnen)
+function initAdsbExchange(icao) {
+    const box = document.getElementById(`adsb-exch-${icao}`);
+    const d = _adsbMapData[icao];
+    if (!box || !d || box.dataset.loaded) return;
+    box.dataset.loaded = '1';
+    box.innerHTML = `<div class="fluege-globe-wrap">
+        <iframe src="${d.globeUrl}" loading="lazy" allowfullscreen referrerpolicy="no-referrer"></iframe>
+        <a class="fluege-globe-open" href="${d.globeUrl}" target="_blank" rel="noopener">Vollbild ↗</a>
+    </div>`;
+}
+
+// Flugzeug-Symbol (Nase nach Norden, wird um den Kurs gedreht) – sauberes mdi-airplane-Icon
 function adsbPlaneSvg(color, deg) {
     return `<div class="adsb-plane-i" style="transform:rotate(${deg}deg)">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="${color}" stroke="#fff" stroke-width="0.8">
-            <path d="M12 2c-.7 0-1.2 1.1-1.2 3v4.2L3 14v1.8l7.8-2.3V18l-2 1.5V21L12 20l3.2 .5v-1.5L13.2 17.5v-2.5L21 17.3V14l-7.8-4.8V5c0-1.9-.5-3-1.2-3z"/>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="${color}" stroke="#fff" stroke-width="0.6" stroke-linejoin="round">
+            <path d="M22,16.21V14.5L13.5,9V3.5A1.5,1.5 0 0,0 12,2A1.5,1.5 0 0,0 10.5,3.5V9L2,14.5V16.21L10.5,13.5V19L8,20.5V22L12,21L16,22V20.5L13.5,19V13.5L22,16.21Z"/>
         </svg></div>`;
 }
 
-// Eigene Leaflet-Live-Karte für den Flüge-Tab (ersetzt das adsbexchange-iframe).
-// Wird beim Umschalten auf "Karte" initialisiert (Leaflet braucht sichtbaren Container).
+// Farbe nach Flugphase (Boden / Ankunft / Abflug / Reiseflug)
+function adsbPhaseColor(a) {
+    const gs = a.gs ?? 0, vr = a.baro_rate ?? a.geom_rate ?? 0;
+    if (gs < 30)   return '#94a3b8';
+    if (vr < -200) return '#22c55e';
+    if (vr >  200) return '#f59e0b';
+    return '#3b82f6';
+}
+
+// Steig-/Sinkrate aufbereiten
+function adsbVerti(a) {
+    const vr = a.baro_rate ?? a.geom_rate;
+    if (vr == null || Math.abs(vr) < 100) return { arrow: '→', txt: 'konstant' };
+    return vr > 0 ? { arrow: '↑', txt: `+${Math.round(vr)} fpm` } : { arrow: '↓', txt: `${Math.round(vr)} fpm` };
+}
+
+// Eigene Leaflet-Live-Karte für den Flüge-Tab. Wird einmal aufgebaut; die Marker
+// werden bei jedem Refresh an Ort und Stelle aktualisiert (Pan/Zoom & Ansicht bleiben).
 function initAdsbMap(icao) {
     const data  = _adsbMapData[icao];
     const mapEl = document.getElementById(`adsb-map-${icao}`);
     if (!data || !mapEl || typeof L === 'undefined') return;
-    if (_adsbMapInst[icao]) { setTimeout(() => _adsbMapInst[icao].invalidateSize(), 60); return; }
-
+    if (_adsbMapInst[icao]) {                 // schon vorhanden -> nur Marker + Größe aktualisieren
+        adsbAddMarkers(icao);
+        setTimeout(() => _adsbMapInst[icao].invalidateSize(), 60);
+        return;
+    }
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     const map = L.map(mapEl, { center: [data.lat, data.lon], zoom: 10, scrollWheelZoom: false, attributionControl: false });
     _adsbMapInst[icao] = map;
@@ -6129,43 +6165,50 @@ function initAdsbMap(icao) {
         : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         { maxZoom: 19, subdomains: 'abcd' }).addTo(map);
 
-    // Flughafen + 20-nm-Radius
     L.circle([data.lat, data.lon], { radius: 20 * 1852, color: '#3b82f6', weight: 1, opacity: 0.4, fillColor: '#3b82f6', fillOpacity: 0.05 }).addTo(map);
     L.circleMarker([data.lat, data.lon], { radius: 6, color: '#fff', weight: 2, fillColor: '#ef4444', fillOpacity: 1 })
         .bindTooltip(icao, { direction: 'top' }).addTo(map);
 
-    const phaseColor = a => {
-        const gs = a.gs ?? 0, vr = a.baro_rate ?? 0;
-        if (gs < 30)   return '#94a3b8';   // Boden
-        if (vr < -200) return '#22c55e';   // Ankunft
-        if (vr >  200) return '#f59e0b';   // Abflug
-        return '#3b82f6';                  // Reiseflug
-    };
+    _adsbMarkers[icao] = L.layerGroup().addTo(map);
+    const bounds = adsbAddMarkers(icao);
+    if (bounds.length > 1) map.fitBounds(bounds, { padding: [30, 30], maxZoom: 11 });
+    setTimeout(() => map.invalidateSize(), 60);
+}
+
+// Flugzeug-Marker (neu) in die bestehende Karte schreiben – Erst-Aufbau & Live-Refresh.
+function adsbAddMarkers(icao) {
+    const data = _adsbMapData[icao], grp = _adsbMarkers[icao];
     const bounds = [[data.lat, data.lon]];
+    if (!grp) return bounds;
+    grp.clearLayers();
     (data.aircraft || []).forEach(a => {
         if (a.lat == null || a.lon == null) return;
         const cs    = (a.flight || '').trim() || a.r || '?';
         const model = acTypeName(a.t);
         const mLink = model
             ? `<a href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" style="color:#3b82f6">${model}</a>`
-            : '';
-        const sub = [acAirline(cs), a.r, mLink].filter(Boolean).join(' · ');
-        const line = [
-            a.alt_baro != null ? Math.round(a.alt_baro).toLocaleString() + ' ft' : '',
-            a.gs ? Math.round(a.gs) + ' kt' : '',
-            a.dst != null ? a.dst.toFixed(1) + ' nm' : ''
-        ].filter(Boolean).join(' · ');
-        const popup = `<div style="font-family:var(--font,sans-serif);min-width:150px">
-            <div style="font-weight:700;font-size:0.85rem">${cs}</div>
-            ${sub ? `<div style="font-size:0.74rem;color:#64748b;margin-top:1px">${sub}</div>` : ''}
-            ${line ? `<div style="font-size:0.74rem;margin-top:3px">${line}</div>` : ''}
+            : (a.t || '');
+        const v = adsbVerti(a);
+        const row = (l, val) => `<div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#64748b">${l}</span><span style="font-weight:600">${val}</span></div>`;
+        const grid = [
+            row('Höhe',       a.alt_baro != null ? `${Math.round(a.alt_baro).toLocaleString()} ft ${v.arrow}` : '—'),
+            row('Geschw.',    a.gs ? `${Math.round(a.gs)} kt` : '—'),
+            row('Steig/Sink', v.txt),
+            row('Kurs',       a.track != null ? `${Math.round(a.track)}°` : '—'),
+            row('Squawk',     a.squawk || '—'),
+            row('Entfernung', a.dst != null ? `${a.dst.toFixed(1)} nm` : '—'),
+        ].join('');
+        const popup = `<div style="font-family:var(--font,sans-serif);min-width:185px;font-size:0.74rem">
+            <div style="font-weight:700;font-size:0.92rem">✈ ${cs}</div>
+            <div style="color:#64748b;margin:1px 0 6px">${[acAirline(cs), a.r, mLink].filter(Boolean).join(' · ') || '—'}</div>
+            ${grid}
+            <a href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:7px;color:#3b82f6">Auf FlightRadar24 verfolgen ↗</a>
         </div>`;
-        const icon = L.divIcon({ className: 'adsb-plane', html: adsbPlaneSvg(phaseColor(a), a.track ?? 0), iconSize: [22, 22], iconAnchor: [11, 11] });
-        L.marker([a.lat, a.lon], { icon }).bindPopup(popup).addTo(map);
+        const icon = L.divIcon({ className: 'adsb-plane', html: adsbPlaneSvg(adsbPhaseColor(a), a.track ?? 0), iconSize: [26, 26], iconAnchor: [13, 13] });
+        L.marker([a.lat, a.lon], { icon }).bindPopup(popup).addTo(grp);
         bounds.push([a.lat, a.lon]);
     });
-    if (bounds.length > 1) map.fitBounds(bounds, { padding: [30, 30], maxZoom: 11 });
-    setTimeout(() => map.invalidateSize(), 60);
+    return bounds;
 }
 
 async function ladeFluege(icao, forceRefresh = false) {
@@ -6177,7 +6220,6 @@ async function ladeFluege(icao, forceRefresh = false) {
     // Cancel pending auto-refresh
     clearTimeout(_flugTimer[icao]);
     delete _flugTimer[icao];
-    if (_adsbMapInst[icao]) { _adsbMapInst[icao].remove(); delete _adsbMapInst[icao]; }
 
     const lat = parseFloat(el.dataset.lat);
     const lon = parseFloat(el.dataset.lon);
@@ -6336,7 +6378,9 @@ async function ladeFluege(icao, forceRefresh = false) {
                 ? `<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" title="${model} im Flugzeug-Katalog ansehen">${model}</a>`
                 : '';
             const regType = [reg, modelLink].filter(Boolean).join(' · ');
-            const subParts = [airlineHtml, regType, route, dist].filter(Boolean);
+            const vert = adsbVerti(a);
+            const sq   = a.squawk ? `SQ ${a.squawk}` : '';
+            const subParts = [airlineHtml, regType, route, dist, sq].filter(Boolean);
             const chipMap = {
                 'flug-ph-land':   ['flug-chip-land',   'Ankunft'],
                 'flug-ph-dep':    ['flug-chip-dep',    'Abflug'],
@@ -6352,7 +6396,7 @@ async function ladeFluege(icao, forceRefresh = false) {
                 </div>
                 <div class="flug-right">
                     <span class="flug-chip ${chipCls}">${chipLbl}</span>
-                    ${alt ? `<span class="flug-alt">${alt}${spd ? ' · '+spd : ''}</span>` : ''}
+                    ${alt ? `<span class="flug-alt">${alt} ${vert.arrow}${spd ? ' · '+spd : ''}</span>` : ''}
                 </div>
             </div>`;
         }
@@ -6372,7 +6416,7 @@ async function ladeFluege(icao, forceRefresh = false) {
                 ? `(<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" title="${model} im Flugzeug-Katalog ansehen">${model}</a>)`
                 : '';
             const regType= [reg, modelLink].filter(Boolean).join(' ');
-            const meta   = [airline, regType, spd, dist].filter(Boolean).join(' · ');
+            const meta   = [airline, regType, spd, dist, a.squawk ? `SQ ${a.squawk}` : ''].filter(Boolean).join(' · ');
             return `<div class="flug-range-item">
                 <span class="flug-range-cs">${cs}</span>
                 <div class="flug-range-bar-wrap">
@@ -6414,7 +6458,49 @@ async function ladeFluege(icao, forceRefresh = false) {
             ? `<div class="fluege-list">${inRange.map(renderRangeItem).join('')}</div>`
             : `<p class="flug-empty" style="margin:0">Keine Flugzeuge in Reichweite</p>`;
 
-        _adsbMapData[icao] = { lat, lon, aircraft };
+        _adsbMapData[icao] = { lat, lon, aircraft, globeUrl };
+
+        const subText  = `${ankuenfte.length} Ankünfte · ${abfluege.length} Abflüge · ${inRange.length} in Reichweite`;
+        const metaHtml = `📡 <strong>${result.src}</strong> · ${adsbStand}`;
+        const listHtml = `
+            <div class="fluege-stats">
+                <div class="fluege-stat-box fluege-stat-land"><div class="fluege-stat-label">Ankünfte</div><div class="fluege-stat-value">${ankuenfte.length}</div></div>
+                <div class="fluege-stat-box fluege-stat-dep"><div class="fluege-stat-label">Abflüge</div><div class="fluege-stat-value">${abfluege.length}</div></div>
+                <div class="fluege-stat-box"><div class="fluege-stat-label">In Reichweite</div><div class="fluege-stat-value">${inRange.length}</div></div>
+            </div>
+            ${renderAcc('🛬','Ankünfte ','#22c55e', ankuenfte, 'Keine ankommenden Flugzeuge')}
+            ${renderAcc('🛫','Abflüge ','#f59e0b', abfluege,  'Keine abfliegenden Flugzeuge')}
+            <div class="fluege-acc">
+                <div class="fluege-acc-head" onclick="this.closest('.fluege-acc').classList.toggle('open')">
+                    <span class="fluege-acc-label" style="color:var(--color-accent)">✈ In Reichweite<span class="fluege-acc-count">(${inRange.length})</span></span>
+                    <span class="fluege-acc-arrow">▶</span>
+                </div>
+                <div class="fluege-acc-body">${rangeHtml}</div>
+            </div>
+            <p class="fluege-hinweis" style="margin-top:8px">Vollständige Flugpläne:
+                <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
+                <a href="${faArrUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware Ankünfte</a> ·
+                <a href="${faDepUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">Abflüge</a>${an}</p>`;
+
+        const panel = el.querySelector('.adsb-panel');
+        if (panel && forceRefresh) {
+            // Live-Update an Ort und Stelle: Ansicht (Liste/Karte/Exchange) bleibt erhalten
+            const subEl  = el.querySelector(`#adsb-sub-${icao}`);   if (subEl)  subEl.textContent = subText;
+            const metaEl = el.querySelector(`#adsb-meta-${icao}`);  if (metaEl) metaEl.innerHTML  = metaHtml;
+            const listEl = el.querySelector(`#adsb-list-${icao}`);
+            if (listEl) {
+                const offen = [...listEl.querySelectorAll('.fluege-acc')].map(a => a.classList.contains('open'));
+                listEl.innerHTML = listHtml;
+                listEl.querySelectorAll('.fluege-acc').forEach((a, i) => { if (offen[i]) a.classList.add('open'); });
+            }
+            if (_adsbMapInst[icao]) adsbAddMarkers(icao);   // Marker auf der Karte live aktualisieren
+            const rb = el.querySelector('.fluege-refresh-btn'); if (rb) { rb.disabled = false; rb.textContent = '↺'; }
+            _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 20000);
+            return;
+        }
+
+        // Erst-Aufbau (volles Rendering)
+        if (_adsbMapInst[icao]) { _adsbMapInst[icao].remove(); delete _adsbMapInst[icao]; delete _adsbMarkers[icao]; }
         el.innerHTML = `
             <div class="adsb-panel" data-icao="${icao}">
                 <div class="adsb-head">
@@ -6422,60 +6508,50 @@ async function ladeFluege(icao, forceRefresh = false) {
                         <span class="adsb-live-dot"></span>
                         <div>
                             <div class="adsb-title">Live ADS-B</div>
-                            <div class="adsb-sub">${ankuenfte.length} Ankünfte · ${abfluege.length} Abflüge · ${inRange.length} in Reichweite</div>
+                            <div class="adsb-sub" id="adsb-sub-${icao}">${subText}</div>
                         </div>
                     </div>
                     <div class="adsb-head-right">
                         <div class="adsb-toggle">
                             <button class="adsb-toggle-btn active" data-view="liste" onclick="setAdsbView(this,'liste')">Liste</button>
                             <button class="adsb-toggle-btn" data-view="karte" onclick="setAdsbView(this,'karte')">Karte</button>
+                            <button class="adsb-toggle-btn" data-view="exchange" onclick="setAdsbView(this,'exchange')">Exchange</button>
                         </div>
-                        <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)" title="Aktualisieren">↺</button>
+                        <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)" title="Jetzt aktualisieren">↺</button>
                     </div>
                 </div>
-                <p class="adsb-meta">📡 <strong>${result.src}</strong> · ${adsbStand}</p>
+                <p class="adsb-meta" id="adsb-meta-${icao}">${metaHtml}</p>
 
-                <div class="adsb-view" data-view="liste">
-                    <div class="fluege-stats">
-                        <div class="fluege-stat-box fluege-stat-land">
-                            <div class="fluege-stat-label">Ankünfte</div>
-                            <div class="fluege-stat-value">${ankuenfte.length}</div>
-                        </div>
-                        <div class="fluege-stat-box fluege-stat-dep">
-                            <div class="fluege-stat-label">Abflüge</div>
-                            <div class="fluege-stat-value">${abfluege.length}</div>
-                        </div>
-                        <div class="fluege-stat-box">
-                            <div class="fluege-stat-label">In Reichweite</div>
-                            <div class="fluege-stat-value">${inRange.length}</div>
-                        </div>
-                    </div>
-                    ${renderAcc('🛬','Ankünfte ','#22c55e', ankuenfte, 'Keine ankommenden Flugzeuge')}
-                    ${renderAcc('🛫','Abflüge ','#f59e0b', abfluege,  'Keine abfliegenden Flugzeuge')}
-                    <div class="fluege-acc">
-                        <div class="fluege-acc-head" onclick="this.closest('.fluege-acc').classList.toggle('open')">
-                            <span class="fluege-acc-label" style="color:var(--color-accent)">✈ In Reichweite<span class="fluege-acc-count">(${inRange.length})</span></span>
-                            <span class="fluege-acc-arrow">▶</span>
-                        </div>
-                        <div class="fluege-acc-body">${rangeHtml}</div>
-                    </div>
-                    <p class="fluege-hinweis" style="margin-top:8px">Vollständige Flugpläne:
-                        <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
-                        <a href="${faArrUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware Ankünfte</a> ·
-                        <a href="${faDepUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">Abflüge</a>${an}</p>
-                </div>
+                <div class="adsb-view" data-view="liste"><div id="adsb-list-${icao}">${listHtml}</div></div>
 
                 <div class="adsb-view" data-view="karte" hidden>
                     <div id="adsb-map-${icao}" class="adsb-map"></div>
-                    <p class="fluege-hinweis" style="margin-top:8px">✈ Live-Position &amp; Kurs · Symbol antippen für Details ·
-                        <a href="${globeUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">ADS-B Exchange Vollbild ↗</a></p>
+                    <p class="fluege-hinweis" style="margin-top:8px">✈ Live-Position &amp; Kurs · aktualisiert automatisch · Symbol antippen für Details</p>
+                </div>
+
+                <div class="adsb-view" data-view="exchange" hidden>
+                    <div id="adsb-exch-${icao}"></div>
+                    <p class="fluege-hinweis" style="margin-top:8px">Externe Radar-Karte von ADS-B Exchange</p>
                 </div>
             </div>`;
 
-        // Auto-refresh every 60 s
-        _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 60000);
+        // gemerkte Ansicht wiederherstellen
+        const av = _adsbView[icao] || 'liste';
+        if (av !== 'liste') {
+            const tb = el.querySelector(`.adsb-toggle-btn[data-view="${av}"]`);
+            if (tb) setAdsbView(tb, av);
+        }
+
+        // Auto-Refresh (ständig aktuell)
+        _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 20000);
 
     } catch(e) {
+        // Auto-Refresh-Fehler: laufende Ansicht + Karte behalten, später erneut versuchen
+        if (forceRefresh && el.querySelector('.adsb-panel')) {
+            const rb = el.querySelector('.fluege-refresh-btn'); if (rb) { rb.disabled = false; rb.textContent = '↺'; }
+            _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 20000);
+            return;
+        }
         el.innerHTML = `
             <div class="fluege-refresh-row">
                 <span class="fluege-ts" style="color:var(--color-text-dim)">Flugzeug-Liste nicht verfügbar – Live-Radar unten funktioniert.</span>
