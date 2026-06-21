@@ -1598,6 +1598,37 @@ function openYT(el, query, type) {
   wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
+// Deep-Link aus ourairports.html (Live-ADS-B): ?q=<Modell> öffnet die Flugzeug-
+// Kategorie und filtert auf den passenden Typ vor. Da der Katalog nur ~40 kuratierte
+// Lehrbuch-Flugzeuge enthält, wird per Token-Abgleich (Hersteller + Modell-Ziffer)
+// auf das jeweilige Basismodell abgebildet (z. B. "Boeing 737-800" -> "Boeing 737").
+(function(){
+  try{
+    var q=new URLSearchParams(location.search).get('q');
+    if(!q) return;
+    loadCat('Flugzeuge');
+    var box=document.getElementById('dSrch');
+    if(!box) return;
+    var toks=function(s){return String(s).toLowerCase().replace(/[-–—]/g,' ').split(/\s+/).filter(Boolean);};
+    var qt=toks(q);
+    var qKey=qt.filter(function(t){return /\d/.test(t);});   // Tokens mit Ziffern (737, a350, a320neo…)
+    var best=null;
+    ((CAT['Flugzeuge']||{}).sections||[]).forEach(function(sec){
+      (sec.subs||[]).forEach(function(sub){
+        (sub.aircraft||[]).forEach(function(ac){
+          var ct=toks(ac.n);
+          var sameMfr=qt.length&&ct.length&&qt[0]===ct[0];
+          var keyHit=qKey.some(function(k){return ct.indexOf(k)>=0;});
+          if(sameMfr&&keyHit) best=ac.n;
+        });
+      });
+    });
+    box.value=best||'';            // Treffer -> vorfiltern, sonst ganze Kategorie zeigen
+    filterAll();
+    var t=document.getElementById('dTitle');
+    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){}
+})();
 
 </script>
 </body>

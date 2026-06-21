@@ -2061,6 +2061,8 @@
         }
         .flug-callsign:hover { text-decoration: underline; }
         .flug-sub { font-size: 0.71rem; color: var(--color-text-dim); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .flug-typ-link { color: var(--color-primary); text-decoration: none; border-bottom: 1px dotted currentColor; }
+        .flug-typ-link:hover { border-bottom-style: solid; }
         .flug-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
         .flug-alt  { font-size: 0.7rem; color: var(--color-text-dim); white-space: nowrap; }
         .flug-chip { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; letter-spacing: 0.03em; }
@@ -2857,6 +2859,7 @@ function ilsBadge(icao, desig) {
 
 const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
 const NOTAM_INFO_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/notam_info.json';
+const FLUGZEUG_KATALOG_URL  = 'Luftfahrt_Katalog_FINAL_CLEAN_10.html';   // Live-ADS-B-Typ -> Flugzeug-Katalog
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
 const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/lxnav_latest.json';
 const OPENAIP_KEY           = '2800111e267cd352c035b2df2102fbdf';
@@ -6140,24 +6143,28 @@ async function ladeFluege(icao, forceRefresh = false) {
         const versuche = [
             async () => {
                 const r = await fetchAny([adsbFiUrl, ...proxied(adsbFiUrl)]);
-                return { ac: parseAdsbFiFormat(await r.json()), src: 'adsb.fi' };
+                const d = await r.json();
+                return { ac: parseAdsbFiFormat(d), src: 'adsb.fi', ts: d.now ?? d.time ?? Date.now() };
             },
             async () => {
                 const r = await fetchAny([adsbLolUrl, ...proxied(adsbLolUrl)]);
-                return { ac: parseAdsbFiFormat(await r.json()), src: 'adsb.lol' };
+                const d = await r.json();
+                return { ac: parseAdsbFiFormat(d), src: 'adsb.lol', ts: d.now ?? d.time ?? Date.now() };
             },
             async () => {
                 const r = await fetchAny([airplanesUrl, ...proxied(airplanesUrl)]);
-                return { ac: parseAdsbFiFormat(await r.json()), src: 'airplanes.live' };
+                const d = await r.json();
+                return { ac: parseAdsbFiFormat(d), src: 'airplanes.live', ts: d.now ?? d.time ?? Date.now() };
             },
             async () => {
                 const r = await fetchAny([adsbExchUrl, ...proxied(adsbExchUrl)]);
                 const d = await r.json();
-                return { ac: d.ac || d.aircraft || [], src: 'ADS-B Exchange' };
+                return { ac: d.ac || d.aircraft || [], src: 'ADS-B Exchange', ts: d.now ?? d.time ?? Date.now() };
             },
             async () => {
                 const r = await fetchAny([openSkyUrl, ...proxied(openSkyUrl)], 12000);
-                return { ac: parseOpenSky(await r.json()), src: 'OpenSky Network' };
+                const d = await r.json();
+                return { ac: parseOpenSky(d), src: 'OpenSky Network', ts: d.time ?? Date.now() };
             },
         ];
 
@@ -6192,7 +6199,11 @@ async function ladeFluege(icao, forceRefresh = false) {
             const route = (a.orig_iata && a.dest_iata) ? `${a.orig_iata}→${a.dest_iata}`
                 : (a.from_icao && a.to_icao) ? `${a.from_icao}→${a.to_icao}` : '';
             const airlineHtml = airline ? `<span style="color:var(--color-text);font-weight:600">${airline}</span>` : '';
-            const regType = [reg, model].filter(Boolean).join(' · ');
+            // Modell verlinkt in den Flugzeug-Katalog (vorgefiltert auf den Typ)
+            const modelLink = model
+                ? `<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" title="${model} im Flugzeug-Katalog ansehen">${model}</a>`
+                : '';
+            const regType = [reg, modelLink].filter(Boolean).join(' · ');
             const subParts = [airlineHtml, regType, route, dist].filter(Boolean);
             const chipMap = {
                 'flug-ph-land':   ['flug-chip-land',   'Ankunft'],
@@ -6225,7 +6236,10 @@ async function ladeFluege(icao, forceRefresh = false) {
             const dist= a.dst != null ? `${a.dst.toFixed(1)} nm` : '';
             const altPct = alt != null ? Math.min(100, Math.max(2, alt / 450)) : 0;
             const altStr = alt != null ? `${alt.toLocaleString()} ft` : '';
-            const regType= [reg, model ? `(${model})` : ''].filter(Boolean).join(' ');
+            const modelLink = model
+                ? `(<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" title="${model} im Flugzeug-Katalog ansehen">${model}</a>)`
+                : '';
+            const regType= [reg, modelLink].filter(Boolean).join(' ');
             const meta   = [airline, regType, spd, dist].filter(Boolean).join(' · ');
             return `<div class="flug-range-item">
                 <span class="flug-range-cs">${cs}</span>
@@ -6256,6 +6270,11 @@ async function ladeFluege(icao, forceRefresh = false) {
         }
 
         const zeit = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        // Stand via Zeitstempel-Modul, Kategorie "API-Feld" (Verkehr/Tracking: Feed-Snapshot now/time)
+        const adsbIso = window.Zeitstempel
+            ? await Zeitstempel.lastUpdated({ id: icao + '-adsb', kategorie: 'API-Feld', data: { timestamp: result.ts } })
+            : null;
+        const adsbStand = adsbIso ? Zeitstempel.formatStand(adsbIso) : zeit;
         const an   = airnavUrl ? ` · <a href="${airnavUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">AirNav</a>` : '';
 
         const inRange = [...reiseflug, ...boden];
@@ -6265,7 +6284,7 @@ async function ladeFluege(icao, forceRefresh = false) {
 
         el.innerHTML = `
             <div class="fluege-refresh-row">
-                <span class="fluege-ts">Live ADS-B · <strong>${result.src}</strong> · ${zeit}</span>
+                <span class="fluege-ts">Live ADS-B · <strong>${result.src}</strong> · ${adsbStand}</span>
                 <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)">↺ Aktualisieren</button>
             </div>
             <div class="fluege-stats">
