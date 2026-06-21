@@ -890,6 +890,22 @@
         .metar-freshness.stale   { background:#fee2e2; color:#991b1b; }
         .notam-zeit { font-size: 0.7rem; color: var(--color-text-dim); display: block; margin-bottom: 2px; }
 
+        /* ── Quellen-Stand (Zeitstempel-Modul) ── */
+        .quellen-stand {
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+            font-size: 0.72rem; color: var(--color-text-dim);
+            background: var(--color-metar-bg);
+            border: 1px solid var(--color-metar-bd);
+            border-radius: var(--radius-pill);
+            padding: 4px 11px; margin: 0 0 12px;
+        }
+        .quellen-stand strong { color: var(--color-text); font-weight: 600; }
+        .quellen-stand .qs-zyklus {
+            font-size: 0.66rem; font-weight: 600;
+            padding: 1px 7px; border-radius: var(--radius-pill);
+            background:#dbeafe; color:#1e40af;
+        }
+
         /* ── NOTAMs ── */
         .notam-list {
             display: flex;
@@ -2419,6 +2435,8 @@
         [data-pwa="true"] .chip        { min-height: 36px; }
         [data-pwa="true"] .card-tab    { min-height: 40px; }
     </style>
+    <!-- Zeitstempel-Modul (AIRAC-Kalender + 6 Quellen-Adapter) -->
+    <script src="zeitstempel.js"></script>
 </head>
 <body>
 <noscript><style>body::before{content:"JavaScript ist erforderlich, um den Flughafen-Katalog zu laden.";display:block;padding:2rem;font-family:sans-serif;text-align:center;color:#64748b}</style></noscript>
@@ -2838,12 +2856,14 @@ function ilsBadge(icao, desig) {
 }
 
 const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
+const NOTAM_INFO_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/notam_info.json';
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
 const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/lxnav_latest.json';
 const OPENAIP_KEY           = '2800111e267cd352c035b2df2102fbdf';
 const SHV_AIRSPACE_URL      = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/shv_airspace.geojson';
 const SHV_WILDLIFE_URL      = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/shv_wildlife.geojson';
 let nflJsonCache         = null;
+let notamInfoCache       = null;
 let eurocontrolCache     = null;
 
 let katalog = {};
@@ -4042,6 +4062,21 @@ function katalogDateiname(icao) {
     return null;
 }
 
+// AIP-/Karten-Daten folgen dem weltweiten AIRAC-Zyklus (Zeitstempel-Modul, Kategorie "AIRAC").
+// Rein berechnet – kein Request. Liefert "" wenn das Modul nicht geladen ist.
+function airacStandBadge(icao) {
+    const Z = window.Zeitstempel;
+    if (!Z || !Z.airacInfo) return '';
+    const a = Z.airacInfo();
+    const stand     = Z.formatStand(a.iso, { nurDatum: true });
+    const naechster = Z.formatStand(a.next.toISOString(), { nurDatum: true }).replace('Stand: ', '');
+    return `<div class="quellen-stand" title="AIP-Karten folgen dem 28-Tage-AIRAC-Zyklus – weltweit synchron. Quelle: Zeitstempel-Modul, Kategorie AIRAC.">
+        🗓 <strong>AIP-${stand}</strong>
+        <span class="qs-zyklus">AIRAC ${a.cycle}</span>
+        <span>· nächster Zyklus ab ${naechster}</span>
+    </div>`;
+}
+
 async function ladeDfsKarten(icao) {
     const el = document.getElementById(`dfs-${icao}`);
     if (!el || el.dataset.geladen) return;
@@ -4804,6 +4839,7 @@ out skel qt;`;
 
             <!-- Karten Panel -->
             <div class="card-tab-panel" data-panel="karten">
+                ${airacStandBadge(icao)}
                 ${vfrLinksHtml(icao, ap.lat, ap.lon)}
                 <div id="dfs-${icao}"></div>
             </div>
@@ -5046,7 +5082,12 @@ async function ladeWetter(icao, lat, lon) {
                 ${m.wxString ? `<div class="wx-item"><dt>Phänomene</dt><dd>${m.wxString}</dd></div>` : ''}
             </dl>
         </div>`;
-        html += `<p class="wx-quelle">Quelle: ${mQuelle}</p>`;
+        // Stand via Zeitstempel-Modul, Kategorie "API-Feld" (liest obsTime aus der API-Antwort)
+        const metarIso = window.Zeitstempel
+            ? await Zeitstempel.lastUpdated({ id: icao + '-metar', kategorie: 'API-Feld', data: m })
+            : null;
+        const metarStand = metarIso ? ' &middot; ' + Zeitstempel.formatStand(metarIso) : '';
+        html += `<p class="wx-quelle">Quelle: ${mQuelle}${metarStand}</p>`;
     } else if (isGerman && lat && lon) {
         // Kein METAR (Flugfeld ohne Meldung oder Proxy ausgefallen) → DWD/BrightSky
         const bsData = await ladeBrightSky(lat, lon);
@@ -5065,11 +5106,17 @@ async function ladeWetter(icao, lat, lon) {
     try {
         const tRes = await fetchProxy(`https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`);
         if (Array.isArray(tRes.data) && tRes.data.length > 0 && tRes.data[0].rawTAF) {
-            const rawTAF = tRes.data[0].rawTAF;
+            const tafObj = tRes.data[0];
+            const rawTAF = tafObj.rawTAF;
+            // Stand via Zeitstempel-Modul, Kategorie "API-Feld" (liest issueTime aus der API-Antwort)
+            const tafIso = window.Zeitstempel
+                ? await Zeitstempel.lastUpdated({ id: icao + '-taf', kategorie: 'API-Feld', data: tafObj })
+                : null;
             html += `<section class="card-section">
                 <h3 class="section-title">TAF</h3>
                 <pre class="taf-pre">${rawTAF}</pre>
                 ${decodeTAF(rawTAF)}
+                ${tafIso ? `<p class="wx-quelle">${Zeitstempel.formatStand(tafIso)}</p>` : ''}
             </section>`;
         }
     } catch(e) {}
@@ -5131,6 +5178,19 @@ async function ladeNflJson() {
     return nflJsonCache;
 }
 
+// NfL-Stand via Zeitstempel-Modul, Kategorie "API/Dump": liest das Feld
+// "aktualisiert" aus notam_info.json (Dump-Metadaten). Liefert "" bei Fehler.
+async function nflStandHtml() {
+    if (!window.Zeitstempel) return '';
+    try {
+        if (!notamInfoCache) notamInfoCache = await (await fetch(NOTAM_INFO_URL)).json();
+        const iso = await Zeitstempel.lastUpdated({
+            id: 'dfs-nfl', kategorie: 'API/Dump', dump: notamInfoCache
+        });
+        return iso ? ` &middot; ${Zeitstempel.formatStand(iso, { nurDatum: true })}` : '';
+    } catch (e) { return ''; }
+}
+
 function nflNummerFormatieren(e) {
     const parts = (e.nummer || '').split('-');
     const jahr  = parts[0] || '';
@@ -5151,6 +5211,7 @@ async function ladeNfl(icao) {
             return;
         }
         const zeige = eintraege.slice(0, 15);
+        const stand = await nflStandHtml();
         el.innerHTML = `<div class="nfl-section">
             <p class="nfl-section-titel">🇩🇪 DFS NfL-Einträge (${eintraege.length})</p>
             ${zeige.map(e => `<div class="nfl-item">
@@ -5160,7 +5221,7 @@ async function ladeNfl(icao) {
             </div>`).join('')}
             ${eintraege.length > 15 ? `<p style="font-size:0.72rem;color:var(--color-text-dim);margin-top:4px">… und ${eintraege.length - 15} weitere Einträge</p>` : ''}
         </div>
-        <p class="wx-quelle">Quelle: DFS NfL via aip.dfs.de</p>`;
+        <p class="wx-quelle">Quelle: DFS NfL via aip.dfs.de${stand}</p>`;
     } catch(e) {
         el.innerHTML = `<span class="status-error">NfL nicht ladbar: ${e.message}</span>`;
     }
