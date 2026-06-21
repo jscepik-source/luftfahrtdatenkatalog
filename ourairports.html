@@ -291,7 +291,19 @@
             display: flex;
             gap: 5px;
             flex-wrap: wrap;
+            align-items: center;
         }
+        .filter-lead {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--color-text-sub);
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+        .filter-lead::after { content: ""; width: 1px; height: 18px; background: var(--color-border); margin-left: 2px; }
 
         .chip {
             padding: 4px 11px;
@@ -1723,6 +1735,19 @@
         }
         .fluege-refresh-btn:hover { background: var(--color-primary-bg); border-color: var(--color-primary); }
         .fluege-refresh-btn:disabled { opacity: 0.5; cursor: default; }
+        /* ── Live ADS-B Premium-Header (Dashboard-Look) ── */
+        .adsb-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+        .adsb-title-wrap { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .adsb-live-dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,0.18); animation: adsbPulse 2s infinite; flex-shrink: 0; }
+        @keyframes adsbPulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+        .adsb-title { font-size: 1.05rem; font-weight: 700; color: var(--color-text); line-height: 1.1; }
+        .adsb-sub { font-size: 0.72rem; color: var(--color-text-dim); margin-top: 2px; }
+        .adsb-head-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .adsb-toggle { display: inline-flex; background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: 2px; }
+        .adsb-toggle-btn { font-size: 0.72rem; font-weight: 600; padding: 4px 13px; border-radius: var(--radius-pill); border: none; background: transparent; color: var(--color-text-dim); cursor: pointer; transition: all .15s; }
+        .adsb-toggle-btn.active { background: var(--color-surface); color: var(--color-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+        .adsb-meta { font-size: 0.68rem; color: var(--color-text-dim); margin: 0 0 12px; }
+        .adsb-view[hidden] { display: none; }
         .flug-ph-land   { color: #22c55e; }
         .flug-ph-dep    { color: #f59e0b; }
         .flug-ph-cruise { color: #60a5fa; }
@@ -2571,7 +2596,8 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
             <input type="search" id="suche" placeholder="ICAO, IATA, Name, Stadt, Land…" autocomplete="off">
         </div>
 
-        <div class="filter-group" role="group" aria-label="Nach Typ filtern" id="filter">
+        <div class="filter-group" role="group" aria-label="Flughäfen filtern" id="filter">
+            <span class="filter-lead">🔍 Filter</span>
             <button class="chip active" data-typ="" title="Alle Flughafentypen anzeigen">Alle</button>
             <button class="chip" data-typ="large_airport" title="Internationale Großflughäfen (z. B. EDDF, JFK, EGLL)">✈ International</button>
             <button class="chip" data-typ="medium_airport" title="Regionale Flughäfen mit regulärem Betrieb">🛫 Regional</button>
@@ -2628,7 +2654,7 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
     <p>
         Studentisches Projekt · Avionik &amp; Luftfahrttechnik ·
         <a href="https://www.hs-rm.de" target="_blank" rel="noopener">Hochschule RheinMain</a>
-        · Katalog aktualisiert alle 6 Stunden
+        · Katalog alle 6 h aktualisiert<span id="katalog-stand"></span>
     </p>
     <p style="margin-top:6px">
         Datenquellen:
@@ -2705,6 +2731,19 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
+
+// Katalog-Stand im Footer: letztes Update von ourairports_export.json (GitHub-Commit-Datum, Kategorie API/Dump)
+(async () => {
+    const el = document.getElementById('katalog-stand');
+    if (!el || !window.Zeitstempel) return;
+    try {
+        const r = await fetch('https://api.github.com/repos/jscepik-source/dfs-katalog/commits?path=ourairports_export.json&per_page=1');
+        const j = await r.json();
+        const d = j && j[0] && j[0].commit && (j[0].commit.committer || j[0].commit.author).date;
+        const iso = Zeitstempel.toISO(d);
+        if (iso) el.textContent = ' · ' + Zeitstempel.formatStand(iso, { nurDatum: true });
+    } catch (e) { /* still: statischer Text bleibt */ }
+})();
 
 // ── ILS-Kategorien weltweit (Quelle: AIP/Wikipedia/NOTAM) ────────────────────
 const ILS_KAT_DE = {
@@ -5475,6 +5514,13 @@ out center tags;`;
         const json = await overpassFetch(query);
         const elements = json.elements || [];
 
+        // OSM-Datenstand via Zeitstempel-Modul, Kategorie "API-Feld" (timestamp_osm_base aus der Antwort)
+        let osmStandHtml = '';
+        if (window.Zeitstempel && json.osm3s && json.osm3s.timestamp_osm_base) {
+            const osmIso = await Zeitstempel.lastUpdated({ id: icao + '-osm', kategorie: 'API-Feld', data: { timestamp: json.osm3s.timestamp_osm_base } });
+            if (osmIso) osmStandHtml = ` &middot; ${Zeitstempel.formatStand(osmIso)}`;
+        }
+
         // ── OSM-Elemente gruppieren ───────────────────────────────────────────
         const groups     = {};
         const osmNavIdents = new Set(); // Duplikat-Schutz beim Merge mit OurAirports
@@ -5777,7 +5823,7 @@ out center tags;`;
             <div class="infra-footer">
                 <div class="infra-source">
                     OSM: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende · ODbL ·
-                    Navaids: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a>
+                    Navaids: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a>${osmStandHtml}
                 </div>
                 <button class="infra-refresh" onclick="ladeInfrastruktur('${icao}', true)">↻ Aktualisieren</button>
             </div>`;
@@ -6043,6 +6089,14 @@ function acAirline(cs){
   return m ? (AIRLINE_NAMES[m[1]] || '') : '';
 }
 
+// Liste/Karte-Umschalter im Live-ADS-B-Header
+function setAdsbView(btn, view) {
+    const panel = btn.closest('.adsb-panel');
+    if (!panel) return;
+    panel.querySelectorAll('.adsb-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    panel.querySelectorAll('.adsb-view').forEach(v => { v.hidden = (v.dataset.view !== view); });
+}
+
 async function ladeFluege(icao, forceRefresh = false) {
     const el = document.getElementById(`fluege-${icao}`);
     if (!el) return;
@@ -6288,38 +6342,59 @@ async function ladeFluege(icao, forceRefresh = false) {
             : `<p class="flug-empty" style="margin:0">Keine Flugzeuge in Reichweite</p>`;
 
         el.innerHTML = `
-            <div class="fluege-refresh-row">
-                <span class="fluege-ts">Live ADS-B · <strong>${result.src}</strong> · ${adsbStand}</span>
-                <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)">↺ Aktualisieren</button>
-            </div>
-            <div class="fluege-stats">
-                <div class="fluege-stat-box fluege-stat-land">
-                    <div class="fluege-stat-label">Ankünfte</div>
-                    <div class="fluege-stat-value">${ankuenfte.length}</div>
+            <div class="adsb-panel">
+                <div class="adsb-head">
+                    <div class="adsb-title-wrap">
+                        <span class="adsb-live-dot"></span>
+                        <div>
+                            <div class="adsb-title">Live ADS-B</div>
+                            <div class="adsb-sub">${ankuenfte.length} Ankünfte · ${abfluege.length} Abflüge · ${inRange.length} in Reichweite</div>
+                        </div>
+                    </div>
+                    <div class="adsb-head-right">
+                        <div class="adsb-toggle">
+                            <button class="adsb-toggle-btn active" data-view="liste" onclick="setAdsbView(this,'liste')">Liste</button>
+                            <button class="adsb-toggle-btn" data-view="karte" onclick="setAdsbView(this,'karte')">Karte</button>
+                        </div>
+                        <button class="fluege-refresh-btn" onclick="ladeFluege('${icao}',true)" title="Aktualisieren">↺</button>
+                    </div>
                 </div>
-                <div class="fluege-stat-box fluege-stat-dep">
-                    <div class="fluege-stat-label">Abflüge</div>
-                    <div class="fluege-stat-value">${abfluege.length}</div>
+                <p class="adsb-meta">📡 <strong>${result.src}</strong> · ${adsbStand}</p>
+
+                <div class="adsb-view" data-view="liste">
+                    <div class="fluege-stats">
+                        <div class="fluege-stat-box fluege-stat-land">
+                            <div class="fluege-stat-label">Ankünfte</div>
+                            <div class="fluege-stat-value">${ankuenfte.length}</div>
+                        </div>
+                        <div class="fluege-stat-box fluege-stat-dep">
+                            <div class="fluege-stat-label">Abflüge</div>
+                            <div class="fluege-stat-value">${abfluege.length}</div>
+                        </div>
+                        <div class="fluege-stat-box">
+                            <div class="fluege-stat-label">In Reichweite</div>
+                            <div class="fluege-stat-value">${inRange.length}</div>
+                        </div>
+                    </div>
+                    ${renderAcc('🛬','Ankünfte ','#22c55e', ankuenfte, 'Keine ankommenden Flugzeuge')}
+                    ${renderAcc('🛫','Abflüge ','#f59e0b', abfluege,  'Keine abfliegenden Flugzeuge')}
+                    <div class="fluege-acc">
+                        <div class="fluege-acc-head" onclick="this.closest('.fluege-acc').classList.toggle('open')">
+                            <span class="fluege-acc-label" style="color:var(--color-accent)">✈ In Reichweite<span class="fluege-acc-count">(${inRange.length})</span></span>
+                            <span class="fluege-acc-arrow">▶</span>
+                        </div>
+                        <div class="fluege-acc-body">${rangeHtml}</div>
+                    </div>
+                    <p class="fluege-hinweis" style="margin-top:8px">Vollständige Flugpläne:
+                        <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
+                        <a href="${faArrUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware Ankünfte</a> ·
+                        <a href="${faDepUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">Abflüge</a>${an}</p>
                 </div>
-                <div class="fluege-stat-box">
-                    <div class="fluege-stat-label">In Reichweite</div>
-                    <div class="fluege-stat-value">${inRange.length}</div>
+
+                <div class="adsb-view" data-view="karte" hidden>
+                    ${globe()}
                 </div>
-            </div>
-            ${renderAcc('🛬','Ankünfte ','#22c55e', ankuenfte, 'Keine ankommenden Flugzeuge')}
-            ${renderAcc('🛫','Abflüge ','#f59e0b', abfluege,  'Keine abfliegenden Flugzeuge')}
-            <div class="fluege-acc">
-                <div class="fluege-acc-head" onclick="this.closest('.fluege-acc').classList.toggle('open')">
-                    <span class="fluege-acc-label" style="color:var(--color-accent)">✈ In Reichweite<span class="fluege-acc-count">(${inRange.length})</span></span>
-                    <span class="fluege-acc-arrow">▶</span>
-                </div>
-                <div class="fluege-acc-body">${rangeHtml}</div>
-            </div>
-            <p class="fluege-hinweis" style="margin-top:8px">Vollständige Flugpläne:
-                <a href="${fr24url}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightRadar24</a> ·
-                <a href="${faArrUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">FlightAware Ankünfte</a> ·
-                <a href="${faDepUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">Abflüge</a>${an}</p>
-            ${globe()}`;
+            </div>`;
 
         // Auto-refresh every 60 s
         _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 60000);
