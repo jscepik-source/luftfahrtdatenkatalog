@@ -4861,6 +4861,7 @@ out skel qt;`;
 
             <!-- NOTAM Panel -->
             <div class="card-tab-panel" data-panel="notam">
+                ${_isDFS ? `<div id="nfl-${icao}"><span class="status-loading">NfL-Stand wird geladen…</span></div>` : ''}
                 ${natNotam ? `<a class="notam-map-btn" href="${natNotam.url}" target="_blank" rel="noopener">
                     <span class="notam-map-btn-icon">${natNotam.flag}</span>
                     <span>
@@ -4897,7 +4898,6 @@ out skel qt;`;
                     <span class="notam-extern-label">Weitere:</span>
                     <a class="btn-ext" href="https://www.ead.eurocontrol.int" target="_blank" rel="noopener">🇪🇺 EAD Basic (Europa)</a>
                 </div>
-                ${_isDFS ? `<div id="nfl-${icao}"><span class="status-loading">NfL werden geladen…</span></div>` : ''}
             </div>
 
             <!-- Karte Panel -->
@@ -5181,16 +5181,20 @@ async function ladeNflJson() {
     return nflJsonCache;
 }
 
-// NfL-Stand via Zeitstempel-Modul, Kategorie "API/Dump": liest das Feld
-// "aktualisiert" aus notam_info.json (Dump-Metadaten). Liefert "" bei Fehler.
-async function nflStandHtml() {
+// NfL-Stand als sichtbares Badge via Zeitstempel-Modul, Kategorie "API/Dump":
+// liest das Feld "aktualisiert" aus notam_info.json (Dump-Metadaten).
+async function nflStandBadge() {
     if (!window.Zeitstempel) return '';
     try {
         if (!notamInfoCache) notamInfoCache = await (await fetch(NOTAM_INFO_URL)).json();
         const iso = await Zeitstempel.lastUpdated({
             id: 'dfs-nfl', kategorie: 'API/Dump', dump: notamInfoCache
         });
-        return iso ? ` &middot; ${Zeitstempel.formatStand(iso, { nurDatum: true })}` : '';
+        if (!iso) return '';
+        return `<div class="quellen-stand" title="Stand der DFS-NfL-Datenbank (Kategorie API/Dump aus notam_info.json)">
+            🗓 <strong>NfL-${Zeitstempel.formatStand(iso, { nurDatum: true })}</strong>
+            <span>· Quelle: DFS NfL</span>
+        </div>`;
     } catch (e) { return ''; }
 }
 
@@ -5207,15 +5211,16 @@ async function ladeNfl(icao) {
     if (!el || el.dataset.geladen) return;
     el.dataset.geladen = '1';
     try {
-        const json     = await ladeNflJson();
+        const badge = await nflStandBadge();   // Stand immer zuerst (auch ohne Einträge)
+        let json = {};
+        try { json = await ladeNflJson(); } catch (e) { /* Stand trotzdem zeigen */ }
         const eintraege = (json.icao_index || {})[icao] || [];
         if (!eintraege.length) {
-            el.innerHTML = '<p style="font-size:0.78rem;color:var(--color-text-dim);margin-top:var(--space-xs)">Keine NfL-Einträge für diesen Flughafen.</p>';
+            el.innerHTML = `${badge}<p style="font-size:0.78rem;color:var(--color-text-dim);margin-top:var(--space-xs)">Keine flughafenspezifischen NfL-Einträge — NOTAMs live über die Portale unten abrufen.</p>`;
             return;
         }
         const zeige = eintraege.slice(0, 15);
-        const stand = await nflStandHtml();
-        el.innerHTML = `<div class="nfl-section">
+        el.innerHTML = `${badge}<div class="nfl-section">
             <p class="nfl-section-titel">🇩🇪 DFS NfL-Einträge (${eintraege.length})</p>
             ${zeige.map(e => `<div class="nfl-item">
                 <span class="nfl-datum">${e.datum}</span>
@@ -5223,8 +5228,7 @@ async function ladeNfl(icao) {
                 <span class="nfl-betreff">${e.betreff}</span>
             </div>`).join('')}
             ${eintraege.length > 15 ? `<p style="font-size:0.72rem;color:var(--color-text-dim);margin-top:4px">… und ${eintraege.length - 15} weitere Einträge</p>` : ''}
-        </div>
-        <p class="wx-quelle">Quelle: DFS NfL via aip.dfs.de${stand}</p>`;
+        </div>`;
     } catch(e) {
         el.innerHTML = `<span class="status-error">NfL nicht ladbar: ${e.message}</span>`;
     }
@@ -6132,19 +6136,20 @@ async function ladeFluege(icao, forceRefresh = false) {
             throw new Error('all_urls_failed');
         }
 
-        const adsbFiUrl      = `https://api.adsb.fi/v1/lat/${lat}/lon/${lon}/dist/20`;
-        const adsbLolUrl     = `https://api.adsb.lol/v2/lat/${lat}/lon/${lon}/dist/20`;
-        const airplanesUrl   = `https://api.airplanes.live/v2/lat/${lat}/lon/${lon}/dist/20`;
+        // airplanes.live sendet CORS (Access-Control-Allow-Origin: *) -> direkt im Browser nutzbar.
+        const airplanesUrl   = `https://api.airplanes.live/v2/point/${lat}/${lon}/20`;
+        const adsbLolUrl     = `https://api.adsb.lol/v2/point/${lat}/${lon}/20`;
+        const adsbFiUrl      = `https://opendata.adsb.fi/api/v2/lat/${lat}/lon/${lon}/dist/20`;
         const adsbExchUrl    = `https://globe.adsbexchange.com/re-api/?lat=${lat}&lon=${lon}&dist=20`;
 
         const pad = 0.4;
         const openSkyUrl = `https://opensky-network.org/api/states/all?lamin=${lat-pad}&lamax=${lat+pad}&lomin=${lon-pad}&lomax=${lon+pad}`;
 
         const versuche = [
-            async () => {
-                const r = await fetchAny([adsbFiUrl, ...proxied(adsbFiUrl)]);
+            async () => {   // primär: CORS-fähig, kein Proxy nötig
+                const r = await fetchAny([airplanesUrl, ...proxied(airplanesUrl)]);
                 const d = await r.json();
-                return { ac: parseAdsbFiFormat(d), src: 'adsb.fi', ts: d.now ?? d.time ?? Date.now() };
+                return { ac: parseAdsbFiFormat(d), src: 'airplanes.live', ts: d.now ?? d.time ?? Date.now() };
             },
             async () => {
                 const r = await fetchAny([adsbLolUrl, ...proxied(adsbLolUrl)]);
@@ -6152,9 +6157,9 @@ async function ladeFluege(icao, forceRefresh = false) {
                 return { ac: parseAdsbFiFormat(d), src: 'adsb.lol', ts: d.now ?? d.time ?? Date.now() };
             },
             async () => {
-                const r = await fetchAny([airplanesUrl, ...proxied(airplanesUrl)]);
+                const r = await fetchAny([adsbFiUrl, ...proxied(adsbFiUrl)]);
                 const d = await r.json();
-                return { ac: parseAdsbFiFormat(d), src: 'airplanes.live', ts: d.now ?? d.time ?? Date.now() };
+                return { ac: parseAdsbFiFormat(d), src: 'adsb.fi', ts: d.now ?? d.time ?? Date.now() };
             },
             async () => {
                 const r = await fetchAny([adsbExchUrl, ...proxied(adsbExchUrl)]);
