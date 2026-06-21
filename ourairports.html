@@ -1748,6 +1748,10 @@
         .adsb-toggle-btn.active { background: var(--color-surface); color: var(--color-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
         .adsb-meta { font-size: 0.68rem; color: var(--color-text-dim); margin: 0 0 12px; }
         .adsb-view[hidden] { display: none; }
+        .adsb-map { height: 340px; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--color-border); overflow: hidden; z-index: 0; background: var(--color-surface-2); }
+        .adsb-plane { background: transparent !important; border: 0 !important; }
+        .adsb-plane-i { display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
+        .adsb-plane-i svg { display: block; }
         .flug-ph-land   { color: #22c55e; }
         .flug-ph-dep    { color: #f59e0b; }
         .flug-ph-cruise { color: #60a5fa; }
@@ -6007,6 +6011,8 @@ function switchTab(btn, panel, icao) {
 
 // ── Flüge (ADS-B Live) ────────────────────────────────────────────────────────
 const _flugTimer = {};
+const _adsbMapInst = {};   // Leaflet-Instanz je ICAO (Live-ADS-B-Karte)
+const _adsbMapData = {};   // {lat, lon, aircraft} je ICAO für die Karte
 
 // Anreicherung: ICAO-Typcode → lesbarer Modellname (gängige Muster)
 const TYPE_NAMES = {
@@ -6095,6 +6101,71 @@ function setAdsbView(btn, view) {
     if (!panel) return;
     panel.querySelectorAll('.adsb-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
     panel.querySelectorAll('.adsb-view').forEach(v => { v.hidden = (v.dataset.view !== view); });
+    if (view === 'karte') initAdsbMap(panel.dataset.icao);
+}
+
+// Plane-Symbol (zeigt nach Norden, wird per CSS um den Kurs gedreht)
+function adsbPlaneSvg(color, deg) {
+    return `<div class="adsb-plane-i" style="transform:rotate(${deg}deg)">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="${color}" stroke="#fff" stroke-width="0.8">
+            <path d="M12 2c-.7 0-1.2 1.1-1.2 3v4.2L3 14v1.8l7.8-2.3V18l-2 1.5V21L12 20l3.2 .5v-1.5L13.2 17.5v-2.5L21 17.3V14l-7.8-4.8V5c0-1.9-.5-3-1.2-3z"/>
+        </svg></div>`;
+}
+
+// Eigene Leaflet-Live-Karte für den Flüge-Tab (ersetzt das adsbexchange-iframe).
+// Wird beim Umschalten auf "Karte" initialisiert (Leaflet braucht sichtbaren Container).
+function initAdsbMap(icao) {
+    const data  = _adsbMapData[icao];
+    const mapEl = document.getElementById(`adsb-map-${icao}`);
+    if (!data || !mapEl || typeof L === 'undefined') return;
+    if (_adsbMapInst[icao]) { setTimeout(() => _adsbMapInst[icao].invalidateSize(), 60); return; }
+
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const map = L.map(mapEl, { center: [data.lat, data.lon], zoom: 10, scrollWheelZoom: false, attributionControl: false });
+    _adsbMapInst[icao] = map;
+
+    L.tileLayer(dark
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        { maxZoom: 19, subdomains: 'abcd' }).addTo(map);
+
+    // Flughafen + 20-nm-Radius
+    L.circle([data.lat, data.lon], { radius: 20 * 1852, color: '#3b82f6', weight: 1, opacity: 0.4, fillColor: '#3b82f6', fillOpacity: 0.05 }).addTo(map);
+    L.circleMarker([data.lat, data.lon], { radius: 6, color: '#fff', weight: 2, fillColor: '#ef4444', fillOpacity: 1 })
+        .bindTooltip(icao, { direction: 'top' }).addTo(map);
+
+    const phaseColor = a => {
+        const gs = a.gs ?? 0, vr = a.baro_rate ?? 0;
+        if (gs < 30)   return '#94a3b8';   // Boden
+        if (vr < -200) return '#22c55e';   // Ankunft
+        if (vr >  200) return '#f59e0b';   // Abflug
+        return '#3b82f6';                  // Reiseflug
+    };
+    const bounds = [[data.lat, data.lon]];
+    (data.aircraft || []).forEach(a => {
+        if (a.lat == null || a.lon == null) return;
+        const cs    = (a.flight || '').trim() || a.r || '?';
+        const model = acTypeName(a.t);
+        const mLink = model
+            ? `<a href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" style="color:#3b82f6">${model}</a>`
+            : '';
+        const sub = [acAirline(cs), a.r, mLink].filter(Boolean).join(' · ');
+        const line = [
+            a.alt_baro != null ? Math.round(a.alt_baro).toLocaleString() + ' ft' : '',
+            a.gs ? Math.round(a.gs) + ' kt' : '',
+            a.dst != null ? a.dst.toFixed(1) + ' nm' : ''
+        ].filter(Boolean).join(' · ');
+        const popup = `<div style="font-family:var(--font,sans-serif);min-width:150px">
+            <div style="font-weight:700;font-size:0.85rem">${cs}</div>
+            ${sub ? `<div style="font-size:0.74rem;color:#64748b;margin-top:1px">${sub}</div>` : ''}
+            ${line ? `<div style="font-size:0.74rem;margin-top:3px">${line}</div>` : ''}
+        </div>`;
+        const icon = L.divIcon({ className: 'adsb-plane', html: adsbPlaneSvg(phaseColor(a), a.track ?? 0), iconSize: [22, 22], iconAnchor: [11, 11] });
+        L.marker([a.lat, a.lon], { icon }).bindPopup(popup).addTo(map);
+        bounds.push([a.lat, a.lon]);
+    });
+    if (bounds.length > 1) map.fitBounds(bounds, { padding: [30, 30], maxZoom: 11 });
+    setTimeout(() => map.invalidateSize(), 60);
 }
 
 async function ladeFluege(icao, forceRefresh = false) {
@@ -6106,6 +6177,7 @@ async function ladeFluege(icao, forceRefresh = false) {
     // Cancel pending auto-refresh
     clearTimeout(_flugTimer[icao]);
     delete _flugTimer[icao];
+    if (_adsbMapInst[icao]) { _adsbMapInst[icao].remove(); delete _adsbMapInst[icao]; }
 
     const lat = parseFloat(el.dataset.lat);
     const lon = parseFloat(el.dataset.lon);
@@ -6165,6 +6237,7 @@ async function ladeFluege(icao, forceRefresh = false) {
                     flight:    (s[1] || '').trim(),
                     t: '', r: '',
                     squawk:    s[14] || '',
+                    lat:       s[6], lon: s[5],
                     dst:       haversine(lat, lon, s[6], s[5]) / 1.852,
                     gs:        s[9]  != null ? s[9]  * 1.944  : 0,
                     baro_rate: s[11] != null ? s[11] * 196.85 : 0,
@@ -6341,8 +6414,9 @@ async function ladeFluege(icao, forceRefresh = false) {
             ? `<div class="fluege-list">${inRange.map(renderRangeItem).join('')}</div>`
             : `<p class="flug-empty" style="margin:0">Keine Flugzeuge in Reichweite</p>`;
 
+        _adsbMapData[icao] = { lat, lon, aircraft };
         el.innerHTML = `
-            <div class="adsb-panel">
+            <div class="adsb-panel" data-icao="${icao}">
                 <div class="adsb-head">
                     <div class="adsb-title-wrap">
                         <span class="adsb-live-dot"></span>
@@ -6392,7 +6466,9 @@ async function ladeFluege(icao, forceRefresh = false) {
                 </div>
 
                 <div class="adsb-view" data-view="karte" hidden>
-                    ${globe()}
+                    <div id="adsb-map-${icao}" class="adsb-map"></div>
+                    <p class="fluege-hinweis" style="margin-top:8px">✈ Live-Position &amp; Kurs · Symbol antippen für Details ·
+                        <a href="${globeUrl}" target="_blank" rel="noopener" style="color:var(--color-primary)">ADS-B Exchange Vollbild ↗</a></p>
                 </div>
             </div>`;
 
