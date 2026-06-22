@@ -31,10 +31,9 @@
             background: var(--header-bg); color: #fff;
             padding: 9px 14px; display: flex; align-items: center; gap: 8px;
             flex-shrink: 0; box-shadow: var(--shadow); z-index: 1001;
+            overflow-x: auto; white-space: nowrap;
         }
-        .back-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.82rem; }
-        .back-link:hover { color: #fff; }
-        .header-title { font-weight: 700; font-size: 0.98rem; flex: 1; }
+        .header-title { font-weight: 700; font-size: 0.98rem; flex: 0 0 auto; }
         .header-btn {
             background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22);
             color: #fff; padding: 5px 11px; border-radius: 6px; cursor: pointer;
@@ -44,6 +43,11 @@
         .header-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         #load-btn { background: rgba(37,99,235,0.7); }
         #load-btn:hover:not(:disabled) { background: rgba(37,99,235,0.9); }
+        /* ── Bereichs-Navigation im Header ── */
+        .lr-nav { display: flex; gap: 6px; align-items: center; }
+        .lr-nav a { color: #cbd5e1; font-size: 0.8rem; font-weight: 600; text-decoration: none; padding: 5px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); white-space: nowrap; transition: all 0.15s; }
+        .lr-nav a:hover { color: #fff; border-color: #4fc3f7; }
+        .lr-nav a.active { background: #2563eb; border-color: #2563eb; color: #fff; }
 
         /* ── Settings Panel ── */
         #settings-panel {
@@ -83,6 +87,10 @@
         }
         .chip.active { color: #fff !important; border-color: transparent; }
         .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .chip.mini { font-weight: 700; background: var(--primary-bg); color: var(--primary); border-color: transparent; }
+        .chip.mini:hover { filter: brightness(0.96); }
+        .lr-search { border: 1px solid var(--border); border-radius: 20px; padding: 4px 11px; font-size: 0.73rem; background: var(--bg); color: var(--text); width: 120px; }
+        .lr-search:focus { outline: none; border-color: var(--primary); }
 
         /* ── Map ── */
         #map { flex: 1; z-index: 0; }
@@ -170,10 +178,17 @@
 <body>
 
 <header>
-    <a href="index.html" class="back-link">← Start</a>
-    <span class="header-title">✈ Luftraumkarte</span>
-    <button class="header-btn" id="load-btn" onclick="ladeAirspaces()">▶ Laden</button>
-    <button class="header-btn" onclick="toggleSettings()">⚙ OpenAIP Key</button>
+    <span class="header-title">🗺 Lufträume</span>
+    <nav class="lr-nav" aria-label="Themenbereiche">
+        <a href="index.html">Start</a>
+        <a href="ourairports.html">Flughäfen</a>
+        <a href="Luftfahrt_Katalog_FINAL_CLEAN_10.html">Flugzeuge</a>
+        <a href="drohnen.html">Drohnen</a>
+        <a href="luftraeume.html" class="active">Lufträume</a>
+    </nav>
+    <span style="flex:1 0 8px"></span>
+    <button class="header-btn" id="load-btn" onclick="ladeAirspaces()">▶ Details laden</button>
+    <button class="header-btn" onclick="toggleSettings()" title="OpenAIP API-Key">⚙</button>
     <button class="header-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
 </header>
 
@@ -187,9 +202,15 @@
 
 <div id="toolbar">
     <span class="toolbar-label">Länder</span>
+    <input id="country-search" class="lr-search" placeholder="Code (DE…)" oninput="buildChips()" aria-label="Land suchen">
+    <button class="chip mini" onclick="setCountries('eu')">🇪🇺 EU</button>
+    <button class="chip mini" onclick="setCountries('all')">Alle</button>
+    <button class="chip mini" onclick="setCountries('none')">Keine</button>
     <div id="country-chips" style="display:flex;flex-wrap:wrap;gap:6px;max-height:72px;overflow-y:auto;align-content:flex-start"></div>
     <div class="toolbar-sep"></div>
     <span class="toolbar-label">Typen</span>
+    <button class="chip mini" onclick="setTypes('all')">Alle</button>
+    <button class="chip mini" onclick="setTypes('none')">Keine</button>
     <div id="type-chips"></div>
 </div>
 
@@ -531,11 +552,29 @@ function toggleTheme() {
 
 // ── Chips ─────────────────────────────────────────────────────────────────────
 
+// Schnellauswahl Länder / Typen
+const EU_CODES = ['DE','AT','CH','FR','NL','BE','LU','GB','IE','DK','NO','SE','FI','IS','PL','CZ','SK','HU','SI','HR','IT','ES','PT','GR','RO','BG','RS','UA','EE','LV','LT','TR'];
+function setCountries(mode) {
+    if (mode === 'all')  activeCountries = new Set(COUNTRIES.map(c => c.code));
+    if (mode === 'none') activeCountries = new Set();
+    if (mode === 'eu')   activeCountries = new Set(EU_CODES);
+    buildChips();
+}
+function setTypes(mode) {
+    if (mode === 'all')  activeTypes = new Set(Object.keys(TYPE_META).map(Number));
+    if (mode === 'none') activeTypes = new Set();
+    buildChips();
+    renderFeatures();
+    updateStats();
+}
+
 function buildChips() {
-    // Länder-Chips
+    // Länder-Chips (optional nach Suchtext gefiltert)
     const cc = document.getElementById('country-chips');
     cc.innerHTML = '';
+    const q = (document.getElementById('country-search')?.value || '').trim().toLowerCase();
     for (const { code, label } of COUNTRIES) {
+        if (q && !code.toLowerCase().includes(q) && !label.toLowerCase().includes(q)) continue;
         const active = activeCountries.has(code);
         const btn = document.createElement('button');
         btn.className = 'chip' + (active ? ' active' : '');
