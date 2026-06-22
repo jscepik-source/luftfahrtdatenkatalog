@@ -1756,6 +1756,8 @@
         .adsb-legend-title { font-weight: 600; color: var(--color-text); }
         .adsb-leg { display: inline-flex; align-items: center; gap: 5px; }
         .adsb-leg i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.15); }
+        .adsb-detail { margin-top: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 10px 12px; background: var(--color-surface-2); min-height: 42px; }
+        .adsb-detail-empty { color: var(--color-text-dim); font-size: 0.76rem; }
         .flug-ph-land   { color: #22c55e; }
         .flug-ph-dep    { color: #f59e0b; }
         .flug-ph-cruise { color: #60a5fa; }
@@ -6022,6 +6024,7 @@ const _adsbView    = {};   // aktive Ansicht je ICAO: 'liste' | 'karte' | 'excha
 const _adsbAcMarkers = {}; // hex -> Leaflet-Marker je ICAO (flüssige Animation)
 const _adsbAnimReq   = {}; // requestAnimationFrame-ID je ICAO
 const _adsbAnimLast  = {}; // letzter Frame-Zeitstempel je ICAO
+const _adsbSel       = {}; // angetipptes Flugzeug (key) je ICAO – für das Detail-Panel
 
 // Anreicherung: ICAO-Typcode → lesbarer Modellname (gängige Muster)
 const TYPE_NAMES = {
@@ -6233,6 +6236,17 @@ function adsbPopupHtml(a) {
     </div>`;
 }
 
+// Detail-Panel unter der Karte mit dem angetippten Flugzeug füllen (FR24-Stil)
+function adsbRenderDetail(icao) {
+    const box = document.getElementById(`adsb-detail-${icao}`);
+    if (!box) return;
+    const key = _adsbSel[icao];
+    if (!key) { box.innerHTML = '<span class="adsb-detail-empty">✈ Tippe ein Flugzeug auf der Karte an — die Details erscheinen hier.</span>'; return; }
+    const mk = _adsbAcMarkers[icao] && _adsbAcMarkers[icao][key];
+    if (!mk || !mk._ac) { box.innerHTML = '<span class="adsb-detail-empty">Ausgewähltes Flugzeug ist nicht mehr in Reichweite.</span>'; return; }
+    box.innerHTML = adsbPopupHtml(mk._ac);
+}
+
 // Marker mit der frischen "Wahrheit" abgleichen (anlegen / bewegen / entfernen).
 // Persistente Marker je hex -> die Animation rechnet zwischen den Updates flüssig weiter.
 function adsbAddMarkers(icao) {
@@ -6252,17 +6266,20 @@ function adsbAddMarkers(icao) {
         let mk = store[key];
         if (mk) {
             mk._dr = { lat: a.lat, lon: a.lon, track, gs };   // neue Wahrheit -> Animation rechnet ab hier weiter
+            mk._ac = a;
             mk.setLatLng([a.lat, a.lon]);
             mk.setIcon(icon);
-            mk.setPopupContent(adsbPopupHtml(a));
         } else {
-            mk = L.marker([a.lat, a.lon], { icon }).bindPopup(adsbPopupHtml(a)).addTo(grp);
+            mk = L.marker([a.lat, a.lon], { icon }).addTo(grp);
             mk._dr = { lat: a.lat, lon: a.lon, track, gs };
+            mk._ac = a;
+            mk.on('click', () => { _adsbSel[icao] = key; adsbRenderDetail(icao); });
             store[key] = mk;
         }
     });
     Object.keys(store).forEach(k => { if (!seen.has(k)) { grp.removeLayer(store[k]); delete store[k]; } });
     adsbStartAnim(icao);
+    adsbRenderDetail(icao);   // Detail-Panel unter der Karte mit aktuellen Werten füllen
     return bounds;
 }
 
@@ -6616,7 +6633,8 @@ async function ladeFluege(icao, forceRefresh = false) {
                         <span class="adsb-leg"><i style="background:#3b82f6"></i>Reiseflug</span>
                         <span class="adsb-leg"><i style="background:#94a3b8"></i>am Boden</span>
                     </div>
-                    <p class="fluege-hinweis" style="margin-top:8px">✈ Live-Position &amp; Kurs · aktualisiert automatisch · Symbol antippen für Details</p>
+                    <div class="adsb-detail" id="adsb-detail-${icao}"><span class="adsb-detail-empty">✈ Tippe ein Flugzeug auf der Karte an — die Details erscheinen hier.</span></div>
+                    <p class="fluege-hinweis" style="margin-top:8px">Live-Position &amp; Kurs · aktualisiert automatisch</p>
                 </div>
 
                 <div class="adsb-view" data-view="exchange" hidden>
