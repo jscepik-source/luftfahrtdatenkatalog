@@ -1750,7 +1750,7 @@
         .adsb-view[hidden] { display: none; }
         .adsb-map { height: 340px; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--color-border); overflow: hidden; z-index: 0; background: var(--color-surface-2); }
         .adsb-plane { background: transparent !important; border: 0 !important; }
-        .adsb-plane-i { display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
+        .adsb-plane-i { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
         .adsb-plane-i svg { display: block; }
         .flug-ph-land   { color: #22c55e; }
         .flug-ph-dep    { color: #f59e0b; }
@@ -6015,6 +6015,9 @@ const _adsbMapInst = {};   // Leaflet-Instanz je ICAO (Live-ADS-B-Karte)
 const _adsbMapData = {};   // {lat, lon, aircraft, globeUrl} je ICAO für die Karte
 const _adsbMarkers = {};   // Flugzeug-Marker-LayerGroup je ICAO
 const _adsbView    = {};   // aktive Ansicht je ICAO: 'liste' | 'karte' | 'exchange'
+const _adsbAcMarkers = {}; // hex -> Leaflet-Marker je ICAO (flüssige Animation)
+const _adsbAnimReq   = {}; // requestAnimationFrame-ID je ICAO
+const _adsbAnimLast  = {}; // letzter Frame-Zeitstempel je ICAO
 
 // Anreicherung: ICAO-Typcode → lesbarer Modellname (gängige Muster)
 const TYPE_NAMES = {
@@ -6121,11 +6124,37 @@ function initAdsbExchange(icao) {
     </div>`;
 }
 
-// Flugzeug-Symbol (Nase nach Norden, wird um den Kurs gedreht) – sauberes mdi-airplane-Icon
-function adsbPlaneSvg(color, deg) {
+// Verschiedene Silhouetten je Flugzeugart (alle Nase nach Norden) – werden per Kurs gedreht.
+const ADSB_SHAPES = {
+    // Verkehrsjet (gepfeilte Flügel) – mdi-airplane
+    jet:    { s: 26, d: 'M22,16.21V14.5L13.5,9V3.5A1.5,1.5 0 0,0 12,2A1.5,1.5 0 0,0 10.5,3.5V9L2,14.5V16.21L10.5,13.5V19L8,20.5V22L12,21L16,22V20.5L13.5,19V13.5L22,16.21Z' },
+    // Großraum-/Schwerjet – gleiche Form, größer
+    jetbig: { s: 32, d: 'M22,16.21V14.5L13.5,9V3.5A1.5,1.5 0 0,0 12,2A1.5,1.5 0 0,0 10.5,3.5V9L2,14.5V16.21L10.5,13.5V19L8,20.5V22L12,21L16,22V20.5L13.5,19V13.5L22,16.21Z' },
+    // Propeller-/Kleinflugzeug – gerade, hoch sitzende Flügel
+    prop:   { s: 21, d: 'M12 3.2c-.55 0-.9.45-.9 1.05V9.5L3.5 11.3v1.3l7.6-1.1v3.9L9 17.1v1.1l3-.7 3 .7v-1.1l-2.1-1.5v-3.9l7.6 1.1v-1.3L12.9 9.5V4.25c0-.6-.35-1.05-.9-1.05z' },
+    // Segelflugzeug – sehr lange, dünne Flügel
+    glider: { s: 28, d: 'M12 4c-.5 0-.85.4-.85 1V9.7L2 11v1l9.15.6V16l-1.7 1.1v.9L12 17.5l2.55.5v-.9L12.85 16v-3.4L22 12v-1l-9.15-1.3V5c0-.6-.35-1-.85-1z' },
+    // Helikopter – Rotorkreuz + Rumpf + Nasenmarkierung
+    heli:   { s: 24, d: 'M11.4 3h1.2v18h-1.2z M3 11.4h18v1.2H3z M12 9.3a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4z M10.8 6.2 12 3.8l1.2 2.4z' },
+};
+
+// Flugzeugart aus ADS-B-Kategorie bzw. Typcode bestimmen
+function adsbIconKind(a) {
+    const c = (a.category || '').toUpperCase();
+    const t = (a.t || '').toUpperCase();
+    if (c === 'A7' || /^(EC|AS3|AS5|R22|R44|R66|B06|B407|B412|H1|H2|H6|S76|A109|A139|AW1|EH10|UH|NH90|GAZL|PUMA|LYNX)/.test(t)) return 'heli';
+    if (c === 'B1' || /^(GLID|DG|LS[0-9]|ASK|ASW|ASG|DISC|VENT|JANU|NIMB|ARCU)/.test(t)) return 'glider';
+    if (c === 'A1' || c === 'B4' || /^(C150|C152|C162|C172|C177|C182|C206|C210|P28|P32|PA[0-9]|DA40|DA42|DA62|SR20|SR22|BE3|BE9|DV20|TBM|PC12|RV[0-9]|M20|C72)/.test(t)) return 'prop';
+    if (c === 'A5' || /^(A38|A35|A33|A34|A30|A31|B74|B77|B78|B76|MD11|IL96|AN[0-9]|B52)/.test(t)) return 'jetbig';
+    return 'jet';
+}
+
+// Symbol-HTML (Form + Farbe + Drehung)
+function adsbPlaneSvg(color, deg, kind) {
+    const p = ADSB_SHAPES[kind] || ADSB_SHAPES.jet;
     return `<div class="adsb-plane-i" style="transform:rotate(${deg}deg)">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="${color}" stroke="#fff" stroke-width="0.6" stroke-linejoin="round">
-            <path d="M22,16.21V14.5L13.5,9V3.5A1.5,1.5 0 0,0 12,2A1.5,1.5 0 0,0 10.5,3.5V9L2,14.5V16.21L10.5,13.5V19L8,20.5V22L12,21L16,22V20.5L13.5,19V13.5L22,16.21Z"/>
+        <svg viewBox="0 0 24 24" width="${p.s}" height="${p.s}" fill="${color}" stroke="#fff" stroke-width="0.6" stroke-linejoin="round">
+            <path d="${p.d}"/>
         </svg></div>`;
 }
 
@@ -6175,40 +6204,89 @@ function initAdsbMap(icao) {
     setTimeout(() => map.invalidateSize(), 60);
 }
 
-// Flugzeug-Marker (neu) in die bestehende Karte schreiben – Erst-Aufbau & Live-Refresh.
+// Detailliertes Popup für ein Flugzeug
+function adsbPopupHtml(a) {
+    const cs    = (a.flight || '').trim() || a.r || '?';
+    const model = acTypeName(a.t);
+    const mLink = model
+        ? `<a href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" style="color:#3b82f6">${model}</a>`
+        : (a.t || '');
+    const v = adsbVerti(a);
+    const row = (l, val) => `<div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#64748b">${l}</span><span style="font-weight:600">${val}</span></div>`;
+    const grid = [
+        row('Höhe',       a.alt_baro != null ? `${Math.round(a.alt_baro).toLocaleString()} ft ${v.arrow}` : '—'),
+        row('Geschw.',    a.gs ? `${Math.round(a.gs)} kt` : '—'),
+        row('Steig/Sink', v.txt),
+        row('Kurs',       a.track != null ? `${Math.round(a.track)}°` : '—'),
+        row('Squawk',     a.squawk || '—'),
+        row('Entfernung', a.dst != null ? `${a.dst.toFixed(1)} nm` : '—'),
+    ].join('');
+    return `<div style="font-family:var(--font,sans-serif);min-width:185px;font-size:0.74rem">
+        <div style="font-weight:700;font-size:0.92rem">✈ ${cs}</div>
+        <div style="color:#64748b;margin:1px 0 6px">${[acAirline(cs), a.r, mLink].filter(Boolean).join(' · ') || '—'}</div>
+        ${grid}
+        <a href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:7px;color:#3b82f6">Auf FlightRadar24 verfolgen ↗</a>
+    </div>`;
+}
+
+// Marker mit der frischen "Wahrheit" abgleichen (anlegen / bewegen / entfernen).
+// Persistente Marker je hex -> die Animation rechnet zwischen den Updates flüssig weiter.
 function adsbAddMarkers(icao) {
     const data = _adsbMapData[icao], grp = _adsbMarkers[icao];
     const bounds = [[data.lat, data.lon]];
     if (!grp) return bounds;
-    grp.clearLayers();
+    const store = _adsbAcMarkers[icao] || (_adsbAcMarkers[icao] = {});
+    const seen = new Set();
     (data.aircraft || []).forEach(a => {
         if (a.lat == null || a.lon == null) return;
-        const cs    = (a.flight || '').trim() || a.r || '?';
-        const model = acTypeName(a.t);
-        const mLink = model
-            ? `<a href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" style="color:#3b82f6">${model}</a>`
-            : (a.t || '');
-        const v = adsbVerti(a);
-        const row = (l, val) => `<div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#64748b">${l}</span><span style="font-weight:600">${val}</span></div>`;
-        const grid = [
-            row('Höhe',       a.alt_baro != null ? `${Math.round(a.alt_baro).toLocaleString()} ft ${v.arrow}` : '—'),
-            row('Geschw.',    a.gs ? `${Math.round(a.gs)} kt` : '—'),
-            row('Steig/Sink', v.txt),
-            row('Kurs',       a.track != null ? `${Math.round(a.track)}°` : '—'),
-            row('Squawk',     a.squawk || '—'),
-            row('Entfernung', a.dst != null ? `${a.dst.toFixed(1)} nm` : '—'),
-        ].join('');
-        const popup = `<div style="font-family:var(--font,sans-serif);min-width:185px;font-size:0.74rem">
-            <div style="font-weight:700;font-size:0.92rem">✈ ${cs}</div>
-            <div style="color:#64748b;margin:1px 0 6px">${[acAirline(cs), a.r, mLink].filter(Boolean).join(' · ') || '—'}</div>
-            ${grid}
-            <a href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:7px;color:#3b82f6">Auf FlightRadar24 verfolgen ↗</a>
-        </div>`;
-        const icon = L.divIcon({ className: 'adsb-plane', html: adsbPlaneSvg(adsbPhaseColor(a), a.track ?? 0), iconSize: [26, 26], iconAnchor: [13, 13] });
-        L.marker([a.lat, a.lon], { icon }).bindPopup(popup).addTo(grp);
+        const key = a.hex || a.r || (a.flight || '').trim();
+        if (!key) return;
+        seen.add(key);
         bounds.push([a.lat, a.lon]);
+        const track = a.track ?? 0, gs = a.gs ?? 0;
+        const icon = L.divIcon({ className: 'adsb-plane', html: adsbPlaneSvg(adsbPhaseColor(a), track, adsbIconKind(a)), iconSize: [28, 28], iconAnchor: [14, 14] });
+        let mk = store[key];
+        if (mk) {
+            mk._dr = { lat: a.lat, lon: a.lon, track, gs };   // neue Wahrheit -> Animation rechnet ab hier weiter
+            mk.setLatLng([a.lat, a.lon]);
+            mk.setIcon(icon);
+            mk.setPopupContent(adsbPopupHtml(a));
+        } else {
+            mk = L.marker([a.lat, a.lon], { icon }).bindPopup(adsbPopupHtml(a)).addTo(grp);
+            mk._dr = { lat: a.lat, lon: a.lon, track, gs };
+            store[key] = mk;
+        }
     });
+    Object.keys(store).forEach(k => { if (!seen.has(k)) { grp.removeLayer(store[k]); delete store[k]; } });
+    adsbStartAnim(icao);
     return bounds;
+}
+
+// 60-fps-Animation: bewegt jeden Marker per Dead-Reckoning entlang Kurs+Geschwindigkeit.
+function adsbStartAnim(icao) {
+    if (_adsbAnimReq[icao]) return;
+    _adsbAnimLast[icao] = performance.now();
+    const step = (now) => {
+        if (!_adsbMapInst[icao]) { _adsbAnimReq[icao] = 0; return; }   // Karte weg -> Animation stoppen
+        const dt = Math.min(2, (now - (_adsbAnimLast[icao] || now)) / 1000);
+        _adsbAnimLast[icao] = now;
+        const store = _adsbAcMarkers[icao] || {};
+        for (const k in store) {
+            const mk = store[k], dr = mk._dr;
+            if (!dr || dr.gs < 40) continue;                 // am Boden / sehr langsam: nicht bewegen
+            const distNm = dr.gs * (dt / 3600);              // gs[kt] * dt[h] = zurückgelegte nm
+            const rad = dr.track * Math.PI / 180;
+            dr.lat += (distNm / 60) * Math.cos(rad);
+            dr.lon += (distNm / 60) * Math.sin(rad) / Math.cos(dr.lat * Math.PI / 180);
+            mk.setLatLng([dr.lat, dr.lon]);
+        }
+        _adsbAnimReq[icao] = requestAnimationFrame(step);
+    };
+    _adsbAnimReq[icao] = requestAnimationFrame(step);
+}
+function adsbStopAnim(icao) {
+    if (_adsbAnimReq[icao]) cancelAnimationFrame(_adsbAnimReq[icao]);
+    _adsbAnimReq[icao] = 0;
 }
 
 async function ladeFluege(icao, forceRefresh = false) {
@@ -6278,6 +6356,7 @@ async function ladeFluege(icao, forceRefresh = false) {
                 .map(s => ({
                     flight:    (s[1] || '').trim(),
                     t: '', r: '',
+                    hex:       s[0],
                     squawk:    s[14] || '',
                     lat:       s[6], lon: s[5],
                     dst:       haversine(lat, lon, s[6], s[5]) / 1.852,
@@ -6495,12 +6574,12 @@ async function ladeFluege(icao, forceRefresh = false) {
             }
             if (_adsbMapInst[icao]) adsbAddMarkers(icao);   // Marker auf der Karte live aktualisieren
             const rb = el.querySelector('.fluege-refresh-btn'); if (rb) { rb.disabled = false; rb.textContent = '↺'; }
-            _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 20000);
+            _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 5000);
             return;
         }
 
         // Erst-Aufbau (volles Rendering)
-        if (_adsbMapInst[icao]) { _adsbMapInst[icao].remove(); delete _adsbMapInst[icao]; delete _adsbMarkers[icao]; }
+        if (_adsbMapInst[icao]) { adsbStopAnim(icao); _adsbMapInst[icao].remove(); delete _adsbMapInst[icao]; delete _adsbMarkers[icao]; delete _adsbAcMarkers[icao]; }
         el.innerHTML = `
             <div class="adsb-panel" data-icao="${icao}">
                 <div class="adsb-head">
@@ -6543,13 +6622,13 @@ async function ladeFluege(icao, forceRefresh = false) {
         }
 
         // Auto-Refresh (ständig aktuell)
-        _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 20000);
+        _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 5000);
 
     } catch(e) {
         // Auto-Refresh-Fehler: laufende Ansicht + Karte behalten, später erneut versuchen
         if (forceRefresh && el.querySelector('.adsb-panel')) {
             const rb = el.querySelector('.fluege-refresh-btn'); if (rb) { rb.disabled = false; rb.textContent = '↺'; }
-            _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 20000);
+            _flugTimer[icao] = setTimeout(() => ladeFluege(icao, true), 5000);
             return;
         }
         el.innerHTML = `
