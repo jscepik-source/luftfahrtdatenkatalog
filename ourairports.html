@@ -1752,6 +1752,8 @@
         .adsb-plane { background: transparent !important; border: 0 !important; }
         .adsb-plane-i { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
         .adsb-plane-i svg { display: block; }
+        .adsb-sel-ring { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; transform: translate(-50%,-50%); border-radius: 50%; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0ea5e9, 0 0 9px 3px rgba(14,165,233,0.65); pointer-events: none; animation: adsbSelPulse 1.4s ease-in-out infinite; }
+        @keyframes adsbSelPulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
         .adsb-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: 0.72rem; color: var(--color-text-dim); align-items: center; }
         .adsb-legend-title { font-weight: 600; color: var(--color-text); }
         .adsb-leg { display: inline-flex; align-items: center; gap: 5px; }
@@ -6156,13 +6158,25 @@ function adsbIconKind(a) {
     return 'jet';
 }
 
-// Symbol-HTML (Form + Farbe + Drehung)
-function adsbPlaneSvg(color, deg, kind) {
+// Symbol-HTML (Form + Farbe + Drehung; bei selected zusätzlich ein Hervorhebungs-Ring)
+function adsbPlaneSvg(color, deg, kind, selected) {
     const p = ADSB_SHAPES[kind] || ADSB_SHAPES.jet;
-    return `<div class="adsb-plane-i" style="transform:rotate(${deg}deg)">
+    const ring = selected ? '<span class="adsb-sel-ring"></span>' : '';
+    return `${ring}<div class="adsb-plane-i" style="transform:rotate(${deg}deg)">
         <svg viewBox="0 0 24 24" width="${p.s}" height="${p.s}" fill="${color}" stroke="#fff" stroke-width="0.6" stroke-linejoin="round">
             <path d="${p.d}"/>
         </svg></div>`;
+}
+
+// Marker-Icon je Flugzeug bauen (mit/ohne Hervorhebung)
+function adsbMakeIcon(a, selected) {
+    return L.divIcon({ className: 'adsb-plane', html: adsbPlaneSvg(adsbPhaseColor(a), a.track ?? 0, adsbIconKind(a), selected), iconSize: [28, 28], iconAnchor: [14, 14] });
+}
+
+// Alle Marker-Icons neu setzen (Auswahl-Ring sofort beim Klick aktualisieren)
+function adsbSelectMarker(icao) {
+    const store = _adsbAcMarkers[icao] || {};
+    for (const k in store) { if (store[k]._ac) store[k].setIcon(adsbMakeIcon(store[k]._ac, _adsbSel[icao] === k)); }
 }
 
 // Farbe nach Flugphase (Boden / Ankunft / Abflug / Reiseflug)
@@ -6262,7 +6276,7 @@ function adsbAddMarkers(icao) {
         seen.add(key);
         bounds.push([a.lat, a.lon]);
         const track = a.track ?? 0, gs = a.gs ?? 0;
-        const icon = L.divIcon({ className: 'adsb-plane', html: adsbPlaneSvg(adsbPhaseColor(a), track, adsbIconKind(a)), iconSize: [28, 28], iconAnchor: [14, 14] });
+        const icon = adsbMakeIcon(a, _adsbSel[icao] === key);
         let mk = store[key];
         if (mk) {
             mk._dr = { lat: a.lat, lon: a.lon, track, gs };   // neue Wahrheit -> Animation rechnet ab hier weiter
@@ -6273,7 +6287,7 @@ function adsbAddMarkers(icao) {
             mk = L.marker([a.lat, a.lon], { icon }).addTo(grp);
             mk._dr = { lat: a.lat, lon: a.lon, track, gs };
             mk._ac = a;
-            mk.on('click', () => { _adsbSel[icao] = key; adsbRenderDetail(icao); });
+            mk.on('click', () => { _adsbSel[icao] = key; adsbRenderDetail(icao); adsbSelectMarker(icao); });
             store[key] = mk;
         }
     });
