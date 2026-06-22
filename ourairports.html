@@ -1752,6 +1752,10 @@
         .adsb-plane { background: transparent !important; border: 0 !important; }
         .adsb-plane-i { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
         .adsb-plane-i svg { display: block; }
+        .adsb-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: 0.72rem; color: var(--color-text-dim); align-items: center; }
+        .adsb-legend-title { font-weight: 600; color: var(--color-text); }
+        .adsb-leg { display: inline-flex; align-items: center; gap: 5px; }
+        .adsb-leg i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.15); }
         .flug-ph-land   { color: #22c55e; }
         .flug-ph-dep    { color: #f59e0b; }
         .flug-ph-cruise { color: #60a5fa; }
@@ -6605,6 +6609,13 @@ async function ladeFluege(icao, forceRefresh = false) {
 
                 <div class="adsb-view" data-view="karte" hidden>
                     <div id="adsb-map-${icao}" class="adsb-map"></div>
+                    <div class="adsb-legend">
+                        <span class="adsb-legend-title">Farbe = Flugphase:</span>
+                        <span class="adsb-leg"><i style="background:#22c55e"></i>Ankunft (Sinkflug)</span>
+                        <span class="adsb-leg"><i style="background:#f59e0b"></i>Abflug (Steigflug)</span>
+                        <span class="adsb-leg"><i style="background:#3b82f6"></i>Reiseflug</span>
+                        <span class="adsb-leg"><i style="background:#94a3b8"></i>am Boden</span>
+                    </div>
                     <p class="fluege-hinweis" style="margin-top:8px">✈ Live-Position &amp; Kurs · aktualisiert automatisch · Symbol antippen für Details</p>
                 </div>
 
