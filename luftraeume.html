@@ -212,6 +212,11 @@
     <button class="chip mini" onclick="setTypes('all')">Alle</button>
     <button class="chip mini" onclick="setTypes('none')">Keine</button>
     <div id="type-chips"></div>
+    <div class="toolbar-sep"></div>
+    <span class="toolbar-label">Klasse</span>
+    <button class="chip mini" onclick="setClasses('all')">Alle</button>
+    <button class="chip mini" onclick="setClasses('none')">Keine</button>
+    <div id="class-chips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
 </div>
 
 <div id="map"></div>
@@ -315,6 +320,22 @@ const COUNTRIES = [
     { code:'KE', label:'KE 🇰🇪', default:false },
 ];
 
+// Deutsche Ländernamen (für die Suche)
+const COUNTRY_NAMES = {
+    DE:'Deutschland', AT:'Österreich', CH:'Schweiz', FR:'Frankreich', NL:'Niederlande',
+    BE:'Belgien', LU:'Luxemburg', GB:'Vereinigtes Königreich Großbritannien', IE:'Irland', DK:'Dänemark',
+    NO:'Norwegen', SE:'Schweden', FI:'Finnland', IS:'Island', PL:'Polen',
+    CZ:'Tschechien', SK:'Slowakei', HU:'Ungarn', SI:'Slowenien', HR:'Kroatien',
+    IT:'Italien', ES:'Spanien', PT:'Portugal', GR:'Griechenland', RO:'Rumänien',
+    BG:'Bulgarien', RS:'Serbien', UA:'Ukraine', EE:'Estland', LV:'Lettland',
+    LT:'Litauen', TR:'Türkei', US:'USA Vereinigte Staaten', CA:'Kanada', MX:'Mexiko',
+    BR:'Brasilien', AR:'Argentinien', CL:'Chile', CO:'Kolumbien', JP:'Japan',
+    CN:'China', IN:'Indien', KR:'Südkorea', TH:'Thailand', SG:'Singapur',
+    ID:'Indonesien', MY:'Malaysia', PH:'Philippinen', AE:'Vereinigte Arabische Emirate', SA:'Saudi-Arabien',
+    IL:'Israel', AU:'Australien', NZ:'Neuseeland', ZA:'Südafrika', EG:'Ägypten',
+    MA:'Marokko', KE:'Kenia',
+};
+
 // OpenAIP Typ-Codes
 const TYPE_META = {
     0:  { label:'Sonstige',   color:'#94a3b8', fill:0.08, weight:1   },
@@ -353,6 +374,7 @@ const DEFAULT_OPENAIP_KEY = '2800111e267cd352c035b2df2102fbdf';
 function getOpenAipKey(){ return localStorage.getItem('openaip_key') || DEFAULT_OPENAIP_KEY; }
 let activeCountries = new Set(COUNTRIES.filter(c => c.default).map(c => c.code));
 let activeTypes = new Set(Object.keys(TYPE_META).map(Number));
+let activeClasses = new Set([0,1,2,3,4,5,6,7,8]);   // ICAO-Luftraumklassen A–G (+ ohne)
 let allFeatures = [];
 
 // ── Hilfsfunktionen ───────────────────────────────────────────────────────────
@@ -505,9 +527,15 @@ async function ladeAirspaces() {
     document.getElementById('load-btn').textContent = '↺ Neu laden';
 }
 
+// Filter: Typ UND ICAO-Klasse müssen aktiv sein
+function featurePasses(f) {
+    const p = f.properties;
+    return activeTypes.has(p.type) && activeClasses.has(p.icaoClass ?? 0);
+}
+
 function renderFeatures() {
     geoLayer.clearLayers();
-    const filtered = allFeatures.filter(f => activeTypes.has(f.properties.type));
+    const filtered = allFeatures.filter(featurePasses);
     if (filtered.length > 0) {
         geoLayer.addData({ type: 'FeatureCollection', features: filtered });
     }
@@ -517,7 +545,7 @@ function updateStats() {
     const bar = document.getElementById('stats-bar');
     if (allFeatures.length === 0) { bar.classList.remove('show'); return; }
     bar.classList.add('show');
-    const shown = allFeatures.filter(f => activeTypes.has(f.properties.type)).length;
+    const shown = allFeatures.filter(featurePasses).length;
     bar.textContent = `${shown.toLocaleString('de')} Lufträume angezeigt · ${allFeatures.length.toLocaleString('de')} geladen`;
 }
 
@@ -567,6 +595,13 @@ function setTypes(mode) {
     renderFeatures();
     updateStats();
 }
+function setClasses(mode) {
+    if (mode === 'all')  activeClasses = new Set([0,1,2,3,4,5,6,7,8]);
+    if (mode === 'none') activeClasses = new Set();
+    buildChips();
+    renderFeatures();
+    updateStats();
+}
 
 function buildChips() {
     // Länder-Chips (optional nach Suchtext gefiltert)
@@ -574,11 +609,13 @@ function buildChips() {
     cc.innerHTML = '';
     const q = (document.getElementById('country-search')?.value || '').trim().toLowerCase();
     for (const { code, label } of COUNTRIES) {
-        if (q && !code.toLowerCase().includes(q) && !label.toLowerCase().includes(q)) continue;
+        const name = COUNTRY_NAMES[code] || '';
+        if (q && !code.toLowerCase().includes(q) && !label.toLowerCase().includes(q) && !name.toLowerCase().includes(q)) continue;
         const active = activeCountries.has(code);
         const btn = document.createElement('button');
         btn.className = 'chip' + (active ? ' active' : '');
         btn.style.background = active ? '#2563eb' : '';
+        btn.title = name;
         btn.textContent = label;
         btn.onclick = () => {
             if (activeCountries.has(code)) activeCountries.delete(code);
@@ -613,6 +650,27 @@ function buildChips() {
             updateStats();
         };
         tc.appendChild(btn);
+    }
+
+    // Klassen-Chips (ICAO-Luftraumklasse A–G + ohne Klasse)
+    const klc = document.getElementById('class-chips');
+    if (klc) {
+        klc.innerHTML = '';
+        for (const id of [1,2,3,4,5,6,7,8,0]) {
+            const lbl = id === 0 ? 'o. Kl.' : (CLASS_LABEL[id] || id);
+            const active = activeClasses.has(id);
+            const btn = document.createElement('button');
+            btn.className = 'chip' + (active ? ' active' : '');
+            btn.style.background = active ? '#475569' : '';
+            btn.textContent = lbl;
+            btn.onclick = () => {
+                if (activeClasses.has(id)) activeClasses.delete(id); else activeClasses.add(id);
+                buildChips();
+                renderFeatures();
+                updateStats();
+            };
+            klc.appendChild(btn);
+        }
     }
 }
 
@@ -652,6 +710,9 @@ function buildLegend() {
 
     // Lufträume sind dank Default-Key + Tile-Layer sofort sichtbar – keine Sperre nötig.
     document.getElementById('no-key-msg').style.display = 'none';
+
+    // Standardländer (DE/AT/CH) automatisch laden -> anklickbare Details sofort verfügbar
+    if (activeCountries.size > 0) ladeAirspaces();
 })();
 </script>
 </body>
