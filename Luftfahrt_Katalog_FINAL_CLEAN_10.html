@@ -18,7 +18,7 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--b0) 1px,transparent 1px),linear-gradient(90deg,var(--b0) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(59,130,246,0.07) 0%,transparent 65%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(59,130,246,0.045) 0%,transparent 65%);pointer-events:none;z-index:0}
 
 /* ── TOPBAR ── */
 .tb{position:fixed;top:0;left:0;right:0;z-index:200;height:54px;background:rgba(5,9,26,0.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 clamp(1rem,4vw,2.5rem);gap:10px}
@@ -322,6 +322,31 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:7px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ── KOMPAKTE QUICK-BAR (Tools/Tracker einklappbar) ── */
+.ac-quick{max-width:1080px;margin:0 auto;padding:1.1rem clamp(1rem,4vw,2.5rem) 0;display:flex;gap:8px;flex-wrap:wrap}
+.ac-qbtn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--tx);
+  background:var(--s1);border:1px solid var(--b1);border-radius:8px;padding:9px 15px;cursor:pointer;
+  font-family:inherit;transition:all .15s}
+.ac-qbtn svg{width:15px;height:15px;stroke:var(--pl);fill:none}
+.ac-qbtn:hover{border-color:var(--b2)}
+.ac-qbtn.active{background:rgba(6,182,212,.12);border-color:var(--pl);color:#bfe9f5}
+.ac-qbtn .chev{margin-left:2px;transition:transform .2s;width:13px;height:13px;stroke:var(--mu)}
+.ac-qbtn.active .chev{transform:rotate(180deg)}
+
+/* ── FILTER-CHIPS (flache Navigation statt verschachtelter Akkordeons) ── */
+.ac-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1rem}
+.ac-chip{font-size:12px;font-weight:600;color:var(--mu);background:var(--s1);border:1px solid var(--b1);
+  border-radius:20px;padding:6px 13px;cursor:pointer;font-family:inherit;transition:all .15s;
+  display:inline-flex;align-items:center;gap:6px}
+.ac-chip span{font-family:'Space Mono',monospace;font-size:10px;color:var(--fa)}
+.ac-chip:hover{border-color:var(--b2);color:var(--tx)}
+.ac-chip.active{background:var(--pl);border-color:var(--pl);color:#04121a}
+.ac-chip.active span{color:rgba(4,18,26,.55)}
+.ac-grp-desc{font-size:12.5px;color:var(--mu);line-height:1.6;margin:-.2rem 0 1.1rem;
+  padding:.7rem .95rem;background:rgba(255,255,255,.02);border-radius:8px;border-left:2px solid var(--b1)}
+.ac-grp-head{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--fa);
+  margin:.2rem 0 .6rem;width:100%}
+
 
 /* ── 3D PHOTO MODAL ─────────────────────────────────────────────────── */
 .pmodal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;
@@ -522,8 +547,20 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
         <option value="rat">Beste Bewertung</option>
         <option value="fre">Kostenlos zuerst</option>
       </select>
-      <span class="ri"><b id="dCnt">0</b> Quellen</span>
+      <span class="ri"><b id="dCnt">0</b> <span id="dCntLbl">Quellen</span></span>
     </div>
+  </div>
+  <div class="ac-quick hide" id="acQuick">
+    <button class="ac-qbtn" id="qbTrack" onclick="acTogglePanel('acTrack',this)">
+      <svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+      Registrierung &amp; letzte Flüge
+      <svg class="chev" viewBox="0 0 24 24" stroke-width="2.2" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <button class="ac-qbtn" id="qbTools" onclick="acTogglePanel('acTools',this)">
+      <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg>
+      Luftfahrzeug-Datenbanken
+      <svg class="chev" viewBox="0 0 24 24" stroke-width="2.2" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
   </div>
   <div class="ac-tools hide" id="acTools">
     <div class="ac-tools-in">
@@ -1016,6 +1053,7 @@ src(5,3,2,5,5,'EASA CS-25 – FBW & Automated Systems Requirements','Anforderung
 // ─────────────────────────────────────────────────────────────────
 // UI STATE
 var activeCat=null;
+var acGroup='all';   // aktive Flugzeug-Untergruppe für die Filter-Chips
 
 function goHome(){
   document.getElementById('vHome').classList.remove('hide');
@@ -1038,8 +1076,13 @@ function loadCat(cat){
 
   // count stats
   const isAcCat=(activeCat==='Flugzeuge');
-  document.getElementById('acTools').classList.toggle('hide',!isAcCat);
-  document.getElementById('acTrack').classList.toggle('hide',!isAcCat);
+  acGroup='all';
+  document.getElementById('acQuick').classList.toggle('hide',!isAcCat);
+  // Panels standardmäßig eingeklappt – per Quick-Bar öffnen
+  document.getElementById('acTools').classList.add('hide');
+  document.getElementById('acTrack').classList.add('hide');
+  ['qbTools','qbTrack'].forEach(id=>{const b=document.getElementById(id);if(b)b.classList.remove('active');});
+  const lbl=document.getElementById('dCntLbl');if(lbl)lbl.textContent=isAcCat?'Flugzeuge':'Quellen';
   let total=0,free=0,pub=0;
   d.sections.forEach(sec=>{
     sec.subs.forEach(sub=>{
@@ -1226,8 +1269,115 @@ async function fetchAdsbdb(reg){
   }catch(e){return null;}
 }
 
+// ── Quick-Bar Panels auf-/zuklappen ──────────────────────────────────────
+function acTogglePanel(id,btn){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const hidden=el.classList.toggle('hide');
+  if(btn)btn.classList.toggle('active',!hidden);
+  if(!hidden)el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function setAcGroup(g){acGroup=g;renderAccordion();}
+
+// ── Eine vollständige Flugzeug-Karte (alle Infos bleiben erhalten) ────────
+function acCardHtml(ac,sub,i,dotClr,cls){
+  const id=`acf-${i}`;
+  const stars=starsHtml(ac.avg);
+  const spHtml=(ac.specs||[]).map(([l,v])=>`<div class="ac-sp"><div class="ac-sl">${l}</div><div class="ac-sv">${v}</div></div>`).join('');
+  const para=sub.id.includes('nb')||sub.id.includes('wb')?'6.4.1':(sub.id.includes('fracht')||sub.id.includes('freighter')||sub.id.includes('belly')?'6.4.2/6.4.3':'6.2');
+  return`<div class="ac-card" style="animation-delay:${Math.min(i*.04,.4)}s">
+  <div class="ac-img-w" data-wiki="${acWikiTitle(ac)}" data-mfr="${ac.h}" data-yr="${ac.erstflug}"${ac.cs?` data-cs="${ac.cs}"`:''} style="background:linear-gradient(140deg,var(--s2),var(--s3))">
+    <div class="ac-ph">
+      <svg viewBox="0 0 24 24" stroke-width="1.3" fill="none" stroke="var(--pl)" opacity="0.35" width="36" height="36"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+      <span style="font-size:12px;font-weight:700;color:var(--tx);text-align:center;max-width:90%;line-height:1.3">${ac.n}</span>
+      <span style="font-size:9px;color:var(--mu);letter-spacing:.1em">${ac.erstflug}</span>
+    </div>
+    <div class="ac-bdg"><span class="ac-b ac-b-mfr">${ac.h}</span><span class="ac-b ac-b-yr">✈ ${ac.erstflug}</span></div>
+    ${ac.cs?`<span class="ac-cs-tag">${ac.cs}</span>`:''}
+  </div>
+  <div class="ac-body">
+    <div class="ac-name">${ac.n}</div>
+    <div class="ac-ksr">
+      <div class="ac-ks"><div class="ac-ksv">${ac.ks[0]}</div><div class="ac-ksl">Spannw.</div></div>
+      <div class="ac-ks"><div class="ac-ksv">${ac.ks[1]}</div><div class="ac-ksl">MTOW</div></div>
+      <div class="ac-ks"><div class="ac-ksv">${ac.ks[2]}</div><div class="ac-ksl">Kap.</div></div>
+    </div>
+    <div class="ac-rat-r"><div class="ac-st">${stars}</div><span class="ac-rv">${ac.avg.toFixed(1)}</span></div>
+  </div>
+  <button class="ac-tog" id="btn-${id}" onclick="toggleAc('${id}')">
+    Alle Daten ansehen <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="ac-det" id="bod-${id}">
+    <span class="tab62">📖 Mensen Tab. 6.2 / §${para}</span>
+    <div class="ac-ddesc">${ac.d}</div>
+    <div class="ac-specs">${spHtml}</div>
+    <div class="ac-rsec">
+      <div class="ac-rlbl">Bewertung</div>
+      ${rBar('Bedeutung',ac.bed,dotClr)}
+      ${rBar('Technologie',ac.tech,dotClr)}
+      ${rBar('Effizienz',ac.eff,dotClr)}
+      ${rBar('Verbreitung',ac.verb,dotClr)}
+      ${rBar('Sicherheit',ac.sich,dotClr)}
+    </div>
+    ${acDbLinks(ac)}
+    ${ac.yt?`<div class="ac-video-row">
+      <button class="vid-chip vid-yt" onclick="openYT(this,'${ac.yt}','documentary')">▶ Dokumentation</button>
+      <button class="vid-chip vid-yt" onclick="openYT(this,'${ac.yt}','cockpit view')">🎮 Cockpit</button>
+      <button class="vid-chip vid-yt" onclick="openYT(this,'${ac.yt}','takeoff landing')">✈ Takeoff/Landing</button>
+      <a href="https://www.pexels.com/search/videos/${encodeURIComponent(ac.yt.split('+')[0])}/" target="_blank" rel="noopener" class="vid-chip vid-px">🎬 Pexels Videos</a>
+      <a href="https://pixabay.com/videos/search/${encodeURIComponent(ac.yt.split('+')[0])}/" target="_blank" rel="noopener" class="vid-chip vid-px2">🎥 Pixabay</a>
+    </div>
+    <div class="vid-frame-wrap"></div>`:''}
+    ${ac.u?`<a href="${ac.u}" target="_blank" rel="noopener" class="lbtn l${cls}">Zur offiziellen Website <svg viewBox="0 0 24 24" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`:''}
+  </div>
+</div>`;
+}
+
+// ── Flache Flugzeug-Ansicht: Filter-Chips + ein Raster (statt 2 Akkordeon-Ebenen) ──
+function renderAircraftFlat(){
+  const d=CAT['Flugzeuge'];
+  const srch=document.getElementById('dSrch').value.toLowerCase();
+  const srt=document.getElementById('dSort').value;
+  const dotClr=d.clr, cls=d.cls;
+
+  const groups=[];
+  d.sections.forEach(sec=>(sec.subs||[]).forEach(sub=>{
+    groups.push({id:sub.id,name:sub.name,section:sec.name,sub,aircraft:sub.aircraft||[]});
+  }));
+  const match=ac=>!srch||[ac.n,ac.d,ac.h,ac.erstflug,(ac.specs||[]).map(s=>s.join(' ')).join(' ')].join(' ').toLowerCase().includes(srch);
+
+  // Chip-Leiste
+  const allCount=groups.reduce((n,g)=>n+g.aircraft.filter(match).length,0);
+  let chips=`<button class="ac-chip ${acGroup==='all'?'active':''}" onclick="setAcGroup('all')">Alle <span>${allCount}</span></button>`;
+  groups.forEach(g=>{
+    const c=g.aircraft.filter(match).length;
+    if(srch&&!c)return;
+    chips+=`<button class="ac-chip ${acGroup===g.id?'active':''}" onclick="setAcGroup('${g.id}')">${g.name} <span>${c}</span></button>`;
+  });
+
+  // Aktive Auswahl als flache Liste
+  let items=[];
+  groups.forEach(g=>{if(acGroup==='all'||acGroup===g.id)g.aircraft.forEach(ac=>{if(match(ac))items.push({ac,g});});});
+  if(srt==='az')items.sort((a,b)=>a.ac.n.localeCompare(b.ac.n));
+  else if(srt==='rat')items.sort((a,b)=>b.ac.avg-a.ac.avg);
+
+  const activeGrp=groups.find(g=>g.id===acGroup);
+  const desc=activeGrp&&activeGrp.sub.desc?`<div class="ac-grp-desc">${activeGrp.sub.desc}</div>`:'';
+  const cards=items.map((x,i)=>acCardHtml(x.ac,x.g.sub,i,dotClr,cls)).join('');
+  const grid=items.length
+    ? `<div class="ac-grid">${cards}</div>`
+    : `<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Flugzeuge gefunden.</p></div>`;
+
+  document.getElementById('accWrap').innerHTML=`<div class="ac-chips">${chips}</div>${desc}${grid}`;
+  document.getElementById('dCnt').textContent=items.length;
+  setTimeout(loadAllPhotos,150);
+  setTimeout(initWikiImages,50);
+  setTimeout(initTilt,80);
+}
+
 function renderAccordion(){
   if(!activeCat)return;
+  if(activeCat==='Flugzeuge'){renderAircraftFlat();return;}
   const d=CAT[activeCat];
   const srch=document.getElementById('dSrch').value.toLowerCase();
   const srt=document.getElementById('dSort').value;
@@ -1876,8 +2026,10 @@ function openYT(el, query, type) {
     if(regParam){
       loadCat('Flugzeuge');
       var trk=document.getElementById('acTrack');
+      var qb=document.getElementById('qbTrack');
       setTimeout(function(){
         if(trk){trk.classList.remove('hide');trk.scrollIntoView({behavior:'smooth',block:'start'});}
+        if(qb)qb.classList.add('active');
         doTrack(regParam.toUpperCase());
       },120);
       return;
