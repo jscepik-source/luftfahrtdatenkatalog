@@ -595,11 +595,11 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
         <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
     </div>
-    <div class="cc te" onclick="openIcao('Helicopter')">
+    <div class="cc te" onclick="openHeli()">
       <div class="cc-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M2 8h20M5 8v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M3 8l2-4h14l2 4"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg></div>
       <div class="cc-info">
         <h3>Hubschrauber</h3>
-        <p class="cc-sub">Alle Drehflügler-Typen (ICAO Doc 8643) — je Typ Foto, Wikipedia-Info &amp; Quellen.</p>
+        <p class="cc-sub">Foto-Katalog der Drehflügler — zivil, Rettung, Transport, Kampf &amp; historisch, mit Bild &amp; Infos.</p>
         <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
     </div>
@@ -735,6 +735,24 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <div class="ac-chips" id="engChips"></div>
     <div class="icao-count" id="engCount"></div>
     <div id="engResults"></div>
+  </div>
+</div>
+
+<!-- HUBSCHRAUBER-KATALOG -->
+<div class="view hide" id="vHeli">
+  <div class="dh">
+    <button class="bk" onclick="goHome()"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Zurück zur Übersicht</button>
+    <h2>Hubschrauber-Katalog</h2>
+    <p>Drehflügler mit Foto &amp; Infos — zivil &amp; Mehrzweck, Rettung, Transport, Kampf, Marine, Kipprotoren &amp; historische Muster. Karte aufklappen → Beschreibung &amp; Quellen. (Die vollständige ICAO-Typenliste ist separat unter „Alle ICAO-Typen".)</p>
+  </div>
+  <div class="icao-wrap">
+    <div class="icao-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="heliSearch" type="text" autocomplete="off" spellcheck="false" placeholder="z. B. Apache, H145, Black Hawk, Chinook, Mi-8 …" oninput="renderHeli()">
+    </div>
+    <div class="ac-chips" id="heliChips"></div>
+    <div class="icao-count" id="heliCount"></div>
+    <div id="heliResults"></div>
   </div>
 </div>
 
@@ -1196,6 +1214,7 @@ function goHome(){
   document.getElementById('vDetail').classList.add('hide');
   document.getElementById('vIcao').classList.add('hide');
   document.getElementById('vEngine').classList.add('hide');
+  document.getElementById('vHeli').classList.add('hide');
   document.getElementById('tbCr').textContent='Übersicht';
   document.getElementById('dSrch').value='';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1270,6 +1289,39 @@ function renderEngine(){
         </div>`;
       }).join('')+'</div>'
     : '<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Triebwerke gefunden.</p></div>';
+}
+// ── Hubschrauber-Foto-Katalog (eigene Seite, getrennt von ICAO) ───────────
+var HELI_DATA=null, heliGroup='all', HELI_GROUPS=[];
+function openHeli(){
+  document.getElementById('vHome').classList.add('hide');
+  document.getElementById('vDetail').classList.add('hide');
+  document.getElementById('vIcao').classList.add('hide');
+  document.getElementById('vEngine').classList.add('hide');
+  document.getElementById('vHeli').classList.remove('hide');
+  document.getElementById('tbCr').innerHTML='<b>Hubschrauber</b>';
+  document.getElementById('heliSearch').value=''; heliGroup='all';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(HELI_DATA){renderHeli();return;}
+  document.getElementById('heliResults').innerHTML='<div class="tr-msg info"><span class="tr-spin"></span>Lade Hubschrauber-Katalog …</div>';
+  fetch('helicopters_ext.json').then(r=>r.json()).then(d=>{HELI_DATA=d;renderHeli();})
+    .catch(()=>{document.getElementById('heliResults').innerHTML='<div class="tr-msg err">Hubschrauber-Daten konnten nicht geladen werden.</div>';});
+}
+function setHeliGroup(g){heliGroup=(g==='all')?'all':(HELI_GROUPS[g]||'all');renderHeli();}
+function renderHeli(){
+  if(!HELI_DATA)return;
+  const srch=(document.getElementById('heliSearch').value||'').toLowerCase();
+  const match=a=>!srch||[a.n,a.d||'',a.h||''].join(' ').toLowerCase().includes(srch);
+  HELI_GROUPS=[...new Set(HELI_DATA.map(a=>a.g))];
+  const allC=HELI_DATA.filter(match).length;
+  let chips=`<button class="ac-chip ${heliGroup==='all'?'active':''}" onclick="setHeliGroup('all')">Alle Hubschrauber <span>${allC}</span></button>`;
+  HELI_GROUPS.forEach((g,gi)=>{const c=HELI_DATA.filter(a=>a.g===g&&match(a)).length;if(srch&&!c)return;chips+=`<button class="ac-chip ${heliGroup===g?'active':''}" onclick="setHeliGroup(${gi})">${esc(g)} <span>${c}</span></button>`;});
+  const items=HELI_DATA.filter(a=>(heliGroup==='all'||a.g===heliGroup)&&match(a));
+  document.getElementById('heliChips').innerHTML=chips;
+  document.getElementById('heliCount').innerHTML=`<b>${items.length}</b> Hubschrauber`;
+  document.getElementById('heliResults').innerHTML=items.length
+    ? `<div class="ac-grid">${items.map((a,i)=>acExtCardHtml(a,'h'+i,'te')).join('')}</div>`
+    : '<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Hubschrauber gefunden.</p></div>';
+  setTimeout(initTilt,80);
 }
 function setIcaoClass(c){icaoClass=c;renderIcao();}
 function engLabel(s){const i=(s||'').indexOf('/');if(i<0)return s||'—';return s.slice(0,i)+'× '+s.slice(i+1).replace(/\//g,' · ');}
