@@ -1,4 +1,4 @@
-const CACHE = 'luftfahrt-v16';
+const CACHE = 'luftfahrt-v17';
 
 const SHELL = [
   './',
@@ -51,6 +51,14 @@ self.addEventListener('fetch', e => {
   // Live-APIs: immer Netzwerk
   if (NETWORK_ONLY.some(h => url.hostname.includes(h))) return;
 
+  // HTML-Seiten (Navigationen): IMMER zuerst Netzwerk → Updates sofort sichtbar,
+  // Cache nur als Offline-Fallback.
+  if (e.request.mode === 'navigate' ||
+      (url.origin === self.location.origin && url.pathname.endsWith('.html'))) {
+    e.respondWith(networkFirst(e.request));
+    return;
+  }
+
   // GitHub Raw JSON (Katalogdaten): Stale-While-Revalidate
   if (url.hostname === 'raw.githubusercontent.com') {
     e.respondWith(staleWhileRevalidate(e.request));
@@ -79,6 +87,18 @@ async function cacheFirst(req) {
     cache.put(req, res.clone());
   }
   return res;
+}
+
+async function networkFirst(req) {
+  const cache = await caches.open(CACHE);
+  try {
+    const res = await fetch(req);
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  } catch (e) {
+    const cached = await cache.match(req);
+    return cached || Response.error();
+  }
 }
 
 async function staleWhileRevalidate(req) {
