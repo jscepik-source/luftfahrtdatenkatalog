@@ -404,6 +404,13 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .icao-exp .tr-spin{margin:.4rem 0}
 .cc.ic .cc-banner{background:linear-gradient(135deg,rgba(37,99,235,.16),rgba(37,99,235,.03))}
 .cc.ic .cc-banner svg{stroke:var(--ac)}.cc.ic .cc-go{color:var(--ac)}.cc.ic .cc-go svg{stroke:var(--ac)}
+.icao-srclbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fa);margin:.7rem 0 .4rem}
+.eng-card .icao-row{align-items:flex-start}
+.eng-mfr{font-weight:500;color:var(--mu);font-size:11.5px}
+.icao-exp-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--b0);border:1px solid var(--b0);border-radius:6px;overflow:hidden;margin:.1rem 0 .65rem}
+.icao-fact{background:var(--s1);padding:.45rem .65rem}
+.icao-fact-l{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--fa);font-weight:700}
+.icao-fact-v{font-size:11.5px;color:var(--tx);margin-top:1px;line-height:1.35}
 @media(max-width:600px){.icao-grid{grid-template-columns:1fr}}
 
 /* ── FILTER-CHIPS (flache Navigation statt verschachtelter Akkordeons) ── */
@@ -587,19 +594,19 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
         <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
     </div>
-    <div class="cc te" onclick="loadCat('Hubschrauber')">
+    <div class="cc te" onclick="openIcao('Helicopter')">
       <div class="cc-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M2 8h20M5 8v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M3 8l2-4h14l2 4"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg></div>
       <div class="cc-info">
         <h3>Hubschrauber</h3>
-        <p class="cc-sub">Zivile & militärische Drehflügler — Rettung, Offshore, Kampf, Transport.</p>
+        <p class="cc-sub">Alle Drehflügler-Typen (ICAO Doc 8643) — je Typ Foto, Wikipedia-Info &amp; Quellen.</p>
         <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
     </div>
-    <div class="cc en" onclick="loadCat('Triebwerke')">
+    <div class="cc en" onclick="openEngine()">
       <div class="cc-banner"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
       <div class="cc-info">
         <h3>Triebwerke</h3>
-        <p class="cc-sub">Kolbenmotor, Turboprop, Turbojet, Turbofan, Raketen-, Elektro- & Hybridantriebe.</p>
+        <p class="cc-sub">Alle Triebwerks-Typen (Kolben → Turbofan → Rakete/Elektro) — je Typ Foto, Info &amp; Quellen.</p>
         <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
     </div>
@@ -698,8 +705,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 <div class="view hide" id="vIcao">
   <div class="dh">
     <button class="bk" onclick="goHome()"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Zurück zur Übersicht</button>
-    <h2>Alle Flugzeugtypen · ICAO Doc 8643</h2>
-    <p>Offizielle ICAO-Typencodes aller Luftfahrzeugmuster — mit Klasse, Triebwerken, Hersteller &amp; Modell, direkt hier (kein externer Link). Tippe einen Code, Hersteller oder Modellnamen.</p>
+    <h2 id="icaoH2">Alle Flugzeugtypen · ICAO Doc 8643</h2>
+    <p>Offizielle ICAO-Typencodes aller Luftfahrzeugmuster — mit Klasse, Triebwerken, Hersteller &amp; Modell. Karte anklicken → Foto, Wikipedia-Info &amp; weitere Quellen.</p>
   </div>
   <div class="icao-wrap">
     <div class="icao-search">
@@ -709,6 +716,24 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <div class="ac-chips" id="icaoChips"></div>
     <div class="icao-count" id="icaoCount"></div>
     <div id="icaoResults"></div>
+  </div>
+</div>
+
+<!-- TRIEBWERKE -->
+<div class="view hide" id="vEngine">
+  <div class="dh">
+    <button class="bk" onclick="goHome()"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Zurück zur Übersicht</button>
+    <h2>Alle Triebwerks-Typen</h2>
+    <p>Von Kolbenmotor über Turboprop/-shaft, Turbojet &amp; Turbofan bis Raketen- und Elektroantrieb. Karte anklicken → Foto, Wikipedia-Info &amp; weitere Quellen (ICAO EEDB, SKYbrary, EASA/FAA TCDS).</p>
+  </div>
+  <div class="icao-wrap">
+    <div class="icao-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="engSearch" type="text" autocomplete="off" spellcheck="false" placeholder="z. B. LEAP, Trent XWB, PT6A, GE90, Merlin …" oninput="renderEngine()">
+    </div>
+    <div class="ac-chips" id="engChips"></div>
+    <div class="icao-count" id="engCount"></div>
+    <div id="engResults"></div>
   </div>
 </div>
 
@@ -1169,6 +1194,7 @@ function goHome(){
   document.getElementById('vHome').classList.remove('hide');
   document.getElementById('vDetail').classList.add('hide');
   document.getElementById('vIcao').classList.add('hide');
+  document.getElementById('vEngine').classList.add('hide');
   document.getElementById('tbCr').textContent='Übersicht';
   document.getElementById('dSrch').value='';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1180,16 +1206,66 @@ const ICAO_CLASS_DE={LandPlane:'Landflugzeug',Helicopter:'Hubschrauber',Amphibia
 function setIcaoData(d){ICAO_DATA=d;ICAO_BY_CODE={};d.forEach(r=>{if(!ICAO_BY_CODE[r[0]])ICAO_BY_CODE[r[0]]=r;});}
 // Datensatz im Hintergrund vorladen, damit die ICAO-Typdaten auch in den Flugzeug-Karten inline erscheinen
 fetch('doc8643.json').then(r=>r.json()).then(d=>{setIcaoData(d);if(activeCat==='Flugzeuge')renderAccordion();}).catch(()=>{});
-function openIcao(){
+function openIcao(preset){
   document.getElementById('vHome').classList.add('hide');
   document.getElementById('vDetail').classList.add('hide');
+  document.getElementById('vEngine').classList.add('hide');
   document.getElementById('vIcao').classList.remove('hide');
-  document.getElementById('tbCr').innerHTML='<b>ICAO-Typen · Doc 8643</b>';
+  icaoClass = preset || 'all';
+  const heli = preset==='Helicopter';
+  document.getElementById('icaoH2').textContent = heli ? 'Alle Hubschrauber-Typen · ICAO Doc 8643' : 'Alle Flugzeugtypen · ICAO Doc 8643';
+  document.getElementById('tbCr').innerHTML = heli ? '<b>Hubschrauber-Typen</b>' : '<b>ICAO-Typen · Doc 8643</b>';
+  document.getElementById('icaoSearch').value='';
   window.scrollTo({top:0,behavior:'smooth'});
   if(ICAO_DATA){renderIcao();return;}
   document.getElementById('icaoResults').innerHTML='<div class="tr-msg info"><span class="tr-spin"></span>Lade ICAO-Typendatenbank …</div>';
   fetch('doc8643.json').then(r=>r.json()).then(d=>{setIcaoData(d);renderIcao();})
     .catch(()=>{document.getElementById('icaoResults').innerHTML='<div class="tr-msg err">ICAO-Daten konnten nicht geladen werden.</div>';});
+}
+// ── Triebwerks-Browser ────────────────────────────────────────────────────
+var ENG_DATA=null, engClass='all';
+function engCat(t){return /Turbofan/.test(t)?'Turbofan':/Turboprop/.test(t)?'Turboprop':/Turboshaft/.test(t)?'Turboshaft':/Turbojet/.test(t)?'Turbojet':/Kolben/.test(t)?'Kolben':/Rakete/.test(t)?'Raketentriebwerk':'Elektro/Hybrid';}
+function openEngine(){
+  document.getElementById('vHome').classList.add('hide');
+  document.getElementById('vDetail').classList.add('hide');
+  document.getElementById('vIcao').classList.add('hide');
+  document.getElementById('vEngine').classList.remove('hide');
+  document.getElementById('tbCr').innerHTML='<b>Triebwerks-Typen</b>';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(ENG_DATA){renderEngine();return;}
+  document.getElementById('engResults').innerHTML='<div class="tr-msg info"><span class="tr-spin"></span>Lade Triebwerks-Datenbank …</div>';
+  fetch('engines.json').then(r=>r.json()).then(d=>{ENG_DATA=d;renderEngine();})
+    .catch(()=>{document.getElementById('engResults').innerHTML='<div class="tr-msg err">Triebwerks-Daten konnten nicht geladen werden.</div>';});
+}
+function setEngClass(c){engClass=c;renderEngine();}
+function renderEngine(){
+  if(!ENG_DATA)return;
+  const q=(document.getElementById('engSearch').value||'').trim().toLowerCase();
+  const counts={};ENG_DATA.forEach(r=>{const c=engCat(r[2]);counts[c]=(counts[c]||0)+1;});
+  const order=['Turbofan','Turboprop','Turboshaft','Turbojet','Kolben','Raketentriebwerk','Elektro/Hybrid'];
+  let chips=`<button class="ac-chip ${engClass==='all'?'active':''}" onclick="setEngClass('all')">Alle <span>${ENG_DATA.length}</span></button>`;
+  order.forEach(c=>{if(!counts[c])return;chips+=`<button class="ac-chip ${engClass===c?'active':''}" onclick="setEngClass('${c}')">${c} <span>${counts[c]}</span></button>`;});
+  document.getElementById('engChips').innerHTML=chips;
+  let rows=ENG_DATA;
+  if(engClass!=='all')rows=rows.filter(r=>engCat(r[2])===engClass);
+  if(q)rows=rows.filter(r=>(r[0]+' '+r[1]+' '+r[2]+' '+r[4]).toLowerCase().includes(q));
+  document.getElementById('engCount').innerHTML=`<b>${rows.length}</b> Triebwerke`;
+  document.getElementById('engResults').innerHTML=rows.length
+    ? '<div class="icao-grid">'+rows.map(r=>{
+        const model=esc(r[0]), mfr=esc(r[1]);
+        const query=(r[1]+' '+r[0]).replace(/"/g,'').replace(/\s*\(.*?\)\s*/g,' ').trim();
+        return `<div class="icao-card eng-card" onclick="icaoToggle(this,'${esc(query)}','','engine')">
+          <div class="icao-row">
+            <div class="icao-main">
+              <div class="icao-name" title="${model} · ${mfr}">${model} <span class="eng-mfr">${mfr}</span></div>
+              <div class="icao-meta"><span class="icao-tag eng-type">${esc(r[2])}</span><span class="icao-tag">${esc(r[3])}</span><span class="icao-tag">${esc(r[4])}</span></div>
+            </div>
+            <svg class="icao-chev" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="icao-exp"></div>
+        </div>`;
+      }).join('')+'</div>'
+    : '<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Triebwerke gefunden.</p></div>';
 }
 function setIcaoClass(c){icaoClass=c;renderIcao();}
 function engLabel(s){const i=(s||'').indexOf('/');if(i<0)return s||'—';return s.slice(0,i)+'× '+s.slice(i+1).replace(/\//g,' · ');}
@@ -1226,35 +1302,91 @@ function renderIcao(){
 // ICAO-Karte aufklappen: Foto + Wikipedia-Kurzinfo + weitere Quellen laden
 function icaoSources(query,code){
   const q=encodeURIComponent(query), c=(code||'').toLowerCase();
-  return `<div class="ac-db-row" style="margin-top:.65rem">
+  return `<div class="icao-srclbl">Weitere Quellen</div>
+  <div class="ac-db-row">
     <a class="db-chip db-icao" href="https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators/search" target="_blank" rel="noopener">ICAO Doc 8643 ↗</a>
     <a class="db-chip db-faa" href="https://skybrary.aero/aircraft/${c}" target="_blank" rel="noopener">SKYbrary ↗</a>
     <a class="db-chip db-wag" href="https://www.planespotters.net/search?q=${q}" target="_blank" rel="noopener">Planespotters ↗</a>
     <a class="db-chip db-wiki" href="https://www.airliners.net/search?keywords=${q}" target="_blank" rel="noopener">airliners.net ↗</a>
+    <a class="db-chip db-faa" href="https://www.airfleets.net/recherche/?aircraft=${q}" target="_blank" rel="noopener">Airfleets ↗</a>
+    <a class="db-chip db-icao" href="https://www.easa.europa.eu/en/document-library/type-certificates" target="_blank" rel="noopener">EASA TCDS ↗</a>
+    <a class="db-chip db-wag" href="https://drs.faa.gov/browse/TCDS" target="_blank" rel="noopener">FAA TCDS ↗</a>
   </div>`;
 }
-async function icaoToggle(card, query, code){
+function engineSources(query){
+  const q=encodeURIComponent(query);
+  return `<div class="icao-srclbl">Weitere Quellen</div>
+  <div class="ac-db-row">
+    <a class="db-chip db-icao" href="https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank" target="_blank" rel="noopener">ICAO EEDB ↗</a>
+    <a class="db-chip db-faa" href="https://skybrary.aero/articles/aircraft-engine" target="_blank" rel="noopener">SKYbrary ↗</a>
+    <a class="db-chip db-icao" href="https://www.easa.europa.eu/en/document-library/type-certificates" target="_blank" rel="noopener">EASA Engine TCDS ↗</a>
+    <a class="db-chip db-wag" href="https://drs.faa.gov/browse/TCDS" target="_blank" rel="noopener">FAA Engine TCDS ↗</a>
+    <a class="db-chip db-wiki" href="https://www.google.com/search?q=${q}+aircraft+engine" target="_blank" rel="noopener">Web-Suche ↗</a>
+  </div>`;
+}
+function cleanWiki(v){
+  if(!v) return '';
+  v=v.replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi,'').replace(/<ref[^>]*\/>/gi,'');
+  v=v.replace(/<!--[\s\S]*?-->/g,'');
+  v=v.replace(/\{\{(?:convert|cvt)\|([^|}]+)\|([^|}]+)[^}]*\}\}/gi,'$1 $2');
+  for(let i=0;i<3;i++) v=v.replace(/\{\{[^{}]*\}\}/g,function(m){const p=m.slice(2,-2).split('|');return p.length>1?p[p.length-1]:'';});
+  v=v.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g,'$1');
+  v=v.replace(/'''?/g,'').replace(/<br\s*\/?>/gi,', ').replace(/<\/?[^>]+>/g,'');
+  v=v.replace(/&nbsp;/g,' ').replace(/\s*,\s*,\s*/g,', ').replace(/\s+/g,' ').replace(/^[,;\s]+|[,;\s]+$/g,'').trim();
+  return v;
+}
+function ibField(wt,names){
+  for(const n of names){
+    const re=new RegExp('\\|\\s*'+n.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&')+'\\s*=\\s*([^\\n]*(?:\\n(?!\\s*[|}])[^\\n]*)*)','i');
+    const m=wt.match(re);
+    if(m){const val=cleanWiki(m[1]);if(val&&val.length<160)return val;}
+  }
+  return '';
+}
+const IB_AIRCRAFT=[['Hersteller',['manufacturer']],['Herkunft',['national origin']],['Erstflug',['first flight']],['In Dienst',['introduced','introduction']],['Status',['status']],['Stückzahl',['number built','produced']],['Hauptnutzer',['primary user','primary users','more users']],['Stückpreis',['unit cost','program unit cost']],['Entwickelt aus',['developed from']]];
+const IB_ENGINE=[['Hersteller',['manufacturer']],['Typ',['type']],['Erstlauf',['first run']],['Anwendungen',['major applications','national origin']],['Entwickelt aus',['developed from']],['Stückzahl',['number built']]];
+function buildFacts(wt,kind){
+  if(!wt) return '';
+  const fields=kind==='engine'?IB_ENGINE:IB_AIRCRAFT;
+  let cells='';
+  fields.forEach(([label,keys])=>{const v=ibField(wt,keys);if(v)cells+=`<div class="icao-fact"><div class="icao-fact-l">${label}</div><div class="icao-fact-v">${esc(v)}</div></div>`;});
+  return cells?`<div class="icao-exp-facts">${cells}</div>`:'';
+}
+async function icaoToggle(card, query, code, kind){
+  kind=kind||'aircraft';
   const exp=card.querySelector('.icao-exp');
   const open=card.classList.toggle('open');
   if(!open) return;
   if(card.dataset.loaded) return;
   card.dataset.loaded='1';
-  exp.innerHTML='<div class="tr-msg info"><span class="tr-spin"></span>Lade Infos …</div>';
+  exp.innerHTML='<div class="tr-msg info"><span class="tr-spin"></span>Lade Infos aus Wikipedia …</div>';
   let img='',txt='',title='';
+  const ctx=kind==='engine'?' aircraft engine':' aircraft';
   try{
     const url='https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1'
-      +'&prop=pageimages|extracts&piprop=thumbnail&pithumbsize=440&exintro=1&explaintext=1&exsentences=3'
-      +'&generator=search&gsrlimit=1&gsrsearch='+encodeURIComponent(query+' aircraft');
+      +'&prop=pageimages|extracts&piprop=thumbnail&pithumbsize=480&exintro=1&explaintext=1&exsentences=5'
+      +'&generator=search&gsrlimit=1&gsrsearch='+encodeURIComponent(query+ctx);
     const r=await fetch(url);
     if(r.ok){const d=await r.json();const pages=d&&d.query&&d.query.pages;
       if(pages){const p=Object.values(pages)[0];if(p){title=p.title||'';txt=(p.extract||'').trim();img=(p.thumbnail&&p.thumbnail.source)||'';}}}
   }catch(e){}
-  const wikiLnk=title?`<a class="icao-exp-lnk" href="https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g,'_'))}" target="_blank" rel="noopener">Wikipedia: ${esc(title)} ↗</a>`:'';
+  // 2. Aufruf: Infobox-Strukturdaten aus dem Lead-Wikitext
+  let facts='';
+  if(title){
+    try{
+      const wr=await fetch('https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&prop=revisions&rvprop=content&rvslots=main&rvsection=0&titles='+encodeURIComponent(title));
+      if(wr.ok){const wd=await wr.json();const wp=wd&&wd.query&&wd.query.pages;
+        if(wp){const pg=Object.values(wp)[0];const wt=pg&&pg.revisions&&pg.revisions[0]&&((pg.revisions[0].slots&&pg.revisions[0].slots.main&&pg.revisions[0].slots.main['*'])||pg.revisions[0]['*']);
+          facts=buildFacts(wt||'',kind);}}
+    }catch(e){}
+  }
+  const wikiLnk=title?`<a class="icao-exp-lnk" href="https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g,'_'))}" target="_blank" rel="noopener">Vollständiger Wikipedia-Artikel: ${esc(title)} ↗</a>`:'';
   exp.innerHTML=
     (img?`<img class="icao-exp-img" src="${esc(img)}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">`:'')
+    +facts
     +`<div class="icao-exp-txt">${esc(txt||'Keine Wikipedia-Kurzbeschreibung gefunden — siehe Quellen unten.')}</div>`
     +wikiLnk
-    +icaoSources(query,code);
+    +(kind==='engine'?engineSources(query):icaoSources(query,code));
 }
 
 function loadCat(cat){
