@@ -23,10 +23,10 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 /* ── Fliegende Flugzeuge im Hintergrund (realistische Silhouetten) ── */
 .sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .sky .plane{position:absolute;will-change:transform;color:#3f516b}
-.sky .plane svg{display:block;width:100%;height:auto;fill:currentColor}
+.sky .plane svg{display:block;width:100%;height:auto;fill:currentColor;transform:rotate(43deg)}
 .sky .rb{left:-22vw}
 .sky .lb{right:-22vw}
-.sky .lb svg{transform:scaleX(-1)}
+.sky .lb svg{transform:scaleX(-1) rotate(43deg)}
 /* Kondensstreifen */
 .sky .trail::after{content:'';position:absolute;top:46%;right:66%;width:34vw;height:2px;
   background:linear-gradient(to left,rgba(90,110,140,.45),transparent);transform:translateY(-50%);border-radius:2px}
@@ -464,12 +464,12 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 <body>
 
 <div class="sky" aria-hidden="true">
-  <span class="plane p1 rb trail"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
-  <span class="plane p2 rb"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
-  <span class="plane p3 lb trail"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
-  <span class="plane p4 rb"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
-  <span class="plane p5 lb"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
-  <span class="plane p6 rb trail"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
+  <span class="plane p1 rb trail"><svg viewBox="0 0 576 512"><path d="M482.3 192c34.2 0 93.7 29 93.7 64c0 36-59.5 64-93.7 64l-116.6 0L265.2 495.9c-5.7 10-16.3 16.1-27.8 16.1l-56.2 0c-10.6 0-18.3-10.2-15.4-20.4l49-171.6L112 320 68.8 377.6c-3 4-7.8 6.4-12.8 6.4l-42 0c-7.8 0-14-6.3-14-14c0-1.3 .2-2.6 .5-3.9L32 256 .5 145.9c-.4-1.3-.5-2.6-.5-3.9c0-7.8 6.3-14 14-14l42 0c5 0 9.8 2.4 12.8 6.4L112 192l102.9 0-49-171.6C162.9 10.2 170.6 0 181.2 0l56.2 0c11.5 0 22.1 6.2 27.8 16.1L365.7 192l116.6 0z"/></svg></span>
+  <span class="plane p2 rb"><svg viewBox="0 0 576 512"><path d="M482.3 192c34.2 0 93.7 29 93.7 64c0 36-59.5 64-93.7 64l-116.6 0L265.2 495.9c-5.7 10-16.3 16.1-27.8 16.1l-56.2 0c-10.6 0-18.3-10.2-15.4-20.4l49-171.6L112 320 68.8 377.6c-3 4-7.8 6.4-12.8 6.4l-42 0c-7.8 0-14-6.3-14-14c0-1.3 .2-2.6 .5-3.9L32 256 .5 145.9c-.4-1.3-.5-2.6-.5-3.9c0-7.8 6.3-14 14-14l42 0c5 0 9.8 2.4 12.8 6.4L112 192l102.9 0-49-171.6C162.9 10.2 170.6 0 181.2 0l56.2 0c11.5 0 22.1 6.2 27.8 16.1L365.7 192l116.6 0z"/></svg></span>
+  <span class="plane p3 lb trail"><svg viewBox="0 0 576 512"><path d="M482.3 192c34.2 0 93.7 29 93.7 64c0 36-59.5 64-93.7 64l-116.6 0L265.2 495.9c-5.7 10-16.3 16.1-27.8 16.1l-56.2 0c-10.6 0-18.3-10.2-15.4-20.4l49-171.6L112 320 68.8 377.6c-3 4-7.8 6.4-12.8 6.4l-42 0c-7.8 0-14-6.3-14-14c0-1.3 .2-2.6 .5-3.9L32 256 .5 145.9c-.4-1.3-.5-2.6-.5-3.9c0-7.8 6.3-14 14-14l42 0c5 0 9.8 2.4 12.8 6.4L112 192l102.9 0-49-171.6C162.9 10.2 170.6 0 181.2 0l56.2 0c11.5 0 22.1 6.2 27.8 16.1L365.7 192l116.6 0z"/></svg></span>
+  <span class="plane p4 rb"><svg viewBox="0 0 576 512"><path d="M482.3 192c34.2 0 93.7 29 93.7 64c0 36-59.5 64-93.7 64l-116.6 0L265.2 495.9c-5.7 10-16.3 16.1-27.8 16.1l-56.2 0c-10.6 0-18.3-10.2-15.4-20.4l49-171.6L112 320 68.8 377.6c-3 4-7.8 6.4-12.8 6.4l-42 0c-7.8 0-14-6.3-14-14c0-1.3 .2-2.6 .5-3.9L32 256 .5 145.9c-.4-1.3-.5-2.6-.5-3.9c0-7.8 6.3-14 14-14l42 0c5 0 9.8 2.4 12.8 6.4L112 192l102.9 0-49-171.6C162.9 10.2 170.6 0 181.2 0l56.2 0c11.5 0 22.1 6.2 27.8 16.1L365.7 192l116.6 0z"/></svg></span>
+  <span class="plane p5 lb"><svg viewBox="0 0 576 512"><path d="M482.3 192c34.2 0 93.7 29 93.7 64c0 36-59.5 64-93.7 64l-116.6 0L265.2 495.9c-5.7 10-16.3 16.1-27.8 16.1l-56.2 0c-10.6 0-18.3-10.2-15.4-20.4l49-171.6L112 320 68.8 377.6c-3 4-7.8 6.4-12.8 6.4l-42 0c-7.8 0-14-6.3-14-14c0-1.3 .2-2.6 .5-3.9L32 256 .5 145.9c-.4-1.3-.5-2.6-.5-3.9c0-7.8 6.3-14 14-14l42 0c5 0 9.8 2.4 12.8 6.4L112 192l102.9 0-49-171.6C162.9 10.2 170.6 0 181.2 0l56.2 0c11.5 0 22.1 6.2 27.8 16.1L365.7 192l116.6 0z"/></svg></span>
+  <span class="plane p6 rb trail"><svg viewBox="0 0 576 512"><path d="M482.3 192c34.2 0 93.7 29 93.7 64c0 36-59.5 64-93.7 64l-116.6 0L265.2 495.9c-5.7 10-16.3 16.1-27.8 16.1l-56.2 0c-10.6 0-18.3-10.2-15.4-20.4l49-171.6L112 320 68.8 377.6c-3 4-7.8 6.4-12.8 6.4l-42 0c-7.8 0-14-6.3-14-14c0-1.3 .2-2.6 .5-3.9L32 256 .5 145.9c-.4-1.3-.5-2.6-.5-3.9c0-7.8 6.3-14 14-14l42 0c5 0 9.8 2.4 12.8 6.4L112 192l102.9 0-49-171.6C162.9 10.2 170.6 0 181.2 0l56.2 0c11.5 0 22.1 6.2 27.8 16.1L365.7 192l116.6 0z"/></svg></span>
 </div>
 
 <style>
@@ -1140,6 +1140,48 @@ function filterAll(){
 }
 
 // ── Luftfahrzeug-Datenbank-Helfer ────────────────────────────────────────
+// Feste Bild-URLs (einmalig von Wikipedia geholt -> kein API-Limit, kein Fehlen).
+const AC_IMG={
+  "De Havilland Comet":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/BEA_de_Havilland_DH-106_Comet_4B_Berlin.jpg/640px-BEA_de_Havilland_DH-106_Comet_4B_Berlin.jpg",
+  "Boeing 707":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Boeing_707-321B_Pan_Am_Freer.jpg/640px-Boeing_707-321B_Pan_Am_Freer.jpg",
+  "Boeing 727":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/B-727_Iberia_%28cropped%29.jpg/640px-B-727_Iberia_%28cropped%29.jpg",
+  "Boeing 737":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/South_African_Airlink_Boeing_737-200_Advanced_Smith.jpg/640px-South_African_Airlink_Boeing_737-200_Advanced_Smith.jpg",
+  "Airbus A320":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Airbus_A320-214%2C_Airbus_Industrie_JP7617615.jpg/640px-Airbus_A320-214%2C_Airbus_Industrie_JP7617615.jpg",
+  "Boeing 747":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/B-747_Iberia.jpg/640px-B-747_Iberia.jpg",
+  "Concorde":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/British_Airways_Concorde_G-BOAC_03.jpg/640px-British_Airways_Concorde_G-BOAC_03.jpg",
+  "Airbus A380":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/A6-EDY_A380_Emirates_31_jan_2013_jfk_%288442269364%29_%28cropped%29.jpg/640px-A6-EDY_A380_Emirates_31_jan_2013_jfk_%288442269364%29_%28cropped%29.jpg",
+  "Boeing 787 Dreamliner":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_787_N1015B_ANA_Airlines_%2827611880663%29_%28cropped%29.jpg/640px-Boeing_787_N1015B_ANA_Airlines_%2827611880663%29_%28cropped%29.jpg",
+  "Airbus A350 XWB":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/EGLF_-_Airbus_A350-941_-_F-WZNW.jpg/640px-EGLF_-_Airbus_A350-941_-_F-WZNW.jpg",
+  "Airbus A320neo":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/IndiGo_Airbus_A320neo_F-WWDG_%28to_VT-ITI%29_%2828915135713%29.jpg/640px-IndiGo_Airbus_A320neo_F-WWDG_%28to_VT-ITI%29_%2828915135713%29.jpg",
+  "ATR 72-600":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/F-WWEZ_%28948%29_ATR.72-212A%28500%29_FlyFireFly_TLS_30AUG11_%286097869500%29_%28cropped%29.jpg/640px-F-WWEZ_%28948%29_ATR.72-212A%28500%29_FlyFireFly_TLS_30AUG11_%286097869500%29_%28cropped%29.jpg",
+  "Boeing 747 Freighter":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/B-747_Iberia.jpg/640px-B-747_Iberia.jpg",
+  "Airbus A400M Atlas":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/German_Air_Force_Airbus_A400M_%28out_cropped%29.jpg/640px-German_Air_Force_Airbus_A400M_%28out_cropped%29.jpg",
+  "Cessna 172 Skyhawk":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Cessna_172S_Skyhawk_SP%2C_Private_JP6817606.jpg/640px-Cessna_172S_Skyhawk_SP%2C_Private_JP6817606.jpg",
+  "Wright Flyer":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/First_flight2.jpg/640px-First_flight2.jpg",
+  "Blériot XI":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Bleriot_XI_Thulin_A_1910_a.jpg/640px-Bleriot_XI_Thulin_A_1910_a.jpg",
+  "Junkers Ju 52/3m":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Ju-Air_Junkers_Ju-52_in_flight_over_Austria.jpg/640px-Ju-Air_Junkers_Ju-52_in_flight_over_Austria.jpg",
+  "Douglas DC-3":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Douglas_DC-3%2C_SE-CFP.jpg/640px-Douglas_DC-3%2C_SE-CFP.jpg",
+  "Lockheed Constellation":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/C-69.jpg/640px-C-69.jpg",
+  "Fokker Dr.I Dreidecker":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Fokker_Dr.I_driedekker_2161_026221.jpg/640px-Fokker_Dr.I_driedekker_2161_026221.jpg",
+  "Supermarine Spitfire":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Spitfire_-_Season_Premiere_Airshow_2018_%28cropped%29.jpg/640px-Spitfire_-_Season_Premiere_Airshow_2018_%28cropped%29.jpg",
+  "Messerschmitt Bf 109":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Bundesarchiv_Bild_101I-662-6659-37%2C_Flugzeug_Messerschmitt_Me_109.jpg/640px-Bundesarchiv_Bild_101I-662-6659-37%2C_Flugzeug_Messerschmitt_Me_109.jpg",
+  "North American P-51 Mustang":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/P-51-361.jpg/640px-P-51-361.jpg",
+  "Messerschmitt Me 262":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Messerschmitt_Me_262A_at_the_National_Museum_of_the_USAF_%28cropped%29.jpg/640px-Messerschmitt_Me_262A_at_the_National_Museum_of_the_USAF_%28cropped%29.jpg",
+  "North American F-86 Sabre":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/F-86_Sabre_hertiage_flight.jpg/640px-F-86_Sabre_hertiage_flight.jpg",
+  "MiG-21":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Croatian_MiG-21_%28cropped%29.jpg/640px-Croatian_MiG-21_%28cropped%29.jpg",
+  "F-15 Eagle":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/F-15C_Eagle_from_the_44th_Fighter_Squadron_flies_during_a_routine_training_exercise_April_15%2C_2019.jpg/640px-F-15C_Eagle_from_the_44th_Fighter_Squadron_flies_during_a_routine_training_exercise_April_15%2C_2019.jpg",
+  "F-16 Fighting Falcon":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_June_2008.jpg/640px-F-16_June_2008.jpg",
+  "Eurofighter Typhoon":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RAF_Eurofighter_EF-2000_Typhoon_F2_Lofting-1.jpg/640px-RAF_Eurofighter_EF-2000_Typhoon_F2_Lofting-1.jpg",
+  "Dassault Rafale":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Rafale_-_RIAT_2009_%283751416421%29.jpg/640px-Rafale_-_RIAT_2009_%283751416421%29.jpg",
+  "F-22A Raptor":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/F-22_Raptor_edit1_%28cropped%29.jpg/640px-F-22_Raptor_edit1_%28cropped%29.jpg",
+  "F-35A Lightning II":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/F-35A_flight_%28cropped%29.jpg/640px-F-35A_flight_%28cropped%29.jpg",
+  "Boeing B-17 Flying Fortress":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/B17_-_Chino_Airshow_2014_%28framed%29.jpg/640px-B17_-_Chino_Airshow_2014_%28framed%29.jpg",
+  "Boeing B-52H Stratofortress":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/B-52_Stratofortress_assigned_to_the_307th_Bomb_Wing_%28cropped%29.jpg/640px-B-52_Stratofortress_assigned_to_the_307th_Bomb_Wing_%28cropped%29.jpg",
+  "Northrop Grumman B-2 Spirit":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/RAF_F-35B_integration_flying_training_with_USAF_B-2_30092019_-_4.jpg/640px-RAF_F-35B_integration_flying_training_with_USAF_B-2_30092019_-_4.jpg",
+  "Lockheed C-130J Hercules":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Lockheed_C-130_Hercules.jpg/640px-Lockheed_C-130_Hercules.jpg",
+  "Douglas DC-3 (C-47 Dakota)":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/C47_Skytrain_-_Duxford_D-Day_Show_2014_%28cropped%29.jpg/640px-C47_Skytrain_-_Duxford_D-Day_Show_2014_%28cropped%29.jpg",
+  "Lockheed SR-71 Blackbird":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Lockheed_SR-71_Blackbird.jpg/640px-Lockheed_SR-71_Blackbird.jpg",
+};
 // Wikipedia-Seitentitel je Flugzeug (für zuverlässiges Bilderladen).
 const AC_WIKI={
   'ATR 72-600':'ATR 72',
@@ -1310,16 +1352,23 @@ function acCardHtml(ac,sub,i,dotClr,cls){
   const stars=starsHtml(ac.avg);
   const spHtml=(ac.specs||[]).map(([l,v])=>`<div class="ac-sp"><div class="ac-sl">${l}</div><div class="ac-sv">${v}</div></div>`).join('');
   const para=sub.id.includes('nb')||sub.id.includes('wb')?'6.4.1':(sub.id.includes('fracht')||sub.id.includes('freighter')||sub.id.includes('belly')?'6.4.2/6.4.3':'6.2');
-  return`<div class="ac-card" style="animation-delay:${Math.min(i*.04,.4)}s">
-  <div class="ac-img-w" data-wiki="${acWikiTitle(ac)}" data-mfr="${ac.h}" data-yr="${ac.erstflug}"${ac.cs?` data-cs="${ac.cs}"`:''} style="background:linear-gradient(140deg,var(--s2),var(--s3))">
+  const fixedImg=(typeof AC_IMG!=='undefined'&&AC_IMG[ac.n])||'';
+  const badges=`<div class="ac-bdg"><span class="ac-b ac-b-mfr">${ac.h}</span><span class="ac-b ac-b-yr">✈ ${ac.erstflug}</span></div>${ac.cs?`<span class="ac-cs-tag">${ac.cs}</span>`:''}`;
+  const imgW=fixedImg
+    ? `<div class="ac-img-w" style="cursor:zoom-in" onclick="openPhoto3D(this.querySelector('img').src,this.closest('.ac-card').querySelector('.ac-name').textContent)">
+    <img class="ac-img" src="${fixedImg}" alt="${ac.n}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+    ${badges}
+  </div>`
+    : `<div class="ac-img-w" data-wiki="${acWikiTitle(ac)}" data-mfr="${ac.h}" data-yr="${ac.erstflug}"${ac.cs?` data-cs="${ac.cs}"`:''} style="background:linear-gradient(140deg,var(--s2),var(--s3))">
     <div class="ac-ph">
       <svg viewBox="0 0 24 24" stroke-width="1.3" fill="none" stroke="var(--pl)" opacity="0.35" width="36" height="36"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
       <span style="font-size:12px;font-weight:700;color:var(--tx);text-align:center;max-width:90%;line-height:1.3">${ac.n}</span>
       <span style="font-size:9px;color:var(--mu);letter-spacing:.1em">${ac.erstflug}</span>
     </div>
-    <div class="ac-bdg"><span class="ac-b ac-b-mfr">${ac.h}</span><span class="ac-b ac-b-yr">✈ ${ac.erstflug}</span></div>
-    ${ac.cs?`<span class="ac-cs-tag">${ac.cs}</span>`:''}
-  </div>
+    ${badges}
+  </div>`;
+  return`<div class="ac-card" style="animation-delay:${Math.min(i*.04,.4)}s">
+  ${imgW}
   <div class="ac-body">
     <div class="ac-name">${ac.n}</div>
     <div class="ac-ksr">

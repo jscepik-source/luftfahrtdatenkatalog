@@ -1,4 +1,4 @@
-const CACHE = 'luftfahrt-v19';
+const CACHE = 'luftfahrt-v20';
 
 const SHELL = [
   './',
