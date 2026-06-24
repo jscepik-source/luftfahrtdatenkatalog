@@ -262,6 +262,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 /* body */
 .ac-body{padding:.8rem .95rem;flex:1;display:flex;flex-direction:column}
 .ac-name{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:.55rem;line-height:1.3}
+.ac-extsub{font-size:11px;color:var(--mu);margin:-.35rem 0 .55rem;line-height:1.4}
 .ac-ksr{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b0);
   border-radius:5px;overflow:hidden;border:1px solid var(--b0);margin-bottom:.55rem}
 .ac-ks{background:var(--s1);padding:.4rem .2rem;text-align:center}
@@ -1206,6 +1207,9 @@ const ICAO_CLASS_DE={LandPlane:'Landflugzeug',Helicopter:'Hubschrauber',Amphibia
 function setIcaoData(d){ICAO_DATA=d;ICAO_BY_CODE={};d.forEach(r=>{if(!ICAO_BY_CODE[r[0]])ICAO_BY_CODE[r[0]]=r;});}
 // Datensatz im Hintergrund vorladen, damit die ICAO-Typdaten auch in den Flugzeug-Karten inline erscheinen
 fetch('doc8643.json').then(r=>r.json()).then(d=>{setIcaoData(d);if(activeCat==='Flugzeuge')renderAccordion();}).catch(()=>{});
+// Erweiterter Flugzeug-Katalog (~130 Muster mit Foto + Wikipedia-Info)
+var EXT_DATA=null;
+fetch('aircraft_ext.json').then(r=>r.json()).then(d=>{EXT_DATA=d;if(activeCat==='Flugzeuge')renderAccordion();}).catch(()=>{});
 function openIcao(preset){
   document.getElementById('vHome').classList.add('hide');
   document.getElementById('vDetail').classList.add('hide');
@@ -1734,6 +1738,28 @@ function acCardHtml(ac,sub,i,dotClr,cls){
 </div>`;
 }
 
+// Karte für erweiterten Katalog (Foto + Wikipedia-Info + Quellen, ohne Mensen-Bewertung)
+function acExtCardHtml(ac,i,cls){
+  const id=`acx-${i}`;
+  const wiki='https://en.wikipedia.org/wiki/'+encodeURIComponent((ac.n||'').replace(/ /g,'_'));
+  return `<div class="ac-card">
+  <div class="ac-img-w" style="cursor:zoom-in" onclick="openPhoto3D(this.querySelector('img').src,this.closest('.ac-card').querySelector('.ac-name').textContent)">
+    <img class="ac-img" src="${esc(ac.img)}" alt="${esc(ac.n)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+    <div class="ac-bdg">${ac.h?`<span class="ac-b ac-b-mfr">${esc(ac.h)}</span>`:''}${ac.y?`<span class="ac-b ac-b-yr">✈ ${esc(ac.y)}</span>`:''}</div>
+  </div>
+  <div class="ac-body">
+    <div class="ac-name">${esc(ac.n)}</div>
+    <div class="ac-extsub">${esc([ac.h,ac.y].filter(Boolean).join(' · '))}</div>
+  </div>
+  <button class="ac-tog" onclick="this.classList.toggle('open');document.getElementById('bod-${id}').classList.toggle('open')">Infos &amp; Quellen <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+  <div class="ac-det" id="bod-${id}">
+    <div class="ac-ddesc">${esc(ac.d||'(keine Beschreibung)')}</div>
+    <a class="icao-exp-lnk" href="${wiki}" target="_blank" rel="noopener">Vollständiger Wikipedia-Artikel ↗</a>
+    ${icaoSources(ac.n,'')}
+  </div>
+</div>`;
+}
+
 // ── Flache Flugzeug-Ansicht: Filter-Chips + ein Raster (statt 2 Akkordeon-Ebenen) ──
 function renderAircraftFlat(){
   const d=CAT['Flugzeuge'];
@@ -1745,6 +1771,14 @@ function renderAircraftFlat(){
   d.sections.forEach(sec=>(sec.subs||[]).forEach(sub=>{
     groups.push({id:sub.id,name:sub.name,section:sec.name,sub,aircraft:sub.aircraft||[]});
   }));
+  // Erweiterter Katalog: ~130 zusätzliche Muster (Foto + Wikipedia-Infos), gruppiert
+  if(EXT_DATA&&EXT_DATA.length){
+    const byG={};
+    EXT_DATA.forEach(a=>{(byG[a.g]||(byG[a.g]=[])).push(a);});
+    Object.keys(byG).forEach(g=>{
+      groups.push({id:'ext-'+g.replace(/[^a-zA-Z]/g,''),name:g,section:'Erweiterter Katalog (Wikipedia)',sub:{id:'ext'},ext:true,aircraft:byG[g]});
+    });
+  }
   const match=ac=>!srch||[ac.n,ac.d,ac.h,ac.erstflug,(ac.specs||[]).map(s=>s.join(' ')).join(' ')].join(' ').toLowerCase().includes(srch);
 
   // Chip-Leiste
@@ -1765,11 +1799,11 @@ function renderAircraftFlat(){
   let items=[];
   groups.forEach(g=>{if(acGroup==='all'||acGroup===g.id)g.aircraft.forEach(ac=>{if(match(ac))items.push({ac,g});});});
   if(srt==='az')items.sort((a,b)=>a.ac.n.localeCompare(b.ac.n));
-  else if(srt==='rat')items.sort((a,b)=>b.ac.avg-a.ac.avg);
+  else if(srt==='rat')items.sort((a,b)=>(b.ac.avg||0)-(a.ac.avg||0));
 
   const activeGrp=groups.find(g=>g.id===acGroup);
   const desc=activeGrp&&activeGrp.sub.desc?`<div class="ac-grp-desc">${activeGrp.sub.desc}</div>`:'';
-  const cards=items.map((x,i)=>acCardHtml(x.ac,x.g.sub,i,dotClr,cls)).join('');
+  const cards=items.map((x,i)=>x.g.ext?acExtCardHtml(x.ac,i,cls):acCardHtml(x.ac,x.g.sub,i,dotClr,cls)).join('');
   const grid=items.length
     ? `<div class="ac-grid">${cards}</div>`
     : `<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Flugzeuge gefunden.</p></div>`;
