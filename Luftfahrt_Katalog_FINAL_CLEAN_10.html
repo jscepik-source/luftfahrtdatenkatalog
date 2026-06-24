@@ -385,13 +385,23 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .icao-count{font-size:12.5px;color:var(--mu);margin:0 0 1rem 2px}
 .icao-count b{color:var(--tx);font-family:'Space Mono',monospace}
 .icao-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
-.icao-card{display:flex;gap:12px;align-items:center;background:var(--s1);border:1px solid var(--b0);border-radius:10px;padding:.7rem .85rem;transition:border-color .15s,transform .12s}
-.icao-card:hover{border-color:var(--b2);transform:translateY(-2px)}
+.icao-card{background:var(--s1);border:1px solid var(--b0);border-radius:10px;padding:.7rem .85rem;transition:border-color .15s;cursor:pointer}
+.icao-card:hover{border-color:var(--b2)}
+.icao-card.open{border-color:var(--pl)}
+.icao-row{display:flex;gap:12px;align-items:center}
 .icao-code{font-family:'Space Mono',monospace;font-weight:700;font-size:15px;color:var(--pl);background:rgba(8,145,178,.1);border:1px solid rgba(8,145,178,.2);border-radius:7px;padding:8px 10px;min-width:62px;text-align:center;flex-shrink:0}
 .icao-main{min-width:0;flex:1}
 .icao-name{font-size:13px;font-weight:700;color:#0f172a;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .icao-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
 .icao-tag{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--s2);border:1px solid var(--b1);color:var(--mu);white-space:nowrap}
+.icao-chev{width:14px;height:14px;stroke:var(--fa);fill:none;flex-shrink:0;transition:transform .2s}
+.icao-card.open .icao-chev{transform:rotate(180deg)}
+.icao-exp{display:none;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--b0)}
+.icao-card.open .icao-exp{display:block}
+.icao-exp-img{width:100%;height:150px;object-fit:cover;border-radius:8px;background:var(--s2);margin-bottom:.6rem;display:block}
+.icao-exp-txt{font-size:12.5px;color:var(--tx);line-height:1.6}
+.icao-exp-lnk{display:inline-block;margin-top:.55rem;font-size:12px;font-weight:600;color:var(--pl);text-decoration:none}
+.icao-exp .tr-spin{margin:.4rem 0}
 .cc.ic .cc-banner{background:linear-gradient(135deg,rgba(37,99,235,.16),rgba(37,99,235,.03))}
 .cc.ic .cc-banner svg{stroke:var(--ac)}.cc.ic .cc-go{color:var(--ac)}.cc.ic .cc-go svg{stroke:var(--ac)}
 @media(max-width:600px){.icao-grid{grid-template-columns:1fr}}
@@ -1199,9 +1209,52 @@ function renderIcao(){
   document.getElementById('icaoResults').innerHTML=shown.length
     ? '<div class="icao-grid">'+shown.map(r=>{
         const name=esc(((r[3]||'')+' '+(r[4]||'')).trim()||'—');
-        return `<div class="icao-card"><div class="icao-code">${esc(r[0])}</div><div class="icao-main"><div class="icao-name" title="${name}">${name}</div><div class="icao-meta"><span class="icao-tag">${esc(ICAO_CLASS_DE[r[1]]||r[1])}</span><span class="icao-tag">${esc(engLabel(r[2]))}</span></div></div></div>`;
+        const q=esc(((r[3]||'')+' '+(r[4]||'')).trim().replace(/"/g,''));
+        return `<div class="icao-card" onclick="icaoToggle(this,'${q}','${esc(r[0])}')">
+          <div class="icao-row">
+            <div class="icao-code">${esc(r[0])}</div>
+            <div class="icao-main"><div class="icao-name" title="${name}">${name}</div>
+              <div class="icao-meta"><span class="icao-tag">${esc(ICAO_CLASS_DE[r[1]]||r[1])}</span><span class="icao-tag">${esc(engLabel(r[2]))}</span></div></div>
+            <svg class="icao-chev" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="icao-exp"></div>
+        </div>`;
       }).join('')+'</div>'
     : '<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Typen gefunden.</p></div>';
+}
+
+// ICAO-Karte aufklappen: Foto + Wikipedia-Kurzinfo + weitere Quellen laden
+function icaoSources(query,code){
+  const q=encodeURIComponent(query), c=(code||'').toLowerCase();
+  return `<div class="ac-db-row" style="margin-top:.65rem">
+    <a class="db-chip db-icao" href="https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators/search" target="_blank" rel="noopener">ICAO Doc 8643 ↗</a>
+    <a class="db-chip db-faa" href="https://skybrary.aero/aircraft/${c}" target="_blank" rel="noopener">SKYbrary ↗</a>
+    <a class="db-chip db-wag" href="https://www.planespotters.net/search?q=${q}" target="_blank" rel="noopener">Planespotters ↗</a>
+    <a class="db-chip db-wiki" href="https://www.airliners.net/search?keywords=${q}" target="_blank" rel="noopener">airliners.net ↗</a>
+  </div>`;
+}
+async function icaoToggle(card, query, code){
+  const exp=card.querySelector('.icao-exp');
+  const open=card.classList.toggle('open');
+  if(!open) return;
+  if(card.dataset.loaded) return;
+  card.dataset.loaded='1';
+  exp.innerHTML='<div class="tr-msg info"><span class="tr-spin"></span>Lade Infos …</div>';
+  let img='',txt='',title='';
+  try{
+    const url='https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1'
+      +'&prop=pageimages|extracts&piprop=thumbnail&pithumbsize=440&exintro=1&explaintext=1&exsentences=3'
+      +'&generator=search&gsrlimit=1&gsrsearch='+encodeURIComponent(query+' aircraft');
+    const r=await fetch(url);
+    if(r.ok){const d=await r.json();const pages=d&&d.query&&d.query.pages;
+      if(pages){const p=Object.values(pages)[0];if(p){title=p.title||'';txt=(p.extract||'').trim();img=(p.thumbnail&&p.thumbnail.source)||'';}}}
+  }catch(e){}
+  const wikiLnk=title?`<a class="icao-exp-lnk" href="https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g,'_'))}" target="_blank" rel="noopener">Wikipedia: ${esc(title)} ↗</a>`:'';
+  exp.innerHTML=
+    (img?`<img class="icao-exp-img" src="${esc(img)}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">`:'')
+    +`<div class="icao-exp-txt">${esc(txt||'Keine Wikipedia-Kurzbeschreibung gefunden — siehe Quellen unten.')}</div>`
+    +wikiLnk
+    +icaoSources(query,code);
 }
 
 function loadCat(cat){
