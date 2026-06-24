@@ -6243,10 +6243,14 @@ function adsbPopupHtml(a) {
         row('Squawk',     a.squawk || '—'),
         row('Entfernung', a.dst != null ? `${a.dst.toFixed(1)} nm` : '—'),
     ].join('');
+    const regLink = a.r
+        ? `<a href="${FLUGZEUG_KATALOG_URL}?reg=${encodeURIComponent(a.r)}" target="_blank" rel="noopener" style="display:block;margin-top:7px;padding:6px 9px;background:#0ea5e9;color:#fff;border-radius:6px;text-align:center;font-weight:600;text-decoration:none">🛩 Dieses Flugzeug: Daten &amp; letzte 10 Flüge ↗</a>`
+        : '';
     return `<div style="font-family:var(--font,sans-serif);min-width:185px;font-size:0.74rem">
         <div style="font-weight:700;font-size:0.92rem">✈ ${cs}</div>
         <div style="color:#64748b;margin:1px 0 6px">${[acAirline(cs), a.r, mLink].filter(Boolean).join(' · ') || '—'}</div>
         ${grid}
+        ${regLink}
         <a href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:7px;color:#3b82f6">Auf FlightRadar24 verfolgen ↗</a>
     </div>`;
 }

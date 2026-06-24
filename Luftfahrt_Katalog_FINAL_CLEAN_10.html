@@ -253,6 +253,75 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .ac-rlbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--fa);font-weight:700;margin-bottom:.4rem}
 @media(max-width:600px){.ac-grid{grid-template-columns:1fr}}
 
+/* ── EXTERNE DATENBANK-TOOLLEISTE ── */
+.ac-tools{max-width:1080px;margin:0 auto;padding:1.1rem clamp(1rem,4vw,2.5rem) 0}
+.ac-tools-in{background:linear-gradient(135deg,rgba(6,182,212,.06),rgba(59,130,246,.05));
+  border:1px solid var(--b1);border-radius:var(--r);padding:1rem 1.2rem}
+.ac-tools-lbl{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;
+  letter-spacing:.05em;color:#93c5fd;text-transform:uppercase;margin-bottom:.85rem}
+.ac-tools-lbl svg{width:15px;height:15px;stroke:currentColor;fill:none}
+.ac-tools-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.actool{display:flex;flex-direction:column;gap:3px;padding:.7rem .9rem;background:var(--bg);
+  border:1px solid var(--b0);border-radius:8px;text-decoration:none;transition:all .15s}
+.actool:hover{border-color:var(--pl);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.actool-t{font-size:13px;font-weight:700;color:#f0f5ff}
+.actool-t::after{content:' ↗';color:var(--pl);font-size:11px}
+.actool-s{font-size:11px;color:var(--mu);line-height:1.45}
+
+/* ── PRO-FLUGZEUG DATENBANK-CHIPS ── */
+.ac-db-row{display:flex;flex-wrap:wrap;gap:6px}
+.db-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+  padding:5px 10px;border-radius:6px;text-decoration:none;border:1px solid;transition:all .15s}
+.db-chip b{font-family:'Space Mono',monospace;letter-spacing:.03em}
+.db-icao{background:rgba(6,182,212,.09);border-color:rgba(6,182,212,.25);color:#67e8f9}
+.db-faa{background:rgba(59,130,246,.09);border-color:rgba(59,130,246,.25);color:#93c5fd}
+.db-wag{background:rgba(139,92,246,.09);border-color:rgba(139,92,246,.25);color:#c4b5fd}
+.db-wiki{background:rgba(255,255,255,.04);border-color:var(--b1);color:var(--mu)}
+.db-chip:hover{filter:brightness(1.3);transform:translateY(-1px)}
+
+/* ── LIVE-FLUGTRACKER ── */
+.ac-track{max-width:1080px;margin:0 auto;padding:.9rem clamp(1rem,4vw,2.5rem) 0}
+.ac-track-in{background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(6,182,212,.05));
+  border:1px solid var(--b1);border-radius:var(--r);padding:1rem 1.2rem}
+.track-form{display:flex;gap:8px;flex-wrap:wrap}
+.track-in{flex:1;min-width:200px;padding:9px 12px;background:var(--s2);border:1px solid var(--b1);
+  border-radius:var(--rs);color:var(--tx);font-family:inherit;font-size:13px;outline:none;text-transform:uppercase}
+.track-in:focus{border-color:var(--pl)}
+.track-in::placeholder{color:var(--fa);text-transform:none}
+.track-btn{padding:9px 22px;background:var(--pl);border:none;border-radius:var(--rs);color:#04121a;
+  font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:filter .15s}
+.track-btn:hover{filter:brightness(1.12)}
+.track-btn:disabled{opacity:.55;cursor:wait}
+.track-hint{font-size:10.5px;color:var(--fa);margin-top:.55rem;line-height:1.55}
+.tr-card{margin-top:1rem;background:var(--bg);border:1px solid var(--b0);border-radius:10px;
+  overflow:hidden;animation:sli .2s ease both}
+.tr-head{display:flex;gap:14px;padding:1rem;border-bottom:1px solid var(--b0);flex-wrap:wrap}
+.tr-photo{width:150px;height:96px;border-radius:8px;object-fit:cover;background:var(--s2);flex-shrink:0}
+.tr-info{flex:1;min-width:180px}
+.tr-reg{font-size:19px;font-weight:700;color:#f0f5ff;font-family:'Space Mono',monospace;letter-spacing:.02em}
+.tr-type{font-size:12.5px;color:var(--mu);margin:2px 0 .65rem}
+.tr-meta{display:flex;flex-wrap:wrap;gap:6px}
+.tr-tag{font-size:10.5px;padding:3px 9px;border-radius:5px;background:var(--s2);border:1px solid var(--b1);color:var(--tx)}
+.tr-tag b{color:#67e8f9;font-family:'Space Mono',monospace}
+.tr-xpdr{font-size:10.5px;padding:3px 9px;border-radius:5px;background:rgba(245,158,11,.1);
+  border:1px solid rgba(245,158,11,.3);color:#fbbf24}
+.tr-xpdr b{font-family:'Space Mono',monospace;letter-spacing:.04em}
+.tr-flights{padding:.5rem 1rem 1rem}
+.tr-fl-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--fa);font-weight:700;margin:.7rem 0 .4rem}
+.tr-fl{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+  padding:.5rem .2rem;border-bottom:1px solid var(--b0);font-size:12px}
+.tr-fl:last-child{border-bottom:none}
+.tr-fl-date{color:var(--mu);font-family:'Space Mono',monospace;font-size:11px;white-space:nowrap}
+.tr-fl-route{color:#f0f5ff;font-weight:600}
+.tr-fl-route span{color:var(--pl);font-weight:400}
+.tr-fl-cs{color:var(--mu);font-family:'Space Mono',monospace;font-size:11px;text-align:right;white-space:nowrap}
+.tr-msg{margin-top:1rem;padding:.8rem 1rem;border-radius:8px;font-size:12.5px;line-height:1.55}
+.tr-msg.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+.tr-msg.info{background:rgba(255,255,255,.02);border:1px solid var(--b0);color:var(--mu)}
+.tr-spin{display:inline-block;width:13px;height:13px;border:2px solid var(--b2);border-top-color:var(--pl);
+  border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:7px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 
 /* ── 3D PHOTO MODAL ─────────────────────────────────────────────────── */
 .pmodal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;
@@ -454,6 +523,43 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
         <option value="fre">Kostenlos zuerst</option>
       </select>
       <span class="ri"><b id="dCnt">0</b> Quellen</span>
+    </div>
+  </div>
+  <div class="ac-tools hide" id="acTools">
+    <div class="ac-tools-in">
+      <div class="ac-tools-lbl">
+        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg>
+        Offizielle Luftfahrzeug-Datenbanken &amp; Typencode-Suche
+      </div>
+      <div class="ac-tools-links">
+        <a class="actool" href="https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators/search" target="_blank" rel="noopener">
+          <span class="actool-t">ICAO Doc 8643</span>
+          <span class="actool-s">Aircraft Type Designators – offizielle Typencode-Suche aller Muster (z. B. A320, B738).</span>
+        </a>
+        <a class="actool" href="https://registry.faa.gov/aircraftinquiry/search/nnumberinquiry" target="_blank" rel="noopener">
+          <span class="actool-t">FAA Registry</span>
+          <span class="actool-s">N-Number Inquiry – US-Luftfahrzeugregister: Halter, Muster &amp; Status zu jedem Kennzeichen.</span>
+        </a>
+        <a class="actool" href="https://dna.icao.int/wagmar/Search/InitAircraftSearchModel" target="_blank" rel="noopener">
+          <span class="actool-t">ICAO WAGMAR</span>
+          <span class="actool-s">World Aircraft / Global Marking Register – weltweite Registrierungs- &amp; Kennzeichen-Suche.</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="ac-track hide" id="acTrack">
+    <div class="ac-track-in">
+      <div class="ac-tools-lbl">
+        <svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+        Live-Flugverfolgung &amp; Transpondercode nach Registrierung
+      </div>
+      <div class="track-form">
+        <input id="trackReg" class="track-in" type="text" autocomplete="off" spellcheck="false"
+               placeholder="Registrierung eingeben – z. B. D-AIMA, N172SP, G-XWBA" onkeydown="if(event.key==='Enter')doTrack()">
+        <button class="track-btn" id="trackBtn" onclick="doTrack()">Suchen</button>
+      </div>
+      <div class="track-hint">Zeigt die <b>letzten Flüge</b> dieses Flugzeugs, Flugzeugdaten und den <b>Mode-S-Transpondercode</b> (24-bit ICAO-Adresse) zur eingegebenen Kennung. Quellen: Flightradar24 &amp; adsbdb – kostenlos, ohne Login.</div>
+      <div id="trackResult"></div>
     </div>
   </div>
   <div class="acc-wrap" id="accWrap"></div>
@@ -932,6 +1038,8 @@ function loadCat(cat){
 
   // count stats
   const isAcCat=(activeCat==='Flugzeuge');
+  document.getElementById('acTools').classList.toggle('hide',!isAcCat);
+  document.getElementById('acTrack').classList.toggle('hide',!isAcCat);
   let total=0,free=0,pub=0;
   d.sections.forEach(sec=>{
     sec.subs.forEach(sub=>{
@@ -963,6 +1071,161 @@ function filterAll(){
   renderAccordion();
 }
 
+// ── Luftfahrzeug-Datenbank-Helfer ────────────────────────────────────────
+// Wikipedia-Seitentitel je Flugzeug (für zuverlässiges Bilderladen).
+const AC_WIKI={
+  'ATR 72-600':'ATR 72',
+  'Boeing 747 Freighter':'Boeing 747',
+  'Airbus A350 XWB':'Airbus A350',
+  'Airbus A400M Atlas':'Airbus A400M',
+  'Airbus A320neo':'Airbus A320neo family',
+  'F-15 Eagle':'McDonnell Douglas F-15 Eagle',
+  'F-16 Fighting Falcon':'General Dynamics F-16 Fighting Falcon',
+  'F-22A Raptor':'Lockheed Martin F-22 Raptor',
+  'F-35A Lightning II':'Lockheed Martin F-35 Lightning II',
+  'Boeing B-52H Stratofortress':'Boeing B-52 Stratofortress',
+  'Lockheed C-130J Hercules':'Lockheed C-130 Hercules',
+  'Douglas DC-3 (C-47 Dakota)':'Douglas C-47 Skytrain',
+  'Junkers Ju 52/3m':'Junkers Ju 52',
+  'Cessna 172 Skyhawk':'Cessna 172'
+};
+function acWikiTitle(ac){
+  if(ac.wiki) return ac.wiki;
+  if(AC_WIKI[ac.n]) return AC_WIKI[ac.n];
+  const m=(ac.u||'').match(/wikipedia\.org\/wiki\/([^#?]+)/);
+  if(m) return decodeURIComponent(m[1]).replace(/_/g,' ');
+  return ac.n;
+}
+// Bekannte ICAO-Typencodes (Doc 8643) – nur gesicherte Muster.
+const AC_ICAO={
+  'Boeing 707':'B703','Boeing 727':'B722','Boeing 737':'B737','Airbus A320':'A320',
+  'Boeing 747':'B744','Concorde':'CONC','Airbus A380':'A388','Boeing 787 Dreamliner':'B788',
+  'Airbus A350 XWB':'A359','Airbus A320neo':'A20N','ATR 72-600':'AT76',
+  'Boeing 747 Freighter':'B748','Airbus A400M Atlas':'A400','Cessna 172 Skyhawk':'C172',
+  'Douglas DC-3':'DC3','Junkers Ju 52/3m':'JU52','Supermarine Spitfire':'SPIT',
+  'North American P-51 Mustang':'P51','F-15 Eagle':'F15','F-16 Fighting Falcon':'F16',
+  'Eurofighter Typhoon':'EUFI','Dassault Rafale':'RFAL','F-22A Raptor':'F22',
+  'F-35A Lightning II':'F35','Boeing B-52H Stratofortress':'B52',
+  'Lockheed C-130J Hercules':'C130','Douglas DC-3 (C-47 Dakota)':'C47',
+  'Lockheed SR-71 Blackbird':'SR71'
+};
+function acDbLinks(ac){
+  const icao=AC_ICAO[ac.n];
+  const wikiU=ac.u&&/wikipedia\.org/.test(ac.u)?ac.u:`https://en.wikipedia.org/wiki/${encodeURIComponent(acWikiTitle(ac))}`;
+  return`<div class="ac-rsec">
+    <div class="ac-rlbl">Luftfahrzeug-Datenbanken</div>
+    <div class="ac-db-row">
+      <a class="db-chip db-icao" href="https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators/search" target="_blank" rel="noopener" title="ICAO Doc 8643 – Typencode-Suche">${icao?`ICAO-Code <b>${icao}</b>`:'ICAO Doc 8643'} ↗</a>
+      <a class="db-chip db-faa" href="https://registry.faa.gov/aircraftinquiry/search/nnumberinquiry" target="_blank" rel="noopener" title="FAA N-Number Registry">FAA Registry ↗</a>
+      <a class="db-chip db-wag" href="https://dna.icao.int/wagmar/Search/InitAircraftSearchModel" target="_blank" rel="noopener" title="ICAO WAGMAR – Registersuche">ICAO WAGMAR ↗</a>
+      <a class="db-chip db-wiki" href="${wikiU}" target="_blank" rel="noopener" title="Wikipedia-Artikel">Wikipedia ↗</a>
+    </div>
+  </div>`;
+}
+
+// ── Live-Flugtracker (Registrierung → Mode-S-Code + letzte Flüge) ─────────
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+async function doTrack(presetReg){
+  const inp=document.getElementById('trackReg');
+  const btn=document.getElementById('trackBtn');
+  const out=document.getElementById('trackResult');
+  if(typeof presetReg==='string'&&presetReg)inp.value=presetReg;
+  const reg=(inp.value||'').trim().toUpperCase().replace(/[^A-Z0-9\-]/g,'');
+  if(!reg){out.innerHTML='<div class="tr-msg err">Bitte eine Registrierung eingeben (z. B. D-AIMA).</div>';return;}
+  btn.disabled=true;
+  out.innerHTML='<div class="tr-msg info"><span class="tr-spin"></span>Suche Flüge &amp; Flugzeugdaten für '+esc(reg)+' …</div>';
+
+  // Parallel: Flightradar24 (Flughistorie + Flugzeugdaten) und adsbdb (Foto + Mode-S)
+  const [fr,adb]=await Promise.all([fetchFR24(reg),fetchAdsbdb(reg)]);
+  const flights=(fr&&fr.flights)||[];
+  const acft=(flights[0]&&flights[0].aircraft)||null;
+
+  const modeS=(adb&&adb.mode_s)||(acft&&acft.hex)||'';
+  const model=(adb?((adb.manufacturer||'')+' '+(adb.type||'')).trim():'')||(acft&&acft.model&&acft.model.text)||'Unbekannter Typ';
+  const icaoT=(adb&&adb.icao_type)||(acft&&acft.model&&acft.model.code)||'';
+  const owner=(adb&&adb.registered_owner)||(flights[0]&&flights[0].owner&&flights[0].owner.name)||'';
+  const country=(adb&&adb.registered_owner_country_name)||(acft&&acft.country&&acft.country.name)||'';
+  const photo=(adb&&(adb.url_photo_thumbnail||adb.url_photo))||'';
+
+  if(!modeS&&!flights.length&&!adb){
+    btn.disabled=false;
+    out.innerHTML='<div class="tr-msg err">Keine Daten zu <b>'+esc(reg)+'</b> gefunden. Bitte Schreibweise prüfen (z. B. D-AIMA, N172SP, G-XWBA).</div>';
+    return;
+  }
+
+  const hex=(modeS||'').toLowerCase();
+  const regL=reg.toLowerCase();
+
+  // Flugliste (letzte 10 Ziele dieses Flugzeugs)
+  let flightsHtml;
+  if(flights.length){
+    const rows=flights.slice(0,10).map(f=>{
+      const num=esc((f.identification&&f.identification.number&&f.identification.number.default)||(f.identification&&f.identification.callsign)||'—');
+      const o=f.airport&&f.airport.origin, dst=f.airport&&f.airport.destination;
+      const oc=esc((o&&o.code&&o.code.iata)||'—'), dc=esc((dst&&dst.code&&dst.code.iata)||'—');
+      const st=esc((f.status&&f.status.text)||'');
+      return '<div class="tr-fl"><span class="tr-fl-date">'+fmtFlDate(f)+'</span>'+
+        '<span class="tr-fl-route" title="'+esc((o&&o.name)||'')+' → '+esc((dst&&dst.name)||'')+'"><b>'+num+'</b> '+oc+' <span>→</span> '+dc+'</span>'+
+        '<span class="tr-fl-cs">'+st+'</span></div>';
+    }).join('');
+    flightsHtml='<div class="tr-fl-lbl">Letzte '+Math.min(10,flights.length)+' Flüge dieses Flugzeugs · Flightradar24</div>'+rows;
+  }else{
+    flightsHtml='<div class="tr-fl-lbl">Letzte Flüge</div><div class="tr-msg info">Flightradar24 lieferte gerade keine Flugliste (evtl. Schutzabfrage/Limit). Über die Buttons unten erreichst du Historie &amp; Live-Squawk direkt.</div>';
+  }
+
+  const fr24Url='https://www.flightradar24.com/data/aircraft/'+encodeURIComponent(regL);
+  const faUrl='https://www.flightaware.com/live/flight/'+encodeURIComponent(reg);
+  const adsblol='https://globe.adsb.lol/?icao='+encodeURIComponent(hex);
+  const psnet='https://www.planespotters.net/hex/'+encodeURIComponent(hex.toUpperCase());
+
+  out.innerHTML=
+    '<div class="tr-card"><div class="tr-head">'+
+      (photo?'<img class="tr-photo" src="'+esc(photo)+'" alt="'+esc(reg)+'" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">':'')+
+      '<div class="tr-info"><div class="tr-reg">'+esc(reg)+'</div>'+
+      '<div class="tr-type">'+esc(model)+'</div>'+
+      '<div class="tr-meta">'+
+        (modeS?'<span class="tr-xpdr">Transponder · Mode-S: <b>'+esc(modeS)+'</b></span>':'')+
+        (icaoT?'<span class="tr-tag">ICAO-Typ <b>'+esc(icaoT)+'</b></span>':'')+
+        (owner?'<span class="tr-tag">'+esc(owner)+'</span>':'')+
+        (country?'<span class="tr-tag">'+esc(country)+'</span>':'')+
+      '</div></div></div>'+
+      '<div class="tr-flights">'+flightsHtml+
+        '<div class="tr-fl-lbl">Live-Verfolgung &amp; mehr</div>'+
+        '<div class="ac-db-row">'+
+          '<a class="db-chip db-faa" href="'+esc(fr24Url)+'" target="_blank" rel="noopener">Flightradar24 ↗</a>'+
+          '<a class="db-chip db-icao" href="'+esc(faUrl)+'" target="_blank" rel="noopener">FlightAware ↗</a>'+
+          '<a class="db-chip db-wag" href="'+esc(adsblol)+'" target="_blank" rel="noopener">adsb.lol Live · Squawk ↗</a>'+
+          '<a class="db-chip db-wiki" href="'+esc(psnet)+'" target="_blank" rel="noopener">Planespotters ↗</a>'+
+        '</div>'+
+      '</div></div>';
+  btn.disabled=false;
+}
+
+function fmtFlDate(f){
+  const t=(f.time&&f.time.scheduled&&f.time.scheduled.departure)||(f.time&&f.time.real&&f.time.real.departure)||(f.status&&f.status.generic&&f.status.generic.eventTime&&f.status.generic.eventTime.utc)||0;
+  if(!t)return '—';
+  const d=new Date(t*1000);
+  return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+}
+async function fetchFR24(reg){
+  try{
+    const r=await fetch('https://api.flightradar24.com/common/v1/flight/list.json?query='+encodeURIComponent(reg)+'&fetchBy=reg&page=1&limit=12');
+    if(!r.ok)return null;
+    const j=await r.json();
+    const data=j&&j.result&&j.result.response&&j.result.response.data;
+    return Array.isArray(data)?{flights:data}:null;
+  }catch(e){return null;}
+}
+async function fetchAdsbdb(reg){
+  try{
+    const r=await fetch('https://api.adsbdb.com/v0/aircraft/'+encodeURIComponent(reg));
+    if(!r.ok)return null;
+    const j=await r.json();
+    return (j&&j.response&&j.response.aircraft)||null;
+  }catch(e){return null;}
+}
+
 function renderAccordion(){
   if(!activeCat)return;
   const d=CAT[activeCat];
@@ -988,7 +1251,7 @@ function renderAccordion(){
           const stars=starsHtml(ac.avg);
           const spHtml=(ac.specs||[]).map(([l,v])=>`<div class="ac-sp"><div class="ac-sl">${l}</div><div class="ac-sv">${v}</div></div>`).join('');
           return`<div class="ac-card" style="animation-delay:${Math.min(i*.05,.5)}s">
-  <div class="ac-img-w" style="background:linear-gradient(140deg,var(--s2),var(--s3))">
+  <div class="ac-img-w" data-wiki="${acWikiTitle(ac)}" data-mfr="${ac.h}" data-yr="${ac.erstflug}"${ac.cs?` data-cs="${ac.cs}"`:''} style="background:linear-gradient(140deg,var(--s2),var(--s3))">
     <div class="ac-ph">
       <svg viewBox="0 0 24 24" stroke-width="1.3" fill="none" stroke="var(--pl)" opacity="0.35" width="36" height="36"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
       <span style="font-size:12px;font-weight:700;color:var(--tx);text-align:center;max-width:90%;line-height:1.3">${ac.n}</span>
@@ -1021,6 +1284,7 @@ function renderAccordion(){
       ${rBar('Verbreitung',ac.verb,dotClr)}
       ${rBar('Sicherheit',ac.sich,dotClr)}
     </div>
+    ${acDbLinks(ac)}
     ${ac.yt?`<div class="ac-video-row">
       <button class="vid-chip vid-yt" onclick="openYT(this,'${ac.yt}','documentary')">▶ Dokumentation</button>
       <button class="vid-chip vid-yt" onclick="openYT(this,'${ac.yt}','cockpit view')">🎮 Cockpit</button>
@@ -1605,7 +1869,20 @@ function openYT(el, query, type) {
 // auf das jeweilige Basismodell abgebildet (z. B. "Boeing 737-800" -> "Boeing 737").
 (function(){
   try{
-    var q=new URLSearchParams(location.search).get('q');
+    var params=new URLSearchParams(location.search);
+    // ?reg=<Kennung> (aus ourairports.html ADS-B-Klick): öffnet die Flugzeug-Kategorie
+    // und startet direkt den Live-Tracker für GENAU dieses Flugzeug (letzte 10 Flüge).
+    var regParam=(params.get('reg')||params.get('track')||'').trim();
+    if(regParam){
+      loadCat('Flugzeuge');
+      var trk=document.getElementById('acTrack');
+      setTimeout(function(){
+        if(trk){trk.classList.remove('hide');trk.scrollIntoView({behavior:'smooth',block:'start'});}
+        doTrack(regParam.toUpperCase());
+      },120);
+      return;
+    }
+    var q=params.get('q');
     if(!q) return;
     loadCat('Flugzeuge');
     var box=document.getElementById('dSrch');
