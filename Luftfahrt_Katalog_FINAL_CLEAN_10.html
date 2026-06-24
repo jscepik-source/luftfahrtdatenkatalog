@@ -20,17 +20,30 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;min-hei
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(15,23,42,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,0.035) 1px,transparent 1px);background-size:46px 46px;pointer-events:none;z-index:0}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(59,130,246,0.045) 0%,transparent 65%);pointer-events:none;z-index:0}
 
-/* ── Fliegende Flugzeuge im Hintergrund ── */
+/* ── Fliegende Flugzeuge im Hintergrund (realistische Silhouetten) ── */
 .sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.sky .plane{position:absolute;left:-16vw;color:#2563eb;will-change:transform}
-.sky .plane svg{display:block;fill:currentColor;transform:rotate(22deg)}
-.sky .p1{top:15%;opacity:.09;animation:flyAcross 42s linear infinite}
-.sky .p1 svg{width:40px;height:40px}
-.sky .p2{top:45%;opacity:.06;animation:flyAcross 64s linear infinite;animation-delay:-22s}
-.sky .p2 svg{width:26px;height:26px}
-.sky .p3{top:71%;opacity:.07;color:#0891b2;animation:flyAcross 52s linear infinite;animation-delay:-34s}
-.sky .p3 svg{width:54px;height:54px}
-@keyframes flyAcross{from{transform:translateX(0)}to{transform:translateX(132vw)}}
+.sky .plane{position:absolute;will-change:transform;color:#3f516b}
+.sky .plane svg{display:block;width:100%;height:auto;fill:currentColor}
+.sky .rb{left:-22vw}
+.sky .lb{right:-22vw}
+.sky .lb svg{transform:scaleX(-1)}
+/* Kondensstreifen */
+.sky .trail::after{content:'';position:absolute;top:46%;right:66%;width:34vw;height:2px;
+  background:linear-gradient(to left,rgba(90,110,140,.45),transparent);transform:translateY(-50%);border-radius:2px}
+.sky .lb.trail::after{right:auto;left:66%;background:linear-gradient(to right,rgba(90,110,140,.45),transparent)}
+/* Größen stark variiert = Tiefenwirkung (nah/groß … fern/klein),
+   jedes Flugzeug mit eigenem Bewegungsmuster (Reiseflug, Steigflug, Sinkflug, Bogen) */
+.sky .p1{top:18%;width:230px;opacity:.13;animation:flyCruiseR 62s linear infinite}
+.sky .p2{top:9%;width:72px;opacity:.06;animation:flyClimbR 96s linear infinite;animation-delay:-40s}
+.sky .p3{top:55%;width:150px;opacity:.10;animation:flyDescendL 76s linear infinite;animation-delay:-14s}
+.sky .p4{top:80%;width:50px;opacity:.05;animation:flyArcR 110s linear infinite;animation-delay:-58s}
+.sky .p5{top:36%;width:108px;opacity:.075;animation:flyClimbL 88s linear infinite;animation-delay:-8s}
+.sky .p6{top:70%;width:300px;opacity:.16;animation:flyCruiseR 52s linear infinite;animation-delay:-28s}
+@keyframes flyCruiseR{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(154vw,4vh) rotate(1.5deg)}}
+@keyframes flyClimbR{0%{transform:translate(0,0) rotate(-4deg)}100%{transform:translate(154vw,-9vh) rotate(-4deg)}}
+@keyframes flyArcR{0%{transform:translate(0,0) rotate(2.5deg)}50%{transform:translate(77vw,-7vh) rotate(-1.5deg)}100%{transform:translate(154vw,3vh) rotate(2.5deg)}}
+@keyframes flyDescendL{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(-154vw,9vh) rotate(3deg)}}
+@keyframes flyClimbL{0%{transform:translate(0,0) rotate(-3deg)}100%{transform:translate(-154vw,-8vh) rotate(-3deg)}}
 @media(prefers-reduced-motion:reduce){.sky{display:none}}
 
 /* ── TOPBAR ── */
@@ -58,31 +71,30 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .hsc-n{font-size:24px;font-weight:700;font-family:'Space Mono',monospace;color:#0f172a}
 .hsc-l{font-size:10px;color:var(--mu);margin-top:2px;letter-spacing:.02em}
 
-/* ── CAT GRID ── */
-.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:12px;padding:0 clamp(1rem,4vw,2.5rem) 5rem;max-width:1080px;margin:0 auto}
-.cc{background:var(--s1);border:1px solid var(--b0);border-radius:var(--r);padding:1.6rem;cursor:pointer;transition:all .18s;text-align:left;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}
-.cc::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;pointer-events:none}
-.cc:hover{border-color:var(--b2);transform:translateY(-3px)}.cc:hover::after{opacity:1}
-.cc.pl::after{background:radial-gradient(ellipse 110% 70% at 50% 0%,rgba(6,182,212,.07),transparent 70%)}
-.cc.en::after{background:radial-gradient(ellipse 110% 70% at 50% 0%,rgba(245,158,11,.07),transparent 70%)}
-.cc.st::after{background:radial-gradient(ellipse 110% 70% at 50% 0%,rgba(16,185,129,.07),transparent 70%)}
-.cc.te::after{background:radial-gradient(ellipse 110% 70% at 50% 0%,rgba(139,92,246,.07),transparent 70%)}
-.cc-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1}
-.cc-ic{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.cc-ic svg{width:21px;height:21px;fill:none;stroke-width:1.8}
-.cc-cnt{font-size:11px;font-weight:700;font-family:'Space Mono',monospace;padding:3px 9px;border-radius:5px}
-.cc h3{font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-.01em;position:relative;z-index:1}
-.cc p{font-size:12.5px;color:var(--mu);line-height:1.6;flex:1;position:relative;z-index:1}
-.cc-tags{display:flex;flex-wrap:wrap;gap:4px;position:relative;z-index:1}
-.ct{font-size:10.5px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.03);border:1px solid var(--b1);color:var(--mu)}
-.cc-cta{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
-.cc-cta span{font-size:12.5px;font-weight:600}
-.cc-cta svg{width:16px;height:16px;fill:none;stroke-width:2;transition:transform .18s}
-.cc:hover .cc-cta svg{transform:translateX(5px)}
-.pl .cc-ic{background:rgba(6,182,212,.1)}.pl .cc-ic svg{stroke:var(--pl)}.pl .cc-cnt{background:rgba(6,182,212,.1);color:var(--pl)}.pl .cc-cta{color:var(--pl)}.pl .cc-cta svg{stroke:var(--pl)}
-.en .cc-ic{background:rgba(245,158,11,.1)}.en .cc-ic svg{stroke:var(--en)}.en .cc-cnt{background:rgba(245,158,11,.1);color:var(--en)}.en .cc-cta{color:var(--en)}.en .cc-cta svg{stroke:var(--en)}
-.st .cc-ic{background:rgba(16,185,129,.1)}.st .cc-ic svg{stroke:var(--st)}.st .cc-cnt{background:rgba(16,185,129,.1);color:var(--st)}.st .cc-cta{color:var(--st)}.st .cc-cta svg{stroke:var(--st)}
-.te .cc-ic{background:rgba(139,92,246,.1)}.te .cc-ic svg{stroke:var(--te)}.te .cc-cnt{background:rgba(139,92,246,.1);color:var(--te)}.te .cc-cta{color:var(--te)}.te .cc-cta svg{stroke:var(--te)}
+/* ── CAT GRID (modern) ── */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px;padding:0 clamp(1rem,4vw,2.5rem) 5rem;max-width:1080px;margin:0 auto}
+.cc{background:var(--s1);border:1px solid var(--b0);border-radius:16px;cursor:pointer;text-align:left;
+  overflow:hidden;display:flex;flex-direction:column;padding:0;
+  transition:transform .2s,box-shadow .2s,border-color .2s}
+.cc:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(15,23,42,.13);border-color:var(--b2)}
+.cc-banner{height:126px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.cc-banner::before{content:'';position:absolute;inset:0;opacity:.6;
+  background-image:radial-gradient(circle at 1px 1px,rgba(15,23,42,.09) 1px,transparent 0);background-size:15px 15px}
+.cc-banner svg{width:54px;height:54px;fill:none;stroke-width:1.5;position:relative;z-index:1}
+.cc-info{padding:1.2rem 1.35rem 1.4rem;display:flex;flex-direction:column;gap:7px;flex:1}
+.cc-info h3{font-size:19px;font-weight:700;color:#0f172a;letter-spacing:-.01em}
+.cc-sub{font-size:12.5px;color:var(--mu);line-height:1.55;flex:1}
+.cc-go{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin-top:6px}
+.cc-go svg{width:15px;height:15px;fill:none;stroke-width:2;transition:transform .18s}
+.cc:hover .cc-go svg{transform:translateX(4px)}
+.cc.pl .cc-banner{background:linear-gradient(135deg,rgba(8,145,178,.16),rgba(8,145,178,.03))}
+.cc.pl .cc-banner svg{stroke:var(--pl)}.cc.pl .cc-go{color:var(--pl)}.cc.pl .cc-go svg{stroke:var(--pl)}
+.cc.en .cc-banner{background:linear-gradient(135deg,rgba(217,119,6,.16),rgba(217,119,6,.03))}
+.cc.en .cc-banner svg{stroke:var(--en)}.cc.en .cc-go{color:var(--en)}.cc.en .cc-go svg{stroke:var(--en)}
+.cc.st .cc-banner{background:linear-gradient(135deg,rgba(5,150,105,.16),rgba(5,150,105,.03))}
+.cc.st .cc-banner svg{stroke:var(--st)}.cc.st .cc-go{color:var(--st)}.cc.st .cc-go svg{stroke:var(--st)}
+.cc.te .cc-banner{background:linear-gradient(135deg,rgba(124,58,237,.16),rgba(124,58,237,.03))}
+.cc.te .cc-banner svg{stroke:var(--te)}.cc.te .cc-go{color:var(--te)}.cc.te .cc-go svg{stroke:var(--te)}
 
 /* ── DETAIL ── */
 .dh{border-bottom:1px solid var(--b0);padding:1.8rem clamp(1rem,4vw,2.5rem);max-width:1080px;margin:0 auto}
@@ -452,9 +464,12 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 <body>
 
 <div class="sky" aria-hidden="true">
-  <span class="plane p1"><svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span>
-  <span class="plane p2"><svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span>
-  <span class="plane p3"><svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span>
+  <span class="plane p1 rb trail"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
+  <span class="plane p2 rb"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
+  <span class="plane p3 lb trail"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
+  <span class="plane p4 rb"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
+  <span class="plane p5 lb"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
+  <span class="plane p6 rb trail"><svg viewBox="0 0 240 90"><path d="M26 46 C26 40 33 36 54 35 L150 34 C176 34 205 38 228 46 C205 54 176 58 150 58 L54 57 C33 56 26 52 26 46 Z"/><path d="M56 35 L36 13 L28 13 L44 35 Z"/><path d="M50 55 L32 65 L44 65 L60 56 Z"/><path d="M140 53 L94 84 L114 84 L160 55 Z"/><ellipse cx="122" cy="62" rx="16" ry="7"/></svg></span>
 </div>
 
 <style>
@@ -498,53 +513,44 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   </div>
   <div class="cg">
     <div class="cc pl" onclick="loadCat('Flugzeuge')">
-      <div class="cc-top">
-        <div class="cc-ic"><svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></div>
-        <span class="cc-cnt">4 Gruppen · 10 Untergruppen · 40+ Flugzeuge</span>
+      <div class="cc-banner"><svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></div>
+      <div class="cc-info">
+        <h3>Flugzeuge</h3>
+        <p class="cc-sub">40+ Flugzeugmuster aus H. Mensen Tab. 6.2 — mit Fotos, Daten & Bewertung.</p>
+        <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
-      <h3>Flugzeuge</h3>
-      <p>Exakt nach H. Mensen Tab. 6.2: §6.4.1 Passagierflugzeuge (Wide-Body + Narrow-Body), §6.4.2 Belly Freight, §6.4.3 Frachtflugzeuge, §6.2 Militärtransport — mit Wikipedia-Fotos, Tabellendaten und Bewertung.</p>
-      <div class="cc-tags"><span class="ct">Passagierflugzeuge</span><span class="ct">Frachtflugzeuge</span><span class="ct">Militärflugzeuge</span></div>
-      <div class="cc-cta"><span>Quellen ansehen</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </div>
     <div class="cc te" onclick="loadCat('Hubschrauber')">
-      <div class="cc-top">
-        <div class="cc-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke="currentColor"><path d="M12 2v4M2 8h20M5 8v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M3 8l2-4h14l2 4"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg></div>
-        <span class="cc-cnt">3 Kategorien · 8 Untergruppen · 38 Quellen</span>
+      <div class="cc-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M2 8h20M5 8v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M3 8l2-4h14l2 4"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg></div>
+      <div class="cc-info">
+        <h3>Hubschrauber</h3>
+        <p class="cc-sub">Zivile & militärische Drehflügler — Rettung, Offshore, Kampf, Transport.</p>
+        <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
-      <h3>Hubschrauber</h3>
-      <p>Zivile und militärische Drehflügler — Rettung, Offshore, Kampf, Transport. Zertifizierung nach EASA CS-29/27.</p>
-      <div class="cc-tags"><span class="tab62">EASA CS-29</span><span class="tab62">SAR/HEMS</span><span class="tab62">Mil-Heli</span></div>
     </div>
     <div class="cc en" onclick="loadCat('Triebwerke')">
-      <div class="cc-top">
-        <div class="cc-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-        <span class="cc-cnt">5 Typen · 7 Untergruppen</span>
+      <div class="cc-banner"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+      <div class="cc-info">
+        <h3>Triebwerke</h3>
+        <p class="cc-sub">Kolbenmotor, Turboprop, Turbojet, Turbofan, Raketen-, Elektro- & Hybridantriebe.</p>
+        <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
-      <h3>Triebwerke</h3>
-      <p>Einteilung nach Triebwerksart: Kolbenmotor, Turboprop, Turbojet, Turbofan, Raketentriebwerke, Elektro- und Hybridantriebe.</p>
-      <div class="cc-tags"><span class="ct">Turbofan</span><span class="ct">Turboprop</span><span class="ct">Elektroantrieb</span></div>
-      <div class="cc-cta"><span>Quellen ansehen</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </div>
     <div class="cc st" onclick="loadCat('Statistik')">
-      <div class="cc-top">
-        <div class="cc-ic"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <span class="cc-cnt">9 Kriterien</span>
+      <div class="cc-banner"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="cc-info">
+        <h3>Statistik</h3>
+        <p class="cc-sub">Verkehr, Technik, Wirtschaft, Sicherheit, Umwelt & Zeitreihen.</p>
+        <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
-      <h3>Statistik</h3>
-      <p>Verkehr, Technik, Wirtschaft, Sicherheit, Umwelt, Geografie, Zeitreihen, Flugzeugtypen und Betriebsformen.</p>
-      <div class="cc-tags"><span class="ct">Verkehrsstatistiken</span><span class="ct">Sicherheit</span><span class="ct">Umwelt</span></div>
-      <div class="cc-cta"><span>Quellen ansehen</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </div>
     <div class="cc te" onclick="loadCat('Technische Infos')">
-      <div class="cc-top">
-        <div class="cc-ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-        <span class="cc-cnt">10 Kriterien</span>
+      <div class="cc-banner"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="cc-info">
+        <h3>Technische Infos</h3>
+        <p class="cc-sub">Avionik, Zertifizierung, Fly-by-Wire, Antrieb, Wartung & Werkstoffe.</p>
+        <span class="cc-go">Öffnen <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </div>
-      <h3>Technische Infos</h3>
-      <p>Systembereich, Funktion, Physik, Flugphase, Flugzeugtyp, Antrieb, Wartung, Leistung, Werkstoffe, Automatisierung.</p>
-      <div class="cc-tags"><span class="ct">Avionik</span><span class="ct">Zertifizierung</span><span class="ct">Fly-by-Wire</span></div>
-      <div class="cc-cta"><span>Quellen ansehen</span><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </div>
   </div>
 </div>
