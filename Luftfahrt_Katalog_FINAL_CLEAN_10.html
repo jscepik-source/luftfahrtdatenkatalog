@@ -20,26 +20,49 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;min-hei
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(15,23,42,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,0.035) 1px,transparent 1px);background-size:46px 46px;pointer-events:none;z-index:0}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(59,130,246,0.045) 0%,transparent 65%);pointer-events:none;z-index:0}
 
-/* ── Fliegende Flugzeuge im Hintergrund (echte Flugzeug-Fotos, transparent) ── */
-.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.sky .plane{position:absolute;will-change:transform}
-.sky .plane img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 14px rgba(15,23,42,.18))}
-.sky .rb{left:-30vw}
-.sky .rb img{transform:scaleX(-1)}   /* Quellbilder zeigen nach links → für Flug nach rechts spiegeln */
-.sky .lb{right:-30vw}
-/* Größen stark variiert = Tiefenwirkung (nah/groß … fern/klein),
-   jedes Flugzeug mit eigenem Bewegungsmuster (Reiseflug, Steigflug, Sinkflug, Bogen) */
-.sky .p1{top:13%;width:360px;opacity:.85;animation:flyCruiseR 74s linear infinite}
-.sky .p2{top:7%;width:120px;opacity:.4;animation:flyClimbR 120s linear infinite;animation-delay:-45s}
-.sky .p3{top:52%;width:250px;opacity:.6;animation:flyDescendL 90s linear infinite;animation-delay:-16s}
-.sky .p4{top:79%;width:95px;opacity:.34;animation:flyArcR 128s linear infinite;animation-delay:-64s}
-.sky .p5{top:33%;width:320px;opacity:.72;animation:flyClimbL 102s linear infinite;animation-delay:-9s}
-@keyframes flyCruiseR{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(154vw,4vh) rotate(1.5deg)}}
-@keyframes flyClimbR{0%{transform:translate(0,0) rotate(-4deg)}100%{transform:translate(154vw,-9vh) rotate(-4deg)}}
-@keyframes flyArcR{0%{transform:translate(0,0) rotate(2.5deg)}50%{transform:translate(77vw,-7vh) rotate(-1.5deg)}100%{transform:translate(154vw,3vh) rotate(2.5deg)}}
-@keyframes flyDescendL{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(-154vw,9vh) rotate(3deg)}}
-@keyframes flyClimbL{0%{transform:translate(0,0) rotate(-3deg)}100%{transform:translate(-154vw,-8vh) rotate(-3deg)}}
-@media(prefers-reduced-motion:reduce){.sky{display:none}}
+/* ── FLUGHAFEN-HINTERGRUND (graue Simulation: Starts & Landungen) ── */
+.airport{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+/* Boden / Vorfeld */
+.ap-ground{position:absolute;left:0;right:0;bottom:0;height:23vh;
+  background:linear-gradient(to bottom,#dbe2ec 0%,#cfd8e4 55%,#c4cedd 100%)}
+.ap-ground::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:rgba(15,23,42,.06)}
+/* Gebäude-Silhouetten am Horizont */
+.ap-buildings{position:absolute;bottom:23vh;left:4vw;width:min(460px,38vw);opacity:.42}
+.ap-buildings svg{display:block;width:100%;height:auto;fill:#9aa6ba}
+.ap-buildings.right{left:auto;right:6vw;width:min(300px,26vw);opacity:.3}
+/* Rollbahn */
+.ap-runway{position:absolute;left:0;right:0;bottom:8.5vh;height:3.2vh;min-height:20px;
+  background:linear-gradient(to bottom,#c0cad8,#b2bdcd)}
+.ap-runway::before{content:'';position:absolute;top:50%;left:0;right:0;height:3px;transform:translateY(-50%);
+  background:repeating-linear-gradient(to right,rgba(255,255,255,.7) 0 34px,transparent 34px 70px)}
+.ap-runway::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:rgba(255,255,255,.5)}
+/* Flugzeuge = echte Profile als graue Silhouetten */
+.ap-plane{position:absolute;bottom:8.2vh;left:0;will-change:transform}
+.ap-plane img{display:block;width:100%;height:auto;filter:brightness(0) saturate(0)}
+.ap-plane.lnd img{transform:scaleX(-1)}     /* Quellbilder zeigen nach rechts → Landung (nach links) spiegeln */
+.ap-t1{width:150px;animation:apDepart 28s linear infinite}
+.ap-t2{width:118px;animation:apDepart 38s linear infinite;animation-delay:-16s}
+.ap-l1{width:138px;animation:apLand 32s linear infinite;animation-delay:-7s}
+.ap-l2{width:168px;animation:apLand 42s linear infinite;animation-delay:-24s}
+.ap-c1{width:78px;bottom:auto;top:15vh;opacity:.22;animation:apCruise 64s linear infinite;animation-delay:-12s}
+@keyframes apDepart{
+  0%  {transform:translate(-16vw,0) rotate(0) scale(1);opacity:0}
+  6%  {opacity:.4}
+  40% {transform:translate(33vw,0) rotate(0) scale(1);opacity:.4}
+  54% {transform:translate(51vw,-6vh) rotate(-12deg) scale(.96);opacity:.4}
+  96% {opacity:0}
+  100%{transform:translate(95vw,-62vh) rotate(-9deg) scale(.5);opacity:0}
+}
+@keyframes apLand{
+  0%  {transform:translate(104vw,-60vh) rotate(-6deg) scale(.5);opacity:0}
+  8%  {opacity:.4}
+  46% {transform:translate(45vw,-5vh) rotate(-4deg) scale(.95);opacity:.4}
+  56% {transform:translate(37vw,0) rotate(0) scale(1);opacity:.4}
+  94% {opacity:.4}
+  100%{transform:translate(-18vw,0) rotate(0) scale(1);opacity:0}
+}
+@keyframes apCruise{0%{transform:translate(-14vw,0)}100%{transform:translate(122vw,-7vh)}}
+@media(prefers-reduced-motion:reduce){.ap-plane{animation:none;opacity:0}}
 
 /* ── TOPBAR ── */
 .tb{position:fixed;top:0;left:0;right:0;z-index:200;height:54px;background:rgba(255,255,255,0.90);backdrop-filter:blur(18px);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 clamp(1rem,4vw,2.5rem);gap:10px}
@@ -478,12 +501,24 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 </head>
 <body>
 
-<div class="sky" aria-hidden="true">
-  <span class="plane p1 rb"><img src="planes/b747.png" alt="" loading="lazy"></span>
-  <span class="plane p2 rb"><img src="planes/a380.png" alt="" loading="lazy"></span>
-  <span class="plane p3 lb"><img src="planes/b747.png" alt="" loading="lazy"></span>
-  <span class="plane p4 rb"><img src="planes/a380.png" alt="" loading="lazy"></span>
-  <span class="plane p5 lb"><img src="planes/b747.png" alt="" loading="lazy"></span>
+<div class="airport" aria-hidden="true">
+  <div class="ap-ground"></div>
+  <div class="ap-buildings"><svg viewBox="0 0 460 120" preserveAspectRatio="xMidYMax meet">
+    <path d="M0 120 V74 H150 V66 H172 V74 H300 V82 H460 V120 Z"/>
+    <rect x="120" y="30" width="11" height="46"/>
+    <path d="M110 30 h31 l-5 -16 h-21 z"/>
+    <path d="M330 120 V92 a44 26 0 0 1 88 0 V120 Z"/>
+  </svg></div>
+  <div class="ap-buildings right"><svg viewBox="0 0 300 90" preserveAspectRatio="xMidYMax meet">
+    <path d="M0 90 V58 H120 V64 H210 V52 H300 V90 Z"/>
+    <rect x="232" y="22" width="9" height="34"/><path d="M224 22 h25 l-4 -12 h-17 z"/>
+  </svg></div>
+  <div class="ap-runway"></div>
+  <span class="ap-plane ap-l2 lnd"><img src="planes/b747.png" alt=""></span>
+  <span class="ap-plane ap-t1 dep"><img src="planes/b747.png" alt=""></span>
+  <span class="ap-plane ap-l1 lnd"><img src="planes/a380.png" alt=""></span>
+  <span class="ap-plane ap-t2 dep"><img src="planes/b747.png" alt=""></span>
+  <span class="ap-plane ap-c1"><img src="planes/a380.png" alt=""></span>
 </div>
 
 <style>
