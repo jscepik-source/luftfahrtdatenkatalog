@@ -68,12 +68,6 @@
       "Aerodrome Obstacle Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/AD_ADOC_HCMI.pdf"
     }
   },
-  "HCMK": {
-    "_url": "https://aip.scaa.gov.so/eAIP/HC-AD-2.HCMK-en-GB.html",
-    "karten": {
-      "Aerodrome Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/HCMK_AD-CHART.pdf"
-    }
-  },
   "HCMM": {
     "_url": "https://aip.scaa.gov.so/eAIP/HC-AD-2.HCMM-en-GB.html",
     "karten": {
