@@ -28,7 +28,16 @@
     <!-- Leaflet (interaktive Karten) — identische Einbindung wie auf der Flughafen-Seite -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- animate.css (dezente Einblend-Animationen) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        /* animate.css dezent & ruhig halten */
+        :root { --animate-duration: 0.5s; }
+        @media (prefers-reduced-motion: reduce) { .animate__animated { animation: none !important; } }
+        /* Modals sanft einblenden (nutzt animate.css-Keyframes) */
+        .modal-overlay.open { animation: fadeIn 0.25s; }
+        .modal-overlay.open .modal-box { animation: fadeInUp 0.35s; }
+
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { overflow-x: hidden; }
@@ -1126,7 +1135,7 @@ function cardHTML(q, index){
             </div>` : '';
 
     return `
-    <article class="q-card" data-gruppe="${esc(q.gruppe)}" data-track="${q.tracking?1:0}" data-free="${q.kostenlos?1:0}" data-api="${q.api?1:0}"
+    <article class="q-card animate__animated animate__fadeIn" data-gruppe="${esc(q.gruppe)}" data-track="${q.tracking?1:0}" data-free="${q.kostenlos?1:0}" data-api="${q.api?1:0}"
              data-haystack="${esc((q.name+' '+q.inhalt+' '+q.formate+' '+q.zielgruppe+' '+q.bemerkung+' '+g.label).toLowerCase())}">
         <button class="card-header" aria-expanded="false" onclick="toggleCard(this)">
             <span class="grp-badge grp-${esc(q.gruppe)}">${g.icon} ${esc(g.label)}</span>
