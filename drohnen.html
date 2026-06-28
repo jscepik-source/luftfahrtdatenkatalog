@@ -37,10 +37,18 @@
         /* Modals sanft einblenden (nutzt animate.css-Keyframes) */
         .modal-overlay.open { animation: fadeIn 0.25s; }
         .modal-overlay.open .modal-box { animation: fadeInUp 0.35s; }
-        /* Reveal beim Scrollen (WOW-Effekt via IntersectionObserver) */
-        .reveal-on-scroll { opacity: 0; }
-        .reveal-on-scroll.revealed { opacity: 1; }
-        @media (prefers-reduced-motion: reduce) { .reveal-on-scroll { opacity: 1 !important; } }
+        /* Reveal beim Scrollen — modern: native CSS Scroll-Driven Animation (an Scroll-Position
+           gekoppelt). Browser ohne Support fallen auf den IntersectionObserver (unten) zurück. */
+        @keyframes revealUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @supports (animation-timeline: view()) {
+            .reveal-on-scroll {
+                animation: revealUp linear both;
+                animation-timeline: view();
+                animation-range: entry 0% cover 35%;
+            }
+        }
+        .reveal-on-scroll.revealed { opacity: 1; }   /* Fallback-Klasse (IntersectionObserver) */
+        @media (prefers-reduced-motion: reduce) { .reveal-on-scroll { animation: none !important; opacity: 1 !important; } }
 
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1204,17 +1212,23 @@ function render(){
 // Reveal beim Scrollen: Karten blenden sanft ein, sobald sie in den Viewport kommen
 // (moderne, abhängigkeitsfreie WOW.js-Alternative via IntersectionObserver).
 function setupReveal(){
-    const els = document.querySelectorAll('.reveal-on-scroll:not(.revealed)');
-    if(!('IntersectionObserver' in window)){ els.forEach(e=>e.classList.add('revealed')); return; }
+    // Moderne Browser: native CSS Scroll-Driven Animation (animation-timeline) übernimmt -> kein JS nötig
+    if(window.CSS && CSS.supports && CSS.supports('animation-timeline','view()')) return;
+    const els = [].slice.call(document.querySelectorAll('.reveal-on-scroll:not(.revealed)'));
+    if(!els.length) return;
+    if(!('IntersectionObserver' in window) || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
+        els.forEach(e=>e.classList.add('revealed')); return;
+    }
     const io = new IntersectionObserver((entries)=>{
         entries.forEach(en=>{
             if(en.isIntersecting){
+                en.target.style.opacity='';
                 en.target.classList.add('revealed','animate__animated','animate__fadeInUp');
                 io.unobserve(en.target);
             }
         });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.04 });
-    els.forEach(e=>io.observe(e));
+    els.forEach(e=>{ e.style.opacity='0'; io.observe(e); });   // nur JS versteckt beobachtete Karten
 }
 
 // Hero-Kennzahlen und Chip-Zähler aus den Daten ableiten (bleibt automatisch korrekt)

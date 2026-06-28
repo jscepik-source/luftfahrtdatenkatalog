@@ -11,9 +11,15 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 /* animate.css dezent halten */
 :root{--animate-duration:0.5s}
-/* Scroll-Reveal: nur JS versteckt beobachtete Karten (kein CSS-opacity:0 -> nie unsichtbar haengend).
-   Bestehende sli-Animation aus, solange noch nicht sichtbar gemacht. */
-.reveal-on-scroll:not(.revealed){animation:none!important}
+@keyframes revealUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+/* Modern: native scroll-gekoppelte Reveal-Animation (uebersteuert die sli-Animation der Karten) */
+@supports (animation-timeline: view()){
+  .ac-card.reveal-on-scroll{animation:revealUp linear both;animation-delay:0s!important;animation-timeline:view();animation-range:entry 0% cover 32%}
+}
+/* Ohne Scroll-Driven-Support: sli aus, bis JS die Karte sichtbar macht (nur JS versteckt -> nie haengend) */
+@supports not (animation-timeline: view()){
+  .reveal-on-scroll:not(.revealed){animation:none!important}
+}
 @media(prefers-reduced-motion:reduce){.reveal-on-scroll{opacity:1!important;animation:none!important}}
 :root{
   --bg:#eef3fa;--s1:#ffffff;--s2:#f3f7fc;--s3:#e7eef8;
@@ -1842,6 +1848,8 @@ function setAcGroup(g){acGroup=g;renderAccordion();}
 // Scroll-Reveal: Karten blenden sanft ein, sobald sie in den Viewport kommen.
 // Nur JS versteckt die beobachteten Elemente -> ohne/bei Fehlern bleibt alles sichtbar.
 function setupReveal(){
+  // Moderne Browser: native CSS Scroll-Driven Animation (animation-timeline) übernimmt -> kein JS nötig
+  if(window.CSS && CSS.supports && CSS.supports('animation-timeline','view()')) return;
   var els=[].slice.call(document.querySelectorAll('.reveal-on-scroll:not(.revealed)'));
   if(!els.length) return;
   if(!('IntersectionObserver' in window) || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
