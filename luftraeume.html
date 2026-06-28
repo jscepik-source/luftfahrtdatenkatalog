@@ -256,7 +256,7 @@
 
 <div id="settings-panel">
     <span class="settings-label">OpenAIP API-Key:</span>
-    <input id="key-input" type="password" class="settings-input" placeholder="gsk_… (kostenlos bei openaip.net)">
+    <input id="key-input" type="password" class="settings-input" placeholder="dein OpenAIP-Key (kostenlos auf openaip.net/register)">
     <button class="settings-save" onclick="saveKey()">Speichern</button>
     <a href="https://www.openaip.net/register" target="_blank" rel="noopener" class="settings-link">→ Kostenlos registrieren</a>
     <span id="key-status"></span>
@@ -435,8 +435,9 @@ let map, geoLayer;
 
 // Geteilter Standard-OpenAIP-Key, damit die Karte OHNE eigenen Key funktioniert.
 // Ein eigener Key (⚙) hat Vorrang und nutzt das eigene Limit.
-const DEFAULT_OPENAIP_KEY = '2800111e267cd352c035b2df2102fbdf';
-function getOpenAipKey(){ return localStorage.getItem('openaip_key') || DEFAULT_OPENAIP_KEY; }
+// Kein geteilter Key mehr: jeder Nutzer trägt seinen EIGENEN OpenAIP-Key ein
+// (nur lokal im Browser gespeichert, nie übertragen/veröffentlicht).
+function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
 let activeCountries = new Set(COUNTRIES.filter(c => c.default).map(c => c.code));
 let activeTypes = new Set(Object.keys(TYPE_META).map(Number));
 let activeClasses = new Set([0,1,2,3,4,5,6,7,8]);   // ICAO-Luftraumklassen A–G (+ ohne)
@@ -480,16 +481,21 @@ function initMap() {
     });
     osm.addTo(map);
 
-    // Weltweite Luftraum-Kacheln von OpenAIP (kein eigener Key nötig) – sofort sichtbar
-    const airspaceTiles = L.tileLayer(
-        `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${DEFAULT_OPENAIP_KEY}`,
-        { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.85 }
-    );
-    airspaceTiles.addTo(map);
+    // Weltweite Luftraum-Kacheln von OpenAIP – nur mit eigenem Key des Nutzers
+    const overlays = {};
+    const _oaKey = getOpenAipKey();
+    if (_oaKey) {
+        const airspaceTiles = L.tileLayer(
+            `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${_oaKey}`,
+            { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.85 }
+        );
+        airspaceTiles.addTo(map);
+        overlays['Lufträume (OpenAIP, weltweit)'] = airspaceTiles;
+    }
 
     L.control.layers(
         { 'Karte (OSM)': osm, 'Satellit': sat },
-        { 'Lufträume (OpenAIP, weltweit)': airspaceTiles },
+        overlays,
         { position: 'topright' }
     ).addTo(map);
 
@@ -546,7 +552,11 @@ async function fetchCountry(country, key) {
 }
 
 async function ladeAirspaces() {
-    const key = getOpenAipKey();   // eigener Key falls vorhanden, sonst geteilter Default
+    const key = getOpenAipKey();   // eigener Key des Nutzers (lokal gespeichert)
+    if (!key) {                    // ohne Key: zur Eingabe auffordern statt fehlzuschlagen
+        document.getElementById('no-key-msg').style.display = 'flex';
+        return;
+    }
 
     document.getElementById('no-key-msg').style.display = 'none';
     document.getElementById('loading').classList.add('show');
@@ -629,8 +639,13 @@ function toggleSettings() {
 
 function saveKey() {
     const key = document.getElementById('key-input').value.trim();
-    if (key) { localStorage.setItem('openaip_key', key); document.getElementById('key-status').textContent = '✓ Gespeichert'; }
-    else { localStorage.removeItem('openaip_key'); document.getElementById('key-status').textContent = 'Key gelöscht'; }
+    if (key) {
+        localStorage.setItem('openaip_key', key);
+        document.getElementById('key-status').textContent = '✓ Gespeichert – lädt neu…';
+        setTimeout(() => location.reload(), 700);   // Neu laden, damit Kacheln + Lufträume aktiv werden
+        return;
+    }
+    localStorage.removeItem('openaip_key'); document.getElementById('key-status').textContent = 'Key gelöscht';
     setTimeout(() => document.getElementById('settings-panel').classList.remove('open'), 1000);
 }
 
@@ -782,11 +797,13 @@ function buildLegend() {
     // Auf schmalen Bildschirmen Legende eingeklappt starten (mehr Kartenfläche)
     if (window.innerWidth < 640) toggleLegend();
 
-    // Lufträume sind dank Default-Key + Tile-Layer sofort sichtbar – keine Sperre nötig.
-    document.getElementById('no-key-msg').style.display = 'none';
-
-    // Standardländer (DE/AT/CH) automatisch laden -> anklickbare Details sofort verfügbar
-    if (activeCountries.size > 0) ladeAirspaces();
+    // OpenAIP braucht jetzt den EIGENEN Key des Nutzers. Ohne Key: Hinweis-Overlay zeigen.
+    if (getOpenAipKey()) {
+        document.getElementById('no-key-msg').style.display = 'none';
+        if (activeCountries.size > 0) ladeAirspaces();   // Standardländer (DE/AT/CH) laden
+    } else {
+        document.getElementById('no-key-msg').style.display = 'flex';
+    }
 })();
 </script>
 </body>

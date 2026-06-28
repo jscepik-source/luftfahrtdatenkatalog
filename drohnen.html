@@ -1339,7 +1339,29 @@ document.addEventListener('keydown', e=>{
 // Hinweis: öffentlicher Client-seitiger OpenAIP-Key (wie auf der Flughafen-Seite eingebunden,
 // damit beide Seiten beim Zusammenführen konsistent bleiben). Bei Bedarf eigenen kostenlosen
 // OpenAIP-Key unter openaip.net eintragen.
-const OPENAIP_KEY = '2800111e267cd352c035b2df2102fbdf';
+// Kein geteilter Key mehr: jeder Nutzer trägt seinen EIGENEN OpenAIP-Key ein
+// (nur lokal im Browser gespeichert, nie übertragen/veröffentlicht).
+function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
+function setOpenAipKey(){
+    const cur = localStorage.getItem('openaip_key') || '';
+    const k = prompt('Eigenen OpenAIP API-Key eingeben (kostenlos auf openaip.net/register).\nWird nur lokal in diesem Browser gespeichert:', cur);
+    if (k === null) return;
+    const v = k.trim();
+    if (v) { localStorage.setItem('openaip_key', v); location.reload(); }
+    else   { localStorage.removeItem('openaip_key'); location.reload(); }
+}
+function addOaipKeyControl(map){
+    const C = L.Control.extend({ options:{ position:'topright' }, onAdd(){
+        const d = L.DomUtil.create('div', 'leaflet-bar');
+        const a = L.DomUtil.create('a', '', d);
+        a.href = '#'; a.title = 'Eigenen OpenAIP-Key eintragen, um Lufträume zu laden';
+        a.style.cssText = 'width:auto;padding:0 8px;white-space:nowrap;font-size:12px';
+        a.textContent = '🔑 OpenAIP-Key';
+        L.DomEvent.on(a, 'click', e => { L.DomEvent.preventDefault(e); L.DomEvent.stopPropagation(e); setOpenAipKey(); });
+        return d;
+    }});
+    map.addControl(new C());
+}
 
 const OAIP_UNIT       = {0:'ft', 1:'FL', 2:'m'};
 const OAIP_REF        = {0:'GND', 1:'MSL', 2:'STD'};
@@ -1399,14 +1421,14 @@ function oaipFormatAlt(lim){
 }
 
 async function ladeOpenAipLuftraum(map, lat, lon){
-    if(!OPENAIP_KEY) return;
+    if(!getOpenAipKey()) return;
     // Vorherige Lufträume + Legende entfernen (für Neuladen/Suche)
     if(map._oaipLayer){ map.removeLayer(map._oaipLayer); map._oaipLayer = null; }
     if(map._oaipLegend){ map.removeControl(map._oaipLegend); map._oaipLegend = null; }
     try {
         const res = await fetch(
             `https://api.core.openaip.net/api/airspaces?page=0&limit=100&pos=${lat},${lon}&dist=50000`,
-            { headers: { 'x-openaip-api-key': OPENAIP_KEY } }
+            { headers: { 'x-openaip-api-key': getOpenAipKey() } }
         );
         if(!res.ok) return;
         const data = await res.json();
@@ -1477,12 +1499,15 @@ function initDrohnenKarte(el){
     });
     osm.addTo(map);
     const ctrl = L.control.layers({ 'Straßenkarte': osm, '🛰 Satellit': sat }, {}, { position:'topright', collapsed:true }).addTo(map);
-    if(OPENAIP_KEY){
+    const _oaKey = getOpenAipKey();
+    if(_oaKey){
         const oaipTiles = L.tileLayer(
-            `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${OPENAIP_KEY}`,
+            `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${_oaKey}`,
             { attribution:'© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom:17, opacity:0.7 }
         );
         ctrl.addOverlay(oaipTiles, '🌐 OpenAIP-Kacheln');
+    } else {
+        addOaipKeyControl(map);   // ohne Key: Button zum Eintragen anbieten
     }
 
     // Container war beim Init evtl. ausgeblendet → Größe neu berechnen
