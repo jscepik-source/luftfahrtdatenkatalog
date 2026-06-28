@@ -1672,7 +1672,9 @@ async function acImgFallback(img){
   if(!w){ img.style.display='none'; return; }
   try{
     const r=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(w));
-    if(r.ok){ const d=await r.json(); const s=d.thumbnail&&d.thumbnail.source; if(s){ img.src=s; return; } }
+    if(r.ok){ const d=await r.json(); const s=d.thumbnail&&d.thumbnail.source;
+      // Logos/Wappen statt Flugzeugfotos vermeiden (z.B. BAe-146-Artikel liefert ein Logo)
+      if(s && !/logo|wappen|crest|roundel|emblem/i.test(s)){ img.src=s; return; } }
   }catch(e){}
   img.style.display='none';
 }
@@ -2579,6 +2581,7 @@ function loadWikiPhoto(wikiTitle, onSuccess) {
   .then(function(d){
     var page = Object.values((d.query||{}).pages||{})[0];
     var src  = page && page.thumbnail && page.thumbnail.source;
+    if (src && /logo|wappen|crest|roundel|emblem/i.test(src)) src = null;  // keine Logos
     _photoCache[key] = src || 'none';
     if (src) onSuccess(src);
   }).catch(function(){});
@@ -2607,8 +2610,13 @@ function loadAllPhotos() {
     var imgW  = card.querySelector('.ac-img-w');
     var nameEl= card.querySelector('.ac-name');
     if (!imgW || !nameEl) return;
+    // Karten mit eigenem <img> (AC_IMG/EXT) laden ihr Bild selbst (+ acImgFallback) –
+    // nur Platzhalter-Karten ohne Bild hier per Wikipedia-Hintergrund füllen.
+    if (imgW.querySelector('img.ac-img')) return;
     var name = nameEl.textContent.trim();
-    loadWikiPhoto(name, function(src) {
+    // Korrekten Wikipedia-Artikeltitel verwenden (Kartenname != Artikelname, z.B. B-52H)
+    var article = (typeof AC_WIKI !== 'undefined' && AC_WIKI[name]) || name;
+    loadWikiPhoto(article, function(src) {
       imgW.style.backgroundImage = 'url(' + src + ')';
       imgW.style.backgroundSize  = 'cover';
       imgW.style.backgroundPosition = 'center';
