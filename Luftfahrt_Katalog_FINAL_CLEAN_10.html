@@ -6,8 +6,15 @@
 <meta name="theme-color" content="#eef3fa">
 <title>Luftfahrt Datenkatalog – HS RheinMain</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* animate.css dezent halten */
+:root{--animate-duration:0.5s}
+/* Scroll-Reveal: nur JS versteckt beobachtete Karten (kein CSS-opacity:0 -> nie unsichtbar haengend).
+   Bestehende sli-Animation aus, solange noch nicht sichtbar gemacht. */
+.reveal-on-scroll:not(.revealed){animation:none!important}
+@media(prefers-reduced-motion:reduce){.reveal-on-scroll{opacity:1!important;animation:none!important}}
 :root{
   --bg:#eef3fa;--s1:#ffffff;--s2:#f3f7fc;--s3:#e7eef8;
   --b0:rgba(15,23,42,0.07);--b1:rgba(15,23,42,0.13);--b2:rgba(15,23,42,0.22);
@@ -1832,6 +1839,26 @@ function acTogglePanel(id,btn){
 }
 function setAcGroup(g){acGroup=g;renderAccordion();}
 
+// Scroll-Reveal: Karten blenden sanft ein, sobald sie in den Viewport kommen.
+// Nur JS versteckt die beobachteten Elemente -> ohne/bei Fehlern bleibt alles sichtbar.
+function setupReveal(){
+  var els=[].slice.call(document.querySelectorAll('.reveal-on-scroll:not(.revealed)'));
+  if(!els.length) return;
+  if(!('IntersectionObserver' in window) || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
+    els.forEach(function(e){ e.classList.add('revealed'); }); return;
+  }
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        en.target.style.opacity='';
+        en.target.classList.add('revealed','animate__animated','animate__fadeInUp');
+        io.unobserve(en.target);
+      }
+    });
+  },{rootMargin:'0px 0px -6% 0px',threshold:0.02});
+  els.forEach(function(e){ e.style.opacity='0'; io.observe(e); });
+}
+
 // ── Fokus-Ansicht (Deep-Link aus ourairports.html) ───────────────────────
 // mode='type' -> nur die eine Typ-Karte; mode='reg' -> nur Live-Tracker + Flugzeugdaten.
 function setFocus(mode,label){
@@ -1885,7 +1912,7 @@ function acCardHtml(ac,sub,i,dotClr,cls){
     </div>
     ${badges}
   </div>`;
-  return`<div class="ac-card" style="animation-delay:${Math.min(i*.04,.4)}s">
+  return`<div class="ac-card reveal-on-scroll" style="animation-delay:${Math.min(i*.04,.4)}s">
   ${imgW}
   <div class="ac-body">
     <div class="ac-name">${ac.n}</div>
@@ -1930,7 +1957,7 @@ function acCardHtml(ac,sub,i,dotClr,cls){
 function acExtCardHtml(ac,i,cls){
   const id=`acx-${i}`;
   const wiki='https://en.wikipedia.org/wiki/'+encodeURIComponent((ac.n||'').replace(/ /g,'_'));
-  return `<div class="ac-card">
+  return `<div class="ac-card reveal-on-scroll">
   <div class="ac-img-w" style="cursor:zoom-in" onclick="openPhoto3D(this.querySelector('img').src,this.closest('.ac-card').querySelector('.ac-name').textContent)">
     <img class="ac-img" src="${esc(ac.img)}" alt="${esc(ac.n)}" loading="lazy" referrerpolicy="no-referrer" data-wiki="${esc(ac.wiki||ac.n)}" onerror="acImgFallback(this)">
     <div class="ac-bdg">${ac.h?`<span class="ac-b ac-b-mfr">${esc(ac.h)}</span>`:''}${ac.y?`<span class="ac-b ac-b-yr">✈ ${esc(ac.y)}</span>`:''}</div>
@@ -2004,6 +2031,7 @@ function renderAircraftFlat(){
     : `<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Flugzeuge gefunden.</p></div>`;
 
   document.getElementById('accWrap').innerHTML=`${chipsHtml}${desc}${grid}`;
+  setupReveal();   // Karten synchron für Scroll-Reveal vorbereiten (kein Flackern)
   document.getElementById('dCnt').textContent=items.length;
   // In der Fokus-Ansicht die einzelne Karte direkt aufklappen
   if(acFocus&&items.length){
