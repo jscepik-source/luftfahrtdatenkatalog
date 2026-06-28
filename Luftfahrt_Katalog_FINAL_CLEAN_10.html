@@ -535,6 +535,11 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 #vDetail[data-focus="type"] #acTools{display:none!important}
 #vDetail[data-focus="type"] .ac-grid{grid-template-columns:1fr;max-width:560px;margin:0 auto}
 
+/* Wikidata-Anreicherung in der Flugzeugkarte */
+.ac-wd{margin-top:.6rem}
+.ac-wd-title{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fa);margin:.2rem 0 .45rem}
+.ac-wd-load{font-size:11px;color:var(--mu)}
+
 </style>
 </head>
 <body>
@@ -1591,6 +1596,67 @@ const AC_WIKI={
   'Junkers Ju 52/3m':'Junkers Ju 52',
   'Cessna 172 Skyhawk':'Cessna 172'
 };
+// Kuratierte Kernwerte (geprüft) für die bekanntesten Muster – sofort sichtbar.
+// Restliche Werte (Länge, Spannweite, Höhe, Stückzahl …) lädt acLoadWikidata() live von Wikidata.
+const AC_FACTS={
+  'Airbus A320':       {zweck:'Kurz-/Mittelstrecken-Verkehrsflugzeug (Schmalrumpf)', laenge:'37,57 m', hoehe:'11,76 m', reichweite:'6.150 km', pax:'150–186', triebwerke:'2× CFM56 oder IAE V2500'},
+  'Airbus A320neo':    {zweck:'Kurz-/Mittelstrecken-Verkehrsflugzeug (Schmalrumpf)', laenge:'37,57 m', hoehe:'11,76 m', reichweite:'6.500 km', pax:'150–195', triebwerke:'2× CFM LEAP-1A oder PW1100G'},
+  'Boeing 737':        {zweck:'Kurz-/Mittelstrecken-Verkehrsflugzeug (Schmalrumpf)', laenge:'28,6–43,8 m (je Version)', hoehe:'12,5 m', reichweite:'~5.500 km', pax:'85–215', triebwerke:'2× JT8D / CFM56 / LEAP-1B'},
+  'Boeing 747':        {zweck:'Langstrecken-Großraumflugzeug (Vierstrahler)', laenge:'70,6 m', hoehe:'19,4 m', reichweite:'~13.450 km', pax:'366–524', triebwerke:'4× Turbofan'},
+  'Boeing 747 Freighter':{zweck:'Langstrecken-Frachtflugzeug', laenge:'70,6 m', hoehe:'19,4 m', reichweite:'~8.300 km', pax:'Fracht bis ~134 t', triebwerke:'4× Turbofan'},
+  'Boeing 787 Dreamliner':{zweck:'Langstrecken-Großraumflugzeug', laenge:'56,7–68,3 m', hoehe:'17,0 m', reichweite:'~14.140 km', pax:'242–330', triebwerke:'2× GEnx oder Trent 1000'},
+  'Airbus A350 XWB':   {zweck:'Langstrecken-Großraumflugzeug', laenge:'66,8–73,8 m', hoehe:'17,1 m', reichweite:'~15.000 km', pax:'300–410', triebwerke:'2× Rolls-Royce Trent XWB'},
+  'Airbus A380':       {zweck:'Langstrecken-Großraumflugzeug (Doppeldeck, Vierstrahler)', laenge:'72,7 m', hoehe:'24,1 m', reichweite:'~15.200 km', pax:'525–853', triebwerke:'4× Trent 900 oder GP7200'},
+  'Concorde':          {zweck:'Überschall-Verkehrsflugzeug', laenge:'61,7 m', hoehe:'12,2 m', reichweite:'~7.250 km', pax:'92–128', speed:'Mach 2,04 (~2.180 km/h)', triebwerke:'4× RR/Snecma Olympus 593 (Nachbrenner)'},
+  'Boeing 707':        {zweck:'Langstrecken-Verkehrsflugzeug (frühes Jet-Zeitalter)', laenge:'46,6 m', hoehe:'12,9 m', reichweite:'~10.000 km', pax:'140–189', triebwerke:'4× Turbojet/Turbofan'},
+  'Boeing 727':        {zweck:'Kurz-/Mittelstrecken-Verkehrsflugzeug (Trijet)', laenge:'46,7 m', hoehe:'10,4 m', reichweite:'~4.450 km', pax:'149–189', triebwerke:'3× P&W JT8D'},
+  'ATR 72-600':        {zweck:'Regional-Turboprop', laenge:'27,2 m', hoehe:'7,65 m', reichweite:'~1.500 km', pax:'68–78', triebwerke:'2× P&W PW127 (Turboprop)'},
+  'Cessna 172 Skyhawk':{zweck:'Einmotoriges Reise-/Schulflugzeug', laenge:'8,28 m', hoehe:'2,72 m', reichweite:'~1.270 km', pax:'1 + 3', triebwerke:'1× Lycoming (~180 PS)'},
+  'Douglas DC-3':      {zweck:'Kolben-Verkehrsflugzeug (Klassiker)', laenge:'19,7 m', hoehe:'5,16 m', reichweite:'~2.400 km', pax:'21–32', triebwerke:'2× Sternmotor (~1.200 PS)'},
+  'Airbus A400M Atlas':{zweck:'Militärisches Transportflugzeug', laenge:'45,1 m', hoehe:'14,7 m', reichweite:'~3.300 km (max. Nutzlast)', pax:'116 Soldaten / 37 t', triebwerke:'4× Europrop TP400 (Turboprop)'},
+};
+
+// Lazy-Anreicherung: holt strukturierte Daten von Wikidata (Länge, Spannweite, Höhe,
+// Stückzahl, Erstflug) – nur zuverlässige Einheiten (Meter/Anzahl/Datum), CORS-frei.
+const _wdCache={};
+async function acLoadWikidata(name, targetId){
+  const box=document.getElementById(targetId);
+  if(!box || box.dataset.done) return;
+  box.dataset.done='1';
+  if(_wdCache[name]){ box.innerHTML=_wdCache[name]; return; }
+  box.innerHTML='<div class="ac-wd-load">Lade weitere Daten von Wikidata…</div>';
+  try{
+    const title=(typeof AC_WIKI!=='undefined' && AC_WIKI[name]) || name;
+    let qid=null;
+    for(const lang of ['en','de']){
+      try{
+        const u=`https://${lang}.wikipedia.org/w/api.php?action=query&prop=pageprops&ppprop=wikibase_item&redirects=1&format=json&origin=*&titles=${encodeURIComponent(title)}`;
+        const d=await (await fetch(u,{signal:AbortSignal.timeout(8000)})).json();
+        const pages=(d.query&&d.query.pages)||{};
+        for(const k in pages){ const pp=pages[k].pageprops; if(pp&&pp.wikibase_item){ qid=pp.wikibase_item; break; } }
+        if(qid) break;
+      }catch(e){}
+    }
+    if(!qid){ box.innerHTML=''; return; }
+    const ed=await (await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=claims&format=json&origin=*`,{signal:AbortSignal.timeout(9000)})).json();
+    const claims=(ed.entities&&ed.entities[qid]&&ed.entities[qid].claims)||{};
+    const qty=(pid)=>{ const c=claims[pid]; const v=c&&c[0]&&c[0].mainsnak&&c[0].mainsnak.datavalue&&c[0].mainsnak.datavalue.value; if(v&&typeof v==='object'&&v.amount!=null) return parseFloat(v.amount); return null; };
+    const num=(n)=> n==null?null:(Math.round(n*100)/100).toLocaleString('de');
+    const facts=(typeof AC_FACTS!=='undefined' && AC_FACTS[name]) || {};
+    const rows=[];
+    const len=qty('P2043'), span=qty('P2050'), hgt=qty('P2048'), built=qty('P1092');
+    // Felder, die bereits kuratiert sind, NICHT erneut (vermeidet abweichende Doppelwerte)
+    if(len!=null && !facts.laenge) rows.push(['Länge',num(len)+' m']);
+    if(span!=null)                 rows.push(['Spannweite',num(span)+' m']);
+    if(hgt!=null && !facts.hoehe)  rows.push(['Höhe',num(hgt)+' m']);
+    if(built!=null)                rows.push(['Stückzahl gebaut',num(built)]);
+    if(!rows.length){ box.innerHTML=''; _wdCache[name]=''; return; }
+    const out=`<div class="ac-wd-title">Weitere Daten · Wikidata</div><div class="ac-specs">`+
+      rows.map(([l,v])=>`<div class="ac-sp"><div class="ac-sl">${l}</div><div class="ac-sv">${v}</div></div>`).join('')+
+      `</div><a class="icao-exp-lnk" href="https://www.wikidata.org/wiki/${qid}" target="_blank" rel="noopener">Quelle: Wikidata ${qid} ↗</a>`;
+    _wdCache[name]=out; box.innerHTML=out;
+  }catch(e){ box.innerHTML=''; }
+}
 function acWikiTitle(ac){
   if(ac.wiki) return ac.wiki;
   if(AC_WIKI[ac.n]) return AC_WIKI[ac.n];
@@ -1787,10 +1853,18 @@ function clearFocus(){
 function acCardHtml(ac,sub,i,dotClr,cls){
   const id=`acf-${i}`;
   const stars=starsHtml(ac.avg);
-  // Bereits vorhandene Stammdaten zusätzlich als Datenzeilen einblenden (akkurat, kein Erfinden)
+  // Bereits vorhandene Stammdaten + kuratierte Kernwerte als Datenzeilen (akkurat, kein Erfinden)
   const baseSpecs=[];
+  const f=(typeof AC_FACTS!=='undefined' && AC_FACTS[ac.n]) || null;
+  if(f&&f.zweck)  baseSpecs.push(['Zweck',f.zweck]);
   if(ac.erstflug) baseSpecs.push(['Erstflug',ac.erstflug]);
   if(ac.h)        baseSpecs.push(['Hersteller',ac.h]);
+  if(f&&f.laenge)     baseSpecs.push(['Länge',f.laenge]);
+  if(f&&f.hoehe)      baseSpecs.push(['Höhe',f.hoehe]);
+  if(f&&f.reichweite) baseSpecs.push(['Reichweite',f.reichweite]);
+  if(f&&f.pax)        baseSpecs.push(['Passagiere',f.pax]);
+  if(f&&f.speed)      baseSpecs.push(['Geschwindigkeit',f.speed]);
+  if(f&&f.triebwerke) baseSpecs.push(['Triebwerke',f.triebwerke]);
   if(ac.cs)       baseSpecs.push(['Zulassung',ac.cs]);
   const spHtml=baseSpecs.concat(ac.specs||[]).map(([l,v])=>`<div class="ac-sp"><div class="ac-sl">${l}</div><div class="ac-sv">${v}</div></div>`).join('');
   const para=sub.id.includes('nb')||sub.id.includes('wb')?'6.4.1':(sub.id.includes('fracht')||sub.id.includes('freighter')||sub.id.includes('belly')?'6.4.2/6.4.3':'6.2');
@@ -1827,6 +1901,7 @@ function acCardHtml(ac,sub,i,dotClr,cls){
     <span class="tab62">📖 Mensen Tab. 6.2 / §${para}</span>
     <div class="ac-ddesc">${ac.d}</div>
     <div class="ac-specs">${spHtml}</div>
+    <div class="ac-wd" id="wd-${id}"></div>
     <div class="ac-rsec">
       <div class="ac-rlbl">Bewertung</div>
       ${rBar('Bedeutung',ac.bed,dotClr)}
@@ -2127,6 +2202,12 @@ function toggleAc(id){
   const btn=document.getElementById('btn-'+id);
   bod.classList.toggle('open');
   btn.classList.toggle('open');
+  // Beim Aufklappen weitere Daten von Wikidata nachladen (einmalig je Karte)
+  if(bod.classList.contains('open')){
+    const card=bod.closest('.ac-card');
+    const nmEl=card&&card.querySelector('.ac-name');
+    if(nmEl) acLoadWikidata(nmEl.textContent.trim(), 'wd-'+id);
+  }
   btn.innerHTML=bod.classList.contains('open')
     ?'Daten ausblenden <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'
     :'Daten aus Mensen Tab. 6.2 <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
