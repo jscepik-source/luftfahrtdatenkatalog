@@ -33,6 +33,19 @@
     <style>
         /* animate.css dezent & ruhig halten */
         :root { --animate-duration: 0.5s; }
+        html { scroll-behavior: smooth; }
+        /* Apple-Stil: Hero gleitet beim Runterscrollen sanft weg (scroll-gekoppelter Parallax) */
+        @supports (animation-timeline: scroll()) {
+            .hero-inner {
+                animation: heroParallax linear both;
+                animation-timeline: scroll(root);
+                animation-range: 0 75vh;
+                will-change: opacity, transform;
+            }
+            @keyframes heroParallax {
+                to { opacity: 0.2; transform: translateY(-32px) scale(0.975); }
+            }
+        }
         @media (prefers-reduced-motion: reduce) { .animate__animated { animation: none !important; } }
         /* Modals sanft einblenden (nutzt animate.css-Keyframes) */
         .modal-overlay.open { animation: fadeIn 0.25s; }

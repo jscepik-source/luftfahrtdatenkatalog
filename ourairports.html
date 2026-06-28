@@ -49,9 +49,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
+        /* ── Scroll-Reveal (modern: scroll-gekoppelt; sonst IntersectionObserver-Fallback) ── */
+        :root { --animate-duration: 0.5s; }
+        @keyframes revealUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+        @supports (animation-timeline: view()) {
+            .airport-card.reveal-on-scroll { animation: revealUp linear both; animation-delay: 0s !important; animation-timeline: view(); animation-range: entry 0% cover 30%; }
+        }
+        @supports not (animation-timeline: view()) {
+            .reveal-on-scroll:not(.revealed) { animation: none !important; }
+        }
+        @media (prefers-reduced-motion: reduce) { .reveal-on-scroll { opacity: 1 !important; animation: none !important; } }
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { overflow-x: hidden; }
@@ -3238,6 +3249,27 @@ function suche() {
     ladeNaechste(liste);
 }
 
+// Scroll-Reveal: moderne Browser nutzen CSS scroll-driven; sonst IntersectionObserver.
+// Nur JS versteckt beobachtete Karten -> ohne/bei Fehlern bleibt alles sichtbar.
+function setupReveal() {
+    if (window.CSS && CSS.supports && CSS.supports('animation-timeline', 'view()')) return;
+    const els = [].slice.call(document.querySelectorAll('.reveal-on-scroll:not(.revealed)'));
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window) || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+        els.forEach(e => e.classList.add('revealed')); return;
+    }
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+            if (en.isIntersecting) {
+                en.target.style.opacity = '';
+                en.target.classList.add('revealed', 'animate__animated', 'animate__fadeInUp');
+                io.unobserve(en.target);
+            }
+        });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.03 });
+    els.forEach(e => { e.style.opacity = '0'; io.observe(e); });
+}
+
 function ladeNaechste(liste) {
     const batch = aktuelleEintraege.slice(angezeigtBis, angezeigtBis + SEITE);
     angezeigtBis += batch.length;
@@ -3245,8 +3277,6 @@ function ladeNaechste(liste) {
     batch.forEach(([icao, ap], i) => {
         try {
             const card = baueKarte(icao, ap);
-            card.classList.add('animiert');
-            card.style.animationDelay = `${Math.min(i * 0.035, 0.45)}s`;
             liste.appendChild(card);
         } catch(e) {
             if (!errShown) {
@@ -3259,6 +3289,7 @@ function ladeNaechste(liste) {
             }
         }
     });
+    setupReveal();   // neue Karten für Scroll-Reveal vorbereiten
     const altBtn = document.getElementById('mehr-btn');
     if (altBtn) altBtn.remove();
     if (angezeigtBis < aktuelleEintraege.length) {
@@ -4725,7 +4756,7 @@ function nationalNotamQuelle(icao) {
 
 function baueKarte(icao, ap) {
     const article = document.createElement('article');
-    article.className = 'airport-card';
+    article.className = 'airport-card reveal-on-scroll';
     const typLabel = TYP_LABEL[ap.type] || ap.type || '';
     const typClass = 'type-' + (ap.type || '');
     const elev = ap.elev !== undefined ? `${ap.elev} ft / ${Math.round(ap.elev * 0.3048)} m` : '–';
