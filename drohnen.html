@@ -37,6 +37,10 @@
         /* Modals sanft einblenden (nutzt animate.css-Keyframes) */
         .modal-overlay.open { animation: fadeIn 0.25s; }
         .modal-overlay.open .modal-box { animation: fadeInUp 0.35s; }
+        /* Reveal beim Scrollen (WOW-Effekt via IntersectionObserver) */
+        .reveal-on-scroll { opacity: 0; }
+        .reveal-on-scroll.revealed { opacity: 1; }
+        @media (prefers-reduced-motion: reduce) { .reveal-on-scroll { opacity: 1 !important; } }
 
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1135,7 +1139,7 @@ function cardHTML(q, index){
             </div>` : '';
 
     return `
-    <article class="q-card animate__animated animate__fadeIn" data-gruppe="${esc(q.gruppe)}" data-track="${q.tracking?1:0}" data-free="${q.kostenlos?1:0}" data-api="${q.api?1:0}"
+    <article class="q-card reveal-on-scroll" data-gruppe="${esc(q.gruppe)}" data-track="${q.tracking?1:0}" data-free="${q.kostenlos?1:0}" data-api="${q.api?1:0}"
              data-haystack="${esc((q.name+' '+q.inhalt+' '+q.formate+' '+q.zielgruppe+' '+q.bemerkung+' '+g.label).toLowerCase())}">
         <button class="card-header" aria-expanded="false" onclick="toggleCard(this)">
             <span class="grp-badge grp-${esc(q.gruppe)}">${g.icon} ${esc(g.label)}</span>
@@ -1194,6 +1198,23 @@ function render(){
            </div>`;
     befuelleStats();
     applyFilter();
+    setupReveal();
+}
+
+// Reveal beim Scrollen: Karten blenden sanft ein, sobald sie in den Viewport kommen
+// (moderne, abhängigkeitsfreie WOW.js-Alternative via IntersectionObserver).
+function setupReveal(){
+    const els = document.querySelectorAll('.reveal-on-scroll:not(.revealed)');
+    if(!('IntersectionObserver' in window)){ els.forEach(e=>e.classList.add('revealed')); return; }
+    const io = new IntersectionObserver((entries)=>{
+        entries.forEach(en=>{
+            if(en.isIntersecting){
+                en.target.classList.add('revealed','animate__animated','animate__fadeInUp');
+                io.unobserve(en.target);
+            }
+        });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.04 });
+    els.forEach(e=>io.observe(e));
 }
 
 // Hero-Kennzahlen und Chip-Zähler aus den Daten ableiten (bleibt automatisch korrekt)
