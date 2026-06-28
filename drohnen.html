@@ -1342,6 +1342,19 @@ document.addEventListener('keydown', e=>{
 // Kein geteilter Key mehr: jeder Nutzer trägt seinen EIGENEN OpenAIP-Key ein
 // (nur lokal im Browser gespeichert, nie übertragen/veröffentlicht).
 function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
+// OpenAIP läuft standardmäßig über den Worker-Proxy (Key geheim im Worker, nie im Code).
+// Eigener Key (optional) -> OpenAIP direkt.
+const OAIP_PROXY = 'https://deploy.jscepik.workers.dev/oaip';
+function oaipTileTemplate(){
+    const k = getOpenAipKey();
+    return k ? `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${k}`
+             : `${OAIP_PROXY}/tiles/{z}/{x}/{y}.png`;
+}
+function oaipAirspaceFetch(qs){
+    const k = getOpenAipKey();
+    return k ? fetch(`https://api.core.openaip.net/api/airspaces?${qs}`, { headers: { 'x-openaip-api-key': k } })
+             : fetch(`${OAIP_PROXY}/airspaces?${qs}`);
+}
 function setOpenAipKey(){
     const cur = localStorage.getItem('openaip_key') || '';
     const k = prompt('Eigenen OpenAIP API-Key eingeben (kostenlos auf openaip.net/register).\nWird nur lokal in diesem Browser gespeichert:', cur);
@@ -1421,15 +1434,11 @@ function oaipFormatAlt(lim){
 }
 
 async function ladeOpenAipLuftraum(map, lat, lon){
-    if(!getOpenAipKey()) return;
     // Vorherige Lufträume + Legende entfernen (für Neuladen/Suche)
     if(map._oaipLayer){ map.removeLayer(map._oaipLayer); map._oaipLayer = null; }
     if(map._oaipLegend){ map.removeControl(map._oaipLegend); map._oaipLegend = null; }
     try {
-        const res = await fetch(
-            `https://api.core.openaip.net/api/airspaces?page=0&limit=100&pos=${lat},${lon}&dist=50000`,
-            { headers: { 'x-openaip-api-key': getOpenAipKey() } }
-        );
+        const res = await oaipAirspaceFetch(`page=0&limit=100&pos=${lat},${lon}&dist=50000`);
         if(!res.ok) return;
         const data = await res.json();
         const layer = L.layerGroup();

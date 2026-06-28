@@ -438,6 +438,19 @@ let map, geoLayer;
 // Kein geteilter Key mehr: jeder Nutzer trägt seinen EIGENEN OpenAIP-Key ein
 // (nur lokal im Browser gespeichert, nie übertragen/veröffentlicht).
 function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
+// OpenAIP läuft standardmäßig über den Worker-Proxy (Key geheim im Worker, nie im Code).
+// Eigener Key (optional, Settings) -> OpenAIP direkt.
+const OAIP_PROXY = 'https://deploy.jscepik.workers.dev/oaip';
+function oaipTileTemplate(){
+    const k = getOpenAipKey();
+    return k ? `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${k}`
+             : `${OAIP_PROXY}/tiles/{z}/{x}/{y}.png`;
+}
+function oaipAirspaceFetch(qs){
+    const k = getOpenAipKey();
+    return k ? fetch(`https://api.core.openaip.net/api/airspaces?${qs}`, { headers: { 'x-openaip-api-key': k, 'Accept': 'application/json' } })
+             : fetch(`${OAIP_PROXY}/airspaces?${qs}`, { headers: { 'Accept': 'application/json' } });
+}
 let activeCountries = new Set(COUNTRIES.filter(c => c.default).map(c => c.code));
 let activeTypes = new Set(Object.keys(TYPE_META).map(Number));
 let activeClasses = new Set([0,1,2,3,4,5,6,7,8]);   // ICAO-Luftraumklassen A–G (+ ohne)
@@ -481,21 +494,16 @@ function initMap() {
     });
     osm.addTo(map);
 
-    // Weltweite Luftraum-Kacheln von OpenAIP – nur mit eigenem Key des Nutzers
-    const overlays = {};
-    const _oaKey = getOpenAipKey();
-    if (_oaKey) {
-        const airspaceTiles = L.tileLayer(
-            `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${_oaKey}`,
-            { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.85 }
-        );
-        airspaceTiles.addTo(map);
-        overlays['Lufträume (OpenAIP, weltweit)'] = airspaceTiles;
-    }
+    // Weltweite Luftraum-Kacheln von OpenAIP – über Worker-Proxy (kein Key im Code nötig)
+    const airspaceTiles = L.tileLayer(
+        oaipTileTemplate(),
+        { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.85 }
+    );
+    airspaceTiles.addTo(map);
 
     L.control.layers(
         { 'Karte (OSM)': osm, 'Satellit': sat },
-        overlays,
+        { 'Lufträume (OpenAIP, weltweit)': airspaceTiles },
         { position: 'topright' }
     ).addTo(map);
 
@@ -532,10 +540,7 @@ async function fetchCountry(country, key) {
     const items = [];
     let page = 1, total = Infinity;
     while (items.length < total) {
-        const r = await fetch(
-            `https://api.core.openaip.net/api/airspaces?country=${country}&limit=1000&page=${page}`,
-            { headers: { 'x-openaip-api-key': key, 'Accept': 'application/json' } }
-        );
+        const r = await oaipAirspaceFetch(`country=${country}&limit=1000&page=${page}`);
         if (!r.ok) {
             if (r.status === 401 || r.status === 403) throw new Error('Ungültiger API-Key — bitte prüfen');
             if (r.status === 429) throw new Error('Rate-Limit erreicht — bitte kurz warten und erneut versuchen');
@@ -552,12 +557,7 @@ async function fetchCountry(country, key) {
 }
 
 async function ladeAirspaces() {
-    const key = getOpenAipKey();   // eigener Key des Nutzers (lokal gespeichert)
-    if (!key) {                    // ohne Key: zur Eingabe auffordern statt fehlzuschlagen
-        document.getElementById('no-key-msg').style.display = 'flex';
-        return;
-    }
-
+    const key = getOpenAipKey();   // eigener Key (optional); sonst läuft alles über den Worker-Proxy
     document.getElementById('no-key-msg').style.display = 'none';
     document.getElementById('loading').classList.add('show');
     document.getElementById('load-btn').disabled = true;
@@ -797,13 +797,9 @@ function buildLegend() {
     // Auf schmalen Bildschirmen Legende eingeklappt starten (mehr Kartenfläche)
     if (window.innerWidth < 640) toggleLegend();
 
-    // OpenAIP braucht jetzt den EIGENEN Key des Nutzers. Ohne Key: Hinweis-Overlay zeigen.
-    if (getOpenAipKey()) {
-        document.getElementById('no-key-msg').style.display = 'none';
-        if (activeCountries.size > 0) ladeAirspaces();   // Standardländer (DE/AT/CH) laden
-    } else {
-        document.getElementById('no-key-msg').style.display = 'flex';
-    }
+    // OpenAIP läuft über den Worker-Proxy -> kein Key nötig, Karte sofort nutzbar.
+    document.getElementById('no-key-msg').style.display = 'none';
+    if (activeCountries.size > 0) ladeAirspaces();   // Standardländer (DE/AT/CH) laden
 })();
 </script>
 </body>
