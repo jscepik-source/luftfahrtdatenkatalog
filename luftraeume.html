@@ -226,15 +226,28 @@
 </head>
 <body>
 
+<!-- ── Themen-Navigation (einheitlich auf allen Seiten) ── -->
+<style>
+.avx-topnav{position:sticky;top:0;z-index:10000;box-sizing:border-box;min-height:48px;display:flex;align-items:center;gap:14px;background:#0f172a;border-bottom:1px solid #334155;padding:7px 16px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0}
+.avx-topnav a{text-decoration:none}
+.avx-topnav .avx-brand{color:#fff;font-weight:800;font-size:.9rem;flex:0 0 auto}
+.avx-topnav .avx-links{display:flex;gap:8px;flex:0 0 auto;margin-left:auto}
+.avx-topnav .avx-pill{color:#cbd5e1;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid #334155;transition:background .15s,color .15s,border-color .15s}
+.avx-topnav .avx-pill:hover{color:#fff;border-color:#4fc3f7}
+.avx-topnav .avx-pill.avx-active{background:#2563eb;border-color:#2563eb;color:#fff}
+</style>
+<nav class="avx-topnav" aria-label="Themenbereiche">
+  <a class="avx-brand" href="index.html">&#9992; Start</a>
+  <span class="avx-links">
+    <a class="avx-pill" href="ourairports.html">Flughäfen</a>
+    <a class="avx-pill" href="Luftfahrt_Katalog_FINAL_CLEAN_10.html">Flugzeuge</a>
+    <a class="avx-pill" href="drohnen.html">Drohnen</a>
+    <a class="avx-pill avx-active" href="luftraeume.html">Lufträume</a>
+  </span>
+</nav>
+
 <header>
     <span class="header-title">🗺 Lufträume</span>
-    <nav class="lr-nav" aria-label="Themenbereiche">
-        <a href="index.html">Start</a>
-        <a href="ourairports.html">Flughäfen</a>
-        <a href="Luftfahrt_Katalog_FINAL_CLEAN_10.html">Flugzeuge</a>
-        <a href="drohnen.html">Drohnen</a>
-        <a href="luftraeume.html" class="active">Lufträume</a>
-    </nav>
     <span style="flex:1 0 8px"></span>
     <button class="header-btn" id="load-btn" onclick="ladeAirspaces()">▶ Details laden</button>
     <button class="header-btn" onclick="toggleSettings()" title="OpenAIP API-Key">⚙</button>
