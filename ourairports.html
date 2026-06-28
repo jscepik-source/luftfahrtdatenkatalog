@@ -6246,11 +6246,16 @@ function adsbPopupHtml(a) {
     const regLink = a.r
         ? `<a href="${FLUGZEUG_KATALOG_URL}?reg=${encodeURIComponent(a.r)}" target="_blank" rel="noopener" style="display:block;margin-top:7px;padding:6px 9px;background:#0ea5e9;color:#fff;border-radius:6px;text-align:center;font-weight:600;text-decoration:none">🛩 Dieses Flugzeug: Daten &amp; letzte 10 Flüge ↗</a>`
         : '';
+    const tSafe = (a.t || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const worldLink = tSafe
+        ? `<a href="#" onclick="acwOpen('${tSafe}');return false;" style="display:block;margin-top:5px;padding:6px 9px;background:#6366f1;color:#fff;border-radius:6px;text-align:center;font-weight:600;text-decoration:none">🌍 Alle ${tSafe} weltweit auf der Karte</a>`
+        : '';
     return `<div style="font-family:var(--font,sans-serif);min-width:185px;font-size:0.74rem">
         <div style="font-weight:700;font-size:0.92rem">✈ ${cs}</div>
         <div style="color:#64748b;margin:1px 0 6px">${[acAirline(cs), a.r, mLink].filter(Boolean).join(' · ') || '—'}</div>
         ${grid}
         ${regLink}
+        ${worldLink}
         <a href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:7px;color:#3b82f6">Auf FlightRadar24 verfolgen ↗</a>
     </div>`;
 }
@@ -6500,7 +6505,13 @@ async function ladeFluege(icao, forceRefresh = false) {
             const regLink = reg
                 ? `<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?reg=${encodeURIComponent(reg)}" target="_blank" rel="noopener" title="Kennzeichen ${reg}: letzte Flüge & Flugzeugdaten">${reg}</a>`
                 : '';
-            const regType = [regLink, modelLink].filter(Boolean).join(' · ');
+            // 🌍 = diesen Flugzeugtyp weltweit live auf der Karte anzeigen
+            // Typ-Code auf [A-Z0-9] begrenzen -> keine Injection aus ADS-B-Daten möglich
+            const tSafe = (type || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const worldBtn = tSafe
+                ? `<a class="flug-world-link" href="#" onclick="acwOpen('${tSafe}');return false;" title="Alle ${tSafe} weltweit live auf der Karte anzeigen">🌍</a>`
+                : '';
+            const regType = [regLink, modelLink, worldBtn].filter(Boolean).join(' · ');
             const vert = adsbVerti(a);
             const sq   = a.squawk ? `SQ ${a.squawk}` : '';
             const subParts = [airlineHtml, regType, route, dist, sq].filter(Boolean);
@@ -6541,7 +6552,11 @@ async function ladeFluege(icao, forceRefresh = false) {
             const regLink = reg
                 ? `<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?reg=${encodeURIComponent(reg)}" target="_blank" rel="noopener" title="Kennzeichen ${reg}: letzte Flüge & Flugzeugdaten">${reg}</a>`
                 : '';
-            const regType= [regLink, modelLink].filter(Boolean).join(' ');
+            const tSafe = (type || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const worldBtn = tSafe
+                ? `<a class="flug-world-link" href="#" onclick="acwOpen('${tSafe}');return false;" title="Alle ${tSafe} weltweit live auf der Karte anzeigen">🌍</a>`
+                : '';
+            const regType= [regLink, modelLink, worldBtn].filter(Boolean).join(' ');
             const meta   = [airline, regType, spd, dist, a.squawk ? `SQ ${a.squawk}` : ''].filter(Boolean).join(' · ');
             return `<div class="flug-range-item">
                 <span class="flug-range-cs">${cs}</span>
@@ -7858,6 +7873,146 @@ async function aiSend() {
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
+</script>
+<!-- ── Typ-weltweit-Overlay (ADS-B): alle Flugzeuge eines Typs live auf der Weltkarte ── -->
+<style>
+    .flug-world-link { text-decoration: none; cursor: pointer; font-size: 0.9em; }
+    .flug-world-link:hover { filter: brightness(1.15); }
+    #acw-overlay {
+        position: fixed; inset: 0; z-index: 12000; display: flex; flex-direction: column;
+        background: var(--color-bg, #0f172a);
+    }
+    #acw-overlay.acw-hidden { display: none; }
+    .acw-bar {
+        display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        padding: 10px 14px; background: var(--color-header-from, #0f172a); color: #fff;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.25); z-index: 2;
+    }
+    .acw-title { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
+    #acw-input {
+        flex: 1; min-width: 130px; max-width: 240px; padding: 7px 12px; border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: #fff;
+        font-family: var(--font, sans-serif); font-size: 0.85rem; text-transform: uppercase;
+    }
+    #acw-input::placeholder { color: rgba(255,255,255,0.5); text-transform: none; }
+    #acw-go {
+        padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer;
+        background: #6366f1; color: #fff; font-weight: 600; font-size: 0.85rem; white-space: nowrap;
+    }
+    #acw-go:hover { background: #4f46e5; }
+    #acw-count { font-size: 0.82rem; color: rgba(255,255,255,0.85); white-space: nowrap; }
+    .acw-spacer { flex: 1; }
+    .acw-close {
+        background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #fff;
+        width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 1rem; flex-shrink: 0;
+    }
+    .acw-close:hover { background: rgba(255,255,255,0.25); }
+    #acw-map { flex: 1; background: #1e293b; }
+    .acw-note {
+        padding: 7px 14px; font-size: 0.72rem; color: var(--color-text-dim, #94a3b8);
+        background: var(--color-surface, #1e293b); border-top: 1px solid var(--color-border, #334155);
+        text-align: center;
+    }
+    .acw-legend { display: inline-flex; gap: 12px; flex-wrap: wrap; margin-left: 8px; }
+    .acw-legend span { display: inline-flex; align-items: center; gap: 4px; }
+    .acw-legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+</style>
+<div id="acw-overlay" class="acw-hidden" aria-hidden="true">
+    <div class="acw-bar">
+        <span class="acw-title">🌍 Typ weltweit</span>
+        <input id="acw-input" type="text" placeholder="ICAO-Typ, z. B. A320, B738" autocomplete="off"
+               onkeydown="if(event.key==='Enter')acwSearch()" aria-label="Flugzeugtyp (ICAO-Code)">
+        <button id="acw-go" onclick="acwSearch()">Anzeigen</button>
+        <span id="acw-count"></span>
+        <span class="acw-spacer"></span>
+        <button class="acw-close" onclick="acwClose()" aria-label="Schließen">✕</button>
+    </div>
+    <div id="acw-map"></div>
+    <div class="acw-note">
+        Live-Positionen via <a href="https://airplanes.live" target="_blank" rel="noopener" style="color:var(--color-primary)">airplanes.live</a> · zeigt alle aktuell von ADS-B-Empfängern erfassten Flugzeuge dieses Typs weltweit. Aktualisiert alle 30 s.
+        <span class="acw-legend">
+            <span><i style="background:#3b82f6"></i>Reiseflug</span>
+            <span><i style="background:#f59e0b"></i>Steigflug</span>
+            <span><i style="background:#22c55e"></i>Sinkflug</span>
+            <span><i style="background:#94a3b8"></i>Boden</span>
+        </span>
+    </div>
+</div>
+<script>
+// ── Typ-weltweit-Overlay: alle Flugzeuge eines ICAO-Typs live auf der Weltkarte ──
+let _acwMap = null, _acwLayer = null, _acwTimer = null, _acwType = '';
+function acwOpen(type) {
+    const ov = document.getElementById('acw-overlay');
+    ov.classList.remove('acw-hidden');
+    ov.setAttribute('aria-hidden', 'false');
+    if (!_acwMap) {
+        _acwMap = L.map('acw-map', { worldCopyJump: true, minZoom: 2, preferCanvas: true }).setView([30, 5], 3);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 12
+        }).addTo(_acwMap);
+        _acwLayer = L.layerGroup().addTo(_acwMap);
+    }
+    setTimeout(() => _acwMap.invalidateSize(), 80);
+    if (type) { document.getElementById('acw-input').value = String(type).toUpperCase(); acwSearch(); }
+}
+function acwClose() {
+    const ov = document.getElementById('acw-overlay');
+    ov.classList.add('acw-hidden');
+    ov.setAttribute('aria-hidden', 'true');
+    clearTimeout(_acwTimer); _acwTimer = null;
+}
+async function acwSearch() {
+    const raw = (document.getElementById('acw-input').value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const cnt = document.getElementById('acw-count');
+    if (!raw) { cnt.textContent = 'Bitte einen Typ-Code eingeben.'; return; }
+    _acwType = raw;
+    cnt.textContent = '⏳ lädt…';
+    clearTimeout(_acwTimer);
+    try {
+        const r = await fetch(`https://api.airplanes.live/v2/type/${encodeURIComponent(raw)}`, { signal: AbortSignal.timeout(12000) });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const d = await r.json();
+        // Nur weitermachen, wenn der Nutzer den Typ in der Zwischenzeit nicht geändert hat
+        if (_acwType !== raw) return;
+        const ac = (d.ac || d.aircraft || []).filter(a => a.lat != null && a.lon != null);
+        _acwLayer.clearLayers();
+        const pts = [];
+        ac.forEach(a => {
+            const mk = L.circleMarker([a.lat, a.lon], {
+                radius: 4, color: '#fff', weight: 0.7,
+                fillColor: adsbPhaseColor(a), fillOpacity: 0.9
+            }).addTo(_acwLayer);
+            mk.bindPopup(acwPopup(a, raw));
+            pts.push([a.lat, a.lon]);
+        });
+        cnt.textContent = ac.length ? `${ac.length.toLocaleString('de')} × ${raw} weltweit live` : `Aktuell keine ${raw} per ADS-B erfasst`;
+        if (pts.length) try { _acwMap.fitBounds(pts, { padding: [40, 40], maxZoom: 7 }); } catch (e) {}
+        _acwTimer = setTimeout(acwSearch, 30000);   // Auto-Refresh
+    } catch (e) {
+        cnt.textContent = 'Keine Daten / Fehler (' + (e.message || e) + ')';
+    }
+}
+function acwPopup(a, type) {
+    // API-Strings escapen, damit keine HTML/JS-Injection aus den ADS-B-Daten möglich ist
+    const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const cs = (a.flight || '').trim();
+    const model = (typeof acTypeName === 'function' ? acTypeName(a.t) : '') || a.t || type;
+    const alt = a.alt_baro != null ? Math.round(a.alt_baro).toLocaleString('de') + ' ft' : '';
+    const spd = a.gs ? Math.round(a.gs) + ' kt' : '';
+    const head = esc(cs || a.r || a.hex || '?');
+    const sub = [a.r, model].filter(Boolean).map(esc).join(' · ');
+    const stat = [alt, spd].filter(Boolean).join(' · ');
+    const reg = a.r
+        ? `<a href="${FLUGZEUG_KATALOG_URL}?reg=${encodeURIComponent(a.r)}" target="_blank" rel="noopener" style="color:#3b82f6">Daten & Flüge ↗</a>`
+        : '';
+    const fr = cs ? `<a href="https://www.flightradar24.com/${encodeURIComponent(cs)}" target="_blank" rel="noopener" style="color:#3b82f6">FR24 ↗</a>` : '';
+    return `<div style="font-size:0.76rem;min-width:150px;line-height:1.5">
+        <b>${head}</b>${sub ? `<br>${sub}` : ''}${stat ? `<br>${stat}` : ''}
+        ${(reg || fr) ? `<br>${[reg, fr].filter(Boolean).join(' · ')}` : ''}
+    </div>`;
+}
+// ESC schließt das Overlay
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('acw-overlay').classList.contains('acw-hidden')) acwClose(); });
 </script>
 </body>
 </html>
