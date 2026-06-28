@@ -5400,6 +5400,8 @@ async function ladeInfrastruktur(icao, force = false) {
   node["aeroway"~"terminal|gate|tower|fuel"](around:${r1},${ap.lat},${ap.lon});
   way["aeroway"~"terminal|gate|fuel"](around:${r1},${ap.lat},${ap.lon});
   relation["aeroway"="terminal"](around:${r1},${ap.lat},${ap.lon});
+  way["building"="terminal"](around:${r1},${ap.lat},${ap.lon});
+  relation["building"="terminal"](around:${r1},${ap.lat},${ap.lon});
   node["man_made"="radar"](around:${r3},${ap.lat},${ap.lon});
   way["man_made"="radar"](around:${r3},${ap.lat},${ap.lon});
   node["aeroway"="navigationaid"]["navaid:type"~"ILS|ILS-DME|LOC|LOC-DME|GS|VOR|VORDME|VORTAC|DVOR|NDB|NDB-DME|DME|TACAN"](around:${r2},${ap.lat},${ap.lon});
@@ -5541,6 +5543,8 @@ out center tags;`;
         for (const item of elements) {
             let t = item.tags?.aeroway;
             if (!t && item.tags?.man_made === 'radar') t = '_radar';
+            // Terminals, die in OSM nur als building=terminal getaggt sind (häufig!), mitnehmen
+            if (!t && item.tags?.building === 'terminal') t = 'terminal';
 
             // OSM navigationaid mit navaid:type → als synthetisches Navaid-Objekt
             if (t === 'navigationaid' && item.tags?.['navaid:type']) {
@@ -5577,7 +5581,12 @@ out center tags;`;
             const seen = new Set();
             groups['terminal'] = groups['terminal'].filter(item => {
                 const tags = item.tags || {};
-                const rawName = (tags.name || '').trim();
+                let rawName = (tags.name || '').trim();
+                // Kein Name, aber kurzer Ref (z. B. "2", "T2") → als "Terminal X" anzeigen statt verwerfen
+                if (!rawName && tags.ref && /^[A-Za-z0-9]{1,4}$/.test(tags.ref.trim())) {
+                    rawName = /terminal/i.test(tags.ref) ? tags.ref.trim() : 'Terminal ' + tags.ref.trim();
+                    tags.name = rawName;
+                }
                 if (!rawName) return false;                          // kein Name
                 if (/^[\d;,\s]+$/.test(rawName)) return false;      // reine Nummern (z.B. "222;223")
                 if (/\b(Flugsteig|Pier|Concourse|Finger)\b/i.test(rawName)) return false; // Concourses
