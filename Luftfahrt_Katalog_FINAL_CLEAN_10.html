@@ -1930,7 +1930,7 @@ function acExtCardHtml(ac,i,cls){
   const wiki='https://en.wikipedia.org/wiki/'+encodeURIComponent((ac.n||'').replace(/ /g,'_'));
   return `<div class="ac-card">
   <div class="ac-img-w" style="cursor:zoom-in" onclick="openPhoto3D(this.querySelector('img').src,this.closest('.ac-card').querySelector('.ac-name').textContent)">
-    <img class="ac-img" src="${esc(ac.img)}" alt="${esc(ac.n)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+    <img class="ac-img" src="${esc(ac.img)}" alt="${esc(ac.n)}" loading="lazy" referrerpolicy="no-referrer" data-wiki="${esc(ac.wiki||ac.n)}" onerror="acImgFallback(this)">
     <div class="ac-bdg">${ac.h?`<span class="ac-b ac-b-mfr">${esc(ac.h)}</span>`:''}${ac.y?`<span class="ac-b ac-b-yr">✈ ${esc(ac.y)}</span>`:''}</div>
   </div>
   <div class="ac-body">
