@@ -35,6 +35,19 @@
         body { overflow-x: hidden; max-width: 100%; }
         button, a, input, select { touch-action: manipulation; }
 
+        /* Nur für Screenreader sichtbar (visuell ausgeblendet) */
+        .sr-only {
+            position: absolute !important; width: 1px; height: 1px;
+            padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+            white-space: nowrap; border: 0;
+        }
+        /* Sichtbarer Tastatur-Fokus (Barrierefreiheit) */
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+            border-radius: var(--radius-sm);
+        }
+
         :root {
             --font:        'Inter', system-ui, sans-serif;
             --radius-sm:   6px;
@@ -371,6 +384,12 @@
             color: var(--color-chip-act-t);
             border-color: var(--color-chip-act-bd);
         }
+        .chip .chip-n {
+            display: inline-block; margin-left: 5px;
+            font-size: 0.66rem; font-weight: 700;
+            opacity: 0.6; font-variant-numeric: tabular-nums;
+        }
+        .chip.active .chip-n { opacity: 0.85; }
         .chip-sep { width: 1px; align-self: stretch; background: var(--color-border); margin: 2px 3px; }
         #zaehler {
             font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
@@ -735,11 +754,11 @@
     <div class="hero-inner">
         <div class="hero-glass-grid">
             <div class="hero-glass-card">
-                <div class="hero-stat-num">17</div>
+                <div class="hero-stat-num" id="stat-total">–</div>
                 <div class="hero-stat-label">Datenquellen</div>
             </div>
             <div class="hero-glass-card">
-                <div class="hero-stat-num accent">3</div>
+                <div class="hero-stat-num accent" id="stat-tracking">–</div>
                 <div class="hero-stat-label">Tracking-Tools</div>
             </div>
             <div class="hero-glass-card">
@@ -1164,7 +1183,32 @@ function render(){
                <div class="no-results-sub">Für deine Suche oder Filter gibt es keine Treffer. Setze die Filter zurück und versuche es erneut.</div>
                <button class="no-results-reset" onclick="resetFilter()">Filter zurücksetzen</button>
            </div>`;
+    befuelleStats();
     applyFilter();
+}
+
+// Hero-Kennzahlen und Chip-Zähler aus den Daten ableiten (bleibt automatisch korrekt)
+function befuelleStats(){
+    const total    = QUELLEN.length;
+    const tracking = QUELLEN.filter(q=>q.tracking).length;
+    const setTxt = (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+    setTxt('stat-total', total);
+    setTxt('stat-tracking', tracking);
+    // Zähler an die Filter-Chips hängen
+    const counts = {
+        '': total,
+        kostenlos: QUELLEN.filter(q=>q.kostenlos).length,
+        api:       QUELLEN.filter(q=>q.api).length
+    };
+    GRUPPEN_REIHENFOLGE.forEach(g=>{ counts[g] = QUELLEN.filter(q=>q.gruppe===g).length; });
+    document.querySelectorAll('#filter .chip').forEach(chip=>{
+        const key = chip.dataset.toggle || chip.dataset.gruppe || '';
+        const n = counts[key];
+        if(n == null) return;
+        let badge = chip.querySelector('.chip-n');
+        if(!badge){ badge = document.createElement('span'); badge.className = 'chip-n'; chip.appendChild(badge); }
+        badge.textContent = n;
+    });
 }
 
 function toggleCard(btn){

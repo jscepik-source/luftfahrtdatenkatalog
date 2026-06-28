@@ -515,6 +515,26 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:4px;
   padding:3px 8px;font-size:11px;cursor:pointer}
 
+/* ── Fokus-Ansicht (Deep-Link aus ourairports.html: nur ein Typ bzw. nur Tracker) ── */
+.focus-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  max-width:min(1440px,94vw);margin:1rem auto 0;padding:.7rem 1rem;
+  background:linear-gradient(135deg,rgba(8,145,178,.10),rgba(99,102,241,.08));
+  border:1px solid rgba(8,145,178,.25);border-radius:12px}
+.focus-bar-txt{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--tx)}
+.focus-bar-txt svg{width:17px;height:17px;stroke:var(--pl);fill:none;stroke-width:2;flex-shrink:0}
+.focus-bar-txt b{color:var(--pl);font-family:'Space Mono',monospace}
+.focus-bar button{margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  background:var(--pl);color:#fff;border:none;border-radius:8px;padding:7px 13px;
+  font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:filter .15s}
+.focus-bar button:hover{filter:brightness(1.08)}
+.focus-bar button svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2}
+#vDetail[data-focus] .dtb,#vDetail[data-focus] #acQuick{display:none!important}
+#vDetail[data-focus="reg"] #accWrap,
+#vDetail[data-focus="reg"] #acTools{display:none!important}
+#vDetail[data-focus="type"] #acTrack,
+#vDetail[data-focus="type"] #acTools{display:none!important}
+#vDetail[data-focus="type"] .ac-grid{grid-template-columns:1fr;max-width:560px;margin:0 auto}
+
 </style>
 </head>
 <body>
@@ -637,6 +657,10 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <h2 id="dTitle"></h2>
     <p id="dDesc"></p>
     <div class="dh-stats" id="dStats"></div>
+  </div>
+  <div class="focus-bar hide" id="focusBar">
+    <span class="focus-bar-txt" id="focusBarTxt"></span>
+    <button onclick="clearFocus()"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>Alle Flugzeuge anzeigen</button>
   </div>
   <div class="dtb">
     <div class="dtb-in">
@@ -1208,6 +1232,7 @@ src(5,3,2,5,5,'EASA CS-25 – FBW & Automated Systems Requirements','Anforderung
 // UI STATE
 var activeCat=null;
 var acGroup='all';   // aktive Flugzeug-Untergruppe für die Filter-Chips
+var acFocus=null;    // Deep-Link-Fokus: exakter Flugzeugname -> nur diese eine Typ-Karte zeigen
 
 function goHome(){
   document.getElementById('vHome').classList.remove('hide');
@@ -1447,6 +1472,10 @@ async function icaoToggle(card, query, code, kind){
 
 function loadCat(cat){
   activeCat=cat;
+  // Fokus-Ansicht (Deep-Link) zurücksetzen, falls aktiv
+  acFocus=null;
+  const _vd=document.getElementById('vDetail');if(_vd)_vd.removeAttribute('data-focus');
+  const _fb=document.getElementById('focusBar');if(_fb)_fb.classList.add('hide');
   const d=CAT[cat];
   document.getElementById('vHome').classList.add('hide');
   document.getElementById('vDetail').classList.remove('hide');
@@ -1729,6 +1758,25 @@ function acTogglePanel(id,btn){
 }
 function setAcGroup(g){acGroup=g;renderAccordion();}
 
+// ── Fokus-Ansicht (Deep-Link aus ourairports.html) ───────────────────────
+// mode='type' -> nur die eine Typ-Karte; mode='reg' -> nur Live-Tracker + Flugzeugdaten.
+function setFocus(mode,label){
+  const v=document.getElementById('vDetail');if(v)v.setAttribute('data-focus',mode);
+  const fb=document.getElementById('focusBar');const txt=document.getElementById('focusBarTxt');
+  if(txt)txt.innerHTML=`<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>${label}`;
+  if(fb)fb.classList.remove('hide');
+}
+function clearFocus(){
+  acFocus=null;
+  const v=document.getElementById('vDetail');if(v)v.removeAttribute('data-focus');
+  const fb=document.getElementById('focusBar');if(fb)fb.classList.add('hide');
+  ['acTrack','acTools'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.add('hide');});
+  ['qbTools','qbTrack'].forEach(id=>{const b=document.getElementById(id);if(b)b.classList.remove('active');});
+  acGroup='all';
+  renderAccordion();
+  const t=document.getElementById('dTitle');if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 // ── Eine vollständige Flugzeug-Karte (alle Infos bleiben erhalten) ────────
 function acCardHtml(ac,sub,i,dotClr,cls){
   const id=`acf-${i}`;
@@ -1853,8 +1901,15 @@ function renderAircraftFlat(){
   if(srt==='az')items.sort((a,b)=>a.ac.n.localeCompare(b.ac.n));
   else if(srt==='rat')items.sort((a,b)=>(b.ac.avg||0)-(a.ac.avg||0));
 
+  // Fokus-Ansicht (Deep-Link aus ourairports.html „Flugzeugtyp“): nur die eine Karte
+  if(acFocus){
+    const f=items.filter(x=>x.ac.n===acFocus);
+    if(f.length)items=f;
+    chipsHtml='';
+  }
+
   const activeGrp=groups.find(g=>g.id===acGroup);
-  const desc=activeGrp&&activeGrp.sub.desc?`<div class="ac-grp-desc">${activeGrp.sub.desc}</div>`:'';
+  const desc=(!acFocus&&activeGrp&&activeGrp.sub.desc)?`<div class="ac-grp-desc">${activeGrp.sub.desc}</div>`:'';
   const cards=items.map((x,i)=>x.g.ext?acExtCardHtml(x.ac,i,cls):acCardHtml(x.ac,x.g.sub,i,dotClr,cls)).join('');
   const grid=items.length
     ? `<div class="ac-grid">${cards}</div>`
@@ -1862,6 +1917,10 @@ function renderAircraftFlat(){
 
   document.getElementById('accWrap').innerHTML=`${chipsHtml}${desc}${grid}`;
   document.getElementById('dCnt').textContent=items.length;
+  // In der Fokus-Ansicht die einzelne Karte direkt aufklappen
+  if(acFocus&&items.length){
+    setTimeout(()=>{const b=document.getElementById('btn-acf-0');const bod=document.getElementById('bod-acf-0');if(b&&bod&&!bod.classList.contains('open'))toggleAc('acf-0');},70);
+  }
   setTimeout(loadAllPhotos,150);
   setTimeout(initWikiImages,50);
   setTimeout(initTilt,80);
@@ -2532,6 +2591,7 @@ function openYT(el, query, type) {
       loadCat('Flugzeuge');
       var trk=document.getElementById('acTrack');
       var qb=document.getElementById('qbTrack');
+      setFocus('reg','Flugzeug &amp; letzte Flüge · <b>'+esc(regParam.toUpperCase())+'</b>');
       setTimeout(function(){
         if(trk){trk.classList.remove('hide');trk.scrollIntoView({behavior:'smooth',block:'start'});}
         if(qb)qb.classList.add('active');
@@ -2548,20 +2608,30 @@ function openYT(el, query, type) {
     var qt=toks(q);
     var qKey=qt.filter(function(t){return /\d/.test(t);});   // Tokens mit Ziffern (737, a350, a320neo…)
     var best=null;
+    // Basismodell aus Katalog (CAT) + erweitertem Katalog (EXT_DATA) per Token-Abgleich suchen
+    var scan=function(ac){
+      var ct=toks(ac.n);
+      var sameMfr=qt.length&&ct.length&&qt[0]===ct[0];
+      var keyHit=qKey.length?qKey.some(function(k){return ct.indexOf(k)>=0;}):sameMfr;
+      if(sameMfr&&keyHit) best=ac.n;
+    };
     ((CAT['Flugzeuge']||{}).sections||[]).forEach(function(sec){
-      (sec.subs||[]).forEach(function(sub){
-        (sub.aircraft||[]).forEach(function(ac){
-          var ct=toks(ac.n);
-          var sameMfr=qt.length&&ct.length&&qt[0]===ct[0];
-          var keyHit=qKey.some(function(k){return ct.indexOf(k)>=0;});
-          if(sameMfr&&keyHit) best=ac.n;
-        });
-      });
+      (sec.subs||[]).forEach(function(sub){(sub.aircraft||[]).forEach(scan);});
     });
-    box.value=best||'';            // Treffer -> vorfiltern, sonst ganze Kategorie zeigen
-    filterAll();
+    if(typeof EXT_DATA!=='undefined'&&EXT_DATA)EXT_DATA.forEach(scan);
     var t=document.getElementById('dTitle');
-    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+    if(best){
+      // Fokus-Ansicht: nur die eine passende Typ-Karte, aufgeklappt
+      acFocus=best;
+      setFocus('type','Flugzeugtyp · <b>'+esc(best)+'</b>');
+      renderAircraftFlat();
+      if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+    }else{
+      // kein eindeutiges Basismodell -> normale gefilterte Suche
+      box.value=q;
+      filterAll();
+      if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+    }
   }catch(e){}
 })();
 

@@ -6496,7 +6496,11 @@ async function ladeFluege(icao, forceRefresh = false) {
             const modelLink = model
                 ? `<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" title="${model} im Flugzeug-Katalog ansehen">${model}</a>`
                 : '';
-            const regType = [reg, modelLink].filter(Boolean).join(' · ');
+            // Kennzeichen verlinkt -> Flugzeug-Katalog (Live-Tracker: letzte Flüge + Flugzeugdaten)
+            const regLink = reg
+                ? `<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?reg=${encodeURIComponent(reg)}" target="_blank" rel="noopener" title="Kennzeichen ${reg}: letzte Flüge & Flugzeugdaten">${reg}</a>`
+                : '';
+            const regType = [regLink, modelLink].filter(Boolean).join(' · ');
             const vert = adsbVerti(a);
             const sq   = a.squawk ? `SQ ${a.squawk}` : '';
             const subParts = [airlineHtml, regType, route, dist, sq].filter(Boolean);
@@ -6534,7 +6538,10 @@ async function ladeFluege(icao, forceRefresh = false) {
             const modelLink = model
                 ? `(<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?q=${encodeURIComponent(model)}" target="_blank" rel="noopener" title="${model} im Flugzeug-Katalog ansehen">${model}</a>)`
                 : '';
-            const regType= [reg, modelLink].filter(Boolean).join(' ');
+            const regLink = reg
+                ? `<a class="flug-typ-link" href="${FLUGZEUG_KATALOG_URL}?reg=${encodeURIComponent(reg)}" target="_blank" rel="noopener" title="Kennzeichen ${reg}: letzte Flüge & Flugzeugdaten">${reg}</a>`
+                : '';
+            const regType= [regLink, modelLink].filter(Boolean).join(' ');
             const meta   = [airline, regType, spd, dist, a.squawk ? `SQ ${a.squawk}` : ''].filter(Boolean).join(' · ');
             return `<div class="flug-range-item">
                 <span class="flug-range-cs">${cs}</span>
