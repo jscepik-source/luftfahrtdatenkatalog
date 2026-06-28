@@ -1787,7 +1787,12 @@ function clearFocus(){
 function acCardHtml(ac,sub,i,dotClr,cls){
   const id=`acf-${i}`;
   const stars=starsHtml(ac.avg);
-  const spHtml=(ac.specs||[]).map(([l,v])=>`<div class="ac-sp"><div class="ac-sl">${l}</div><div class="ac-sv">${v}</div></div>`).join('');
+  // Bereits vorhandene Stammdaten zusätzlich als Datenzeilen einblenden (akkurat, kein Erfinden)
+  const baseSpecs=[];
+  if(ac.erstflug) baseSpecs.push(['Erstflug',ac.erstflug]);
+  if(ac.h)        baseSpecs.push(['Hersteller',ac.h]);
+  if(ac.cs)       baseSpecs.push(['Zulassung',ac.cs]);
+  const spHtml=baseSpecs.concat(ac.specs||[]).map(([l,v])=>`<div class="ac-sp"><div class="ac-sl">${l}</div><div class="ac-sv">${v}</div></div>`).join('');
   const para=sub.id.includes('nb')||sub.id.includes('wb')?'6.4.1':(sub.id.includes('fracht')||sub.id.includes('freighter')||sub.id.includes('belly')?'6.4.2/6.4.3':'6.2');
   const fixedImg=(typeof AC_IMG!=='undefined'&&AC_IMG[ac.n])||'';
   const badges=`<div class="ac-bdg"><span class="ac-b ac-b-mfr">${ac.h}</span><span class="ac-b ac-b-yr">✈ ${ac.erstflug}</span></div>${ac.cs?`<span class="ac-cs-tag">${ac.cs}</span>`:''}`;
