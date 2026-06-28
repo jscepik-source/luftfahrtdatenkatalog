@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
         :root {
@@ -214,6 +215,21 @@
             display: none; white-space: nowrap;
         }
         #toast.show { display: block; }
+
+        /* ── Dezente Einblend-Animationen (animate.css-Keyframes) ── */
+        :root { --animate-duration: 0.5s; }
+        #legend { animation: fadeInUp 0.5s ease both; }
+        #stats-bar.show { animation: fadeInUp 0.4s ease both; }
+        #loading.show .loading-box { animation: zoomIn 0.3s ease both; }
+        #no-key-msg { animation: fadeIn 0.3s ease both; }
+        #no-key-msg .no-key-box { animation: fadeInUp 0.4s ease both; }
+        #settings-panel.open { animation: fadeIn 0.25s ease both; }
+        #toast.show { animation: fadeInUp 0.3s ease both; }
+        .leaflet-popup { animation: fadeIn 0.2s ease both; }
+        @media (prefers-reduced-motion: reduce) {
+            #legend, #stats-bar.show, #loading.show .loading-box, #no-key-msg,
+            #no-key-msg .no-key-box, #settings-panel.open, #toast.show, .leaflet-popup { animation: none !important; }
+        }
 
         /* ── Responsive ── */
         @media (max-width: 640px) {
