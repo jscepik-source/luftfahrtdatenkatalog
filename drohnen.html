@@ -18,7 +18,7 @@
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Luftfahrtdatenkatalog — UAV-Tracking & Drohnendaten">
-    <meta property="og:description" content="17 Datenquellen rund um Drohnen mit Fokus auf UAV-Tracking: Remote-ID-Erkennung, Geo-Zonen, Flugplanung, Regularien & Behörden.">
+    <meta property="og:description" content="18 Datenquellen rund um Drohnen mit Fokus auf UAV-Tracking: Remote-ID-Erkennung, Geo-Zonen, Flugplanung, Regularien & Behörden.">
     <meta property="og:locale" content="de_DE">
     <meta name="twitter:card" content="summary">
 
@@ -28,59 +28,12 @@
     <!-- Leaflet (interaktive Karten) — identische Einbindung wie auf der Flughafen-Seite -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- animate.css (dezente Einblend-Animationen) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* animate.css dezent & ruhig halten */
-        :root { --animate-duration: 0.5s; }
-        html { scroll-behavior: smooth; }
-        /* Apple-Stil: Hero gleitet beim Runterscrollen sanft weg (scroll-gekoppelter Parallax) */
-        @supports (animation-timeline: scroll()) {
-            .hero-inner {
-                animation: heroParallax linear both;
-                animation-timeline: scroll(root);
-                animation-range: 0 75vh;
-                will-change: opacity, transform;
-            }
-            @keyframes heroParallax {
-                to { opacity: 0.2; transform: translateY(-32px) scale(0.975); }
-            }
-        }
-        @media (prefers-reduced-motion: reduce) { .animate__animated { animation: none !important; } }
-        /* Modals sanft einblenden (nutzt animate.css-Keyframes) */
-        .modal-overlay.open { animation: fadeIn 0.25s; }
-        .modal-overlay.open .modal-box { animation: fadeInUp 0.35s; }
-        /* Reveal beim Scrollen — modern: native CSS Scroll-Driven Animation (an Scroll-Position
-           gekoppelt). Browser ohne Support fallen auf den IntersectionObserver (unten) zurück. */
-        @keyframes revealUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @supports (animation-timeline: view()) {
-            .reveal-on-scroll {
-                animation: revealUp linear both;
-                animation-timeline: view();
-                animation-range: entry 0% cover 35%;
-            }
-        }
-        .reveal-on-scroll.revealed { opacity: 1; }   /* Fallback-Klasse (IntersectionObserver) */
-        @media (prefers-reduced-motion: reduce) { .reveal-on-scroll { animation: none !important; opacity: 1 !important; } }
-
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { overflow-x: hidden; }
         body { overflow-x: hidden; max-width: 100%; }
         button, a, input, select { touch-action: manipulation; }
-
-        /* Nur für Screenreader sichtbar (visuell ausgeblendet) */
-        .sr-only {
-            position: absolute !important; width: 1px; height: 1px;
-            padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
-            white-space: nowrap; border: 0;
-        }
-        /* Sichtbarer Tastatur-Fokus (Barrierefreiheit) */
-        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
-            border-radius: var(--radius-sm);
-        }
 
         :root {
             --font:        'Inter', system-ui, sans-serif;
@@ -361,7 +314,7 @@
             border-bottom: 1px solid var(--color-border);
             padding: 10px var(--space-lg);
             position: sticky;
-            top: 48px;   /* unter der einheitlichen Themen-Topleiste */
+            top: 0;
             z-index: 100;
             transition: background var(--transition);
             box-shadow: 0 4px 20px rgba(27,54,93,0.05), 0 1px 0 var(--color-border);
@@ -418,12 +371,6 @@
             color: var(--color-chip-act-t);
             border-color: var(--color-chip-act-bd);
         }
-        .chip .chip-n {
-            display: inline-block; margin-left: 5px;
-            font-size: 0.66rem; font-weight: 700;
-            opacity: 0.6; font-variant-numeric: tabular-nums;
-        }
-        .chip.active .chip-n { opacity: 0.85; }
         .chip-sep { width: 1px; align-self: stretch; background: var(--color-border); margin: 2px 3px; }
         #zaehler {
             font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
@@ -591,15 +538,40 @@
         /* ── Gruppen-Trenner ── */
         .group-heading {
             display: flex; align-items: center; gap: 10px;
-            margin: var(--space-lg) 0 10px;
+            margin: var(--space-lg) 0 0;
             font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
             text-transform: uppercase; color: var(--color-text-dim);
+            cursor: pointer; user-select: none;
+            padding: 8px 0; border: none; background: none; width: 100%;
+            font-family: var(--font);
         }
+        .group-heading:hover { color: var(--color-text-sub); }
         .group-heading:first-of-type { margin-top: 0; }
         .group-heading .gh-line { flex: 1; height: 1px; background: var(--color-border); }
         .group-heading .gh-count {
             font-size: 0.65rem; color: var(--color-text-dim);
             background: var(--color-surface-2); padding: 2px 8px; border-radius: var(--radius-pill);
+        }
+        .group-heading .gh-chevron {
+            font-size: 0.6rem; transition: transform 0.25s ease; display: inline-block;
+        }
+        .group-section.collapsed .gh-chevron { transform: rotate(-90deg); }
+
+        .group-cards {
+            display: grid; gap: 0;
+            overflow: hidden;
+            transition: grid-template-rows 0.3s ease, opacity 0.2s ease;
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+        .group-cards > div { overflow: hidden; }
+        .group-section.collapsed .group-cards {
+            grid-template-rows: 0fr;
+            opacity: 0;
+            pointer-events: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .group-cards { transition: none; }
         }
 
         /* ── Loading / No-Results ── */
@@ -750,26 +722,6 @@
 <body>
 <noscript><style>body::before{content:"JavaScript ist erforderlich, um den Katalog zu laden.";display:block;padding:2rem;font-family:sans-serif;text-align:center;color:#64748b}</style></noscript>
 
-<!-- ── Themen-Navigation (einheitlich auf allen Seiten) ── -->
-<style>
-.avx-topnav{position:sticky;top:0;z-index:10000;box-sizing:border-box;min-height:48px;display:flex;align-items:center;gap:14px;background:#0f172a;border-bottom:1px solid #334155;padding:7px 16px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
-.avx-topnav a{text-decoration:none}
-.avx-topnav .avx-brand{color:#fff;font-weight:800;font-size:.9rem;flex:0 0 auto}
-.avx-topnav .avx-links{display:flex;gap:8px;flex:0 0 auto;margin-left:auto}
-.avx-topnav .avx-pill{color:#cbd5e1;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid #334155;transition:background .15s,color .15s,border-color .15s}
-.avx-topnav .avx-pill:hover{color:#fff;border-color:#4fc3f7}
-.avx-topnav .avx-pill.avx-active{background:#2563eb;border-color:#2563eb;color:#fff}
-</style>
-<nav class="avx-topnav" aria-label="Themenbereiche">
-  <a class="avx-brand" href="index.html">&#9992; Start</a>
-  <span class="avx-links">
-    <a class="avx-pill" href="ourairports.html">Flughäfen</a>
-    <a class="avx-pill" href="Luftfahrt_Katalog_FINAL_CLEAN_10.html">Flugzeuge</a>
-    <a class="avx-pill avx-active" href="drohnen.html">Drohnen</a>
-    <a class="avx-pill" href="luftraeume.html">Lufträume</a>
-  </span>
-</nav>
-
 <!-- ── Header ── -->
 <header>
     <div class="header-inner">
@@ -779,6 +731,11 @@
             <h1>UAV-Tracking &amp; Drohnendaten</h1>
             <p>Remote ID &middot; Geo-Zonen &middot; Flugplanung &middot; Regularien &middot; Behörden &middot; Wetter</p>
         </div>
+        <nav class="header-nav" aria-label="Katalog-Bereiche">
+            <a href="ourairports.html">Flughäfen</a>
+            <a href="drohnen.html" class="active" aria-current="page">UAVs / Drohnen</a>
+            <a href="https://valeryconstant9-ux.github.io/luftfahrt-katalog/Luftfahrt_Katalog_FINAL_CLEAN_5.html" target="_blank" rel="noopener">Flugzeuge ↗</a>
+        </nav>
         <button class="btn-theme" id="theme-btn" onclick="toggleTheme()" aria-label="Hell/Dunkel-Modus umschalten">🌙</button>
     </div>
 </header>
@@ -788,11 +745,11 @@
     <div class="hero-inner">
         <div class="hero-glass-grid">
             <div class="hero-glass-card">
-                <div class="hero-stat-num" id="stat-total">–</div>
+                <div class="hero-stat-num">18</div>
                 <div class="hero-stat-label">Datenquellen</div>
             </div>
             <div class="hero-glass-card">
-                <div class="hero-stat-num accent" id="stat-tracking">–</div>
+                <div class="hero-stat-num accent">4</div>
                 <div class="hero-stat-label">Tracking-Tools</div>
             </div>
             <div class="hero-glass-card">
@@ -872,6 +829,7 @@
         <a href="https://lba-openuav.de" target="_blank" rel="noopener">LBA OpenUAV</a>,
         <a href="https://www.openaip.net" target="_blank" rel="noopener">OpenAIP</a>,
         <a href="https://www.dronetag.com" target="_blank" rel="noopener">Dronetag</a>,
+        <a href="https://www.drone-check.eu" target="_blank" rel="noopener">Drone-Check</a>,
         <a href="https://dronemaps24.org" target="_blank" rel="noopener">DroneMaps24</a>,
         <a href="https://www.droniq.de" target="_blank" rel="noopener">Droniq</a>)
         sind eigenständige Dritte.
@@ -931,7 +889,7 @@
 <script>
 // ════════════════════════════════════════════════════════════════════
 //  Datengrundlage: Luftfahrtdatenkatalog, Kategorie "UAVs / Drohnen"
-//  (17 Quellen, Stand Juni 2026). AirMap und Altitude Angel entfernt (nicht
+//  (17 Quellen + Drone-Check = 18, Stand Juni 2026). AirMap und Altitude Angel entfernt (nicht
 //  public / eingestellt). DroneMaps24 und Droniq App (TraX) ergänzt.
 // ════════════════════════════════════════════════════════════════════
 const GRUPPEN = {
@@ -974,6 +932,16 @@ const QUELLEN = [
         abdeckung: 'Lokal (Empfangsreichweite)', kosten: 'Kostenlos',
         bemerkung: 'Keine Anmeldung nötig. Basiert auf ASTM-F3411-Standard für Remote ID. Zeigt vollständige Flugdaten erkannter Drohnen. Nur Android, kein iOS.',
         link: null, statusNote: ''
+    },
+    {
+        name: 'Drone-Check', gruppe: 'tracking', tracking: true, kostenlos: true, api: true, karte: true,
+        inhalt: 'Live-Karte geplanter und aktiver Drohnenflüge in Europa: Transparenzplattform für Anwohner, Piloten und Behörden.',
+        zielgruppe: 'Drohnenpiloten, Anwohner, Behörden, Plattform-Integratoren',
+        formate: 'Web (PWA), iOS, Android, REST API, MQTT', uniqueIds: '',
+        verfuegbarkeit: 'Public (Web + App); API Basic kostenlos', lizenz: 'Proprietär (Privacy-First)', aktualitaet: 'Echtzeit (Flugdaten 7 Tage sichtbar)',
+        abdeckung: 'Europa', kosten: 'Kostenlos (Basis); API Pro kostenpflichtig',
+        bemerkung: 'Belgische Transparenzplattform (seit 2025): Piloten kündigen Flüge freiwillig an, Anwohner und Behörden sehen diese auf einer Live-Karte. Keine Genehmigungsplattform — zeigt nur gemeldete Aktivitäten. Flugdaten werden nach 7 Tagen automatisch gelöscht. QR-Code-Generator und E-Mail-Benachrichtigungstool für Anwohner inklusive. API-Zugang für Drittplattformen verfügbar.',
+        link: 'https://www.drone-check.eu/', statusNote: ''
     },
     {
         name: 'DJI FlySafe Geo Zones', gruppe: 'zonen', tracking: false, kostenlos: true, api: false, karte: true,
@@ -1160,7 +1128,7 @@ function cardHTML(q, index){
             </div>` : '';
 
     return `
-    <article class="q-card reveal-on-scroll" data-gruppe="${esc(q.gruppe)}" data-track="${q.tracking?1:0}" data-free="${q.kostenlos?1:0}" data-api="${q.api?1:0}"
+    <article class="q-card" data-gruppe="${esc(q.gruppe)}" data-track="${q.tracking?1:0}" data-free="${q.kostenlos?1:0}" data-api="${q.api?1:0}"
              data-haystack="${esc((q.name+' '+q.inhalt+' '+q.formate+' '+q.zielgruppe+' '+q.bemerkung+' '+g.label).toLowerCase())}">
         <button class="card-header" aria-expanded="false" onclick="toggleCard(this)">
             <span class="grp-badge grp-${esc(q.gruppe)}">${g.icon} ${esc(g.label)}</span>
@@ -1199,17 +1167,25 @@ function render(){
     let lastGroup = null;
     sorted.forEach((q,i)=>{
         if(q.gruppe !== lastGroup){
+            // Vorherige Gruppe schließen
+            if(lastGroup !== null) html += `</div></div></section>`;
             const g = GRUPPEN[q.gruppe];
             const count = QUELLEN.filter(x=>x.gruppe===q.gruppe).length;
-            html += `<div class="group-heading" data-group-heading="${esc(q.gruppe)}">
-                        <span>${g.icon} ${esc(g.label)}</span>
-                        <span class="gh-count">${count}</span>
-                        <span class="gh-line"></span>
-                     </div>`;
+            html += `<section class="group-section collapsed" data-grp="${esc(q.gruppe)}">
+                        <button class="group-heading" data-group-heading="${esc(q.gruppe)}" onclick="toggleGroup(this)" aria-expanded="false">
+                            <span class="gh-chevron">▼</span>
+                            <span>${g.icon} ${esc(g.label)}</span>
+                            <span class="gh-count">${count}</span>
+                            <span class="gh-line"></span>
+                        </button>
+                        <div class="group-cards"><div>`;
             lastGroup = q.gruppe;
         }
         html += cardHTML(q,i);
     });
+    // Letzte Gruppe schließen
+    if(lastGroup !== null) html += `</div></div></section>`;
+
     document.getElementById('liste').innerHTML = html
         + `<div class="no-results-wrap" id="noResults" style="display:none">
                <div class="no-results-icon">🔍</div>
@@ -1217,55 +1193,13 @@ function render(){
                <div class="no-results-sub">Für deine Suche oder Filter gibt es keine Treffer. Setze die Filter zurück und versuche es erneut.</div>
                <button class="no-results-reset" onclick="resetFilter()">Filter zurücksetzen</button>
            </div>`;
-    befuelleStats();
     applyFilter();
-    setupReveal();
 }
 
-// Reveal beim Scrollen: Karten blenden sanft ein, sobald sie in den Viewport kommen
-// (moderne, abhängigkeitsfreie WOW.js-Alternative via IntersectionObserver).
-function setupReveal(){
-    // Moderne Browser: native CSS Scroll-Driven Animation (animation-timeline) übernimmt -> kein JS nötig
-    if(window.CSS && CSS.supports && CSS.supports('animation-timeline','view()')) return;
-    const els = [].slice.call(document.querySelectorAll('.reveal-on-scroll:not(.revealed)'));
-    if(!els.length) return;
-    if(!('IntersectionObserver' in window) || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
-        els.forEach(e=>e.classList.add('revealed')); return;
-    }
-    const io = new IntersectionObserver((entries)=>{
-        entries.forEach(en=>{
-            if(en.isIntersecting){
-                en.target.style.opacity='';
-                en.target.classList.add('revealed','animate__animated','animate__fadeInUp');
-                io.unobserve(en.target);
-            }
-        });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.04 });
-    els.forEach(e=>{ e.style.opacity='0'; io.observe(e); });   // nur JS versteckt beobachtete Karten
-}
-
-// Hero-Kennzahlen und Chip-Zähler aus den Daten ableiten (bleibt automatisch korrekt)
-function befuelleStats(){
-    const total    = QUELLEN.length;
-    const tracking = QUELLEN.filter(q=>q.tracking).length;
-    const setTxt = (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
-    setTxt('stat-total', total);
-    setTxt('stat-tracking', tracking);
-    // Zähler an die Filter-Chips hängen
-    const counts = {
-        '': total,
-        kostenlos: QUELLEN.filter(q=>q.kostenlos).length,
-        api:       QUELLEN.filter(q=>q.api).length
-    };
-    GRUPPEN_REIHENFOLGE.forEach(g=>{ counts[g] = QUELLEN.filter(q=>q.gruppe===g).length; });
-    document.querySelectorAll('#filter .chip').forEach(chip=>{
-        const key = chip.dataset.toggle || chip.dataset.gruppe || '';
-        const n = counts[key];
-        if(n == null) return;
-        let badge = chip.querySelector('.chip-n');
-        if(!badge){ badge = document.createElement('span'); badge.className = 'chip-n'; chip.appendChild(badge); }
-        badge.textContent = n;
-    });
+function toggleGroup(btn){
+    const section = btn.closest('.group-section');
+    const collapsed = section.classList.toggle('collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
 }
 
 function toggleCard(btn){
@@ -1286,8 +1220,22 @@ function toggleExpandAll(){
     alleOffen = !alleOffen;
     const btn = document.getElementById('expandAll');
     btn.textContent = alleOffen ? '▲ Alle zuklappen' : '▼ Alle aufklappen';
+
+    // Gruppen auf-/zuklappen
+    document.querySelectorAll('.group-section').forEach(sec=>{
+        const heading = sec.querySelector('.group-heading');
+        if(alleOffen){
+            sec.classList.remove('collapsed');
+            heading.setAttribute('aria-expanded','true');
+        } else {
+            sec.classList.add('collapsed');
+            heading.setAttribute('aria-expanded','false');
+        }
+    });
+
+    // Einzelne Karten auf-/zuklappen
     document.querySelectorAll('.q-card').forEach(card=>{
-        if(card.style.display === 'none') return; // skip filtered-out
+        if(card.style.display === 'none') return;
         const header = card.querySelector('.card-header');
         const body = card.querySelector('.card-body');
         const isOpen = card.classList.contains('card-open');
@@ -1324,9 +1272,10 @@ function applyFilter(){
         if(show){ visible++; groupHasVisible[grp] = true; }
     });
 
-    // Gruppen-Überschriften nur zeigen, wenn die Gruppe sichtbare Karten hat
-    document.querySelectorAll('[data-group-heading]').forEach(h=>{
-        h.style.display = groupHasVisible[h.dataset.groupHeading] ? '' : 'none';
+    // Gruppen-Sektionen nur zeigen, wenn die Gruppe sichtbare Karten hat
+    document.querySelectorAll('.group-section').forEach(sec=>{
+        const grp = sec.dataset.grp;
+        sec.style.display = groupHasVisible[grp] ? '' : 'none';
     });
 
     document.getElementById('noResults').style.display = visible ? 'none' : '';
@@ -1396,42 +1345,7 @@ document.addEventListener('keydown', e=>{
 // Hinweis: öffentlicher Client-seitiger OpenAIP-Key (wie auf der Flughafen-Seite eingebunden,
 // damit beide Seiten beim Zusammenführen konsistent bleiben). Bei Bedarf eigenen kostenlosen
 // OpenAIP-Key unter openaip.net eintragen.
-// Kein geteilter Key mehr: jeder Nutzer trägt seinen EIGENEN OpenAIP-Key ein
-// (nur lokal im Browser gespeichert, nie übertragen/veröffentlicht).
-function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
-// OpenAIP läuft standardmäßig über den Worker-Proxy (Key geheim im Worker, nie im Code).
-// Eigener Key (optional) -> OpenAIP direkt.
-const OAIP_PROXY = 'https://deploy.jscepik.workers.dev/oaip';
-function oaipTileTemplate(){
-    const k = getOpenAipKey();
-    return k ? `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${k}`
-             : `${OAIP_PROXY}/tiles/{z}/{x}/{y}.png`;
-}
-function oaipAirspaceFetch(qs){
-    const k = getOpenAipKey();
-    return k ? fetch(`https://api.core.openaip.net/api/airspaces?${qs}`, { headers: { 'x-openaip-api-key': k } })
-             : fetch(`${OAIP_PROXY}/airspaces?${qs}`);
-}
-function setOpenAipKey(){
-    const cur = localStorage.getItem('openaip_key') || '';
-    const k = prompt('Eigenen OpenAIP API-Key eingeben (kostenlos auf openaip.net/register).\nWird nur lokal in diesem Browser gespeichert:', cur);
-    if (k === null) return;
-    const v = k.trim();
-    if (v) { localStorage.setItem('openaip_key', v); location.reload(); }
-    else   { localStorage.removeItem('openaip_key'); location.reload(); }
-}
-function addOaipKeyControl(map){
-    const C = L.Control.extend({ options:{ position:'topright' }, onAdd(){
-        const d = L.DomUtil.create('div', 'leaflet-bar');
-        const a = L.DomUtil.create('a', '', d);
-        a.href = '#'; a.title = 'Eigenen OpenAIP-Key eintragen, um Lufträume zu laden';
-        a.style.cssText = 'width:auto;padding:0 8px;white-space:nowrap;font-size:12px';
-        a.textContent = '🔑 OpenAIP-Key';
-        L.DomEvent.on(a, 'click', e => { L.DomEvent.preventDefault(e); L.DomEvent.stopPropagation(e); setOpenAipKey(); });
-        return d;
-    }});
-    map.addControl(new C());
-}
+const OPENAIP_KEY = '2800111e267cd352c035b2df2102fbdf';
 
 const OAIP_UNIT       = {0:'ft', 1:'FL', 2:'m'};
 const OAIP_REF        = {0:'GND', 1:'MSL', 2:'STD'};
@@ -1491,11 +1405,15 @@ function oaipFormatAlt(lim){
 }
 
 async function ladeOpenAipLuftraum(map, lat, lon){
+    if(!OPENAIP_KEY) return;
     // Vorherige Lufträume + Legende entfernen (für Neuladen/Suche)
     if(map._oaipLayer){ map.removeLayer(map._oaipLayer); map._oaipLayer = null; }
     if(map._oaipLegend){ map.removeControl(map._oaipLegend); map._oaipLegend = null; }
     try {
-        const res = await oaipAirspaceFetch(`page=0&limit=100&pos=${lat},${lon}&dist=50000`);
+        const res = await fetch(
+            `https://api.core.openaip.net/api/airspaces?page=0&limit=100&pos=${lat},${lon}&dist=50000`,
+            { headers: { 'x-openaip-api-key': OPENAIP_KEY } }
+        );
         if(!res.ok) return;
         const data = await res.json();
         const layer = L.layerGroup();
@@ -1565,15 +1483,12 @@ function initDrohnenKarte(el){
     });
     osm.addTo(map);
     const ctrl = L.control.layers({ 'Straßenkarte': osm, '🛰 Satellit': sat }, {}, { position:'topright', collapsed:true }).addTo(map);
-    const _oaKey = getOpenAipKey();
-    if(_oaKey){
+    if(OPENAIP_KEY){
         const oaipTiles = L.tileLayer(
-            `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${_oaKey}`,
+            `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${OPENAIP_KEY}`,
             { attribution:'© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom:17, opacity:0.7 }
         );
         ctrl.addOverlay(oaipTiles, '🌐 OpenAIP-Kacheln');
-    } else {
-        addOaipKeyControl(map);   // ohne Key: Button zum Eintragen anbieten
     }
 
     // Container war beim Init evtl. ausgeblendet → Größe neu berechnen
