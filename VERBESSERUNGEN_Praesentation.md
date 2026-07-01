@@ -71,11 +71,12 @@ Die Überarbeitung umfasst **fünf Themenblöcke**:
 
 **Bewertung des Risikos:** Read-only Kartendaten, kostenlos → kein Account-Zugriff, keine Kosten, kein echtes „Hacking"-Risiko; höchstens Kontingent-Mitnutzung. Dennoch ist ein exponierter Schlüssel unsaubere Praxis.
 
-**Lösung — serverseitiger Proxy (Cloudflare Worker):**
-- Der Schlüssel liegt als **verschlüsselte Umgebungsvariable im Worker**, nie im Seiten-Code.
-- Die Seiten rufen den Worker (`/oaip/tiles`, `/oaip/airspaces`) statt OpenAIP direkt.
-- **Ergebnis:** Karten funktionieren **für alle Besucher ohne eigenen Key**, und der Schlüssel ist **nirgends öffentlich** sichtbar.
-- Fällt der Worker aus, bleibt die OpenStreetMap-Basiskarte funktionsfähig (graceful degradation). Ein eigener Key kann optional als Override lokal hinterlegt werden.
+**Lösung — serverseitiger Proxy (Cloudflare Worker) als saubere Architektur:**
+- Der Schlüssel kann als **verschlüsselte Umgebungsvariable im Worker** liegen, nie im Seiten-Code (Code liegt fertig als `worker_complete.js` bereit).
+- Die Seiten rufen dann den Worker (`/oaip/tiles`, `/oaip/airspaces`) statt OpenAIP direkt.
+- **Ergebnis:** Karten funktionieren für alle Besucher ohne eigenen Key, und der Schlüssel ist nirgends öffentlich sichtbar.
+
+**Aktueller Betriebsmodus:** Für den sofortigen, aufwandsfreien Betrieb (ohne Deploy) wird derzeit ein geteilter, kostenloser Read-only-Kartenschlüssel direkt genutzt; ein eigener Key kann optional lokal (Browser) als Override hinterlegt werden. Der Worker-Proxy ist als **umschaltbare, sicherere Variante** vorbereitet. → Zeigt bewusst die **Abwägung Sicherheit ↔ Einfachheit**.
 
 **Architektur-Prinzip:** Trennung von Geheimnis (Server) und Darstellung (Client) — dasselbe Muster, das bereits der KI-Assistent (Groq-Schlüssel im Worker) nutzt.
 
