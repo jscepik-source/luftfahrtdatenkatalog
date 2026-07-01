@@ -425,6 +425,25 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .eng-thumb{width:64px;height:64px;border-radius:8px;flex-shrink:0;background:var(--s2) center/cover no-repeat;border:1px solid var(--b0);position:relative}
 .eng-thumb::after{content:'\2699';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--fa);opacity:.45}
 .eng-thumb.has-photo::after{display:none}
+/* Statistik-Dashboard (live aus Katalog-Daten) */
+.stats-dash{margin-bottom:1.5rem}
+.stats-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.stat-kpi{background:var(--s1);border:1px solid var(--b0);border-radius:10px;padding:.85rem .9rem;text-align:center}
+.stat-kpi-n{font-size:1.55rem;font-weight:800;color:var(--st);line-height:1;font-family:'Space Mono',monospace}
+.stat-kpi-l{font-size:11px;color:var(--mu);margin-top:5px;line-height:1.3}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
+.stat-card{background:var(--s1);border:1px solid var(--b0);border-radius:12px;padding:1rem 1.1rem}
+.stat-card-t{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:.85rem}
+.stat-bars{display:flex;flex-direction:column;gap:7px}
+.stat-bar-row{display:flex;align-items:center;gap:9px;font-size:12px}
+.stat-bar-lbl{flex:0 0 92px;color:var(--mu);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat-bar-track{flex:1;height:14px;background:var(--s3);border-radius:7px;overflow:hidden}
+.stat-bar-fill{display:block;height:100%;border-radius:7px;min-width:3px;animation:statGrow .7s cubic-bezier(.22,.61,.36,1) both}
+@keyframes statGrow{from{width:0 !important}}
+.stat-bar-val{flex:0 0 36px;font-weight:700;color:var(--tx);font-family:'Space Mono',monospace}
+.stats-note{font-size:11px;color:var(--fa);margin:12px 2px 4px}
+.stat-hint{font-size:12px;color:var(--mu)}
+@media(prefers-reduced-motion:reduce){.stat-bar-fill{animation:none}}
 .icao-exp-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--b0);border:1px solid var(--b0);border-radius:6px;overflow:hidden;margin:.1rem 0 .65rem}
 .icao-fact{background:var(--s1);padding:.45rem .65rem}
 .icao-fact-l{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--fa);font-weight:700}
@@ -2097,6 +2116,60 @@ function renderAircraftFlat(){
   setTimeout(initTilt,80);
 }
 
+// ── Statistik-Dashboard: echte Diagramme, live aus den Katalog-Daten berechnet ──
+function _statYear(v){ var m=String(v==null?'':v).match(/(1[89]\d\d|20\d\d)/); return m?parseInt(m[1],10):null; }
+function statsCollect(){
+  var years=[], mfr={}, acCount=0;
+  ((CAT['Flugzeuge']||{}).sections||[]).forEach(function(sec){(sec.subs||[]).forEach(function(sub){(sub.aircraft||[]).forEach(function(ac){
+    acCount++; var y=_statYear(ac.erstflug); if(y)years.push(y);
+    if(ac.h){ var h=String(ac.h).split(/[\/,]| \/ | - /)[0].trim(); if(h)mfr[h]=(mfr[h]||0)+1; }
+  });});});
+  if(typeof EXT_DATA!=='undefined' && EXT_DATA){ EXT_DATA.forEach(function(a){ acCount++; var y=_statYear(a.y); if(y)years.push(y); if(a.h){ var h=String(a.h).split(/[\/,]| \/ | - /)[0].trim(); if(h)mfr[h]=(mfr[h]||0)+1; } }); }
+  var eng={}, engCount=0; if(typeof ENG_DATA!=='undefined' && ENG_DATA){ ENG_DATA.forEach(function(r){ engCount++; var t=(r[2]||'Sonstige'); eng[t]=(eng[t]||0)+1; }); }
+  return {years:years, mfr:mfr, eng:eng, acCount:acCount, engCount:engCount};
+}
+function _statTop(obj,n){ return Object.keys(obj).map(function(k){return {label:k,n:obj[k]};}).sort(function(a,b){return b.n-a.n;}).slice(0,n); }
+function _statBars(items,color){
+  if(!items.length) return '<div class="stat-hint">Lädt …</div>';
+  var max=Math.max.apply(null,items.map(function(i){return i.n;}).concat([1]));
+  return '<div class="stat-bars">'+items.map(function(i){
+    return '<div class="stat-bar-row"><span class="stat-bar-lbl" title="'+esc(i.label)+'">'+esc(i.label)+'</span>'
+      +'<span class="stat-bar-track"><span class="stat-bar-fill" style="width:'+(i.n/max*100).toFixed(1)+'%;background:'+color+'"></span></span>'
+      +'<span class="stat-bar-val">'+i.n+'</span></div>';
+  }).join('')+'</div>';
+}
+function renderStatsDashboard(){
+  var s=statsCollect();
+  var srcCount=0; ((CAT['Statistik']||{}).sections||[]).forEach(function(sec){(sec.subs||[]).forEach(function(sub){srcCount+=(sub.sources||[]).length;});});
+  var yMin=s.years.length?Math.min.apply(null,s.years):null, yMax=s.years.length?Math.max.apply(null,s.years):null;
+  var decMap={}; s.years.forEach(function(y){ var dec=Math.floor(y/10)*10; decMap[dec]=(decMap[dec]||0)+1; });
+  var decades=Object.keys(decMap).map(Number).sort(function(a,b){return a-b;}).map(function(k){return {label:k+'er',n:decMap[k]};});
+  var topM=_statTop(s.mfr,8);
+  var engItems=_statTop(s.eng,20);
+  var kpi=function(v,l){ return '<div class="stat-kpi"><div class="stat-kpi-n">'+v+'</div><div class="stat-kpi-l">'+l+'</div></div>'; };
+  return '<div id="statsDash" class="stats-dash">'
+    +'<div class="stats-kpis">'
+      +kpi(s.acCount,'Flugzeugmuster')
+      +kpi(s.engCount||'…','Triebwerke')
+      +kpi((yMin&&yMax)?(yMax-yMin)+' Jahre':'—',(yMin&&yMax)?('Zeitspanne '+yMin+'–'+yMax):'Zeitspanne')
+      +kpi(srcCount,'Statistik-Quellen')
+    +'</div>'
+    +'<div class="stats-grid">'
+      +'<div class="stat-card"><div class="stat-card-t">✈ Flugzeugmuster nach Jahrzehnt (Erstflug)</div>'+_statBars(decades,'var(--ac)')+'</div>'
+      +'<div class="stat-card"><div class="stat-card-t">🏭 Top-Hersteller (Anzahl Muster)</div>'+_statBars(topM,'var(--pl)')+'</div>'
+      +'<div class="stat-card"><div class="stat-card-t">⚙ Triebwerke nach Typ</div>'+_statBars(engItems,'var(--en)')+'</div>'
+    +'</div>'
+    +'<div class="stats-note">📊 Live aus den Katalog-Daten berechnet. Darunter: kuratierte externe Statistik-Quellen nach neun Kriterien.</div>'
+  +'</div>';
+}
+function loadStatsData(){
+  var need=[];
+  if(typeof ENG_DATA==='undefined' || !ENG_DATA) need.push(fetch('engines.json').then(function(r){return r.json();}).then(function(d){ENG_DATA=d;}).catch(function(){}));
+  if(typeof EXT_DATA==='undefined' || !EXT_DATA) need.push(fetch('aircraft_ext.json').then(function(r){return r.json();}).then(function(d){EXT_DATA=d;}).catch(function(){}));
+  if(!need.length) return;
+  Promise.all(need).then(function(){ var el=document.getElementById('statsDash'); if(el && activeCat==='Statistik') el.outerHTML=renderStatsDashboard(); });
+}
+
 function renderAccordion(){
   if(!activeCat)return;
   if(activeCat==='Flugzeuge'){renderAircraftFlat();return;}
@@ -2253,7 +2326,9 @@ function renderAccordion(){
 </div>`;
   }).join('');
 
-  document.getElementById('accWrap').innerHTML=html;
+  const statsHtml = (activeCat==='Statistik' && !document.getElementById('dSrch').value) ? renderStatsDashboard() : '';
+  document.getElementById('accWrap').innerHTML=statsHtml+html;
+  if(activeCat==='Statistik' && statsHtml) setTimeout(loadStatsData, 30);
   setTimeout(loadAllPhotos, 150);
   if(activeCat==='Flugzeuge')setTimeout(initWikiImages,50);
   setTimeout(initTilt,80)||(srch?`<div class="nores"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Keine Quellen gefunden.</p></div>`:'');
