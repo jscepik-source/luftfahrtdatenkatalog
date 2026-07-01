@@ -648,6 +648,24 @@
             padding: var(--space-md);
         }
 
+        /* ── Sort select ── */
+        .sort-select {
+            font-family: var(--font); font-size: 0.72rem; font-weight: 600;
+            color: var(--color-text-sub); background: var(--color-surface);
+            border: 1px solid var(--color-border); padding: 5px 28px 5px 10px;
+            border-radius: var(--radius-pill); cursor: pointer;
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 10px center;
+            transition: all var(--transition); white-space: nowrap;
+        }
+        .sort-select:hover { border-color: var(--color-primary); }
+        .sort-select:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+        [data-theme="dark"] .sort-select {
+            background-color: var(--color-surface-2);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
+        }
+
         /* ── Expand-all button ── */
         .btn-expand-all {
             display: inline-flex; align-items: center; gap: 5px;
@@ -796,6 +814,12 @@
         </div>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
             <p id="zaehler" aria-live="polite" aria-atomic="true"></p>
+            <select id="sortierung" class="sort-select" aria-label="Sortierung" onchange="wechsleSortierung()">
+                <option value="kategorie">Sortierung: Kategorie</option>
+                <option value="az">Sortierung: A – Z</option>
+                <option value="abdeckung">Sortierung: Abdeckung ↓</option>
+                <option value="kosten">Sortierung: Kostenlos zuerst</option>
+            </select>
             <button class="btn-expand-all" id="expandAll" onclick="toggleExpandAll()" title="Alle Quellen auf- oder zuklappen">▼ Alle aufklappen</button>
         </div>
     </div>
@@ -1159,23 +1183,66 @@ function cardHTML(q, index){
     </article>`;
 }
 
+let aktiveSortierung = 'kategorie';
+
+function abdeckungScore(s){
+    const t = (s||'').toLowerCase();
+    if(t.includes('global') || t.includes('weltweit')) return 0;
+    if(t.includes('europa') || t.includes('eu')) return 1;
+    if(t.includes('deutschland') && (t.includes('schweiz')||t.includes('/'))) return 2;
+    if(t.includes('deutschland')) return 3;
+    return 4;
+}
+function kostenScore(s){
+    const t = (s||'').toLowerCase();
+    if(t.startsWith('kostenlos') && !t.includes('teils') && !t.includes('pro ') && !t.includes('basis')) return 0;
+    if(t.includes('kostenlos') || t.includes('free')) return 1;
+    return 2;
+}
+
+function sortQuellen(modus){
+    let arr = [...QUELLEN];
+    if(modus === 'az'){
+        arr.sort((a,b)=> a.name.localeCompare(b.name, 'de'));
+    } else if(modus === 'abdeckung'){
+        arr.sort((a,b)=> abdeckungScore(a.abdeckung) - abdeckungScore(b.abdeckung) || a.name.localeCompare(b.name,'de'));
+    } else if(modus === 'kosten'){
+        arr.sort((a,b)=> kostenScore(a.kosten) - kostenScore(b.kosten) || a.name.localeCompare(b.name,'de'));
+    }
+    const byGroup = {};
+    arr.forEach(q=>{ (byGroup[q.gruppe] = byGroup[q.gruppe]||[]).push(q); });
+    const result = [];
+    GRUPPEN_REIHENFOLGE.forEach(g=>{ if(byGroup[g]) result.push(...byGroup[g]); });
+    return result;
+}
+
+function wechsleSortierung(){
+    aktiveSortierung = document.getElementById('sortierung').value;
+    render();
+}
+
 function render(){
-    // Quellen nach Gruppen-Reihenfolge sortieren (Tracking zuerst)
-    const sorted = [...QUELLEN].sort((a,b)=>
-        GRUPPEN_REIHENFOLGE.indexOf(a.gruppe) - GRUPPEN_REIHENFOLGE.indexOf(b.gruppe));
+    // Zustand merken: welche Gruppen sind gerade offen?
+    const openGroups = new Set();
+    document.querySelectorAll('.group-section:not(.collapsed)').forEach(sec=>{
+        openGroups.add(sec.dataset.grp);
+    });
+    const isFirstRender = document.querySelectorAll('.group-section').length === 0;
+
+    const sorted = sortQuellen(aktiveSortierung);
     let html = '';
     let lastGroup = null;
     sorted.forEach((q,i)=>{
         if(q.gruppe !== lastGroup){
-            // Vorherige Gruppe schließen
             if(lastGroup !== null) html += `</div></div></section>`;
             const g = GRUPPEN[q.gruppe];
-            const count = QUELLEN.filter(x=>x.gruppe===q.gruppe).length;
-            html += `<section class="group-section collapsed" data-grp="${esc(q.gruppe)}">
-                        <button class="group-heading" data-group-heading="${esc(q.gruppe)}" onclick="toggleGroup(this)" aria-expanded="false">
+            const total = QUELLEN.filter(x=>x.gruppe===q.gruppe).length;
+            const isOpen = !isFirstRender && openGroups.has(q.gruppe);
+            html += `<section class="group-section${isOpen ? '' : ' collapsed'}" data-grp="${esc(q.gruppe)}">
+                        <button class="group-heading" data-group-heading="${esc(q.gruppe)}" onclick="toggleGroup(this)" aria-expanded="${isOpen ? 'true' : 'false'}">
                             <span class="gh-chevron">▼</span>
                             <span>${g.icon} ${esc(g.label)}</span>
-                            <span class="gh-count">${count}</span>
+                            <span class="gh-count" data-total="${total}">${total}</span>
                             <span class="gh-line"></span>
                         </button>
                         <div class="group-cards"><div>`;
@@ -1183,7 +1250,6 @@ function render(){
         }
         html += cardHTML(q,i);
     });
-    // Letzte Gruppe schließen
     if(lastGroup !== null) html += `</div></div></section>`;
 
     document.getElementById('liste').innerHTML = html
@@ -1221,7 +1287,6 @@ function toggleExpandAll(){
     const btn = document.getElementById('expandAll');
     btn.textContent = alleOffen ? '▲ Alle zuklappen' : '▼ Alle aufklappen';
 
-    // Gruppen auf-/zuklappen
     document.querySelectorAll('.group-section').forEach(sec=>{
         const heading = sec.querySelector('.group-heading');
         if(alleOffen){
@@ -1233,7 +1298,6 @@ function toggleExpandAll(){
         }
     });
 
-    // Einzelne Karten auf-/zuklappen
     document.querySelectorAll('.q-card').forEach(card=>{
         if(card.style.display === 'none') return;
         const header = card.querySelector('.card-header');
@@ -1259,7 +1323,7 @@ function applyFilter(){
     const q = (document.getElementById('suche').value || '').trim().toLowerCase();
     const cards = document.querySelectorAll('.q-card');
     let visible = 0;
-    const groupHasVisible = {};
+    const groupVisible = {};
 
     cards.forEach(card=>{
         const grp = card.dataset.gruppe;
@@ -1269,13 +1333,19 @@ function applyFilter(){
         if(aktiveToggles.api && card.dataset.api !== '1') show = false;
         if(show && q && !card.dataset.haystack.includes(q)) show = false;
         card.style.display = show ? '' : 'none';
-        if(show){ visible++; groupHasVisible[grp] = true; }
+        if(show){ visible++; groupVisible[grp] = (groupVisible[grp]||0) + 1; }
     });
 
-    // Gruppen-Sektionen nur zeigen, wenn die Gruppe sichtbare Karten hat
+    const filtersActive = !!(aktiveGruppe || aktiveToggles.kostenlos || aktiveToggles.api || q);
     document.querySelectorAll('.group-section').forEach(sec=>{
         const grp = sec.dataset.grp;
-        sec.style.display = groupHasVisible[grp] ? '' : 'none';
+        const vis = groupVisible[grp] || 0;
+        sec.style.display = vis ? '' : 'none';
+        const badge = sec.querySelector('.gh-count');
+        if(badge){
+            const total = parseInt(badge.dataset.total);
+            badge.textContent = (filtersActive && vis < total) ? `${vis} von ${total}` : `${total}`;
+        }
     });
 
     document.getElementById('noResults').style.display = visible ? 'none' : '';
