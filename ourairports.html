@@ -2925,9 +2925,9 @@ const NOTAM_INFO_URL        = 'https://raw.githubusercontent.com/jscepik-source/
 const FLUGZEUG_KATALOG_URL  = 'Luftfahrt_Katalog_FINAL_CLEAN_10.html';   // Live-ADS-B-Typ -> Flugzeug-Katalog
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
 const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/lxnav_latest.json';
-// Kein geteilter Key mehr: jeder Nutzer trägt seinen EIGENEN OpenAIP-Key ein.
-// Wird nur lokal im Browser gespeichert (localStorage), nie übertragen/veröffentlicht.
-function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
+// Geteilter OpenAIP-Key (read-only Kartendaten) -> Karten laufen sofort ohne Setup.
+// Ein eigener Key (localStorage) hat Vorrang und nutzt das eigene Limit.
+function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '2800111e267cd352c035b2df2102fbdf').trim(); }
 // OpenAIP läuft standardmäßig über den Worker-Proxy (Key liegt geheim im Worker,
 // nie im Seiten-Code). Wer einen eigenen Key einträgt, nutzt OpenAIP direkt.
 const OAIP_PROXY = 'https://deploy.jscepik.workers.dev/oaip';

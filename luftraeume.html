@@ -451,9 +451,9 @@ let map, geoLayer;
 
 // Geteilter Standard-OpenAIP-Key, damit die Karte OHNE eigenen Key funktioniert.
 // Ein eigener Key (⚙) hat Vorrang und nutzt das eigene Limit.
-// Kein geteilter Key mehr: jeder Nutzer trägt seinen EIGENEN OpenAIP-Key ein
-// (nur lokal im Browser gespeichert, nie übertragen/veröffentlicht).
-function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
+// Geteilter OpenAIP-Key (read-only Kartendaten) -> Karten laufen sofort ohne Setup.
+// Ein eigener Key (localStorage, ⚙-Panel) hat Vorrang und nutzt das eigene Limit.
+function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '2800111e267cd352c035b2df2102fbdf').trim(); }
 // OpenAIP läuft standardmäßig über den Worker-Proxy (Key geheim im Worker, nie im Code).
 // Eigener Key (optional, Settings) -> OpenAIP direkt.
 const OAIP_PROXY = 'https://deploy.jscepik.workers.dev/oaip';
