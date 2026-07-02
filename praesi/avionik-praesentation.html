@@ -272,7 +272,7 @@
   .fig-card h4{font-size:17px;margin:14px 4px 2px;color:#cdd8ee}
   .fig-card p{font-size:15px;color:var(--muted);margin:2px 4px 6px;line-height:1.5}
   .fig-src{font-family:var(--mono);font-size:11.5px;color:var(--muted);opacity:.85;margin:6px 4px 0}
-  .brand img{height:44px;display:block}
+  .brand img{height:44px;display:block;filter:brightness(0) invert(1)}
   .section-hero{border-radius:18px;overflow:hidden;border:1px solid var(--line);margin-top:26px;position:relative}
   .section-hero img{display:block;width:100%;height:auto}
   .section-hero .cap{position:absolute;left:0;right:0;bottom:0;padding:18px 22px;font-size:13px;color:#dfe7f5;
@@ -345,6 +345,12 @@
   .alfus .tag{position:absolute;top:50%;transform:translateY(-50%);right:12px;font-family:var(--mono);font-size:12px;color:#fff;font-weight:700}
   .alfus-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:4px;padding-left:268px}
   @media(max-width:760px){.alfus-scale{padding-left:0}}
+
+  /* Kapitel-Trenner (Chancen / Risiken / Antwort) */
+  .secdiv{display:flex;align-items:center;gap:16px}
+  .secdiv::after{content:"";flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,currentColor,transparent);opacity:.45}
+  .secdiv-lab{font-family:var(--mono);font-size:17px;letter-spacing:2px;text-transform:uppercase;font-weight:800;white-space:nowrap}
+  .cbadge{font-size:38px;line-height:1;margin-bottom:8px}
 
   /* ---------- A320 fly-by (real cutout, cinematic) ---------- */
   .flyby{position:fixed;inset:0;z-index:130;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .25s ease}
@@ -1067,15 +1073,18 @@
     <div class="dfeedback" style="font-size:15px;margin-top:18px">Heute stark bei Aufgabe &amp; Umgebung — aber die entscheidende Achse <b>Human Independence bleibt niedrig</b>: hochautomatisiert, <b>nicht autonom</b>. Technische ≠ menschliche (ethische) Autonomie.<a class="cite" href="#quellen">[20,21,6]</a></div>
   </div>
 
-  <div class="fig-row reveal" style="grid-template-columns:1fr">
-    <div class="fig-card"><div class="figure"><img src="webseite-praesi-assets/image23.png" alt="Auto-GCAS"></div><h4>Auto-GCAS</h4><p>Szenario → Systemreaktion → Rettung: autonomer Steigflug bei drohender Kollision</p>
-      <p style="font-size:17px;color:#c8d3e8;margin:12px 4px 2px;line-height:1.5"><b style="color:#86b0ff">+ FORDEC:</b> KI als virtueller Co-Pilot — Was-wäre-wenn-Szenarien, entlastet die Crew in Stresssituationen</p><div class="fig-src">Grafikquelle: NotebookLM (KI-generiert)</div></div>
-    
+  <!-- ===== CHANCEN ===== -->
+  <div class="reveal secdiv" style="margin-top:56px;color:#27c08a"><span class="secdiv-lab">✓ Chancen</span></div>
+  <div class="fig-row reveal" style="grid-template-columns:1.3fr 1fr 1fr;margin-top:22px">
+    <div class="fig-card"><div class="figure"><img src="webseite-praesi-assets/image23.png" alt="Auto-GCAS"></div><h4>Sicherheit · Auto-GCAS</h4><p>Bei Handlungsunfähigkeit (z. B. Hypoxie) leitet das System autonom den Steigflug ein — bevor der Mensch reagiert.</p><div class="fig-src">Grafikquelle: NotebookLM (KI-generiert)</div></div>
+    <div class="fig-card"><div class="cbadge">🤝</div><h4>Entlastung · FORDEC</h4><p>KI als virtueller Co-Pilot: rechnet Was-wäre-wenn im Hintergrund, entlastet die Crew im Stress.</p></div>
+    <div class="fig-card"><div class="cbadge">🍃</div><h4>Effizienz · 4D-Bahn</h4><p>Treibstoff- &amp; lärmoptimierte Trajektorien (Cost Index) — spart Sprit und CO₂.</p></div>
   </div>
 
-  <!-- Risiken kombiniert: Skill Degradation + Modus-Konfusion -->
-  <h3 class="reveal" style="margin-top:56px">Risiken: Skill Degradation &amp; Modus-Konfusion</h3>
-  <p class="lead reveal">Mehr Automatik → weniger Übung; bei abrupter Rückgabe der Kontrolle wird es kritisch<a class="cite" href="#quellen">[8,24]</a></p>
+  <!-- ===== RISIKEN ===== -->
+  <div class="reveal secdiv" style="margin-top:64px;color:#e3242b"><span class="secdiv-lab">⚠ Risiken</span></div>
+  <h3 class="reveal" style="margin-top:26px">Skill Degradation &amp; Modus-Konfusion</h3>
+  <p class="lead reveal">Mehr Automatik → weniger Übung; abrupte Kontrollrückgabe wird kritisch<a class="cite" href="#quellen">[8,24]</a></p>
   <div class="fig-row reveal" style="grid-template-columns:1fr">
     <div class="fig-card">
       <div class="chart" style="background:none;border:0;padding:4px 0">
@@ -1158,13 +1167,15 @@
       <h4 style="font-size:16px;color:#86b0ff">Weitere IT-Risiken</h4>
       <ul class="pts" style="margin-top:6px">
         <li>Dauerkonnektivität → größere Angriffsfläche</li>
-        <li>Adversarial Examples: KI-Eingaben manipulierbar</li>
-        <li>Antwort: EASA Learning + Runtime Assurance<a class="cite" href="#quellen">[9,10,16]</a></li>
+        <li>Adversarial Examples: KI-Eingaben manipulierbar<a class="cite" href="#quellen">[9,10,16]</a></li>
       </ul>
     </div>
   </div>
 
-  <h3 class="reveal" style="margin-top:40px">EASA-Antwort auf die Black-Box</h3>
+  <!-- ===== ANTWORT ===== -->
+  <div class="reveal secdiv" style="margin-top:64px;color:#5e92ff"><span class="secdiv-lab">➜ Antwort: kontrollierte Autonomie</span></div>
+  <p class="lead reveal">Nicht Autonomie um jeden Preis — geprüfte Systeme, <b>Mensch als Letztinstanz</b>.</p>
+  <h3 class="reveal" style="margin-top:26px">EASA-Antwort auf die Black-Box</h3>
   <div class="fig-row reveal" style="grid-template-columns:1fr">
     <div class="fig-card"><div class="dgm" style="margin:0">
       <svg viewBox="0 0 460 236" style="width:100%;height:auto;display:block" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
