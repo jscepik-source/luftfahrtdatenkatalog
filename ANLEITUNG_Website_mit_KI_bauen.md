@@ -471,7 +471,25 @@ Jede Quelle wird nach **einheitlichen Kriterien** erfasst und bewertet (die Spal
 **Wie der Katalog in die Website kommt:**
 Die bewerteten Quellen werden als **Datenobjekte im JavaScript** hinterlegt (im Projekt die `src(...)`-Einträge je Kategorie-Seite: Bewertungszahlen, Name, Inhalt, Zielgruppe, Format, Bemerkung, Link). Die Seite **rendert daraus automatisch** die aufklappbaren Quellen-Karten mit Sterne-Bewertung, Filtern und Suche. So wird aus der Recherche-Tabelle eine interaktive, filterbare Katalog-Seite.
 
-> **PROMPT (Ebene B):** „Ich habe offizielle Luftfahrt-Quellen nach einheitlichen Kriterien recherchiert (Inhalt, Zielgruppe, Format, Unique-ID, Verfügbarkeit, AIRAC-Zyklus, Abdeckung, Kosten, Bewertung). Lege sie als `src(...)`-Datenobjekte je Kategorie an und baue eine Kategorie-Seite, die daraus **aufklappbare, bewertete Quellen-Karten** mit **Filter-Chips und Suche** rendert."
+### Prompts — den Quellenkatalog in die Website einbauen (Schritt für Schritt)
+
+So wird aus der Recherche-Tabelle eine **interaktive, filterbare Katalog-Seite**. Prompts der Reihe nach:
+
+> **Prompt B.1 — Tabelle → Daten:** „Ich habe eine Tabelle mit Luftfahrt-Quellen (Spalten: Kategorie, Name, Inhalt, Zielgruppe, Format, Unique-ID-Schema, Verfügbarkeit/Login, AIRAC-Zyklus, Abdeckung, Kosten, Bewertung 1–5, URL, Bemerkung). Wandle sie in ein **JavaScript-Datenarray** um — pro Quelle ein Objekt mit diesen Feldern. Bei vielen Einträgen lagere sie stattdessen in eine externe **`quellen.json`** aus, die die Seite per `fetch` lädt."
+
+> **Prompt B.2 — Katalog-Seite rendern:** „Baue eine **Kategorie-Seite**, die dieses Array rendert: pro Quelle eine **aufklappbare Karte** mit Name, **Sterne-Bewertung**, Kurzinfo und Detailfeldern (Zielgruppe, Format, Verfügbarkeit, AIRAC, Abdeckung, Kosten, Bemerkung) sowie einem **‚Zur Quelle ↗'-Button**. Oben **Filter-Chips** (nach Kategorie / Format / Kosten / maschinenlesbar), eine **Suche** und ein **Ergebniszähler**. Gruppiere nach Kategorie mit **einklappbaren Abschnitten**."
+
+> **Prompt B.3 — Bewertung & Sortierung:** „Berechne die **Sterne-Bewertung** als Mittel der Einzelkriterien und zeige sie als halbe/volle Sterne. Ergänze eine Sortier-Option **‚Beste Bewertung zuerst'** und **‚Kostenlos zuerst'**."
+
+> **Prompt B.4 — AIP/NOTAM je Land (Präfix-Zuordnung):** „Für AIP- und NOTAM-Quellen: lege eine Zuordnung **ICAO-Präfix → {Name, URL}** an (z. B. `'ED'` → DFS, `'LF'` → SIA France). Zeige auf **jeder Flughafen-Detailkarte automatisch** den passenden AIP-/NOTAM-Link anhand des ICAO-Präfixes des Flughafens."
+
+> **Prompt B.5 — Kennzahlen aus den Daten:** „Berechne aus dem Quellen-Array **automatisch Kennzahlen** (Anzahl je Kategorie, Anteil kostenlos, Anteil maschinenlesbar) und zeige sie als **Chip-Zähler** und kleine **CSS-Balkendiagramme** — so bleibt die Statistik automatisch korrekt, wenn Quellen dazukommen."
+
+> **Prompt B.6 — Einbinden & Verlinken:** „Verlinke die neue Quellen-Kategorie in der **einheitlichen Navigationsleiste** und als **Karte auf der Startseite**. Setze konsistentes Design (gleiche Karten-/Chip-Stile wie die übrigen Seiten)."
+
+> **Prompt B.7 — Pflege über CSV (empfohlen bei großen Katalogen):** „Ich pflege die Quellen in **`QUELLENKATALOG.csv`**. Lies die CSV im Browser per `fetch`, **parse** sie (einfacher CSV-Parser) und rendere daraus die Katalog-Seite — so ändere ich nur die CSV, die Seite bleibt automatisch aktuell. Optional: ein **GitHub-Actions-Bot**, der die CSV regelmäßig aus einer Google-Tabelle neu erzeugt und committet."
+
+> **Prompt B.8 — Verknüpfung mit Live-Daten:** „Wo eine recherchierte Quelle eine **CORS-freie API** hat (z. B. Wetter, ADS-B), setze sie zusätzlich als **Live-Feature** um und verlinke von der Quellen-Karte direkt dorthin (‚Live ansehen')."
 
 **Didaktischer Wert (für die Bewertung):** Ebene B zeigt **systematische, kriteriengeleitete Quellenrecherche** — nicht nur „Daten anzeigen", sondern Quellen **vergleichen und bewerten**. Das ist der wissenschaftliche Kern des Projekts; Ebene A (die Live-APIs) ist die technische Umsetzung.
 
