@@ -424,6 +424,42 @@ Für jede Quelle: **was sie liefert**, **wo/wann sie im Projekt eingesetzt wird*
 > - **Kostenloses Konto + Key nötig:** **OpenAIP** (Lufträume) und **Groq** (KI) — beide in ~1 Minute registriert, Key gehört in den **Cloudflare Worker**.
 > - **Kostenloses Konto (kein Key im Code):** **GitHub** (Hosting) und **Cloudflare** (Secret-Proxy).
 
+### Zwei Ebenen von Quellen — wichtig zu unterscheiden
+Das Projekt nutzt **zwei getrennte Quellen-Ebenen**:
+
+- **Ebene A — Technische Live-APIs** (oben, die 21 Steckbriefe): Was der Browser **zur Laufzeit automatisch abruft** (ADS-B, Wikipedia/Wikidata, Overpass, OpenAIP …). Maschinenlesbar, per `fetch`.
+- **Ebene B — Kuratierter Quellenkatalog** (redaktionelle Recherche): Eine **systematisch recherchierte Sammlung offizieller Luftfahrt-Informationsquellen** (nationale AIP je Land, NOTAM-Dienste, Statistik-Quellen …), **von Hand nach einheitlichen Kriterien bewertet**. Das ist die **inhaltliche Grundlage** der Kategorie-Seiten und der eigentliche wissenschaftliche Kern des „Datenkatalogs".
+
+### Ebene B — Der kuratierte Quellenkatalog (Recherche-Methodik)
+
+Jede Quelle wird nach **einheitlichen Kriterien** erfasst und bewertet (die Spalten der Katalog-Tabelle):
+
+| Kriterium | Bedeutung / Beispiel |
+|---|---|
+| **Name / Betreiber** | z. B. „DFS BasicAIP (Deutschland)", „ASECNA – AIP (17 afrikanische Staaten)" |
+| **Inhalt** | was die Quelle enthält, z. B. „AD-2-Karten", „En-Route", „VFR-Karten" |
+| **Zielgruppe** | Piloten, Airlines, ANSPs, Behörden, Entwickler … |
+| **Format** | PDF, HTML-eAIP, XML (AIXM 5.1), REST/JSON, GeoJSON … |
+| **Unique-ID-Schema** | wie Objekte identifiziert werden, z. B. ICAO-Code-Präfix (EDDF), NOTAM-Nummer, FIR-ID |
+| **Verfügbarkeit / Login** | öffentlich vs. Login/B2B-Vertrag nötig |
+| **AIRAC-Zyklus** | Aktualisierungsrhythmus (28-Tage-AIRAC vs. laufend) |
+| **Abdeckung** | geografisch (ein Land, EU/ECAC, weltweit) und inhaltlich (AIP-vollständig?) |
+| **Kosten** | kostenlos / Basic kostenlos / kostenpflichtig |
+| **Bewertung** | Sterne-Rating (Eignung fürs Projekt) |
+| **Link** | direkte Quelle |
+
+**Kategorien im Katalog (Auszug, wie in der Tabelle sichtbar):**
+- **AIP** — nationale Luftfahrthandbücher **je Land** (sehr viele Staaten, inkl. Sammelquellen wie **ASECNA** für 17 afrikanische Staaten, **Eurocontrol EAD** für ECAC, **FAA d-TPP/NASR** für die USA, **DFS BasicAIP / BasicVFR / NfL** für Deutschland, plus Werkzeuge wie **SkyVector**, **EUROCONTROL Cartography**).
+- **NOTAM** — **11 Quellen**: AVWX, CheckWX, DFS AIM/NfL, Eurocontrol EAD, FAA NOTAM Search/DINS, ICAO NOTAMs (Annex 15), ICAO iSTARS, NOAA aviationweather, autorouter.aero, notammap, SkyLink API (RapidAPI) — jeweils mit Vermerk zu Key/Zugang und Eignung.
+- *(Analog im Projekt: weitere Kategorien für Flughäfen, Flugzeuge/Triebwerke, Drohnen/UAV, Lufträume und Statistik — je nach Kriterien bewertet.)*
+
+**Wie der Katalog in die Website kommt:**
+Die bewerteten Quellen werden als **Datenobjekte im JavaScript** hinterlegt (im Projekt die `src(...)`-Einträge je Kategorie-Seite: Bewertungszahlen, Name, Inhalt, Zielgruppe, Format, Bemerkung, Link). Die Seite **rendert daraus automatisch** die aufklappbaren Quellen-Karten mit Sterne-Bewertung, Filtern und Suche. So wird aus der Recherche-Tabelle eine interaktive, filterbare Katalog-Seite.
+
+> **PROMPT (Ebene B):** „Ich habe offizielle Luftfahrt-Quellen nach einheitlichen Kriterien recherchiert (Inhalt, Zielgruppe, Format, Unique-ID, Verfügbarkeit, AIRAC-Zyklus, Abdeckung, Kosten, Bewertung). Lege sie als `src(...)`-Datenobjekte je Kategorie an und baue eine Kategorie-Seite, die daraus **aufklappbare, bewertete Quellen-Karten** mit **Filter-Chips und Suche** rendert."
+
+**Didaktischer Wert (für die Bewertung):** Ebene B zeigt **systematische, kriteriengeleitete Quellenrecherche** — nicht nur „Daten anzeigen", sondern Quellen **vergleichen und bewerten**. Das ist der wissenschaftliche Kern des Projekts; Ebene A (die Live-APIs) ist die technische Umsetzung.
+
 ---
 
 # TEIL P · Fehlerbehebung (Troubleshooting)
