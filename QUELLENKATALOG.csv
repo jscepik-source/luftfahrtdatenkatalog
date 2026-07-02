@@ -1,0 +1,540 @@
+Kategorie,Name,Kennung/Praefix,Format/Typ,URL
+AIP,DFS AIP Deutschland,ED,AIP,https://aip.dfs.de/basicAIP/
+AIP,DFS AIP Deutschland (Mil),ET,AIP,https://aip.dfs.de/basicAIP/
+AIP,NATS AIP United Kingdom,EG,AIP,https://nats-uk.ead-it.com/cms-nats/opencms/en/Publications/AIP/
+AIP,IAA AIP Ireland,EI,AIP,https://www.iaa.ie/commercial-aviation/aeronautical-information-infrastructure-aai/publications
+AIP,Naviair AIP Denmark,EK,AIP,https://ais.naviair.dk/en/pages/aip
+AIP,Finavia AIP Finland,EF,AIP,https://ais.fi/aip/fi/index.html
+AIP,Avinor AIP Norway,EN,AIP,https://www.ippc.no/norway_aip/current/AIRAC/html/eAIP/ENG/html/index-ENG.html
+AIP,LFV AIP Sweden,ES,AIP,https://aro.lfv.se/
+AIP,skeyes AIP Belgium,EB,AIP,https://ops.skeyes.be/html/belgocontrol_static/eaip_upcoming/eAIP_Main/html/index-en-GB.html
+AIP,LVNL AIP Netherlands,EH,AIP,https://www.lvnl.nl/diensten/aip
+AIP,Administration de la Navigation Aérienne AIP Luxembourg,EL,AIP,https://www.ana.lu/en/aeronautical-information/integrated-aeronautical-information-package
+AIP,PANSA AIP Poland,EP,AIP,https://www.ais.pansa.pl/aip/
+AIP,Austrocontrol AIP Austria,LO,AIP,https://eaip.austrocontrol.at/
+AIP,ŘLP AIP Czech Republic,LK,AIP,https://lis.rlp.cz/vfrmanual/actual/index_en.html
+AIP,LPS SR AIP Slovakia,LZ,AIP,https://lps.sk/en/index.php/aeronautical-information-services/aip
+AIP,HungaroControl AIP Hungary,LH,AIP,https://www.hungarocontrol.hu/aip/
+AIP,ENAV AIP Italy,LI,AIP,https://www.enav.it/sites/public/en/aeronautical-services/publications/aip.html
+AIP,Skyguide AIP Switzerland,LS,AIP,https://www.skyguide.ch/services/aeronautical-information
+AIP,NAV Portugal AIP,LP,AIP,https://www.nav.pt/en/aeronautical-information
+AIP,ENAIRE AIP Spain,LE,AIP,https://ais.enaire.es/AIP/AIP_VIG/aip/indexEN.html
+AIP,ENAIRE AIP Spain (Canarias),GC,AIP,https://ais.enaire.es/AIP/AIP_VIG/aip/indexEN.html
+AIP,DSNA AIP France,LF,AIP,https://www.sia.aviation-civile.gouv.fr/dvd/eAIP_France/AIRAC-2024-10-31/FRANCE/html/index-fr-FR.html
+AIP,HCAA AIP Greece,LG,AIP,https://www.hcaa.gr/en/aeronautical-information
+AIP,BULATSA AIP Bulgaria,LB,AIP,https://www.bulatsa.com/en/aip
+AIP,ROMATSA AIP Romania,LR,AIP,https://www.romatsa.ro/en/aip
+AIP,SMATSA AIP Serbia,LY,AIP,https://www.smatsa.rs/en/aip
+AIP,BHANSA AIP Bosnia,LQ,AIP,https://www.bhansa.gov.ba/en/aeronautical-information
+AIP,M-NAV AIP North Macedonia,LW,AIP,https://www.m-nav.com.mk/en/aeronautical-information
+AIP,ALBCONTROL AIP Albania,LA,AIP,https://www.albcontrol.al/en/aeronautical-information
+AIP,DCAC AIP Cyprus,LC,AIP,https://www.dcac.gov.cy/dcac/web.nsf/page62_en/page62_en?opendocument
+AIP,Croatia Control AIP Croatia,LD,AIP,https://www.crocontrol.hr/en/aip
+AIP,Sloveniacontrol AIP Slovenia,LJ,AIP,https://www.sloveniacontrol.si/acrobat/aip/info/index.html
+AIP,Malta MATS AIP,LM,AIP,https://www.mats.com.mt/aip
+AIP,DHMI AIP Turkey,LT,AIP,https://aip.dhmi.gov.tr/
+AIP,MoldATSA AIP Moldova,LU,AIP,https://moldatsa.md/en/aip
+AIP,BAKAD AIP Kyrgyzstan,UK,AIP,https://gaacm.gov.kg/
+AIP,BelAeronavigation AIP Belarus,UM,AIP,https://www.belaeronavigation.by/en/aeronautical-information/
+AIP,Azeronavigation AIP Azerbaijan,UB,AIP,https://www.ans.az/en/
+AIP,SAKAERONAVIGATSIA AIP Georgia,UG,AIP,https://ais.sakaeronavigatsia.ge/aip/en/index.html
+AIP,Armaviamet AIP Armenia,UD,AIP,https://www.armaviamct.am/en/
+AIP,LGS AIP Latvia,EV,AIP,https://www.lgs.lv/en/products-and-services/aeronautical-information
+AIP,Oro navigacija AIP Lithuania,EY,AIP,https://www.ans.lt/en/aeronautical-information
+AIP,EANS AIP Estonia,EE,AIP,https://www.eans.ee/en/aeronautical-information
+AIP,ISAVIA AIP Iceland,BI,AIP,https://www.isavia.is/en/civil-aviation/aeronautical-information
+AIP,CARC AIP Jordan,OJ,AIP,https://www.carc.gov.jo/en/Pages/default.aspx
+AIP,CAAI AIP Iran,OI,AIP,https://ais.airport.ir/
+AIP,DGCA AIP Oman,OO,AIP,https://www.dgcam.gov.om/aip
+AIP,DGCA AIP Kuwait,OK,AIP,https://www.dgca.gov.kw/en/aip
+AIP,GACA AIP Bahrain,OB,AIP,https://www.caa.gov.bh/en/aip
+AIP,CAA AIP Qatar,OT,AIP,https://www.caa.gov.qa/en/services/aeronautical-information
+AIP,GCAA AIP UAE,OM,AIP,https://www.gcaa.gov.ae/en/ais/pages/aip.aspx
+AIP,CAMA AIP Yemen,OY,AIP,https://www.cama.gov.ye/
+AIP,GACA AIP Saudi Arabia,OS,AIP,https://www.gaca.gov.sa/en/services/Pages/aip.aspx
+AIP,ICAA AIP Iraq,OR,AIP,https://www.icaa.gov.iq/en/
+AIP,DGCA AIP Lebanon,OL,AIP,https://www.dgca.gov.lb/aip
+AIP,CAA AIP Pakistan,OP,AIP,https://www.caapakistan.com.pk/aip
+AIP,ACAA AIP Afghanistan,OA,AIP,https://www.acaa.gov.af/en/
+AIP,CAAT AIP Thailand,VT,AIP,https://aip.caat.or.th/
+AIP,CAD AIP Hong Kong,VH,AIP,https://www.hkatc.gov.hk/
+AIP,VNAISC AIP Vietnam,VV,AIP,https://vnaic.vn/
+AIP,MACA AIP Myanmar,VB,AIP,https://www.maca.gov.mm/
+AIP,AAI AIP India (East),VE,AIP,https://www.aai.aero/en/air-traffic-management/aip
+AIP,AAI AIP India (North),VI,AIP,https://www.aai.aero/en/air-traffic-management/aip
+AIP,AAI AIP India (South),VO,AIP,https://www.aai.aero/en/air-traffic-management/aip
+AIP,AAI AIP India (West),VA,AIP,https://www.aai.aero/en/air-traffic-management/aip
+AIP,CAAB AIP Bangladesh,VG,AIP,https://www.caab.gov.bd/
+AIP,AASL AIP Sri Lanka,VC,AIP,https://www.aasl.lk/aip
+AIP,CAAN AIP Nepal,VN,AIP,https://caanepal.gov.np/aip
+AIP,DGCA AIP Bhutan,VQ,AIP,https://www.dcab.gov.bt/
+AIP,DCA AIP Myanmar,VY,AIP,https://www.moca.gov.mm/
+AIP,CAAM AIP Malaysia,WM,AIP,https://aip.caam.gov.my/
+AIP,AirNav AIP Indonesia,WI,AIP,https://airnav.co.id/en/aip
+AIP,CAAS AIP Singapore,WS,AIP,https://www.caas.gov.sg/publications-resources/aip
+AIP,CAAP AIP Philippines,RP,AIP,https://www.caap.gov.ph/index.php/aip
+AIP,KCAB AIP Laos,VL,AIP,https://www.kcab.gov.la/
+AIP,SSCA AIP Cambodia,VD,AIP,https://www.ssca.gov.kh/
+AIP,CAAC AIP China (Beijing),ZB,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China (Guangzhou),ZG,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China (Shanghai),ZS,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China,ZH,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China (Hainan),ZJ,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China,ZK,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China (Lanzhou),ZL,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China,ZP,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China (Chengdu),ZU,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China,ZW,AIP,https://www.caac.gov.cn/
+AIP,CAAC AIP China (Shenyang),ZY,AIP,https://www.caac.gov.cn/
+AIP,MOLIT AIP South Korea,RK,AIP,https://aim.molit.go.kr/
+AIP,JCAB AIP Japan,RJ,AIP,https://nagodede.github.io/aip/japan/
+AIP,DGAC AIP French Polynesia,RO,AIP,https://www.dgac.pf/
+AIP,CAA AIP Taiwan,RC,AIP,https://www.caa.gov.tw/en/aip
+AIP,AACM AIP Macau,VM,AIP,https://www.aacm.gov.mo/
+AIP,Kazaeronavigatsia AIP Kazakhstan,UP,AIP,https://kan.kz/en/aip
+AIP,MTKM AIP Turkmenistan,UT,AIP,https://www.mtk.gov.tm/
+AIP,Tajikistan SCAIMT AIP,UА,AIP,https://www.scaimt.tj/
+AIP,ANSP AIP Algeria,DA,AIP,https://www.ansp.dz/aip
+AIP,OACA AIP Tunisia,DT,AIP,https://www.oaca.nat.tn/
+AIP,ASECNA AIP Côte d'Ivoire,DI,AIP,https://aim.asecna.aero/
+AIP,ASECNA AIP Benin,DB,AIP,https://aim.asecna.aero/
+AIP,ASECNA AIP Burkina Faso,DF,AIP,https://aim.asecna.aero/
+AIP,GCAA AIP Ghana,DG,AIP,https://www.gcaa.com.gh/aip
+AIP,NCAA AIP Nigeria,DN,AIP,https://www.ncaa.gov.ng/aip
+AIP,ASECNA AIP Niger,DR,AIP,https://aim.asecna.aero/
+AIP,ASECNA AIP Mauritania,GQ,AIP,https://aim.asecna.aero/
+AIP,SLCAA AIP Sierra Leone,GF,AIP,https://www.slcaa.sl/
+AIP,ASECNA AIP Guinea-Bissau,GG,AIP,https://aim.asecna.aero/
+AIP,ANAC AIP Guinea,GU,AIP,https://www.anac.gov.gn/
+AIP,SCAA AIP Somalia,HC,AIP,https://www.scaa.so/
+AIP,ECAA AIP Ethiopia,HA,AIP,https://www.ecaa.gov.et/aip
+AIP,CAMA AIP Eritrea,HH,AIP,https://www.mot.gov.er/
+AIP,KCAA eAIP Kenya,HK,AIP,https://eaip.kcaa.or.ke/
+AIP,SCAA AIP Sudan,HS,AIP,https://www.caasudanese.sd/
+AIP,TCAA AIP Tanzania,HT,AIP,https://www.tcaa.go.tz/aip
+AIP,UCAA AIP Uganda,HU,AIP,https://www.caa.go.ug/aip
+AIP,RCAA AIP Rwanda,HR,AIP,https://www.rcaa.gov.rw/aip
+AIP,ECAA AIP Egypt,HE,AIP,https://www.ecaa.gov.eg/aip
+AIP,ANAC AIP Liberia,GL,AIP,https://www.anac-liberia.com/
+AIP,ASECNA AIP Senegal,GO,AIP,https://aim.asecna.aero/
+AIP,DGAC AIP Western Sahara,GS,AIP,https://www.asecna.aero/
+AIP,ASA AIP Cabo Verde,GV,AIP,https://www.asa.cv/en/
+AIP,ENASA AIP São Tomé,FP,AIP,https://www.enasa.st/
+AIP,ASECNA AIP CAR,FE,AIP,https://aim.asecna.aero/
+AIP,ASECNA AIP Cameroon,FK,AIP,https://aim.asecna.aero/
+AIP,DCAA AIP Zambia,FL,AIP,https://www.dcaa.gov.zm/aip
+AIP,ASECNA AIP Madagascar,FM,AIP,https://aim.asecna.aero/
+AIP,INAVIC AIP Angola,FN,AIP,https://www.inavic.gv.ao/
+AIP,ASECNA AIP Gabon,FO,AIP,https://aim.asecna.aero/
+AIP,IACM AIP Mozambique,FQ,AIP,https://www.iacm.gov.mz/
+AIP,SCAA AIP Seychelles,FS,AIP,https://www.scaa.sc/aip
+AIP,ASECNA AIP Chad,FT,AIP,https://aim.asecna.aero/
+AIP,CAAZ AIP Zimbabwe,FV,AIP,https://www.caaz.co.zw/aip
+AIP,DGAC AIP Wallis & Futuna,FW,AIP,https://www.sia.aviation-civile.gouv.fr/
+AIP,GCAA AIP Lesotho,FX,AIP,https://www.gcaa.org.ls/aip
+AIP,CAA AIP South Africa,FA,AIP,https://www.caa.co.za/industry-information/aeronautical-information-aeronautical-charts/
+AIP,CAAB AIP Botswana,FB,AIP,https://www.caab.co.bw/aip
+AIP,Namibia Airports AIP,FY,AIP,https://www.airports.com.na/
+AIP,SACAA AIP Eswatini,FD,AIP,https://www.sacaa.org.sz/
+AIP,ASECNA AIP Comoros,FI,AIP,https://aim.asecna.aero/
+AIP,ASECNA AIP Togo,DX,AIP,https://aim.asecna.aero/
+AIP,ASECNA AIP Congo,FC,AIP,https://aim.asecna.aero/
+AIP,ASECNA AIP Equat. Guinea,FG,AIP,https://aim.asecna.aero/
+AIP,ASECNA AIP Mali,GA,AIP,https://aim.asecna.aero/
+AIP,GACA eAIS Saudi Arabia,OE,AIP,https://eais.gaca.gov.sa/
+AIP,CAA AIP Israel,LL,AIP,https://www.caa.gov.il/
+AIP,ONDA AIP Morocco,GM,AIP,https://www.onda.ma/
+AIP,CARC AIP Jordan (Mil),OG,AIP,https://www.carc.gov.jo/
+AIP,SENEAM AIP Mexico,MX,AIP,https://www.seneam.gob.mx/aip
+AIP,IDAC AIP Dominican Republic,MD,AIP,https://www.idac.gov.do/aip
+AIP,CACSA AIP Cuba,MU,AIP,https://www.cacsa.cu/
+AIP,CAA AIP Jamaica,MK,AIP,https://www.caa.gov.jm/aip
+AIP,OFNAC AIP Haiti,MT,AIP,https://www.ofnac.ht/
+AIP,TCCA AIP Turks & Caicos,MB,AIP,https://www.tcaa.tc/
+AIP,BCAD AIP Bahamas,MY,AIP,https://www.bcad.gov.bs/
+AIP,SENEAM AIP Mexico,MM,AIP,https://www.seneam.gob.mx/aip
+AIP,EANA AIP Argentina,SA,AIP,https://ais.eana.com.ar/
+AIP,DECEA AIP Brazil,SB,AIP,https://aisweb.decea.mil.br/
+AIP,DECEA AIP Brazil,SN,AIP,https://aisweb.decea.mil.br/
+AIP,DECEA AIP Brazil,SW,AIP,https://aisweb.decea.mil.br/
+AIP,DECEA AIP Brazil,SS,AIP,https://aisweb.decea.mil.br/
+AIP,DECEA AIP Brazil,SD,AIP,https://aisweb.decea.mil.br/
+AIP,DECEA AIP Brazil,SI,AIP,https://aisweb.decea.mil.br/
+AIP,DGAC AIP Chile,SC,AIP,https://www.aipchile.gob.cl/
+AIP,DGAC AIP Ecuador,SE,AIP,https://www.aviacioncivil.gob.ec/
+AIP,Aerocivil AIP Colombia,SK,AIP,https://www.aerocivil.gov.co/
+AIP,CORPAC AIP Peru,SP,AIP,https://www.corpac.gob.pe/
+AIP,DINACIA AIP Uruguay,SU,AIP,https://www.dinacia.gub.uy/
+AIP,INAC AIP Venezuela,SV,AIP,http://www.inac.gob.ve/
+AIP,AASANA AIP Bolivia,SL,AIP,https://www.aasana.bo/aip
+AIP,AAAC AIP Guyana,SY,AIP,https://www.caa.gov.gy/
+AIP,DC AIP Suriname,SM,AIP,https://www.dc.sr.org/
+AIP,DGAC AIP French Guiana,SF,AIP,https://www.sia.aviation-civile.gouv.fr/
+AIP,DINAC AIP Paraguay,SG,AIP,https://www.dinac.gov.py/aip
+AIP,VRSTT AIP USVI,TI,AIP,https://www.faa.gov/air_traffic/publications/
+AIP,FAA AIP Puerto Rico,TJ,AIP,https://www.faa.gov/air_traffic/publications/
+AIP,DCAR AIP Aruba/Curaçao,TN,AIP,https://www.dcar.nl/aip
+AIP,TTCAA AIP Trinidad & Tobago,TB,AIP,https://www.ttcaa.com/aip
+AIP,DSAC AIP Martinique/Guadeloupe,TF,AIP,https://www.sia.aviation-civile.gouv.fr/
+AIP,AIA AIP St. Vincent,TV,AIP,https://www.aiasvg.com/
+AIP,ECCAA AIP Montserrat,TR,AIP,https://www.eccaa.org/aip
+AIP,AAC AIP Panama,MP,AIP,https://www.aac.gob.pa/aip
+AIP,DGCA AIP Costa Rica,MR,AIP,https://www.dgac.go.cr/aip
+AIP,INAC AIP Nicaragua,MN,AIP,https://www.inac.gob.ni/
+AIP,AHAC AIP Honduras,MH,AIP,https://www.ahac.gob.hn/
+AIP,DGAC AIP Guatemala,MGT,AIP,https://www.dgac.gob.gt/
+AIP,Transport Canada AIP Canada,YV,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CY,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CF,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CG,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CU,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CW,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CZ,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CE,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CS,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,NAV CANADA AIP,CO,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,Airservices AIP Australia,YS,AIP,https://www.airservicesaustralia.com/aip/current/aip.asp
+AIP,Airservices AIP Australia,YM,AIP,https://www.airservicesaustralia.com/aip/current/aip.asp
+AIP,Airways AIP New Zealand,NZ,AIP,https://www.aip.net.nz/
+AIP,CASA AIP Solomon Islands,AG,AIP,https://www.casasi.com.sb/
+AIP,CASA AIP Nauru,AN,AIP,https://www.casanauru.com/
+AIP,CASA AIP Papua New Guinea,AY,AIP,https://www.casapng.com.pg/
+AIP,CAAF AIP Fiji,NF,AIP,https://www.caaf.org.fj/aip
+AIP,DGAC AIP Cook Islands,NC,AIP,https://www.moi.gov.ck/
+AIP,CATV AIP Tuvalu,NGT,AIP,https://www.tuvalu-gov.tv/
+AIP,MCIL AIP Samoa,NS,AIP,https://www.mcil.gov.ws/
+AIP,DGAC AIP French Polynesia,NT,AIP,https://www.dgac.pf/
+AIP,DCAM AIP Niue,NI,AIP,https://www.gov.nu/pm/niue-aviation.htm
+AIP,DGAC AIP New Caledonia,NW,AIP,https://www.dgac.pf/
+AIP,Wallis & Futuna DGAC,NL,AIP,https://www.sia.aviation-civile.gouv.fr/
+AIP,FAA AIP USA,K,AIP,https://www.faa.gov/air_traffic/publications/
+AIP,FAA AIP USA/Pacific,P,AIP,https://www.faa.gov/air_traffic/publications/
+AIP,NAV CANADA AIP,C,AIP,https://www.navcanada.ca/en/aeronautical-information/aip-canada.aspx
+AIP,Airservices AIP Australia,Y,AIP,https://www.airservicesaustralia.com/aip/current/aip.asp
+NOTAM-Portal (national),DFS AIP Deutschland,ED,NOTAM,https://aip.dfs.de/basicAIP/
+NOTAM-Portal (national),DFS AIP Deutschland,ET,NOTAM,https://aip.dfs.de/basicAIP/
+NOTAM-Portal (national),NATS AIS,EG,NOTAM,https://www.nats-uk.ead-it.com
+NOTAM-Portal (national),IAA AIS,EI,NOTAM,https://www.iaa.ie/general-aviation/aeronautical-information
+NOTAM-Portal (national),Naviair AIS,EK,NOTAM,https://www.naviair.dk/en/services/ais
+NOTAM-Portal (national),skeyes AIS,EB,NOTAM,https://www.skeyes.be/en/services/aeronautical-information-services
+NOTAM-Portal (national),LVNL eAIP,EH,NOTAM,https://eaip.lvnl.nl
+NOTAM-Portal (national),ANA AIS,EL,NOTAM,https://www.ana.lu/en/ais
+NOTAM-Portal (national),Avinor AIS,EN,NOTAM,https://avinor.no/en/for-the-industry/ais
+NOTAM-Portal (national),LFV AIS,ES,NOTAM,https://ais.lfv.se
+NOTAM-Portal (national),Finavia AIS,EF,NOTAM,https://ais.fi
+NOTAM-Portal (national),EANS AIS,EE,NOTAM,https://www.eans.ee/en/ais
+NOTAM-Portal (national),LGS AIS,EV,NOTAM,https://ais.lgs.lv
+NOTAM-Portal (national),Oro Navigacija AIS,EY,NOTAM,https://www.ans.lt/en/ais
+NOTAM-Portal (national),Isavia AIS,BI,NOTAM,https://www.isavia.is/en/aviation/ais
+NOTAM-Portal (national),SIA DGAC,LF,NOTAM,https://www.sia.aviation-civile.gouv.fr
+NOTAM-Portal (national),ENAIRE AIP,LE,NOTAM,https://aip.enaire.es
+NOTAM-Portal (national),ENAIRE AIP,GC,NOTAM,https://aip.enaire.es
+NOTAM-Portal (national),NAV Portugal AIS,LP,NOTAM,https://www.nav.pt/en/ais
+NOTAM-Portal (national),Austrocontrol AIS,LO,NOTAM,https://www.ais.austrocontrol.at
+NOTAM-Portal (national),skyguide Briefing,LS,NOTAM,https://www.skybriefing.com
+NOTAM-Portal (national),ENAV AIS,LI,NOTAM,https://www.enav.it/en/ais
+NOTAM-Portal (national),HCAA AIS,LG,NOTAM,https://www.hcaa.gr/en/ais
+NOTAM-Portal (national),MATS AIS,LM,NOTAM,https://www.maltairport.com/ais
+NOTAM-Portal (national),DCAC AIS,LC,NOTAM,https://www.dcac.gov.cy/dcac/web.nsf/page43_en
+NOTAM-Portal (national),DHMİ AIS,LT,NOTAM,https://www.dhmi.gov.tr/ais
+NOTAM-Portal (national),PANSA NOTAM,EP,NOTAM,https://www.ais.pansa.pl/notam/
+NOTAM-Portal (national),ANS Czech LIS,LK,NOTAM,https://lis.rlp.cz
+NOTAM-Portal (national),LPS SR LIS,LZ,NOTAM,https://lis.lps.sk
+NOTAM-Portal (national),HungaroControl AIS,LH,NOTAM,https://ais.hungarocontrol.hu
+NOTAM-Portal (national),ROMATSA AIS,LR,NOTAM,https://www.romatsa.ro/index.php/ais
+NOTAM-Portal (national),BULATSA AIS,LB,NOTAM,https://www.bulatsa.com/en/ais
+NOTAM-Portal (national),Croatia Control AIS,LD,NOTAM,https://www.crocontrol.hr/default.aspx?id=34
+NOTAM-Portal (national),SMATSA AIS,LY,NOTAM,https://www.smatsa.rs/en/ais
+NOTAM-Portal (national),Slovenia Control AIS,LJ,NOTAM,https://www.sloveniacontrol.si/en/AIS
+NOTAM-Portal (national),M-NAV AIS,LW,NOTAM,https://www.m-nav.mk/ais
+NOTAM-Portal (national),ALBCONTROL AIS,LA,NOTAM,https://www.albcontrol.al/ais
+NOTAM-Portal (national),BHANSA AIS,LQ,NOTAM,https://www.bhansa.gov.ba/ais
+NOTAM-Portal (national),Sakaeronavigatsia AIS,UG,NOTAM,https://ais.sakaeronavigatsia.ge
+NOTAM-Portal (national),Armats AIS,UD,NOTAM,https://armats.com/en/ais
+NOTAM-Portal (national),AzANS AIS,UB,NOTAM,https://www.azans.az/en/ais
+NOTAM-Portal (national),UkSATSE AIS,UK,NOTAM,https://ais.uksatse.ua
+NOTAM-Portal (national),BelAeronavigation AIS,UM,NOTAM,https://ais.belaeronavigatsia.by
+NOTAM-Portal (national),CAAI AIS Israel,LL,NOTAM,https://www.caa.gov.il/ais
+NOTAM-Portal (national),GCAA AIS UAE,OM,NOTAM,https://www.gcaa.gov.ae/en/ais
+NOTAM-Portal (national),GACA AIS,OE,NOTAM,https://www.gaca.gov.sa/web/en-gb/ais
+NOTAM-Portal (national),CARC AIS Jordan,OJ,NOTAM,https://www.carc.gov.jo/ais
+NOTAM-Portal (national),CAAM Oman AIS,OO,NOTAM,https://www.caa.gov.om/ais
+NOTAM-Portal (national),QCAA AIS,OT,NOTAM,https://www.caa.gov.qa/ais
+NOTAM-Portal (national),DGCA Kuwait AIS,OK,NOTAM,https://www.dgca.gov.kw/ais
+NOTAM-Portal (national),CAA Bahrain AIS,OB,NOTAM,https://www.caa.gov.bh/ais
+NOTAM-Portal (national),IACA AIS Iraq,OR,NOTAM,https://www.iaca.gov.iq/ais
+NOTAM-Portal (national),CAO Iran AIS,OI,NOTAM,https://www.cao.ir/en/ais
+NOTAM-Portal (national),JCAB AIS Japan,RJ,NOTAM,https://aisjapan.mlit.go.jp
+NOTAM-Portal (national),JCAB AIS Japan,RO,NOTAM,https://aisjapan.mlit.go.jp
+NOTAM-Portal (national),MOLIT AIS Korea,RK,NOTAM,https://ais.casa.go.kr
+NOTAM-Portal (national),CAA Taiwan AIS,RC,NOTAM,https://www.caa.gov.tw
+NOTAM-Portal (national),CAD Hong Kong AIS,VH,NOTAM,https://www.cad.gov.hk/english/ais.html
+NOTAM-Portal (national),AEROTHAI AIS,VT,NOTAM,https://www.aerothai.co.th/en/ais
+NOTAM-Portal (national),CAA Singapore AIS,WS,NOTAM,https://www.caas.gov.sg
+NOTAM-Portal (national),CAAM AIS Malaysia,WM,NOTAM,https://www.caam.gov.my/en/ais
+NOTAM-Portal (national),CAAM AIS Malaysia,WB,NOTAM,https://www.caam.gov.my/en/ais
+NOTAM-Portal (national),AirNav Indonesia,WI,NOTAM,https://www.airnavindonesia.co.id
+NOTAM-Portal (national),AirNav Indonesia,WA,NOTAM,https://www.airnavindonesia.co.id
+NOTAM-Portal (national),CAAP AIS Philippines,RP,NOTAM,https://www.caap.gov.ph
+NOTAM-Portal (national),VATM AIS Vietnam,VV,NOTAM,https://www.vatm.vn/en/ais
+NOTAM-Portal (national),CAAN AIS Nepal,VN,NOTAM,https://www.caan.gov.np/pages/ais
+NOTAM-Portal (national),AASL AIS Sri Lanka,VC,NOTAM,https://www.airport.lk/ais
+NOTAM-Portal (national),CAAB AIS Bangladesh,VG,NOTAM,https://www.caab.gov.bd
+NOTAM-Portal (national),DCAB AIS Bhutan,VQ,NOTAM,https://www.dcab.gov.bt
+NOTAM-Portal (national),CAA Pakistan AIS,OP,NOTAM,https://www.caapakistan.com.pk/ais
+NOTAM-Portal (national),DGCA NOTAM Indien,VI,NOTAM,https://dgca.gov.in/digigov-portal/?page=notam
+NOTAM-Portal (national),DGCA NOTAM Indien,VA,NOTAM,https://dgca.gov.in/digigov-portal/?page=notam
+NOTAM-Portal (national),DGCA NOTAM Indien,VE,NOTAM,https://dgca.gov.in/digigov-portal/?page=notam
+NOTAM-Portal (national),DGCA NOTAM Indien,VO,NOTAM,https://dgca.gov.in/digigov-portal/?page=notam
+NOTAM-Portal (national),CAAC AIS China,ZB,NOTAM,https://www.caac.gov.cn
+NOTAM-Portal (national),CAAC AIS China,ZS,NOTAM,https://www.caac.gov.cn
+NOTAM-Portal (national),CAAC AIS China,ZG,NOTAM,https://www.caac.gov.cn
+NOTAM-Portal (national),CAAC AIS China,ZL,NOTAM,https://www.caac.gov.cn
+NOTAM-Portal (national),CAAC AIS China,ZU,NOTAM,https://www.caac.gov.cn
+NOTAM-Portal (national),CAAC AIS China,ZW,NOTAM,https://www.caac.gov.cn
+NOTAM-Portal (national),CAAC AIS China,ZY,NOTAM,https://www.caac.gov.cn
+NOTAM-Portal (national),ATNS AIS Südafrika,FA,NOTAM,https://www.atns.co.za/ais
+NOTAM-Portal (national),ECAA AIS Ägypten,HE,NOTAM,https://www.ecaa.gov.eg
+NOTAM-Portal (national),ONDA AIS Marokko,GM,NOTAM,https://ais.onda.ma
+NOTAM-Portal (national),NCAA AIS Nigeria,DN,NOTAM,https://www.ncaa.gov.ng/ais
+NOTAM-Portal (national),KCAA AIS Kenia,HK,NOTAM,https://www.kcaa.or.ke/ais
+NOTAM-Portal (national),ECAA AIS Äthiopien,HA,NOTAM,https://www.ecaa.gov.et/ais
+NOTAM-Portal (national),TCAA AIS Tansania,HT,NOTAM,https://www.tcaa.go.tz/ais
+NOTAM-Portal (national),GCAA AIS Ghana,DG,NOTAM,https://www.gcaa.com.gh
+NOTAM-Portal (national),IACC AIS Kuba,MU,NOTAM,https://www.iacc.cu/ais
+NOTAM-Portal (national),AAC AIS Panama,MP,NOTAM,https://www.aeronautica.gob.pa/ais
+NOTAM-Portal (national),DGAC AIS Costa Rica,MR,NOTAM,https://www.dgac.go.cr/ais
+NOTAM-Portal (national),SENEAM NOTAM Mexiko,MM,NOTAM,https://www.seneam.gob.mx/notam/
+NOTAM-Portal (national),SENEAM NOTAM Mexiko,MX,NOTAM,https://www.seneam.gob.mx/notam/
+NOTAM-Portal (national),ANAC AIS Argentinien,SA,NOTAM,https://www.anac.gov.ar/anac/web/index.php/1/12/ais
+NOTAM-Portal (national),DECEA NOTAMweb,SB,NOTAM,https://notamweb.decea.mil.br
+NOTAM-Portal (national),DECEA NOTAMweb,SN,NOTAM,https://notamweb.decea.mil.br
+NOTAM-Portal (national),DECEA NOTAMweb,SW,NOTAM,https://notamweb.decea.mil.br
+NOTAM-Portal (national),DECEA NOTAMweb,SS,NOTAM,https://notamweb.decea.mil.br
+NOTAM-Portal (national),DECEA NOTAMweb,SD,NOTAM,https://notamweb.decea.mil.br
+NOTAM-Portal (national),DECEA NOTAMweb,SI,NOTAM,https://notamweb.decea.mil.br
+NOTAM-Portal (national),DGAC AIS Chile,SC,NOTAM,https://www.dgac.gob.cl/portalweb/ais
+NOTAM-Portal (national),Aerocivil AIS Kolumbien,SK,NOTAM,https://www.aerocivil.gov.co/ais
+NOTAM-Portal (national),CORPAC AIS Peru,SP,NOTAM,https://www.corpac.gob.pe/ais
+NOTAM-Portal (national),INAC AIS Venezuela,SV,NOTAM,https://www.inac.gob.ve/ais
+NOTAM-Portal (national),DGAC AIS Ecuador,SE,NOTAM,https://www.aviacioncivil.gob.ec/ais
+NOTAM-Portal (national),DINACIA AIS Uruguay,SU,NOTAM,https://www.dinacia.gub.uy/ais
+NOTAM-Portal (national),DINAC AIS Paraguay,SG,NOTAM,https://www.dinac.gov.py/ais
+NOTAM-Portal (national),DGAC AIS Bolivien,SL,NOTAM,https://www.dgac.gob.bo/ais
+NOTAM-Portal (national),Nav Canada CFPS,C,NOTAM,https://www.navcanada.ca/en/flight-planning/flight-briefing.aspx
+NOTAM-Portal (national),Airservices Australia NAIPS,Y,NOTAM,https://www.airservicesaustralia.com/naips
+NOTAM-Portal (national),Airways NZ AIS,N,NOTAM,https://www.aip.net.nz
+VFR,Open-Flightmaps Deutschland,ED,VFR,https://www.openflightmaps.org/ed-germany/
+VFR,DFS AIP,ED,VFR,https://aip.dfs.de/basicAIP/
+VFR,DFS AIP VFR Online 💳,ED,VFR,https://www.eisenschmidt.aero/aip-vfr-online-version-zugang-fuer-12-monate/S2102001
+VFR,ICAO-Karte bestellen 💳,ED,VFR,https://www.flightplanner.de/cms/ICAO_Deutschland
+VFR,Open-Flightmaps Deutschland,ET,VFR,https://www.openflightmaps.org/ed-germany/
+VFR,DFS AIP VFR Online 💳,ET,VFR,https://www.eisenschmidt.aero/aip-vfr-online-version-zugang-fuer-12-monate/S2102001
+VFR,ICAO-Karte bestellen 💳,ET,VFR,https://www.flightplanner.de/cms/ICAO_Deutschland
+VFR,Open-Flightmaps Österreich,LO,VFR,https://www.openflightmaps.org/lo-austria/
+VFR,AustroControl Online VFR,LO,VFR,https://www.austrocontrol.at/piloten/vor_dem_flug/aim_produkte/onlinekarte_vfr_austria
+VFR,ICAO-Karte bestellen 💳,LO,VFR,https://www.flightplanner.de/cms/ICAO_Oesterreich
+VFR,Open-Flightmaps Italien,LI,VFR,https://www.openflightmaps.org/li-italy/
+VFR,Open-Flightmaps Belgien,EB,VFR,https://www.openflightmaps.org/eb-belgium/
+VFR,Open-Flightmaps Niederlande,EH,VFR,https://www.openflightmaps.org/eh-netherlands/
+VFR,Open-Flightmaps Polen,EP,VFR,https://www.openflightmaps.org/ep-poland/
+VFR,Open-Flightmaps Tschechien,LK,VFR,https://www.openflightmaps.org/lk-czech-republic/
+VFR,Open-Flightmaps Slowakei,LZ,VFR,https://www.openflightmaps.org/lz-slovakia/
+VFR,Open-Flightmaps Ungarn,LH,VFR,https://www.openflightmaps.org/lh-hungary/
+VFR,Open-Flightmaps Slowenien,LJ,VFR,https://www.openflightmaps.org/lj-slovenia/
+VFR,Open-Flightmaps Kroatien,LD,VFR,https://www.openflightmaps.org/ld-croatia/
+VFR,Géoportail OACI-VFR,LF,VFR,https://www.geoportail.gouv.fr/donnees/carte-oaci-vfr
+VFR,ICAO-Karte bestellen 💳,LF,VFR,https://www.flightplanner.de/cms/ICAO_Frankreich
+VFR,geo.admin.ch ICAO-Karte,LS,VFR,https://map.geo.admin.ch/?lang=de&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.bazl.luftfahrtkarte-icao
+VFR,ICAO-Karte bestellen 💳,LS,VFR,https://www.flightplanner.de/cms/ICAO_Schweiz
+VFR,NATS AeroHub Charts,EG,VFR,https://aerohub.nats.aero/charts
+VFR,ICAO-Karte bestellen 💳,EG,VFR,https://www.flightplanner.de/cms/ICAO_UK
+VFR,IAA Charts,EI,VFR,https://www.iaa.ie/general-aviation/aeronautical-charts
+VFR,Finavia AIP,EF,VFR,https://ais.fi/ais/eaip/
+VFR,ICAO-Karte bestellen 💳,EF,VFR,https://www.flightplanner.de/cms/ICAO_Finnland
+VFR,Avinor eAIP,EN,VFR,https://ais.avinor.no/no/AIP/
+VFR,ICAO-Karte bestellen 💳,EN,VFR,https://www.flightplanner.de/cms/ICAO_Norwegen
+VFR,LFV eAIP,ES,VFR,https://aro.lfv.se/Editorial/View/IAIP
+VFR,ICAO-Karte bestellen 💳,ES,VFR,https://www.flightplanner.de/cms/ICAO_Schweden
+VFR,Naviair eAIP,EK,VFR,https://eaip.naviair.dk/
+VFR,LGS eAIP,EV,VFR,https://www.lgs.lv/en/ais/eaip/
+VFR,ICAO-Karte bestellen 💳,EV,VFR,https://www.flightplanner.de/cms/ICAO_Baltikum
+VFR,Oro Navigacija eAIP,EY,VFR,https://www.ans.lt/en/eaip/
+VFR,ICAO-Karte bestellen 💳,EY,VFR,https://www.flightplanner.de/cms/ICAO_Baltikum
+VFR,EANS eAIP,EE,VFR,https://ais.eans.ee/aip/
+VFR,ICAO-Karte bestellen 💳,EE,VFR,https://www.flightplanner.de/cms/ICAO_Baltikum
+VFR,ENAIRE AIS,LE,VFR,https://aip.enaire.es/
+VFR,NAV Portugal eAIP,LP,VFR,https://www.nav.pt/en/aeronautical-information/eaip
+VFR,HCAA eAIP,LG,VFR,https://www.hcaa.gr/en/eaip/
+VFR,ICAO-Karte bestellen 💳,GM,VFR,https://www.flightplanner.de/cms/ICAO_Marokko
+Drohnen/UAV,Dronetag Platform,tracking,"Web, iOS, Android",https://www.dronetag.com/
+Drohnen/UAV,Drone Scanner – Dronetag,tracking,iOS / Android App,https://www.dronetag.com/
+Drohnen/UAV,Drone Tracker – Drone Radar,tracking,Android App,
+Drohnen/UAV,Drone-Check,tracking,"Web (PWA), iOS, Android, REST API, MQTT",https://www.drone-check.eu/
+Drohnen/UAV,DJI FlySafe Geo Zones,zonen,"Web (interaktiv), proprietär",https://www.dji.com/flysafe
+Drohnen/UAV,OpenAIP (UAV-Zonen),zonen,"GeoJSON, OpenAir, KML, REST API",https://www.openaip.net/
+Drohnen/UAV,EASA – Geo-Zonen (wo darf ich fliegen?),zonen,"JSON, XML",https://www.easa.europa.eu/en/domains/civil-drones
+Drohnen/UAV,DFS – Drohnenflug-Portal,zonen,"Web (interaktiv), PDF",https://www.dfs.de
+Drohnen/UAV,Dipul – Map Tool,zonen,Web (interaktiv),https://www.dipul.de/
+Drohnen/UAV,DroneMaps24,zonen,"Web (interaktiv), iOS, Android",https://dronemaps24.org/
+Drohnen/UAV,Droniq App (TraX),zonen,iOS / Android / Web-App,https://droniq.de/drohnenapp-trax
+Drohnen/UAV,EASA Easy Access Rules UAS,regeln,"PDF, XML",https://www.easa.europa.eu/en/domains/civil-drones
+Drohnen/UAV,ICAO RPAS / UAS Regulations,regeln,PDF,https://www.icao.int
+Drohnen/UAV,EASA – Nationale Drohnenbehörden (NAA),behoerden,Web (HTML),https://www.easa.europa.eu/en/domains/civil-drones
+Drohnen/UAV,LBA – UAS-Betreiberregistrierung,behoerden,"Web, PDF",https://www.lba.de/DE/Drohnen/
+Drohnen/UAV,LBA OpenUAV – Training,behoerden,"Web (HTML, Videos, Multiple Choice)",https://lba-openuav.de/
+Drohnen/UAV,UAV Forecast,wetter,"iOS/Android, Web",https://www.uavforecast.com/
+Drohnen/UAV,Dipul – NOTAMs,notam,"Web, PDF, JPG",https://www.dipul.de/
+Katalog-Quelle,EASA CS-29 — Large Rotorcraft,,,https://www.easa.europa.eu/en/document-library/certification-specifications/cs-29-large-rotorcraft
+Katalog-Quelle,FAA FAR Part 29 — Transport Category Rotorcraft,,,https://www.ecfr.gov/current/title-14/chapter-I/subchapter-G/part-29
+Katalog-Quelle,Airbus Helicopters — Produktdaten,,,https://www.airbus.com/en/products-services/helicopters
+Katalog-Quelle,"Leonardo Helicopters — AW139, AW169, AW189",,,https://www.leonardocompany.com/en/helicopter
+Katalog-Quelle,IOGP Report 590 — Offshore Helicopter Guidelines,,,https://www.iogp.org/bookstore/product/helicopter-guidelines-for-offshore-operations/
+Katalog-Quelle,"Bell Helicopter — Bell 429, 412, 525",,,https://www.bellflight.com
+Katalog-Quelle,EASA AMC-20 — HEMS-Betriebsvorschriften,,,https://www.easa.europa.eu/en/document-library/acceptable-means-of-compliance-and-guidance-material/commission-regulation-eu-no-9652012
+Katalog-Quelle,ADAC Luftrettung — Flottendaten & Statistiken,,,https://www.adac.de/der-adac/verein/luftrettung/
+Katalog-Quelle,DRF Luftrettung — Technik & Einsatzbericht,,,https://www.drf-luftrettung.de
+Katalog-Quelle,ICAO Doc 9868 — SAR-Verfahren,,,https://www.icao.int/safety/search-and-rescue/Pages/default.aspx
+Katalog-Quelle,Rettungshubschrauber.de — Standorte Deutschland,,,https://www.rettungshubschrauber.de
+Katalog-Quelle,EASA CS-27 — Small Rotorcraft,,,https://www.easa.europa.eu/en/document-library/certification-specifications/cs-27-small-rotorcraft
+Katalog-Quelle,Robinson Helicopter — R44 / R66 Daten,,,https://www.robinsonheli.com
+Katalog-Quelle,HAI — Helicopter Association International,,,https://www.rotor.org
+Katalog-Quelle,Boeing AH-64 Apache — Technische Daten,,,https://www.boeing.com/defense/ah-64-apache/
+Katalog-Quelle,Airbus H145M / Tiger — Militärversionen,,,https://www.airbus.com/en/products-services/helicopters/military-helicopters
+Katalog-Quelle,Leonardo AW129 Mangusta,,,https://www.leonardocompany.com/en/helicopter/aw129-mangusta
+Katalog-Quelle,Sikorsky UH-60 Black Hawk — Varianten,,,https://www.lockheedmartin.com/en-us/products/black-hawk.html
+Katalog-Quelle,SKYbrary — Attack Helicopter Articles,,,https://www.skybrary.aero
+Katalog-Quelle,Sikorsky CH-53K King Stallion,,,https://www.lockheedmartin.com/en-us/products/ch-53k-king-stallion.html
+Katalog-Quelle,Boeing CH-47 Chinook — Technische Daten,,,https://www.boeing.com/defense/ch-47-chinook/
+Katalog-Quelle,NHIndustries NH90 — Multinationale Beschaffung,,,https://www.nhindustries.com
+Katalog-Quelle,NATO STANAG 3150 — Helicopter Operations,,,https://www.nato.int/cps/en/natolive/topics_50086.htm
+Katalog-Quelle,Sikorsky MH-60R Seahawk — Maritime Strike,,,https://www.lockheedmartin.com/en-us/products/mh-60r-seahawk.html
+Katalog-Quelle,Leonardo AW101 Merlin — ASW-Konfiguration,,,https://www.leonardocompany.com/en/helicopter/aw101
+Katalog-Quelle,NATO — Maritime Patrol & Helicopter ASW,,,https://www.nato.int
+Katalog-Quelle,NASA Technical Report — Helicopter Aerodynamics,,,https://ntrs.nasa.gov/citations/19630011694
+Katalog-Quelle,SKYbrary — Helicopter Aerodynamics,,,https://www.skybrary.aero/articles/helicopters
+Katalog-Quelle,DLR — Hubschrauber Aerodynamik & CFD,,,https://www.dlr.de/as/de
+Katalog-Quelle,EASA Easy Access Rules — Helicopter Operations,,,https://www.easa.europa.eu/en/document-library/easy-access-rules
+Katalog-Quelle,EASA TCDS — Rotorcraft Type Certificates,,,https://www.easa.europa.eu/en/domains/aircraft-products/aircraft-type-designators
+Katalog-Quelle,FAA TCDS — Rotorcraft,,,https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/
+Katalog-Quelle,ICAO Doc 9110 — Helicopter IFR Procedures,,,https://www.icao.int/publications/pages/publication.aspx?docnum=9110
+Katalog-Quelle,BFU — Hubschrauber-Unfallberichte Deutschland,,,https://www.bfu-web.de
+Katalog-Quelle,EASA TCDS – Piston Engines,,,https://www.easa.europa.eu/en/domains/aircraft-products/engines
+Katalog-Quelle,FAA TCDS – Reciprocating Engines,,,https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/
+Katalog-Quelle,Lycoming Engines,,,https://www.lycoming.com/engines
+Katalog-Quelle,Continental Aerospace Technologies,,,https://www.continentalmotors.aero/engines
+Katalog-Quelle,Rotax Aircraft Engines (BRP),,,https://www.flyrotax.com/engines
+Katalog-Quelle,Pratt & Whitney Canada – PW100/127/150 (Turboprop),,,https://www.pwc.ca/en/products-and-services/products
+Katalog-Quelle,GE Aviation – CT7 / H80 Turboprop,,,https://www.geaviation.com/regional/products
+Katalog-Quelle,Rolls-Royce – AE 2100 / T56,,,https://www.rolls-royce.com/products-and-services/defence.aspx
+Katalog-Quelle,ICAO EEDB – Turboprop Entries,,,https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank
+Katalog-Quelle,ICAO EEDB – Turbojet Entries,,,https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank
+Katalog-Quelle,EASA TCDS – Turbojet Engines,,,https://www.easa.europa.eu/en/domains/aircraft-products/engines
+Katalog-Quelle,SKYbrary – Turbojet Engine,,,https://skybrary.aero/articles/jet-engine
+Katalog-Quelle,ICAO Aircraft Engine Emissions Databank (EEDB),,,https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank
+Katalog-Quelle,EASA Engine Type Certificate Data Sheets (TCDS),,,https://www.easa.europa.eu/en/domains/aircraft-products/engines
+Katalog-Quelle,FAA Engine Type Certificate Data Sheets,,,https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/
+Katalog-Quelle,CFM International – LEAP & CFM56,,,https://www.cfmaeroengines.com/engines/
+Katalog-Quelle,GE Aviation – Commercial Engines,,,https://www.geaviation.com/commercial/engines
+Katalog-Quelle,Rolls-Royce – Trent-Familie,,,https://www.rolls-royce.com/products-and-services/civil-aerospace.aspx
+Katalog-Quelle,Pratt & Whitney – Geared Turbofan (GTF),,,https://www.prattwhitney.com/en/products/commercial-engines/geared-turbofan
+Katalog-Quelle,Safran Aircraft Engines – LEAP & SaM146,,,https://www.safran-aircraft-engines.com/commercial-aircraft
+Katalog-Quelle,Honeywell Aerospace – HTF7000 & APU,,,https://aerospace.honeywell.com/us/en/products-and-services/product/hardware-and-systems/engines
+Katalog-Quelle,NASA Glenn Research Center – Propulsion Systems,,,https://www.grc.nasa.gov/www/k-12/airplane/rocket.html
+Katalog-Quelle,ESA – Propulsion Technology,,,https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Propulsion
+Katalog-Quelle,"SpaceX – Merlin, Raptor Engine Specs",,,https://www.spacex.com/vehicles/falcon-9/
+Katalog-Quelle,Pipistrel – Velis Electro (Erste EASA-zugelassene Elektro-GA),,,https://www.pipistrel-aircraft.com/aircraft/electric-flight/velis-electro-easa-tc/
+Katalog-Quelle,MagniX – Magni250 & Magni500 Electric Propulsion,,,https://www.magniX.aero/
+Katalog-Quelle,Eviation – Alice All-Electric Commuter,,,https://www.eviation.com/aircraft/alice/
+Katalog-Quelle,EASA – Certification of Electric/Hybrid Propulsion,,,https://www.easa.europa.eu/en/newsroom-and-events/news/easa-issues-first-certification-specifications-electric-propulsion
+Katalog-Quelle,DLR – Elektrisches Fliegen,,,https://www.dlr.de/de/forschung-und-transfer/projekte-und-missionen/elektrisches-fliegen
+Katalog-Quelle,Airbus – ZEROe Hydrogen Aircraft Concepts,,,https://www.airbus.com/en/innovation/zero-emission-aviation/hydrogen/zeroe
+Katalog-Quelle,ZeroAvia – HyperTech Hydrogen-Electric,,,https://www.zeroavia.com/technology/
+Katalog-Quelle,Ampaire – Hybrid-Electric Otter,,,https://www.ampaire.com/
+Katalog-Quelle,DLR – Hybrid- und Wasserstoffantriebe,,,https://www.dlr.de/de/forschung-und-transfer/projekte-und-missionen/elektrisches-fliegen
+Katalog-Quelle,IATA – Net Zero 2050 & SAF Report,,,https://www.iata.org/contentassets/77685d02f1ed4779b5bc4f49bb1e4bf7/iata-net-zero-2050.pdf
+Katalog-Quelle,ICAO World Air Transport Statistics (WATS),,,https://www.icao.int/sustainability/Pages/air-transport-statistics.aspx
+Katalog-Quelle,Eurostat – Air Transport Statistics,,,https://ec.europa.eu/eurostat/statistics-explained/index.php/Air_transport_statistics
+Katalog-Quelle,DESTATIS – Luftverkehr Deutschland,,,https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Transport-Verkehr/Personenverkehr/luftverkehr.html
+Katalog-Quelle,Eurocontrol STATFOR – Traffic Statistics,,,https://www.eurocontrol.int/forecasting
+Katalog-Quelle,ACI World – Airport Traffic Statistics,,,https://aci.aero/data-centre/annual-traffic-data/
+Katalog-Quelle,ICAO EEDB – Engine Technical Statistics,,,https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank
+Katalog-Quelle,EASA Annual Safety Review – Technical Statistics,,,https://www.easa.europa.eu/en/domains/safety-management/safety-analysis/annual-safety-review
+Katalog-Quelle,Boeing Commercial Market Outlook (CMO) – Techniktrends,,,https://www.boeing.com/commercial/market/commercial-market-outlook/
+Katalog-Quelle,NASA Technical Reports Server (NTRS),,,https://ntrs.nasa.gov/
+Katalog-Quelle,IATA Economics – Airline Industry Statistics,,,https://www.iata.org/en/publications/economics/
+Katalog-Quelle,Boeing Orders & Deliveries,,,https://www.boeing.com/orders-deliveries
+Katalog-Quelle,Airbus Orders & Deliveries,,,https://www.airbus.com/en/investors/orders-and-deliveries
+Katalog-Quelle,Boeing Commercial Market Outlook (CMO),,,https://www.boeing.com/commercial/market/commercial-market-outlook/
+Katalog-Quelle,Airbus Global Market Forecast (GMF),,,https://www.airbus.com/en/products-services/commercial-aircraft/market/global-market-forecast
+Katalog-Quelle,Our World in Data – Air Transport,,,https://ourworldindata.org/transport
+Katalog-Quelle,NTSB Aviation Accident Database,,,https://www.ntsb.gov/investigations/AccidentReports/Pages/aviation.aspx
+Katalog-Quelle,EASA Annual Safety Review,,,https://www.easa.europa.eu/en/domains/safety-management/safety-analysis/annual-safety-review
+Katalog-Quelle,Aviation Safety Network (ASN),,,https://aviation-safety.net/database/
+Katalog-Quelle,BFU – Bundesstelle für Flugunfalluntersuchung,,,https://www.bfu-web.de/
+Katalog-Quelle,ICAO ADREP – Accident/Incident Reporting,,,https://www.icao.int/safety/airnavigation/AIG/Pages/ADREP.aspx
+Katalog-Quelle,ICAO EEDB – Emissionsparameter,,,https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank
+Katalog-Quelle,ICAO Environmental Report – Aviation & Climate Change,,,https://www.icao.int/environmental-protection/Pages/env2022.aspx
+Katalog-Quelle,EASA European Aviation Environmental Report,,,https://www.easa.europa.eu/en/domains/environment/eaer
+Katalog-Quelle,Our World in Data – CO₂ from Aviation,,,https://ourworldindata.org/co2-emissions-from-aviation
+Katalog-Quelle,Eurocontrol – Aviation Sustainability Dashboard,,,https://www.eurocontrol.int/publication/eurocontrol-think-paper-17-sustainable-aviation-fuels
+Katalog-Quelle,Eurostat – Eurostat Air Transport by Airport,,,https://ec.europa.eu/eurostat/databrowser/view/AVIA_PAOA/default/table
+Katalog-Quelle,DESTATIS – Flughafen-Statistiken Deutschland,,,https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Transport-Verkehr/Personenverkehr/luftverkehr.html
+Katalog-Quelle,ACI World Airport Traffic Report,,,https://aci.aero/data-centre/annual-traffic-data/
+Katalog-Quelle,OurAirports – Worldwide Airport Data,,,https://ourairports.com/data/
+Katalog-Quelle,Eurocontrol STATFOR – Historical Data,,,https://www.eurocontrol.int/forecasting
+Katalog-Quelle,Our World in Data – Long-term Air Travel Trends,,,https://ourworldindata.org/transport
+Katalog-Quelle,NTSB – Accident Trends seit 1962,,,https://www.ntsb.gov/investigations/AccidentReports/Pages/aviation.aspx
+Katalog-Quelle,ICAO WATS – 20-Year Trends,,,https://www.icao.int/sustainability/Pages/air-transport-statistics.aspx
+Katalog-Quelle,Planespotters.net – Fleet Statistics,,,https://www.planespotters.net/airline
+Katalog-Quelle,ICAO Doc 8643 – Aircraft Type Designators,,,https://www.icao.int/publications/doc8643/Pages/default.aspx
+Katalog-Quelle,Boeing Orders & Deliveries – By Aircraft Type,,,https://www.boeing.com/orders-deliveries
+Katalog-Quelle,Airbus Orders & Deliveries – By Aircraft Type,,,https://www.airbus.com/en/investors/orders-and-deliveries
+Katalog-Quelle,IATA Air Passenger Market Analysis – Load Factor & Routes,,,https://www.iata.org/en/iata-repository/publications/economic-reports/
+Katalog-Quelle,Eurocontrol STATFOR – Traffic by Flight Phase,,,https://www.eurocontrol.int/forecasting
+Katalog-Quelle,OAG – Airline Schedule Data,,,https://www.oag.com/airline-schedules-data
+Katalog-Quelle,FlightAware – Historical Flight Data,,,https://www.flightaware.com/analysis/
+Katalog-Quelle,EASA CS-25 – Certification Specifications Large Aeroplanes,,,https://www.easa.europa.eu/en/document-library/certification-specifications/cs-25-amendment-28
+Katalog-Quelle,FAA FAR Part 25 – Airworthiness Standards,,,https://www.ecfr.gov/current/title-14/chapter-I/subchapter-C/part-25
+Katalog-Quelle,SKYbrary – Aviation Safety Knowledge Base,,,https://skybrary.aero/
+Katalog-Quelle,NASA Technical Reports Server (NTRS),,,https://ntrs.nasa.gov/
+Katalog-Quelle,FAA Aeronautical Information Manual (AIM),,,https://www.faa.gov/air_traffic/publications/atpubs/aim_html/
+Katalog-Quelle,ICAO Annex 10 – Aeronautical Telecommunications,,,https://www.icao.int/Pages/default.aspx
+Katalog-Quelle,ICAO Annex 11 – Air Traffic Services,,,https://www.icao.int/Pages/default.aspx
+Katalog-Quelle,EUROCONTROL – Navigation & Communication Standards,,,https://www.eurocontrol.int/aviation-standards
+Katalog-Quelle,"ICAO EEDB – Schub, TSFC, BPR, OPR Daten",,,https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank
+Katalog-Quelle,NASA Glenn – Propulsion & Physical Data,,,https://www.grc.nasa.gov/www/k-12/airplane/
+Katalog-Quelle,Jane\,,,https://janes.com/janes-aero-engines
+Katalog-Quelle,DLR Institut für Antriebstechnik – Forschungsberichte,,,https://www.dlr.de/at/
+Katalog-Quelle,FAA AIM – Pilot\,,,https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/phak
+Katalog-Quelle,ICAO Doc 8168 – PANS-OPS,,,https://store.icao.int/en/pans-ops-doc-8168
+Katalog-Quelle,EASA CS-25 – Flight Performance Requirements,,,https://www.easa.europa.eu/en/document-library/certification-specifications/cs-25-amendment-28
+Katalog-Quelle,SKYbrary – Flight Phases Articles,,,https://skybrary.aero/
+Katalog-Quelle,EASA Type Certificate Data Sheets – Aircraft,,,https://www.easa.europa.eu/en/domains/aircraft-products/aircraft/type-certificates
+Katalog-Quelle,FAA TCDS – Aircraft,,,https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/
+Katalog-Quelle,ICAO Doc 8643 – All Aircraft Types,,,https://www.icao.int/publications/doc8643/Pages/default.aspx
+Katalog-Quelle,Jane\,,,https://janes.com/janes-all-the-worlds-aircraft-development-production
+Katalog-Quelle,EASA CS-29 / CS-27 – Rotorcraft,,,https://www.easa.europa.eu/en/document-library/certification-specifications
+Katalog-Quelle,ICAO EEDB – Alle Triebwerkstypen,,,https://www.easa.europa.eu/en/domains/environment/icao-aircraft-engine-emissions-databank
+Katalog-Quelle,EASA CS-E – Triebwerkszertifizierung,,,https://www.easa.europa.eu/en/document-library/certification-specifications/cs-e-amendment-6
+Katalog-Quelle,FAA FAR Part 33 – Aircraft Engines,,,https://www.ecfr.gov/current/title-14/chapter-I/subchapter-C/part-33
+Katalog-Quelle,SKYbrary – Engine Types Overview,,,https://skybrary.aero/articles/jet-engine
+Katalog-Quelle,FAA Advisory Circular AC 43.13 – Aircraft Inspection & Repair,,,https://www.faa.gov/regulations_policies/advisory_circulars/index.cfm/go/document.information/documentID/99861
+Katalog-Quelle,EASA Part-145 – Maintenance Organisation Requirements,,,https://www.easa.europa.eu/en/document-library/regulations/commission-regulation-eu-no-13212014
+Katalog-Quelle,Airbus – Aircraft Characteristics for Maintenance,,,https://www.airbus.com/en/aircraft/support-and-services/aircraft-maintenance
+Katalog-Quelle,Boeing – Maintenance Planning Data (MPD),,,https://www.boeing.com/services/maintenance
+Katalog-Quelle,NTSB – Maintenance-Related Accident Reports,,,https://www.ntsb.gov/investigations/AccidentReports/Pages/aviation.aspx
+Katalog-Quelle,EASA TCDS – Performance Data,,,https://www.easa.europa.eu/en/domains/aircraft-products/aircraft/type-certificates
+Katalog-Quelle,Airbus Airport & Technical Data,,,https://www.airbus.com/en/products-services/commercial-aircraft/the-life-of-an-aircraft/airport-operations-and-technical-data
+Katalog-Quelle,Boeing Airplane Characteristics for Airport Planning,,,https://www.boeing.com/commercial/airports/plan_manuals.page
+Katalog-Quelle,Jane\,,,https://janes.com/janes-all-the-worlds-aircraft-development-production
+Katalog-Quelle,EASA CS-25 – Structural Requirements,,,https://www.easa.europa.eu/en/document-library/certification-specifications/cs-25-amendment-28
+Katalog-Quelle,NASA Materials and Structures Research,,,https://ntrs.nasa.gov/
+Katalog-Quelle,DLR Institut für Faserverbundleichtbau und Adaptronik,,,https://www.dlr.de/fa/
+Katalog-Quelle,Beuth Verlag – DIN Luft- und Raumfahrt-Normen,,,https://www.beuth.de/
+Katalog-Quelle,RTCA DO-178C – Software Considerations in Airborne Systems,,,https://www.rtca.org/content/do-178c
+Katalog-Quelle,RTCA DO-160G – Environmental Conditions Airborne Equipment,,,https://www.rtca.org/content/do-160g
+Katalog-Quelle,ARINC 429 – Digital Information Transfer System,,,https://www.aviation-ia.com/arinc/specifications
+Katalog-Quelle,MIL-STD-1553B – Military Avionics Data Bus,,,https://quicksearch.dla.mil/qsDocDetails.aspx?ident_number=36512
+Katalog-Quelle,FAA AC 25.1309 – System Safety Assessment,,,https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgAdvisoryCircular.nsf/0/
+Katalog-Quelle,EASA CS-25 – FBW & Automated Systems Requirements,,,https://www.easa.europa.eu/en/document-library/certification-specifications/cs-25-amendment-28
