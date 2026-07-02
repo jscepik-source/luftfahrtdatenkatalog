@@ -768,9 +768,6 @@
       </circle>
     </svg>
   </div>
-  <div class="sim-ctrl reveal">
-    <button class="sim-btn" id="simDisturb">⤵ Störung einspeisen (Böe)</button>
-  </div>
   <div class="sim-cap reveal" id="simCap">Signalpunkt läuft permanent durch den Regelkreis</div>
 
   <div class="af reveal">
@@ -1471,22 +1468,15 @@ bank.oninput=updateLaw;updateLaw();
 
 /* ---------- FBW closed-loop mini-simulation ---------- */
 (function(){
-  const surf=document.getElementById('ctrlSurf'),cap=document.getElementById('simCap'),btn=document.getElementById('simDisturb');
-  if(!surf||!btn)return;
-  let t=0,dist=0,distV=0,disturbing=false;
+  const surf=document.getElementById('ctrlSurf');
+  if(!surf)return;
+  let t=0;
   function loop(){
     t+=0.03;
-    let a=Math.sin(t)*4;                       // ruhiger Dauerausschlag
-    if(disturbing){
-      distV+=(-dist*0.16 - distV*0.12); dist+=distV;   // gedämpfte Feder → SAS
-      if(Math.abs(dist)<0.4&&Math.abs(distV)<0.4){disturbing=false;dist=0;cap.textContent='SAS hat die Störung gedämpft → wieder stabil';}
-      a+=dist;
-    }
-    surf.style.transform='rotate('+a.toFixed(2)+'deg)';
+    surf.style.transform='rotate('+(Math.sin(t)*4).toFixed(2)+'deg)';   // ruhiger Dauerausschlag
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
-  btn.onclick=()=>{ dist=28;distV=0;disturbing=true; cap.textContent='Böe stört die Fluglage → FCC + SAS regeln gegen …'; };
 })();
 
 /* ---------- Artificial Feel widget ---------- */
