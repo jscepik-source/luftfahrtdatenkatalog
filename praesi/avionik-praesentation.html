@@ -834,7 +834,11 @@
   </div>
 
   <h3 class="reveal" style="margin-top:52px">Positionsbestimmung — Sensor-Fusion (Kalman-Filter)</h3>
-  <p class="lead reveal">Zuerst die Frage „Wo bin ich?": Der Kalman-Filter verschmilzt mehrere Sensoren zu einer präzisen Position — GPS korrigiert die Drift der Trägheitsnavigation.</p>
+  <ul class="pts reveal" style="margin:10px 0 6px">
+    <li>Erste Frage: <b>„Wo bin ich?"</b></li>
+    <li><b>Kalman-Filter</b> verschmilzt mehrere Sensoren (Sensor-Fusion)</li>
+    <li><b>GPS</b> korrigiert die Drift der Trägheitsnavigation (IRS)</li>
+  </ul>
   <figure class="reveal" style="max-width:1240px;margin-inline:auto;margin-top:8px">
     <div class="dgm"><div class="flowrow">
         <div class="dcol">
@@ -851,7 +855,12 @@
   </figure>
 
   <h3 class="reveal" style="margin-top:46px">4D-Trajektorie — Ort (X·Y) + Höhe (Z) + Zeit (T)</h3>
-  <p class="lead reveal">Das FMS plant den Flug in <b>vier Dimensionen</b>: nicht nur <b>wo</b> (Ort X·Y + Höhe Z), sondern auch <b>wann</b> — jeder Wegpunkt bekommt eine <b>Sollzeit (RTA)</b>. Ergebnis: ein exakt geplanter, treibstoffoptimaler Pfad, der sich <b>zeitgenau in den Verkehrsfluss</b> einfügt.</p>
+  <ul class="pts reveal" style="margin:10px 0 6px">
+    <li>Plant in <b>vier Dimensionen</b>: Ort (X·Y) + Höhe (Z) + <b>Zeit (T)</b></li>
+    <li>Jeder Wegpunkt bekommt eine <b>Sollzeit (RTA)</b></li>
+    <li>Exakt geplanter, <b>treibstoffoptimaler</b> Pfad</li>
+    <li><b>Zeitgenau</b> im Verkehrsfluss</li>
+  </ul>
   <div class="traj reveal">
     <svg viewBox="0 0 920 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
       <defs>
@@ -876,7 +885,7 @@
       <text x="180" y="63" fill="#9fb0cf" font-size="12">Reiseflug</text>
       <text x="415" y="228" fill="#9fb0cf" font-size="13">Continuous Descent</text>
       <!-- RTA-Zeitmarken (T) auf dem Profil -->
-      <g fill="#27c08a"><circle cx="180" cy="72" r="5"/><circle cx="380" cy="72" r="5"/><circle cx="600" cy="150" r="5"/><circle cx="790" cy="223" r="5"/></g>
+      <g fill="#27c08a"><circle cx="180" cy="72" r="5"/><circle cx="380" cy="72" r="5"/><circle cx="600" cy="127" r="5"/><circle cx="790" cy="223" r="5"/></g>
       <g fill="#9fd8c2" font-size="12.5" font-weight="700" font-family="ui-monospace,monospace">
         <text x="180" y="92" text-anchor="middle">RTA 10:30</text><text x="380" y="92" text-anchor="middle">10:36</text>
         <text x="612" y="144">10:42</text><text x="800" y="217">10:47</text>
