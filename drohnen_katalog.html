@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#eef3fa">
+<title>UAV & Drohnen Katalog – HS RheinMain</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── CSS VARIABLEN ── */
+:root{
+  --bg:#eef3fa;--s1:#ffffff;--s2:#f3f7fc;--s3:#e7eef8;
+  --b0:rgba(15,23,42,0.07);--b1:rgba(15,23,42,0.13);--b2:rgba(15,23,42,0.22);
+  --tx:#1f2a3d;--mu:#5b6b82;--fa:#9aa7bd;
+  --ac:#2563eb;
+  /* Farben je Bauform */
+  --mc:#0891b2;   /* Multicopter – Cyan */
+  --fw:#059669;   /* Fixed Wing  – Grün */
+  --vt:#7c3aed;   /* VTOL        – Violett */
+  --r:12px;--rs:8px;
+}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;min-height:100vh}
+
+/* Gitternetz-Hintergrund */
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(15,23,42,0.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(15,23,42,0.035) 1px,transparent 1px);
+  background-size:46px 46px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(59,130,246,0.045) 0%,transparent 65%);
+  pointer-events:none;z-index:0}
+
+/* ── DROHNEN-HINTERGRUND-ANIMATION ── */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.sky-drone{position:absolute;font-size:22px;opacity:0;animation:droneFly linear infinite}
+.d1{top:12%;left:-80px;animation-duration:22s;animation-delay:0s}
+.d2{top:28%;left:-80px;animation-duration:31s;animation-delay:-10s;font-size:16px;opacity:0}
+.d3{top:18%;left:-80px;animation-duration:18s;animation-delay:-6s;font-size:28px;opacity:0}
+.d4{top:8%;left:-80px;animation-duration:38s;animation-delay:-20s;font-size:13px;opacity:0}
+@keyframes droneFly{
+  0%  {transform:translate(-10vw,0) scale(1);opacity:0}
+  5%  {opacity:.18}
+  50% {opacity:.18}
+  95% {opacity:.18}
+  100%{transform:translate(115vw,-8vh) scale(.7);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){.sky-drone{animation:none;opacity:0}}
+
+/* ── GLOBALE TOPNAV ── */
+.avx-topnav{position:fixed;top:0;left:0;right:0;z-index:300;box-sizing:border-box;
+  min-height:48px;display:flex;align-items:center;gap:14px;
+  background:#0f172a;border-bottom:1px solid #334155;
+  padding:7px 16px;font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.avx-topnav a{text-decoration:none}
+.avx-brand{color:#fff;font-weight:800;font-size:.9rem;flex:0 0 auto}
+.avx-links{display:flex;gap:8px;flex:0 0 auto;margin-left:auto}
+.avx-pill{color:#cbd5e1;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:999px;
+  border:1px solid #334155;transition:background .15s,color .15s,border-color .15s}
+.avx-pill:hover{color:#fff;border-color:#4fc3f7}
+.avx-pill.avx-active{background:#2563eb;border-color:#2563eb;color:#fff}
+
+/* ── TOPBAR (Seiten-interne Navigation) ── */
+.tb{position:fixed;top:48px;left:0;right:0;z-index:200;height:54px;
+  background:rgba(255,255,255,0.90);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--b1);display:flex;align-items:center;
+  padding:0 clamp(1rem,4vw,2.5rem);gap:10px}
+.tb-logo{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;
+  color:var(--tx);cursor:pointer;text-decoration:none;background:none;border:none;font-family:inherit}
+.tb-logo svg{width:20px;height:20px;fill:none;stroke:#2563eb;stroke-width:2;flex-shrink:0}
+.tb-div{width:1px;height:16px;background:var(--b1)}
+.tb-cr{font-size:12px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
+.tb-cr b{color:var(--tx);font-weight:500}
+.tb-badge{margin-left:auto;font-size:11px;padding:3px 11px;border-radius:20px;
+  background:rgba(59,130,246,0.09);border:1px solid rgba(59,130,246,0.18);
+  color:#1d4ed8;letter-spacing:.03em;white-space:nowrap}
+
+/* ── VIEWS ── */
+.view{position:relative;z-index:1;padding-top:102px}
+.hide{display:none!important}
+
+/* ────────────────────────────────────────────────
+   STARTSEITE (Bauform-Auswahl)
+──────────────────────────────────────────────── */
+.hh{text-align:center;padding:4.5rem clamp(1rem,4vw,2.5rem) 2.5rem;max-width:820px;margin:0 auto}
+.ey{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:#2563eb;margin-bottom:1.4rem;
+  padding:5px 14px;border-radius:20px;background:rgba(59,130,246,0.08);
+  border:1px solid rgba(59,130,246,0.14)}
+.ey svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.hh h1{font-size:clamp(1.9rem,4.5vw,2.9rem);font-weight:700;line-height:1.1;
+  letter-spacing:-.03em;color:#0f172a;margin-bottom:.9rem}
+.hh h1 em{font-style:normal;color:#2563eb}
+.hh p{font-size:14.5px;color:var(--mu);line-height:1.7;max-width:500px;margin:0 auto 2.2rem}
+
+/* Statistik-Leiste */
+.hs{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b1);
+  border-radius:var(--r);overflow:hidden;border:1px solid var(--b1);max-width:360px;margin:0 auto 3.5rem}
+.hsc{background:var(--s1);padding:1.1rem .8rem;text-align:center}
+.hsc-n{font-size:24px;font-weight:700;font-family:'Space Mono',monospace;color:#0f172a}
+.hsc-l{font-size:10px;color:var(--mu);margin-top:2px;letter-spacing:.02em}
+
+/* Bauform-Karten */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;
+  padding:0 clamp(1rem,4vw,2.5rem) 5rem;max-width:min(1000px,94vw);margin:0 auto}
+.cc{background:var(--s1);border:1px solid var(--b0);border-radius:16px;cursor:pointer;
+  text-align:left;overflow:hidden;display:flex;flex-direction:column;padding:0;
+  transition:transform .2s,box-shadow .2s,border-color .2s;border:none}
+.cc:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(15,23,42,.13);border-color:var(--b2)}
+.cc-banner{height:130px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden}
+.cc-banner::before{content:'';position:absolute;inset:0;opacity:.55;
+  background-image:radial-gradient(circle at 1px 1px,rgba(15,23,42,.09) 1px,transparent 0);
+  background-size:15px 15px}
+.cc-banner .drone-icon{font-size:54px;position:relative;z-index:1;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.15))}
+.cc-info{padding:1.2rem 1.35rem 1.4rem;display:flex;flex-direction:column;gap:7px;flex:1}
+.cc-info h3{font-size:19px;font-weight:700;color:#0f172a;letter-spacing:-.01em}
+.cc-sub{font-size:12.5px;color:var(--mu);line-height:1.55;flex:1}
+.cc-go{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin-top:6px}
+.cc-go svg{width:15px;height:15px;fill:none;stroke-width:2;transition:transform .18s}
+.cc:hover .cc-go svg{transform:translateX(4px)}
+
+/* Bauform-Farben */
+.cc.mc{background:var(--s1);border:1px solid var(--b0)}
+.cc.mc .cc-banner{background:linear-gradient(135deg,rgba(8,145,178,.16),rgba(8,145,178,.03))}
+.cc.mc .cc-go{color:var(--mc)}.cc.mc .cc-go svg{stroke:var(--mc)}
+.cc.fw{background:var(--s1);border:1px solid var(--b0)}
+.cc.fw .cc-banner{background:linear-gradient(135deg,rgba(5,150,105,.16),rgba(5,150,105,.03))}
+.cc.fw .cc-go{color:var(--fw)}.cc.fw .cc-go svg{stroke:var(--fw)}
+.cc.vt{background:var(--s1);border:1px solid var(--b0)}
+.cc.vt .cc-banner{background:linear-gradient(135deg,rgba(124,58,237,.16),rgba(124,58,237,.03))}
+.cc.vt .cc-go{color:var(--vt)}.cc.vt .cc-go svg{stroke:var(--vt)}
+
+/* ────────────────────────────────────────────────
+   DETAIL-ANSICHT (Drohnen-Liste)
+──────────────────────────────────────────────── */
+.dh{border-bottom:1px solid var(--b0);padding:1.8rem clamp(1rem,4vw,2.5rem);
+  max-width:min(1440px,94vw);margin:0 auto}
+.bk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--mu);
+  background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
+  margin-bottom:.7rem;transition:color .15s}
+.bk:hover{color:var(--tx)}.bk svg{width:14px;height:14px;stroke:currentColor;fill:none}
+.dh h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.02em;
+  color:#0f172a;margin-bottom:.35rem}
+.dh p{font-size:13.5px;color:var(--mu);max-width:580px;line-height:1.6}
+.dh-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.2rem}
+.ds{padding:8px 16px;background:var(--s1);border:1px solid var(--b0);
+  border-radius:var(--rs);display:flex;flex-direction:column;align-items:center;min-width:80px}
+.ds-n{font-size:19px;font-weight:700;font-family:'Space Mono',monospace}
+.ds-l{font-size:10px;color:var(--mu);margin-top:1px}
+
+/* Toolbar */
+.dtb{position:sticky;top:102px;z-index:100;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--b0);
+  padding:.7rem clamp(1rem,4vw,2.5rem)}
+.dtb-in{max-width:min(1440px,94vw);margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sw{position:relative;flex:1;min-width:150px;max-width:280px}
+.sw svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;stroke:var(--fa);fill:none}
+.si{width:100%;padding:7px 9px 7px 30px;background:var(--s2);border:1px solid var(--b1);
+  border-radius:var(--rs);color:var(--tx);font-family:inherit;font-size:12.5px;outline:none;transition:border-color .15s}
+.si:focus{border-color:var(--b2)}.si::placeholder{color:var(--fa)}
+.sl{padding:7px 10px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);
+  color:var(--tx);font-family:inherit;font-size:12px;outline:none;cursor:pointer}
+.ri{margin-left:auto;font-size:11.5px;color:var(--mu);white-space:nowrap}.ri b{color:var(--tx)}
+
+/* ────────────────────────────────────────────────
+   DROHNEN-KARTEN
+──────────────────────────────────────────────── */
+.drone-grid{display:flex;flex-direction:column;gap:10px;
+  max-width:min(1440px,94vw);margin:0 auto;
+  padding:1.2rem clamp(1rem,4vw,2.5rem) 5rem}
+
+.dc{background:var(--s1);border:1px solid var(--b0);border-radius:var(--r);
+  overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.dc:hover{border-color:var(--b1);box-shadow:0 4px 18px rgba(15,23,42,.08)}
+
+/* Thumbnail-Bereich (immer sichtbar) */
+.dc-top{display:grid;grid-template-columns:80px 1fr auto;gap:0;align-items:stretch}
+.dc-thumb{width:80px;min-height:80px;background:var(--s2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  border-right:1px solid var(--b0);position:relative;overflow:hidden}
+.dc-thumb-icon{font-size:32px;z-index:1;position:relative}
+.dc-thumb-ph{position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;opacity:.08}
+.dc-thumb-ph svg{width:36px;height:36px;stroke:var(--tx)}
+
+.dc-meta{padding:.8rem 1rem;display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0}
+.dc-name{font-size:15px;font-weight:700;color:#0f172a;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.dc-hersteller{font-size:11.5px;color:var(--mu)}
+
+/* Quick-Stats (Gewicht, Flugdauer, Reichweite) – immer sichtbar im Thumbnail */
+.dc-quickstats{display:flex;gap:0;border-top:1px solid var(--b0);
+  background:var(--s2)}
+.dc-qs-item{flex:1;padding:.45rem .6rem;text-align:center;border-right:1px solid var(--b0)}
+.dc-qs-item:last-child{border-right:none}
+.dc-qs-val{font-size:12px;font-weight:700;font-family:'Space Mono',monospace;color:#0f172a;line-height:1.2}
+.dc-qs-lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--fa);font-weight:700;margin-top:1px}
+
+/* Bauform-Badge & Kostenlos-Badge */
+.dc-badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;
+  padding:.8rem .9rem;flex-shrink:0;justify-content:center}
+.bdg-bauform{display:inline-flex;align-items:center;padding:3px 9px;border-radius:4px;
+  font-size:10.5px;font-weight:700;white-space:nowrap;letter-spacing:.02em}
+.bdg-mc{background:rgba(8,145,178,.1);color:#0891b2;border:1px solid rgba(8,145,178,.22)}
+.bdg-fw{background:rgba(5,150,105,.1);color:#059669;border:1px solid rgba(5,150,105,.22)}
+.bdg-vt{background:rgba(124,58,237,.1);color:#7c3aed;border:1px solid rgba(124,58,237,.22)}
+
+/* Toggle-Button */
+.dc-toggle{width:100%;background:none;border:none;border-top:1px solid var(--b0);
+  padding:.55rem 1rem;color:var(--mu);font-family:inherit;font-size:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s}
+.dc-toggle:hover{background:rgba(0,0,0,.02)}
+.dc-toggle svg{width:12px;height:12px;stroke:currentColor;fill:none;transition:transform .2s}
+.dc-toggle.open svg{transform:rotate(180deg)}
+
+/* Ausgeklappter Body */
+.dc-body{display:none;padding:1rem 1.1rem;border-top:1px solid var(--b0);background:var(--bg)}
+.dc-body.open{display:block}
+
+/* Info-Beschreibung */
+.dc-desc{font-size:13px;color:var(--tx);line-height:1.65;padding:.8rem 1rem;
+  background:var(--s1);border-radius:6px;border-left:2px solid var(--b2);margin-bottom:.9rem}
+
+/* Daten-Grid im Body */
+.dc-datengrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:1px;background:var(--b0);border-radius:6px;overflow:hidden;
+  border:1px solid var(--b0);margin-bottom:.9rem}
+.dc-daten-cell{background:var(--s1);padding:.6rem .8rem}
+.dc-daten-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--fa);font-weight:700;margin-bottom:2px}
+.dc-daten-val{font-size:12px;color:var(--tx);font-weight:500;line-height:1.3}
+
+/* Link-Bereich */
+.dc-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:.3rem}
+.dc-link-btn{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+  padding:6px 13px;border-radius:6px;cursor:pointer;border:1px solid;
+  text-decoration:none;transition:all .15s;font-family:inherit}
+.dc-link-ext{background:rgba(37,99,235,.09);border-color:rgba(37,99,235,.22);color:#2563eb}
+.dc-link-ext:hover{background:#2563eb;color:#fff;border-color:#2563eb}
+
+/* Kein Ergebnis */
+.no-results{text-align:center;padding:3rem 1rem;color:var(--mu);font-size:14px}
+.no-results svg{width:40px;height:40px;stroke:var(--fa);fill:none;margin:0 auto .8rem;display:block}
+
+/* ────────────────────────────────────────────────
+   RESPONSIVE
+──────────────────────────────────────────────── */
+@media(max-width:600px){
+  .dc-top{grid-template-columns:64px 1fr}
+  .dc-badges{display:none}
+  .dc-qs-lbl{display:none}
+  .cg{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .tb .tb-badge{display:none}
+  .avx-brand span{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Drohnen-Animations-Hintergrund ── -->
+<div class="sky" aria-hidden="true">
+  <span class="sky-drone d1">🚁</span>
+  <span class="sky-drone d2">✈️</span>
+  <span class="sky-drone d3">🛸</span>
+  <span class="sky-drone d4">🚁</span>
+</div>
+
+<!-- ── Globale Themen-Navigation ── -->
+<nav class="avx-topnav" aria-label="Themenbereiche">
+  <a class="avx-brand" href="index.html">&#9992; Start</a>
+  <span class="avx-links">
+    <a class="avx-pill" href="ourairports.html">Flughäfen</a>
+    <a class="avx-pill" href="Luftfahrt_Katalog_FINAL_CLEAN_10.html">Flugzeuge</a>
+    <a class="avx-pill avx-active" href="drohnen_katalog.html">Drohnen</a>
+    <a class="avx-pill" href="luftraeume.html">Lufträume</a>
+  </span>
+</nav>
+
+<!-- ── Seiteninterme Topbar ── -->
+<nav class="tb">
+  <button class="tb-logo" onclick="goHome()" aria-label="Zur Startseite">
+    <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    UAV & Drohnen
+  </button>
+  <div class="tb-div"></div>
+  <div class="tb-cr" id="tbCr">Übersicht</div>
+  <span class="tb-badge">HS RheinMain · Avionik</span>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     STARTSEITE – Bauform-Auswahl
+══════════════════════════════════════════════ -->
+<div class="view" id="vHome">
+  <div class="hh">
+    <div class="ey">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Studentisches Projekt · Fachbereich Ingenieurwissenschaften
+    </div>
+    <h1>UAV & <em>Drohnen</em> Katalog</h1>
+    <p>Übersicht kommerzieller und professioneller Drohnen nach Bauform — mit technischen Daten, Verwendungszweck und Herstellerinfos. Wähle eine Bauform, um die passenden Modelle zu sehen.</p>
+    <div class="hs">
+      <div class="hsc"><div class="hsc-n" id="statTotal">0</div><div class="hsc-l">Drohnen</div></div>
+      <div class="hsc"><div class="hsc-n">3</div><div class="hsc-l">Bauformen</div></div>
+      <div class="hsc"><div class="hsc-n">★</div><div class="hsc-l">Bewertet</div></div>
+    </div>
+  </div>
+
+  <!-- Bauform-Auswahl-Karten -->
+  <div class="cg">
+
+    <!-- Multicopter -->
+    <button class="cc mc" onclick="loadBauform('Multicopter')">
+      <div class="cc-banner">
+        <span class="drone-icon">🚁</span>
+      </div>
+      <div class="cc-info">
+        <h3>Multicopter</h3>
+        <p class="cc-sub">Drohnen mit mehreren Rotoren (Quadro-, Hexa-, Oktocopter). Hohe Manövrierfähigkeit, VTOL-fähig. Ideal für Fotografie, Inspektion und kurze Einsätze.</p>
+        <span class="cc-go" style="color:var(--mc)">Öffnen
+          <svg viewBox="0 0 24 24" stroke="var(--mc)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </button>
+
+    <!-- VTOL -->
+    <button class="cc vt" onclick="loadBauform('VTOL')">
+      <div class="cc-banner">
+        <span class="drone-icon">🛸</span>
+      </div>
+      <div class="cc-info">
+        <h3>VTOL</h3>
+        <p class="cc-sub">Vertical Take-Off and Landing — kombiniert Vorteile von Multicoptern und Starrflüglern. Höhere Reichweite & Effizienz im Reiseflug.</p>
+        <span class="cc-go" style="color:var(--vt)">Öffnen
+          <svg viewBox="0 0 24 24" stroke="var(--vt)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </button>
+
+    <!-- Fixed Wing -->
+    <button class="cc fw" onclick="loadBauform('Fixed Wing')">
+      <div class="cc-banner">
+        <span class="drone-icon">✈️</span>
+      </div>
+      <div class="cc-info">
+        <h3>Fixed Wing</h3>
+        <p class="cc-sub">Starrflügler-Drohnen mit fester Tragfläche. Maximale Reichweite und Ausdauer. Geeignet für Flächenmapping, Überwachung und Langstreckenmissionen.</p>
+        <span class="cc-go" style="color:var(--fw)">Öffnen
+          <svg viewBox="0 0 24 24" stroke="var(--fw)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DETAIL-ANSICHT – Drohnen-Liste
+══════════════════════════════════════════════ -->
+<div class="view hide" id="vDetail">
+
+  <!-- Header -->
+  <div class="dh">
+    <button class="bk" onclick="goHome()">
+      <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Zurück zur Übersicht
+    </button>
+    <h2 id="dTitle">Multicopter</h2>
+    <p id="dDesc"></p>
+    <div class="dh-stats" id="dStats"></div>
+  </div>
+
+  <!-- Toolbar: Suche + Sortierung -->
+  <div class="dtb">
+    <div class="dtb-in">
+      <div class="sw">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="si" id="dSrch" type="search" placeholder="Drohne suchen…"
+               oninput="filterAll()" aria-label="Drohnen suchen">
+      </div>
+      <select class="sl" id="dSort" onchange="filterAll()" aria-label="Sortierung">
+        <option value="def">Sortierung: Standard</option>
+        <option value="az">A → Z</option>
+        <option value="gewicht">Gewicht (aufst.)</option>
+        <option value="reichweite">Reichweite (abst.)</option>
+        <option value="flugdauer">Flugdauer (abst.)</option>
+      </select>
+      <span class="ri"><b id="dCnt">0</b> <span id="dCntLbl">Drohnen</span></span>
+    </div>
+  </div>
+
+  <!-- Drohnen-Karten Container -->
+  <div class="drone-grid" id="droneGrid"></div>
+
+</div><!-- /vDetail -->
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── HILFSFUNKTIONEN ── */
+const esc = s => String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+/* ── DATEN-FORMAT
+   Drohne: {
+     n  – Name (Hersteller + Modell)
+     h  – Hersteller
+     bf – Bauform: 'Multicopter' | 'VTOL' | 'Fixed Wing'
+     bj – Baujahr (erste Markteinführung)
+     zw – Verwendungszweck
+     gw – Leergewicht (z. B. "0,9 kg")
+     fd – Flugdauer (z. B. "31 min")
+     rw – Reichweite (z. B. "8 km")
+     nl – Nutzlast (z. B. "200 g")
+     kq – Kameraqualität (z. B. "4K / 48 MP")
+     se – Verbauter Sensor (z. B. "CMOS 1/1.3\"")
+     eg – Einsatzgebiet (z. B. "Fotografie, Inspektion")
+     di – Kurze Beschreibung
+     url – Offizielle Webseite
+   }
+── */
+function drone(n, h, bf, bj, zw, gw, fd, rw, nl, kq, se, eg, di, url) {
+  return { n, h, bf, bj, zw, gw, fd, rw, nl, kq, se, eg, di, url: url || '#' };
+}
+
+/* ── DATENSATZ (Gerüst – noch leer, wird später befüllt) ── */
+const DROHNEN = [
+  /* Multicopter ─────────────────────────────── */
+  /* Hier kommen die Multicopter-Einträge rein */
+
+  /* VTOL ─────────────────────────────────────── */
+  /* Hier kommen die VTOL-Einträge rein */
+
+  /* Fixed Wing ───────────────────────────────── */
+  /* Hier kommen die Fixed-Wing-Einträge rein */
+];
+
+/* ── STATE ── */
+let aktiveBauform = null;
+
+/* ── Statistik aktualisieren ── */
+function updateStats() {
+  document.getElementById('statTotal').textContent = DROHNEN.length;
+}
+
+/* ── Bauform-Beschreibungen ── */
+const BAUFORM_DESC = {
+  'Multicopter': 'Multicopter mit mehreren Rotoren — von der kompakten Hobby-Drohne bis zur professionellen Industrie-UAV. Besonders wendig, einfach zu bedienen, VTOL-fähig.',
+  'VTOL':        'VTOL-Systeme (Vertical Take-Off and Landing) vereinen die Flexibilität des senkrechten Starts mit der Effizienz und Reichweite von Starrflüglern.',
+  'Fixed Wing':  'Starrflügler-UAV für maximale Flächenleistung, Reichweite und Ausdauer. Ideal für Kartierung, Fernerkundung und Langstreckenmissionen.'
+};
+
+const BAUFORM_FARBE = {
+  'Multicopter': 'var(--mc)',
+  'VTOL':        'var(--vt)',
+  'Fixed Wing':  'var(--fw)'
+};
+
+/* ── Bauform laden ── */
+function loadBauform(bf) {
+  aktiveBauform = bf;
+  document.getElementById('vHome').classList.add('hide');
+  document.getElementById('vDetail').classList.remove('hide');
+  document.getElementById('dTitle').textContent = bf;
+  document.getElementById('dDesc').textContent = BAUFORM_DESC[bf] || '';
+  document.getElementById('tbCr').innerHTML = `<b>${esc(bf)}</b>`;
+  document.getElementById('dSrch').value = '';
+  document.getElementById('dSort').value = 'def';
+
+  const liste = DROHNEN.filter(d => d.bf === bf);
+  document.getElementById('dStats').innerHTML = `
+    <div class="ds">
+      <div class="ds-n" style="color:${BAUFORM_FARBE[bf]}">${liste.length}</div>
+      <div class="ds-l">Modelle</div>
+    </div>`;
+
+  renderDrohnen();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Zurück zur Startseite ── */
+function goHome() {
+  aktiveBauform = null;
+  document.getElementById('vDetail').classList.add('hide');
+  document.getElementById('vHome').classList.remove('hide');
+  document.getElementById('tbCr').innerHTML = 'Übersicht';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Filter + Sortierung ── */
+function filterAll() { renderDrohnen(); }
+
+function renderDrohnen() {
+  if (!aktiveBauform) return;
+  const grid   = document.getElementById('droneGrid');
+  const query  = (document.getElementById('dSrch').value || '').toLowerCase().trim();
+  const sort   = document.getElementById('dSort').value;
+
+  // Offene Karten merken
+  const openIds = new Set();
+  grid.querySelectorAll('.dc-body.open').forEach(b => openIds.add(b.dataset.id));
+
+  let liste = DROHNEN.filter(d => d.bf === aktiveBauform);
+
+  // Suche
+  if (query) {
+    liste = liste.filter(d =>
+      (d.n + d.h + d.eg + d.zw + d.di).toLowerCase().includes(query));
+  }
+
+  // Sortierung
+  if (sort === 'az')         liste.sort((a, b) => a.n.localeCompare(b.n, 'de'));
+  else if (sort === 'gewicht')   liste.sort((a, b) => parseFloat(a.gw) - parseFloat(b.gw));
+  else if (sort === 'reichweite') liste.sort((a, b) => parseFloat(b.rw) - parseFloat(a.rw));
+  else if (sort === 'flugdauer')  liste.sort((a, b) => parseFloat(b.fd) - parseFloat(a.fd));
+
+  document.getElementById('dCnt').textContent = liste.length;
+  document.getElementById('dCntLbl').textContent = liste.length === 1 ? 'Drohne' : 'Drohnen';
+
+  if (liste.length === 0) {
+    grid.innerHTML = `
+      <div class="no-results">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Keine Drohnen gefunden.<br>Suchbegriff anpassen oder
+        <button onclick="document.getElementById('dSrch').value='';filterAll()"
+                style="background:none;border:none;color:var(--ac);cursor:pointer;font-family:inherit;text-decoration:underline">
+          Filter zurücksetzen
+        </button>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = liste.map((d, i) => buildCard(d, i)).join('');
+
+  // Offene Karten wiederherstellen
+  openIds.forEach(id => {
+    const body   = grid.querySelector(`.dc-body[data-id="${id}"]`);
+    const toggle = grid.querySelector(`.dc-toggle[data-id="${id}"]`);
+    if (body)   { body.classList.add('open'); }
+    if (toggle) { toggle.classList.add('open'); toggle.setAttribute('aria-expanded','true'); toggle.textContent = ''; toggle.innerHTML = 'Weniger anzeigen <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>'; }
+  });
+}
+
+/* ── Bauform → Badge-Klasse ── */
+function badgeClass(bf) {
+  if (bf === 'Multicopter') return 'bdg-mc';
+  if (bf === 'VTOL')        return 'bdg-vt';
+  if (bf === 'Fixed Wing')  return 'bdg-fw';
+  return '';
+}
+
+/* ── Drohnen-Icon je Bauform ── */
+function bauformIcon(bf) {
+  if (bf === 'Multicopter') return '🚁';
+  if (bf === 'VTOL')        return '🛸';
+  if (bf === 'Fixed Wing')  return '✈️';
+  return '🛩️';
+}
+
+/* ── Karte bauen ── */
+function buildCard(d, i) {
+  const idx = esc(d.n + i); // eindeutiger Schlüssel
+  return `
+<div class="dc" id="card-${i}">
+
+  <!-- Thumbnail-Bereich (immer sichtbar) -->
+  <div class="dc-top">
+    <div class="dc-thumb">
+      <span class="dc-thumb-icon">${bauformIcon(d.bf)}</span>
+      <div class="dc-thumb-ph">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      </div>
+    </div>
+
+    <div class="dc-meta">
+      <div class="dc-name">${esc(d.n)}</div>
+      <div class="dc-hersteller">${esc(d.h)}</div>
+    </div>
+
+    <div class="dc-badges">
+      <span class="bdg-bauform ${badgeClass(d.bf)}">${esc(d.bf)}</span>
+    </div>
+  </div>
+
+  <!-- Quick-Stats: Gewicht, Flugdauer, Reichweite -->
+  <div class="dc-quickstats">
+    <div class="dc-qs-item">
+      <div class="dc-qs-val">${esc(d.gw) || '—'}</div>
+      <div class="dc-qs-lbl">Gewicht (leer)</div>
+    </div>
+    <div class="dc-qs-item">
+      <div class="dc-qs-val">${esc(d.fd) || '—'}</div>
+      <div class="dc-qs-lbl">Flugdauer</div>
+    </div>
+    <div class="dc-qs-item">
+      <div class="dc-qs-val">${esc(d.rw) || '—'}</div>
+      <div class="dc-qs-lbl">Reichweite</div>
+    </div>
+  </div>
+
+  <!-- Toggle-Button -->
+  <button class="dc-toggle" data-id="${idx}"
+          onclick="toggleCard(this)" aria-expanded="false">
+    Mehr Details
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+
+  <!-- Ausgeklappter Body mit allen Details -->
+  <div class="dc-body" data-id="${idx}">
+
+    <!-- Kurze Beschreibung -->
+    ${d.di ? `<div class="dc-desc">${esc(d.di)}</div>` : ''}
+
+    <!-- Detaillierte Daten-Grid -->
+    <div class="dc-datengrid">
+      <div class="dc-daten-cell">
+        <div class="dc-daten-label">Bauform</div>
+        <div class="dc-daten-val">${esc(d.bf) || '—'}</div>
+      </div>
+      <div class="dc-daten-cell">
+        <div class="dc-daten-label">Baujahr</div>
+        <div class="dc-daten-val">${esc(d.bj) || '—'}</div>
+      </div>
+      <div class="dc-daten-cell">
+        <div class="dc-daten-label">Verwendungszweck</div>
+        <div class="dc-daten-val">${esc(d.zw) || '—'}</div>
+      </div>
+      <div class="dc-daten-cell">
+        <div class="dc-daten-label">Nutzlast</div>
+        <div class="dc-daten-val">${esc(d.nl) || '—'}</div>
+      </div>
+      <div class="dc-daten-cell">
+        <div class="dc-daten-label">Reichweite</div>
+        <div class="dc-daten-val">${esc(d.rw) || '—'}</div>
+      </div>
+      <div class="dc-daten-cell">
+        <div class="dc-daten-label">Kameraqualität</div>
+        <div class="dc-daten-val">${esc(d.kq) || '—'}</div>
+      </div>
+      <div class="dc-daten-cell">
+        <div class="dc-daten-label">Verbauter Sensor</div>
+        <div class="dc-daten-val">${esc(d.se) || '—'}</div>
+      </div>
+      <div class="dc-daten-cell">
+        <div class="dc-daten-label">Einsatzgebiet</div>
+        <div class="dc-daten-val">${esc(d.eg) || '—'}</div>
+      </div>
+    </div>
+
+    <!-- Offizieller Link -->
+    ${d.url && d.url !== '#' ? `
+    <div class="dc-links">
+      <a class="dc-link-btn dc-link-ext" href="${esc(d.url)}" target="_blank" rel="noopener">
+        🔗 Offizielle Webseite ↗
+      </a>
+    </div>` : ''}
+
+  </div><!-- /dc-body -->
+</div><!-- /dc -->`;
+}
+
+/* ── Karte auf-/zuklappen ── */
+function toggleCard(btn) {
+  const id   = btn.dataset.id;
+  const body = btn.parentElement.querySelector(`.dc-body[data-id="${id}"]`);
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.setAttribute('aria-expanded', isOpen);
+  btn.innerHTML = isOpen
+    ? 'Weniger anzeigen <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>'
+    : 'Mehr Details <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+}
+
+/* ── Init ── */
+updateStats();
+</script>
+</body>
+</html>
