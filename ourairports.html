@@ -2619,6 +2619,8 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
             <label for="suche" class="sr-only">Flughafen suchen</label>
             <input type="search" id="suche" placeholder="ICAO, IATA, Name, Stadt, Land…" autocomplete="off">
         </div>
+        <button type="button" class="world-launch" onclick="acwOpen('')" title="Flugzeugtyp (z. B. A320) weltweit live auf der Karte anzeigen"
+                style="display:inline-flex;align-items:center;gap:6px;background:#6366f1;color:#fff;border:none;border-radius:999px;padding:8px 15px;font-weight:700;font-size:0.82rem;font-family:var(--font);cursor:pointer;white-space:nowrap;flex:0 0 auto">🌍 Typ&nbsp;weltweit</button>
 
         <div class="filter-group" role="group" aria-label="Flughäfen filtern" id="filter">
             <span class="filter-lead">🔍 Filter</span>
