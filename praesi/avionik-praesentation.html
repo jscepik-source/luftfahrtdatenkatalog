@@ -1501,14 +1501,9 @@ const flyby=document.getElementById('flyby');
   };
 })();
 
-/* A320: automatisch beim Erreichen der Timeline + jederzeit per Klick */
+/* A320 nur per Klick auf den A320-Meilenstein */
 const a320Node=document.getElementById('a320Node');
 if(a320Node) a320Node.onclick=()=>window.playA320&&window.playA320();
-const evoTL=document.getElementById('evoTimeline');
-if(evoTL && !REDUCE){
-  const io2=new IntersectionObserver(es=>{es.forEach(e=>{ if(e.isIntersecting) window.playA320&&window.playA320(); })},{threshold:.4});
-  io2.observe(evoTL);
-}
 
 /* ---------- Control law demo (attitude indicators) ---------- */
 const bank=document.getElementById('bank');
