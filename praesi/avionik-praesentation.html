@@ -351,6 +351,8 @@
   .secdiv::after{content:"";flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,currentColor,transparent);opacity:.45}
   .secdiv-lab{font-family:var(--mono);font-size:17px;letter-spacing:2px;text-transform:uppercase;font-weight:800;white-space:nowrap}
   .cbadge{font-size:38px;line-height:1;margin-bottom:8px}
+  .gcas-big{display:grid;grid-template-columns:1.7fr 1fr;gap:26px;align-items:center;margin-top:22px}
+  @media(max-width:880px){.gcas-big{grid-template-columns:1fr}}
 
   /* ---------- A320 fly-by (real cutout, cinematic) ---------- */
   .flyby{position:fixed;inset:0;z-index:130;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .25s ease}
@@ -1075,8 +1077,17 @@
 
   <!-- ===== CHANCEN ===== -->
   <div class="reveal secdiv" style="margin-top:56px;color:#27c08a"><span class="secdiv-lab">✓ Chancen</span></div>
-  <div class="fig-row reveal" style="grid-template-columns:1.3fr 1fr 1fr;margin-top:22px">
-    <div class="fig-card"><div class="figure"><img src="webseite-praesi-assets/image23.png" alt="Auto-GCAS"></div><h4>Sicherheit · Auto-GCAS</h4><p>Bei Handlungsunfähigkeit (z. B. Hypoxie) leitet das System autonom den Steigflug ein — bevor der Mensch reagiert.</p><div class="fig-src">Grafikquelle: NotebookLM (KI-generiert)</div></div>
+  <!-- Auto-GCAS gross, quer -->
+  <div class="fig-card reveal gcas-big">
+    <div class="figure"><img src="webseite-praesi-assets/image23.png" alt="Auto-GCAS"></div>
+    <div>
+      <h4 style="font-size:23px;margin-top:0">Sicherheit · Auto-GCAS</h4>
+      <p style="font-size:18px;line-height:1.55">Bei Handlungsunfähigkeit (z. B. Hypoxie) leitet das System <b>autonom den Steigflug</b> ein — noch bevor der Mensch reagiert. Der Pilot kann jederzeit übersteuern.</p>
+      <div class="fig-src">Grafikquelle: NotebookLM (KI-generiert)</div>
+    </div>
+  </div>
+
+  <div class="fig-row reveal" style="grid-template-columns:1fr 1fr;margin-top:22px">
     <div class="fig-card"><div class="cbadge">🤝</div><h4>Entlastung · FORDEC</h4><p>KI als virtueller Co-Pilot: rechnet Was-wäre-wenn im Hintergrund, entlastet die Crew im Stress.</p></div>
     <div class="fig-card"><div class="cbadge">🍃</div><h4>Effizienz · 4D-Bahn</h4><p>Treibstoff- &amp; lärmoptimierte Trajektorien (Cost Index) — spart Sprit und CO₂.</p></div>
   </div>
