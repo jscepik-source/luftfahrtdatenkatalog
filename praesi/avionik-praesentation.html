@@ -657,6 +657,51 @@
 
 
 
+<h3 class="reveal" style="margin-top:46px">Welche Steuerflächen der Regelkreis bewegt</h3>
+  <div class="traj reveal">
+    <svg viewBox="0 0 920 360" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <!-- Zelle -->
+      <g fill="#2a3c63" stroke="#46597f" stroke-width="2">
+        <path d="M460,55 C474,55 480,86 480,150 C480,220 477,262 460,302 C443,262 440,220 440,150 C440,86 446,55 460,55 Z"/>
+        <polygon points="450,150 250,238 256,256 452,192"/>
+        <polygon points="470,150 670,238 664,256 468,192"/>
+      </g>
+      <!-- primär (rot): Quer-, Höhen-, Seitenruder -->
+      <g fill="#e3242b" stroke="#a3161b" stroke-width="1">
+        <polygon points="250,238 316,224 322,241 256,256"/>
+        <polygon points="670,238 604,224 598,241 664,256"/>
+        <polygon points="452,256 378,284 382,295 454,270"/>
+        <polygon points="468,256 542,284 538,295 466,270"/>
+        <polygon points="460,260 451,304 469,304"/>
+      </g>
+      <!-- Hochauftrieb (blau): Klappen/Vorflügel -->
+      <g fill="#3f7bff" stroke="#1d4fb0" stroke-width="1">
+        <polygon points="356,210 452,192 454,203 362,223"/>
+        <polygon points="564,210 468,192 466,203 558,223"/>
+      </g>
+      <!-- Leitlinien -->
+      <g stroke-width="1.6" fill="none">
+        <path d="M196,176 L286,243" stroke="#e3242b"/>
+        <path d="M214,312 L404,212" stroke="#3f7bff"/>
+        <path d="M712,176 L506,283" stroke="#e3242b"/>
+        <path d="M704,312 L470,304" stroke="#e3242b"/>
+      </g>
+      <g fill="#e3242b"><circle cx="286" cy="243" r="3.5"/><circle cx="506" cy="283" r="3.5"/><circle cx="470" cy="304" r="3.5"/></g>
+      <circle cx="404" cy="212" r="3.5" fill="#3f7bff"/>
+      <!-- Beschriftung -->
+      <g font-size="16" font-weight="700">
+        <text x="44" y="172" fill="#cdd8ee">Querruder <tspan fill="#ff8a8e">· Rollen</tspan></text>
+        <text x="44" y="316" fill="#cdd8ee">Klappen/Vorflügel <tspan fill="#9bc0ff">· Auftrieb</tspan></text>
+        <text x="876" y="172" fill="#cdd8ee" text-anchor="end">Höhenruder <tspan fill="#ff8a8e">· Nicken</tspan></text>
+        <text x="876" y="316" fill="#cdd8ee" text-anchor="end">Seitenruder <tspan fill="#ff8a8e">· Gieren</tspan></text>
+      </g>
+    </svg>
+  </div>
+  <div class="traj-legend reveal">
+    <span style="color:#ff8a8e">■ Primäre Steuerflächen — 3 Achsen (Rollen · Nicken · Gieren)</span>
+    <span style="color:#9bc0ff">■ Hochauftriebshilfen (Start/Landung)</span>
+  </div>
+
   <h3 class="reveal" style="margin-top:46px">So funktioniert Fly-by-Wire — der geschlossene Regelkreis</h3>
   <div class="fbw-loop reveal">
     <svg viewBox="0 0 920 285" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
@@ -726,50 +771,7 @@
     </div>
   </div>
 
-  <h3 class="reveal" style="margin-top:46px">Welche Steuerflächen der Regelkreis bewegt</h3>
-  <div class="traj reveal">
-    <svg viewBox="0 0 920 360" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
-      <!-- Zelle -->
-      <g fill="#2a3c63" stroke="#46597f" stroke-width="2">
-        <path d="M460,55 C474,55 480,86 480,150 C480,220 477,262 460,302 C443,262 440,220 440,150 C440,86 446,55 460,55 Z"/>
-        <polygon points="450,150 250,238 256,256 452,192"/>
-        <polygon points="470,150 670,238 664,256 468,192"/>
-      </g>
-      <!-- primär (rot): Quer-, Höhen-, Seitenruder -->
-      <g fill="#e3242b" stroke="#a3161b" stroke-width="1">
-        <polygon points="250,238 316,224 322,241 256,256"/>
-        <polygon points="670,238 604,224 598,241 664,256"/>
-        <polygon points="452,256 378,284 382,295 454,270"/>
-        <polygon points="468,256 542,284 538,295 466,270"/>
-        <polygon points="460,260 451,304 469,304"/>
-      </g>
-      <!-- Hochauftrieb (blau): Klappen/Vorflügel -->
-      <g fill="#3f7bff" stroke="#1d4fb0" stroke-width="1">
-        <polygon points="356,210 452,192 454,203 362,223"/>
-        <polygon points="564,210 468,192 466,203 558,223"/>
-      </g>
-      <!-- Leitlinien -->
-      <g stroke-width="1.6" fill="none">
-        <path d="M196,176 L286,243" stroke="#e3242b"/>
-        <path d="M214,312 L404,212" stroke="#3f7bff"/>
-        <path d="M712,176 L506,283" stroke="#e3242b"/>
-        <path d="M704,312 L470,304" stroke="#e3242b"/>
-      </g>
-      <g fill="#e3242b"><circle cx="286" cy="243" r="3.5"/><circle cx="506" cy="283" r="3.5"/><circle cx="470" cy="304" r="3.5"/></g>
-      <circle cx="404" cy="212" r="3.5" fill="#3f7bff"/>
-      <!-- Beschriftung -->
-      <g font-size="16" font-weight="700">
-        <text x="44" y="172" fill="#cdd8ee">Querruder <tspan fill="#ff8a8e">· Rollen</tspan></text>
-        <text x="44" y="316" fill="#cdd8ee">Klappen/Vorflügel <tspan fill="#9bc0ff">· Auftrieb</tspan></text>
-        <text x="876" y="172" fill="#cdd8ee" text-anchor="end">Höhenruder <tspan fill="#ff8a8e">· Nicken</tspan></text>
-        <text x="876" y="316" fill="#cdd8ee" text-anchor="end">Seitenruder <tspan fill="#ff8a8e">· Gieren</tspan></text>
-      </g>
-    </svg>
-  </div>
-  <div class="traj-legend reveal">
-    <span style="color:#ff8a8e">■ Primäre Steuerflächen — 3 Achsen (Rollen · Nicken · Gieren)</span>
-    <span style="color:#9bc0ff">■ Hochauftriebshilfen (Start/Landung)</span>
-  </div>
+
 
   <!-- Power-by-Wire hervorgehoben -->
   <div class="slide reveal">
@@ -1499,9 +1501,14 @@ const flyby=document.getElementById('flyby');
   };
 })();
 
-/* A320 nur auf Klick auf den A320-Meilenstein (wenn man dazu erklären will) */
+/* A320: automatisch beim Erreichen der Timeline + jederzeit per Klick */
 const a320Node=document.getElementById('a320Node');
 if(a320Node) a320Node.onclick=()=>window.playA320&&window.playA320();
+const evoTL=document.getElementById('evoTimeline');
+if(evoTL && !REDUCE){
+  const io2=new IntersectionObserver(es=>{es.forEach(e=>{ if(e.isIntersecting) window.playA320&&window.playA320(); })},{threshold:.4});
+  io2.observe(evoTL);
+}
 
 /* ---------- Control law demo (attitude indicators) ---------- */
 const bank=document.getElementById('bank');
