@@ -334,11 +334,15 @@
   .blackbox{background:#0a1020;border-color:#2a3a5e}
 
   /* ---------- A320 fly-by (real cutout, cinematic) ---------- */
-  .flyby{position:fixed;inset:0;z-index:130;pointer-events:none;display:flex;align-items:center;justify-content:center;
-         perspective:1300px;overflow:hidden}
-  .flyby{opacity:0;transition:opacity .3s ease}
+  .flyby{position:fixed;inset:0;z-index:130;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .25s ease}
   .flyby.go{opacity:1}
-  .flyby canvas{width:100%;height:100%;display:block}
+  .a320img{position:absolute;top:24%;left:112%;width:min(48vw,640px);height:auto;filter:drop-shadow(0 22px 44px rgba(0,0,0,.55))}
+  .flyby.go .a320img{animation:flyacross 5s cubic-bezier(.4,.05,.5,1) forwards}
+  @keyframes flyacross{
+    0%{left:112%;transform:translateY(0) rotate(-4deg) scale(1)}
+    50%{transform:translateY(-16px) rotate(-6deg) scale(1.06)}
+    100%{left:-56%;transform:translateY(6px) rotate(-3deg) scale(1)}
+  }
   @media(prefers-reduced-motion:reduce){.flyby{display:none}}
   @media(prefers-reduced-motion:reduce){
     *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
@@ -481,7 +485,7 @@
 <div id="progress"></div>
 
 <!-- A320 3D fly-by (triggert an der Timeline: FADEC vs FBW) -->
-<div class="flyby" id="flyby"><canvas id="a320c"></canvas>
+<div class="flyby" id="flyby"><img class="a320img" src="webseite-praesi-assets/a320.png" alt="Airbus A320 (Erstflug 1987)">
   <div class="fly-cap"><div class="big">Fly-by-Wire</div><div class="sub">A320 · 1987 · erstes ziviles FBW</div></div>
 </div>
 
@@ -1326,9 +1330,6 @@
   Jan Scepik · Avionik · Hochschule RheinMain · Rüsselsheim · 2026 &nbsp;·&nbsp; FBW · FADEC · FMS · KI
 </footer>
 
-<script src="webseite-praesi-assets/three.min.js"></script>
-<script src="webseite-praesi-assets/GLTFLoader.js"></script>
-<script src="webseite-praesi-assets/a320_glb.js"></script>
 <script>
 /* ---------- progress + nav active ---------- */
 const prog=document.getElementById('progress');
@@ -1372,134 +1373,14 @@ revealBtn.onclick=()=>{
 (function(){const b=document.getElementById('hfReveal'),a=document.getElementById('hfAnswer');
   if(b&&a) b.onclick=()=>{a.style.display='inline';b.style.display='none';};})();
 
-/* ====================================================================
-   A320 — echtes 3D-Modell (Three.js), fliegt mit der Nase in den Bildschirm
-   ==================================================================== */
+/* ---------- A320 2D-Durchflug (freigestelltes Foto), nur per Klick ---------- */
 const flyby=document.getElementById('flyby');
-(function(){
-  if(typeof THREE==='undefined'){return;}
-  const canvas=document.getElementById('a320c');
-  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.outputEncoding=THREE.sRGBEncoding;
-  const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(42,1,.1,300);
-  camera.position.set(0,2.2,16);
-  camera.lookAt(0,0,-3);
-
-  function resize(){
-    const w=innerWidth,h=innerHeight;
-    renderer.setSize(w,h,false);
-    camera.aspect=w/h;camera.updateProjectionMatrix();
-  }
-  addEventListener('resize',resize);resize();
-
-  // lights
-  scene.add(new THREE.AmbientLight(0xb8c6e0,1.0));
-  const sun=new THREE.DirectionalLight(0xffffff,1.5);sun.position.set(6,10,8);scene.add(sun);
-  const fill=new THREE.DirectionalLight(0x9bbcff,.6);fill.position.set(-7,-2,5);scene.add(fill);
-
-  // ---- load the real A320 model (GLB) and auto-orient it ----
-  const plane=new THREE.Group();
-  scene.add(plane);
-  let ready=false;
-  const BlocalInv=new THREE.Matrix4();   // model-axis correction (set after load)
-  const loader=new THREE.GLTFLoader();
-  function onModel(gltf){
-    const model=gltf.scene;
-    model.traverse(o=>{ if(o.isMesh){o.frustumCulled=false;} });
-    model.updateMatrixWorld(true);
-    const box=new THREE.Box3().setFromObject(model);
-    const size=box.getSize(new THREE.Vector3());
-    const center=box.getCenter(new THREE.Vector3());
-    const sorted=['x','y','z'].map(a=>[a,size[a]]).sort((p,q)=>q[1]-p[1]);
-    const fAxis=sorted[0][0];   // longest = fuselage (forward)
-    const uAxis=sorted[2][0];   // shortest = vertical (up)
-    // scan vertices: fin = tallest point, sits on the TAIL → gives nose side + up sign
-    let posUp=0,negUp=0,topMag=0,topSign=1;
-    const tmp=new THREE.Vector3();
-    model.traverse(o=>{ if(o.isMesh&&o.geometry&&o.geometry.attributes.position){
-      const pa=o.geometry.attributes.position, m=o.matrixWorld;
-      for(let i=0;i<pa.count;i+=11){
-        tmp.fromBufferAttribute(pa,i).applyMatrix4(m);
-        const f=tmp[fAxis]-center[fAxis], u=tmp[uAxis]-center[uAxis];
-        if(f>=0){if(Math.abs(u)>posUp)posUp=Math.abs(u);} else {if(Math.abs(u)>negUp)negUp=Math.abs(u);}
-        if(Math.abs(u)>topMag){topMag=Math.abs(u);topSign=Math.sign(u)||1;}
-      }
-    }});
-    const noseSign=(posUp>negUp)?-1:1;     // nose is opposite the (taller) tail side
-    const e=a=>{const v=new THREE.Vector3();v[a]=1;return v;};
-    const fwdLocal=e(fAxis).multiplyScalar(noseSign);
-    const upLocal =e(uAxis).multiplyScalar(topSign);
-    const rightLocal=new THREE.Vector3().crossVectors(upLocal,fwdLocal).normalize();
-    const upOrtho=new THREE.Vector3().crossVectors(fwdLocal,rightLocal).normalize();
-    BlocalInv.copy(new THREE.Matrix4().makeBasis(rightLocal,upOrtho,fwdLocal)).transpose();
-    // center, scale into a wrapper (~9 units fuselage length)
-    model.position.sub(center);
-    const inner=new THREE.Group();
-    inner.add(model);
-    inner.scale.setScalar(9/size[fAxis]);
-    plane.add(inner);
-    ready=true;
-  }
-  function onErr(err){ console.warn('A320 GLB konnte nicht geladen werden:',err); }
-  if(window.A320_GLB_B64){           // bevorzugt: eingebettet → läuft per Doppelklick (file://)
-    const bin=atob(window.A320_GLB_B64),len=bin.length,bytes=new Uint8Array(len);
-    for(let i=0;i<len;i++)bytes[i]=bin.charCodeAt(i);
-    loader.parse(bytes.buffer,'',onModel,onErr);
-  } else {                           // Fallback: über Webserver nachladen
-    loader.load('webseite-praesi-assets/A320.glb',onModel,undefined,onErr);
-  }
-
-  // ---- smooth flight path (Catmull-Rom spline) ----
-  const curve=new THREE.CatmullRomCurve3([
-    new THREE.Vector3( 30, 4.6,-20),   // von rechts ins Bild
-    new THREE.Vector3( 15, 3.4,-14),
-    new THREE.Vector3(  0, 2.6,-11),   // Bildmitte, näher → bankt elegant ein
-    new THREE.Vector3(-15, 3.0,-14),
-    new THREE.Vector3(-30, 4.4,-20)    // ins linke Bild hinaus
-  ],false,'centripetal');              // cooler Banked-Flypast, Nase nach links
-
-  const worldUp=new THREE.Vector3(0,1,0);
-  const ease=t=>t*t*t*(t*(t*6-15)+10);     // smootherstep (very smooth in & out)
-  const m4=new THREE.Matrix4();
-  const qLook=new THREE.Quaternion(), qRoll=new THREE.Quaternion();
-  const fwd=new THREE.Vector3(), right=new THREE.Vector3(), up=new THREE.Vector3(),
-        pos=new THREE.Vector3(), nxt=new THREE.Vector3();
-
-  function place(u){
-    curve.getPointAt(u,pos);  plane.position.copy(pos);
-    curve.getTangentAt(u,fwd).normalize();
-    right.crossVectors(worldUp,fwd); if(right.lengthSq()<1e-5)right.set(1,0,0); right.normalize();
-    up.crossVectors(fwd,right).normalize();
-    m4.makeBasis(right,up,fwd).multiply(BlocalInv);
-    qLook.setFromRotationMatrix(m4);
-    // deterministic banking: look ahead on the curve, bank into the upcoming turn
-    curve.getTangentAt(Math.min(1,u+0.06),nxt).normalize();
-    let d=Math.atan2(nxt.x,nxt.z)-Math.atan2(fwd.x,fwd.z);
-    while(d>Math.PI)d-=2*Math.PI; while(d<-Math.PI)d+=2*Math.PI;
-    const bank=Math.max(-0.55,Math.min(0.55,-d*6));   // smooth function of u → no per-frame jitter
-    qRoll.setFromAxisAngle(fwd,bank);
-    plane.quaternion.copy(qRoll).multiply(qLook);
-  }
-
-  const DUR=6000;let startT=0,running=false;
-  function frame(now){
-    if(!running)return;
-    let t=(now-startT)/DUR;
-    if(t>=1){ if(ready)place(1); renderer.render(scene,camera); running=false; flyby.classList.remove('go'); return; }
-    if(ready) place(ease(t));
-    renderer.render(scene,camera);
-    requestAnimationFrame(frame);
-  }
-  window.playA320=function(){
-    if(running)return;                              // nur nicht überlappen; beliebig oft per Klick
-    if(!ready){ setTimeout(()=>window.playA320&&window.playA320(),400); return; }
-    startT=performance.now();running=true;
-    flyby.classList.add('go');
-    requestAnimationFrame(frame);
-  };
-})();
+let flyRun=false;
+window.playA320=function(){
+  if(flyRun||!flyby)return;
+  flyRun=true; flyby.classList.remove('go'); void flyby.offsetWidth; flyby.classList.add('go');
+  setTimeout(function(){ flyby.classList.remove('go'); flyRun=false; }, 5200);
+};
 
 /* A320 nur per Klick auf den A320-Meilenstein */
 const a320Node=document.getElementById('a320Node');
