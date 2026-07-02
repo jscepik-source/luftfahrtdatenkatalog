@@ -831,6 +831,73 @@
     </div>
   </div>
 
+  <h3 class="reveal" style="margin-top:52px">Positionsbestimmung — Sensor-Fusion (Kalman-Filter)</h3>
+  <p class="lead reveal">Zuerst die Frage „Wo bin ich?": Der Kalman-Filter verschmilzt mehrere Sensoren zu einer präzisen Position — GPS korrigiert die Drift der Trägheitsnavigation.</p>
+  <figure class="reveal" style="max-width:1240px;margin-inline:auto;margin-top:8px">
+    <div class="dgm"><div class="flowrow">
+        <div class="dcol">
+          <div class="dbox">IMU<small>Lage</small></div>
+          <div class="dbox">GNSS<small>GPS</small></div>
+          <div class="dbox">VOR<small>Funk</small></div>
+          <div class="dbox">DME<small>Distanz</small></div>
+        </div>
+        <span class="dar">➜</span>
+        <div class="dbox big">Kalman-<br>Filter<small>Sensor-Fusion</small></div>
+        <span class="dar">➜</span>
+        <div class="dbox ok">Position<small>präzise</small></div>
+      </div><div class="dgm-cap">GPS korrigiert IRS-Drift · gewichtete Fusion aller Quellen</div></div>
+  </figure>
+
+  <h3 class="reveal" style="margin-top:46px">4D-Trajektorie — Ort (X·Y) + Höhe (Z) + Zeit (T)</h3>
+  <p class="lead reveal">Das FMS plant den Flug in <b>vier Dimensionen</b>: nicht nur <b>wo</b> (Ort X·Y + Höhe Z), sondern auch <b>wann</b> — jeder Wegpunkt bekommt eine <b>Sollzeit (RTA)</b>. Ergebnis: ein exakt geplanter, treibstoffoptimaler Pfad, der sich <b>zeitgenau in den Verkehrsfluss</b> einfügt.</p>
+  <div class="traj reveal">
+    <svg viewBox="0 0 920 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
+      <defs>
+        <path id="altPath" d="M110,72 L380,72 C520,72 650,150 820,240" fill="none"/>
+        <linearGradient id="altFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#5e92ff" stop-opacity=".28"/><stop offset="1" stop-color="#5e92ff" stop-opacity="0"/></linearGradient>
+      </defs>
+      <!-- ===== Seitenansicht: Höhe (Z) + Zeit (T) ===== -->
+      <text x="80" y="34" fill="#9bc0ff" font-size="15" font-weight="800">Seitenansicht · Höhe (Z) &amp; Zeit (T)</text>
+      <!-- Achsen + Gitter -->
+      <g stroke="#3a4d76" stroke-width="1"><line x1="80" y1="50" x2="80" y2="252"/><line x1="80" y1="252" x2="878" y2="252"/></g>
+      <g stroke="#26375f" stroke-width="1" stroke-dasharray="2 6"><line x1="80" y1="72" x2="878" y2="72"/><line x1="80" y1="150" x2="878" y2="150"/></g>
+      <g fill="#7c8aa5" font-size="12" font-family="ui-monospace,monospace"><text x="74" y="76" text-anchor="end">FL350</text><text x="74" y="154" text-anchor="end">FL200</text><text x="74" y="250" text-anchor="end">GND</text></g>
+      <text x="470" y="278" fill="#7c8aa5" font-size="13" text-anchor="middle">Distanz / Zeit →</text>
+      <!-- Fläche + Profil -->
+      <path d="M110,72 L380,72 C520,72 650,150 820,240 L820,252 L110,252 Z" fill="url(#altFill)"/>
+      <use href="#altPath" xlink:href="#altPath" stroke="#5e92ff" stroke-width="4.5"/>
+      <!-- Runway -->
+      <rect x="806" y="248" width="72" height="9" rx="2" fill="#5a6b8c"/>
+      <!-- Top of Descent -->
+      <circle cx="380" cy="72" r="7" fill="#fff" stroke="#5e92ff" stroke-width="3"/>
+      <text x="388" y="63" fill="#cdd8ee" font-size="13" font-weight="700">Top of Descent</text>
+      <text x="180" y="63" fill="#9fb0cf" font-size="12">Reiseflug</text>
+      <text x="415" y="228" fill="#9fb0cf" font-size="13">Continuous Descent</text>
+      <!-- RTA-Zeitmarken (T) auf dem Profil -->
+      <g fill="#27c08a"><circle cx="180" cy="72" r="5"/><circle cx="380" cy="72" r="5"/><circle cx="600" cy="150" r="5"/><circle cx="790" cy="223" r="5"/></g>
+      <g fill="#9fd8c2" font-size="12.5" font-weight="700" font-family="ui-monospace,monospace">
+        <text x="180" y="92" text-anchor="middle">RTA 10:30</text><text x="380" y="92" text-anchor="middle">10:36</text>
+        <text x="612" y="144">10:42</text><text x="800" y="217">10:47</text>
+      </g>
+      <!-- Flugzeug auf dem Höhenprofil -->
+      <g fill="#ffd23f" stroke="#9a7b1a" stroke-width=".6">
+        <path d="M-20,0 Q-20,-3.3 -4,-3.8 L14,-3 Q24,-2.2 26,0 Q24,2.2 14,3 L-4,3.8 Q-20,3.3 -20,0 Z"/>
+        <path d="M2,-2 Q-3,-3.2 -10,-15 Q-8.5,-16 -3,-14.5 Q4,-5 8,-2 Z"/>
+        <path d="M2,2 Q-3,3.2 -10,15 Q-8.5,16 -3,14.5 Q4,5 8,2 Z"/>
+        <path d="M-14,-1.4 Q-17,-2.2 -21,-8 Q-19.5,-8.6 -16,-7 Q-12,-2.6 -10,-1.4 Z"/>
+        <path d="M-14,1.4 Q-17,2.2 -21,8 Q-19.5,8.6 -16,7 Q-12,2.6 -10,1.4 Z"/>
+        <animateMotion dur="9s" repeatCount="indefinite" rotate="auto"><mpath xlink:href="#altPath" href="#altPath"/></animateMotion>
+      </g>
+      <!-- ===== Draufsicht: Lateral (X·Y) ===== -->
+      <text x="80" y="322" fill="#f5c98a" font-size="15" font-weight="800">Draufsicht · Lateraler Pfad (X·Y)</text>
+      <rect x="80" y="332" width="798" height="74" rx="10" fill="rgba(245,166,35,.06)" stroke="var(--line)"/>
+      <path d="M110,369 C300,346 400,392 520,368 C650,342 740,392 850,368" fill="none" stroke="#f5a623" stroke-width="4"/>
+      <g fill="#f5a623"><circle cx="180" cy="360" r="5"/><circle cx="380" cy="374" r="5"/><circle cx="600" cy="360" r="5"/><circle cx="790" cy="374" r="5"/></g>
+      <circle r="8" fill="#fff" stroke="#f5a623" stroke-width="3"><animateMotion dur="9s" repeatCount="indefinite" path="M110,369 C300,346 400,392 520,368 C650,342 740,392 850,368"/></circle>
+      <text x="479" y="424" fill="#9fb0cf" font-size="13" text-anchor="middle">4D = Ort (X·Y) + Höhe (Z) + Zeit (T) · Cost Index optimiert Zeit ⟷ Treibstoff<a class="cite" href="#quellen">[7,18,11]</a></text>
+    </svg>
+  </div>
+
   <h3 class="reveal" style="margin-top:40px">Kaskadierte Regelschleifen</h3>
   <div class="traj reveal">
     <svg viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
@@ -943,71 +1010,6 @@
   </div>
   <p class="hint reveal" style="text-align:center">Zwei Sicherheitsphilosophien: Maschine schützt absolut ⟷ Mensch entscheidet absolut<a class="cite" href="#quellen">[3]</a></p>
 
-
-  <figure class="reveal" style="max-width:1240px;margin-inline:auto">
-    <div class="dgm"><div class="flowrow">
-        <div class="dcol">
-          <div class="dbox">IMU<small>Lage</small></div>
-          <div class="dbox">GNSS<small>GPS</small></div>
-          <div class="dbox">VOR<small>Funk</small></div>
-          <div class="dbox">DME<small>Distanz</small></div>
-        </div>
-        <span class="dar">➜</span>
-        <div class="dbox big">Kalman-<br>Filter<small>Sensor-Fusion</small></div>
-        <span class="dar">➜</span>
-        <div class="dbox ok">Position<small>präzise</small></div>
-      </div><div class="dgm-cap">GPS korrigiert IRS-Drift · gewichtete Fusion aller Quellen</div></div>
-  </figure>
-
-  <h3 class="reveal" style="margin-top:46px">4D-Trajektorie — Ort (X·Y) + Höhe (Z) + Zeit (T)</h3>
-  <p class="lead reveal">Das FMS plant den Flug in <b>vier Dimensionen</b>: nicht nur <b>wo</b> (Ort X·Y + Höhe Z), sondern auch <b>wann</b> — jeder Wegpunkt bekommt eine <b>Sollzeit (RTA)</b>. Ergebnis: ein exakt geplanter, treibstoffoptimaler Pfad, der sich <b>zeitgenau in den Verkehrsfluss</b> einfügt.</p>
-  <div class="traj reveal">
-    <svg viewBox="0 0 920 430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" font-family="-apple-system,Segoe UI,Roboto,sans-serif">
-      <defs>
-        <path id="altPath" d="M110,72 L380,72 C520,72 650,150 820,240" fill="none"/>
-        <linearGradient id="altFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#5e92ff" stop-opacity=".28"/><stop offset="1" stop-color="#5e92ff" stop-opacity="0"/></linearGradient>
-      </defs>
-      <!-- ===== Seitenansicht: Höhe (Z) + Zeit (T) ===== -->
-      <text x="80" y="34" fill="#9bc0ff" font-size="15" font-weight="800">Seitenansicht · Höhe (Z) &amp; Zeit (T)</text>
-      <!-- Achsen + Gitter -->
-      <g stroke="#3a4d76" stroke-width="1"><line x1="80" y1="50" x2="80" y2="252"/><line x1="80" y1="252" x2="878" y2="252"/></g>
-      <g stroke="#26375f" stroke-width="1" stroke-dasharray="2 6"><line x1="80" y1="72" x2="878" y2="72"/><line x1="80" y1="150" x2="878" y2="150"/></g>
-      <g fill="#7c8aa5" font-size="12" font-family="ui-monospace,monospace"><text x="74" y="76" text-anchor="end">FL350</text><text x="74" y="154" text-anchor="end">FL200</text><text x="74" y="250" text-anchor="end">GND</text></g>
-      <text x="470" y="278" fill="#7c8aa5" font-size="13" text-anchor="middle">Distanz / Zeit →</text>
-      <!-- Fläche + Profil -->
-      <path d="M110,72 L380,72 C520,72 650,150 820,240 L820,252 L110,252 Z" fill="url(#altFill)"/>
-      <use href="#altPath" xlink:href="#altPath" stroke="#5e92ff" stroke-width="4.5"/>
-      <!-- Runway -->
-      <rect x="806" y="248" width="72" height="9" rx="2" fill="#5a6b8c"/>
-      <!-- Top of Descent -->
-      <circle cx="380" cy="72" r="7" fill="#fff" stroke="#5e92ff" stroke-width="3"/>
-      <text x="388" y="63" fill="#cdd8ee" font-size="13" font-weight="700">Top of Descent</text>
-      <text x="180" y="63" fill="#9fb0cf" font-size="12">Reiseflug</text>
-      <text x="415" y="228" fill="#9fb0cf" font-size="13">Continuous Descent</text>
-      <!-- RTA-Zeitmarken (T) auf dem Profil -->
-      <g fill="#27c08a"><circle cx="180" cy="72" r="5"/><circle cx="380" cy="72" r="5"/><circle cx="600" cy="150" r="5"/><circle cx="790" cy="223" r="5"/></g>
-      <g fill="#9fd8c2" font-size="12.5" font-weight="700" font-family="ui-monospace,monospace">
-        <text x="180" y="92" text-anchor="middle">RTA 10:30</text><text x="380" y="92" text-anchor="middle">10:36</text>
-        <text x="612" y="144">10:42</text><text x="800" y="217">10:47</text>
-      </g>
-      <!-- Flugzeug auf dem Höhenprofil -->
-      <g fill="#ffd23f" stroke="#9a7b1a" stroke-width=".6">
-        <path d="M-20,0 Q-20,-3.3 -4,-3.8 L14,-3 Q24,-2.2 26,0 Q24,2.2 14,3 L-4,3.8 Q-20,3.3 -20,0 Z"/>
-        <path d="M2,-2 Q-3,-3.2 -10,-15 Q-8.5,-16 -3,-14.5 Q4,-5 8,-2 Z"/>
-        <path d="M2,2 Q-3,3.2 -10,15 Q-8.5,16 -3,14.5 Q4,5 8,2 Z"/>
-        <path d="M-14,-1.4 Q-17,-2.2 -21,-8 Q-19.5,-8.6 -16,-7 Q-12,-2.6 -10,-1.4 Z"/>
-        <path d="M-14,1.4 Q-17,2.2 -21,8 Q-19.5,8.6 -16,7 Q-12,2.6 -10,1.4 Z"/>
-        <animateMotion dur="9s" repeatCount="indefinite" rotate="auto"><mpath xlink:href="#altPath" href="#altPath"/></animateMotion>
-      </g>
-      <!-- ===== Draufsicht: Lateral (X·Y) ===== -->
-      <text x="80" y="322" fill="#f5c98a" font-size="15" font-weight="800">Draufsicht · Lateraler Pfad (X·Y)</text>
-      <rect x="80" y="332" width="798" height="74" rx="10" fill="rgba(245,166,35,.06)" stroke="var(--line)"/>
-      <path d="M110,369 C300,346 400,392 520,368 C650,342 740,392 850,368" fill="none" stroke="#f5a623" stroke-width="4"/>
-      <g fill="#f5a623"><circle cx="180" cy="360" r="5"/><circle cx="380" cy="374" r="5"/><circle cx="600" cy="360" r="5"/><circle cx="790" cy="374" r="5"/></g>
-      <circle r="8" fill="#fff" stroke="#f5a623" stroke-width="3"><animateMotion dur="9s" repeatCount="indefinite" path="M110,369 C300,346 400,392 520,368 C650,342 740,392 850,368"/></circle>
-      <text x="479" y="424" fill="#9fb0cf" font-size="13" text-anchor="middle">4D = Ort (X·Y) + Höhe (Z) + Zeit (T) · Cost Index optimiert Zeit ⟷ Treibstoff<a class="cite" href="#quellen">[7,18,11]</a></text>
-    </svg>
-  </div>
 
   <div class="reveal" style="border-top:1px solid var(--line);margin-top:90px"></div>
   <h3 class="reveal" style="margin-top:60px">Automatische Landung bis CAT IIIb</h3>
