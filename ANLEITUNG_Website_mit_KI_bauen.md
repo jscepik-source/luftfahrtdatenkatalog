@@ -448,10 +448,25 @@ Jede Quelle wird nach **einheitlichen Kriterien** erfasst und bewertet (die Spal
 | **Bewertung** | Sterne-Rating (Eignung fürs Projekt) |
 | **Link** | direkte Quelle |
 
-**Kategorien im Katalog (Auszug, wie in der Tabelle sichtbar):**
-- **AIP** — nationale Luftfahrthandbücher **je Land** (sehr viele Staaten, inkl. Sammelquellen wie **ASECNA** für 17 afrikanische Staaten, **Eurocontrol EAD** für ECAC, **FAA d-TPP/NASR** für die USA, **DFS BasicAIP / BasicVFR / NfL** für Deutschland, plus Werkzeuge wie **SkyVector**, **EUROCONTROL Cartography**).
-- **NOTAM** — **11 Quellen**: AVWX, CheckWX, DFS AIM/NfL, Eurocontrol EAD, FAA NOTAM Search/DINS, ICAO NOTAMs (Annex 15), ICAO iSTARS, NOAA aviationweather, autorouter.aero, notammap, SkyLink API (RapidAPI) — jeweils mit Vermerk zu Key/Zugang und Eignung.
-- *(Analog im Projekt: weitere Kategorien für Flughäfen, Flugzeuge/Triebwerke, Drohnen/UAV, Lufträume und Statistik — je nach Kriterien bewertet.)*
+**Die 11 recherchierten Fachkategorien — und welcher Bau-Schritt sie nutzt:**
+
+| # | Kategorie | Quellen | Beispiel-Anbieter | Gehört zu Bau-Schritt |
+|---|---|---|---|---|
+| 1 | **AIP** (national) | 191 Anbieter | DFS BasicAIP, ASECNA (17 Staaten), FAA d-TPP, SkyVector, Eurocontrol EAD | G.4 (NOTAM/AIP-Links je Land) |
+| 2 | **NOTAM** | 11 | AVWX, CheckWX, ICAO iSTARS, FAA DINS, autorouter, NOAA | G.4 |
+| 3 | **Flugplan** | ca. 11 | Aviation Edge, Cirium, Eurocontrol NM B2B, FAA SWIM, IATA, ICAO Doc 4444/FIXM, Lufthansa API | G.6 / H.6 (Live-Flüge, Tracker) |
+| 4 | **Verkehr** | 8 | ADS-B Exchange, OpenSky, FlightAware, Plane Finder, Spire | **G.6** (Live-ADS-B) |
+| 5 | **Luftraum** | 9 | OpenAIP, Eurocontrol AIRAC, Open Flightmaps, LXNAV, ChartFox | **Teil J** (Lufträume) |
+| 6 | **Flugzeuge** | ca. 11 | ICAO Doc 8643, FAA Registry, EASA Register, Planespotters, SKYbrary, TCDS | **H.1 / H.4** (Katalog, ICAO) |
+| 7 | **Triebwerke** | 11 | CFM, GE, Pratt & Whitney, Rolls-Royce, Safran, Honeywell, ICAO EEDB, TCDS | **H.4** (Triebwerke) |
+| 8 | **Technische Infos** | 18 | CS-25 / CS-E, FAR 25/33, RTCA DO-178C / DO-160, Jane's, NASA | Katalog „Technische Infos" |
+| 9 | **Wetter** | 24 | AWC/NOAA (METAR/TAF/SIGMET), ECMWF, Meteoblue, Meteomatics, DWD, GAFOR, SkySight | **G.3** (Wetter) |
+| 10 | **Statistik** | 15 | Eurostat, DESTATIS, ICAO WATS, IATA, Boeing/Airbus Forecast, NTSB, ASN | **H.5** (Statistik-Dashboard) |
+| 11 | **UAVs / Drohnen** | 17 (Code: 18) | OpenAIP UAV, DJI FlySafe, Dronetag, EASA/LBA/DFS/Dipul, Drone-Check | **Teil I** (Drohnen) |
+
+*(Zähler laut Recherche-Tabelle; „ca." = in der Vorlage nicht eindeutig lesbar. Die vollständige Liste aller **539 Einzelquellen** liegt in **`QUELLENKATALOG.csv`**; Zählungen & Methodik in **`QUELLENKATALOG.md`**.)*
+
+**So verbindet sich Recherche und Bau:** Vor dem Bau einer Seite steht die **Recherche der passenden Kategorie** (z. B. „Wetter": 24 Quellen vergleichen und bewerten). Beim Bauen wird dann entweder die **beste browser-taugliche Quelle als Live-Feature** umgesetzt (Wetter → aviationweather.gov, Verkehr → airplanes.live) **oder die kuratierte, bewertete Quellenliste** als filterbare Katalog-Seite gerendert (AIP, Flugzeuge, Triebwerke, Statistik, Drohnen). **Merke:** erst recherchieren & bewerten, dann bauen — nicht umgekehrt.
 
 **Wie der Katalog in die Website kommt:**
 Die bewerteten Quellen werden als **Datenobjekte im JavaScript** hinterlegt (im Projekt die `src(...)`-Einträge je Kategorie-Seite: Bewertungszahlen, Name, Inhalt, Zielgruppe, Format, Bemerkung, Link). Die Seite **rendert daraus automatisch** die aufklappbaren Quellen-Karten mit Sterne-Bewertung, Filtern und Suche. So wird aus der Recherche-Tabelle eine interaktive, filterbare Katalog-Seite.
