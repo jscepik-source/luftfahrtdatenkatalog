@@ -310,6 +310,120 @@ Manche Daten (nationale NOTAMs, VFR/IFR-Karten, Länder-Lufträume) ändern sich
 | KI-Assistent | Groq (über Cloudflare Worker) | **ja** (im Worker) | via Worker |
 | Karten-Bibliothek | Leaflet (CDN) | nein | — |
 
+### Quellensteckbriefe — was · wann verwendet · wie bekommen
+
+Für jede Quelle: **was sie liefert**, **wo/wann sie im Projekt eingesetzt wird**, und **wie man sie bekommt** (Registrierung/Key/Endpunkt). „Wie bekommen" ist bei den meisten schlicht: *öffentlicher Endpunkt, einfach im Code per `fetch` aufrufen — keine Anmeldung.*
+
+**1) OurAirports (Flughafen-Stammdaten)**
+- *Liefert:* ~72.000 Flughäfen weltweit (ICAO/IATA, Name, Land, Koordinaten, Typ, Pisten, Frequenzen).
+- *Wann/wo:* Flughäfen-Seite, Datengrundlage der Suche (Teil G.1).
+- *Wie bekommen:* keine Anmeldung. CSV direkt laden: `https://davidmegginson.github.io/ourairports-data/airports.csv` (+ `runways.csv`, `airport-frequencies.csv`, `navaids.csv`). Kostenlos, Public Domain, CORS ok.
+
+**2) Leaflet (Karten-Bibliothek)**
+- *Liefert:* die interaktive Kartenkomponente (Zoom, Marker, Popups).
+- *Wann/wo:* überall wo eine Karte ist (Flughäfen, Lufträume, Drohnen, „Typ weltweit").
+- *Wie bekommen:* keine Anmeldung. Per CDN einbinden: `https://unpkg.com/leaflet@1.9.4/dist/leaflet.js` + `leaflet.css`. Kostenlos (BSD-Lizenz).
+
+**3) OpenStreetMap-Kacheln (Basiskarte)**
+- *Liefert:* die Straßenkarten-Kacheln als Kartenhintergrund.
+- *Wann/wo:* Hintergrund jeder Leaflet-Karte.
+- *Wie bekommen:* keine Anmeldung. Tile-URL `https://tile.openstreetmap.org/{z}/{x}/{y}.png`. Kostenlos; **Attribution Pflicht** („© OpenStreetMap-Mitwirkende").
+
+**4) Esri World Imagery (Satellit)**
+- *Liefert:* Satellitenbild-Kacheln (Umschalt-Layer).
+- *Wann/wo:* optionaler „Satellit"-Layer in den Karten.
+- *Wie bekommen:* keine Anmeldung für den öffentlichen Tile-Endpunkt (`server.arcgisonline.com/.../World_Imagery/...`), Attribution „© Esri".
+
+**5) Overpass-API (OpenStreetMap-Infrastruktur)**
+- *Liefert:* Flughafen-Objekte aus OSM (Terminals, Gates, Tower, Betankung, Radar, Navaids).
+- *Wann/wo:* Flughafen-Detailkarte, Infrastruktur-Liste (Teil G.5).
+- *Wie bekommen:* keine Anmeldung. POST-Abfrage an `https://overpass-api.de/api/interpreter` (mit Spiegelservern als Fallback). Kostenlos; fair use beachten.
+
+**6) Nominatim (Geocoding / Ortssuche)**
+- *Liefert:* Ort/Adresse → Koordinaten.
+- *Wann/wo:* Ortssuche auf der Lufträume-Karte.
+- *Wie bekommen:* keine Anmeldung. `https://nominatim.openstreetmap.org/search?format=json&q=…`. Kostenlos; fair use (kein Massen-Polling).
+
+**7) aviationweather.gov (METAR/TAF)**
+- *Liefert:* aktuelles Wetter & Vorhersage je Flughafen.
+- *Wann/wo:* Flughafen-Detail (Teil G.3).
+- *Wie bekommen:* keine Anmeldung. Öffentliche US-Behörden-API (NOAA/AWC). Kostenlos.
+
+**8) airplanes.live (Live-ADS-B)**
+- *Liefert:* aktuell fliegende Flugzeuge — im **Umkreis** (`/v2/point/<lat>/<lon>/<radius>`) und **nach Typ weltweit** (`/v2/type/<ICAO-Typ>`).
+- *Wann/wo:* Live-Radar am Flughafen (G.6) und 🌍-„Typ weltweit" (K.2).
+- *Wie bekommen:* **keine Anmeldung, kein Key.** Sendet CORS `*` → direkt aus dem Browser nutzbar. Kostenlos.
+
+**9) adsb.lol (ADS-B-Fallback)**
+- *Liefert:* dasselbe wie airplanes.live (Ausweichquelle).
+- *Wann/wo:* Fallback, falls airplanes.live nicht antwortet.
+- *Wie bekommen:* keine Anmeldung, CORS `*`, kostenlos.
+
+**10) Flightradar24 (inoffiziell) — Registrierungs-Tracker**
+- *Liefert:* letzte Flüge + Flugzeugdaten zu einer **Registrierung**.
+- *Wann/wo:* Flugzeug-Tracker (H.6) und Deep-Link „dieses Flugzeug".
+- *Wie bekommen:* keine Anmeldung. Inoffizieller JSON-Endpunkt `api.flightradar24.com/common/v1/flight/list.json?query=<REG>&fetchBy=reg`; sendet CORS `*`. *(Inoffiziell — nur für Lehr-/Demozweck.)*
+
+**11) adsbdb.com (Mode-S / Halterdaten)**
+- *Liefert:* Transpondercode (Mode-S), Typ, Halter zu einer Registrierung.
+- *Wann/wo:* Tracker (H.6).
+- *Wie bekommen:* keine Anmeldung. `https://api.adsbdb.com/v0/aircraft/<REG>`, CORS `*`, kostenlos.
+
+**12) OpenAIP (Lufträume) — ⚠️ braucht Key**
+- *Liefert:* Luftraum-Kacheln + klickbare Luftraum-Polygone (Klassen A–G, CTR, TMA, Danger …).
+- *Wann/wo:* Lufträume-Karte (Teil J) und Luftraum-Overlays auf anderen Karten.
+- *Wie bekommen:* **kostenloses Konto auf `openaip.net/register`** → im Konto einen **API-Key** erzeugen. Nutzung: Header `x-openaip-api-key` (Polygone) bzw. `?apiKey=` (Kacheln). Lizenz CC BY-NC (nicht-kommerziell — für ein Uni-Projekt passend). *Empfehlung:* Key über Cloudflare Worker verstecken (Teil L.3).
+
+**13) Wikipedia REST-API (Bilder & Kurzinfos)**
+- *Liefert:* Flugzeug-/Triebwerk-Fotos (`pageimages`, `page/summary`) und Kurztexte.
+- *Wann/wo:* Katalog-Karten (H.2), Triebwerke (H.4).
+- *Wie bekommen:* keine Anmeldung. `https://en.wikipedia.org/w/api.php?...&origin=*` bzw. `…/api/rest_v1/page/summary/<Titel>`. Kostenlos, CORS via `origin=*`.
+
+**14) Wikidata (strukturierte Daten)**
+- *Liefert:* Länge (P2043), Spannweite (P2050), Höhe (P2048), Stückzahl (P1092) u. a.
+- *Wann/wo:* Anreicherung der Flugzeugkarten (H.3).
+- *Wie bekommen:* keine Anmeldung. Titel → QID über Wikipedia `pageprops`, dann `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=<QID>&props=claims&origin=*`. Kostenlos.
+
+**15) Wikimedia Commons (Foto-Fallback)**
+- *Liefert:* echte Fotos, wenn das Wikipedia-Titelbild ein Logo ist.
+- *Wann/wo:* Triebwerk-/Flugzeugfotos, wenn Stufe 1 ein Logo liefert (z. B. GE90).
+- *Wie bekommen:* keine Anmeldung. `commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&prop=imageinfo&origin=*`. Kostenlos.
+
+**16) Groq (KI-Assistent) — ⚠️ braucht Key (im Worker)**
+- *Liefert:* die Antworten des KI-Assistenten (LLM).
+- *Wann/wo:* AeroGuide-Chat auf der Flughäfen-Seite (G.8).
+- *Wie bekommen:* **kostenloses Konto auf `console.groq.com`** → API-Key (`gsk_…`). Key **nicht** ins HTML, sondern als Variable `GROQ_KEY` in den **Cloudflare Worker** (Teil L.3).
+
+**17) Pollinations.ai (KI-Fallback)**
+- *Liefert:* KI-Antworten ohne Key (Ausweich, wenn Groq ausfällt).
+- *Wann/wo:* Fallback im KI-Chat.
+- *Wie bekommen:* keine Anmeldung. `https://text.pollinations.ai/…`. Kostenlos.
+
+**18) Cloudflare Workers (Secret-Proxy) — Konto nötig**
+- *Liefert:* die serverseitige „Zwischenschicht", die Groq-/OpenAIP-Schlüssel versteckt.
+- *Wann/wo:* zwischen Website und Groq/OpenAIP.
+- *Wie bekommen:* **kostenloses Konto auf `dash.cloudflare.com`** → Worker anlegen, Code einfügen, Variablen `GROQ_KEY`/`OPENAIP_KEY` setzen, deployen (Teil L.3). Kostenloses Kontingent reicht locker.
+
+**19) GitHub Pages (Hosting) — Konto nötig**
+- *Liefert:* das kostenlose Webhosting der Seite.
+- *Wann/wo:* Veröffentlichung des gesamten Projekts.
+- *Wie bekommen:* GitHub-Konto (Teil A.1) → Repo → Settings → Pages aktivieren (Teil C). Kostenlos.
+
+**20) Google Fonts + animate.css (Darstellung)**
+- *Liefert:* Schriftart „Inter" bzw. fertige CSS-Animationen.
+- *Wann/wo:* Typografie und dezente Animationen auf allen Seiten.
+- *Wie bekommen:* keine Anmeldung, per CDN-`<link>`. Kostenlos.
+
+**21) Nationale Luftfahrt-Daten (DFS, Eurocontrol, Austrocontrol, NfL …)**
+- *Liefert:* NOTAMs, VFR/IFR-Karten, nationale Luftraumdaten.
+- *Wann/wo:* NOTAM-/Länder-Ansichten; werden **nicht** live im Browser geholt, sondern von den **Bots** (Teil M) als JSON/GeoJSON ins Repo geschrieben und dann von der Seite gelesen.
+- *Wie bekommen:* öffentliche Behörden-/AIP-Quellen; die Bots laden sie serverseitig in der GitHub Action.
+
+> **Zusammengefasst — „wie bekommt man die Quellen":**
+> - **Sofort nutzbar, ohne Anmeldung:** 1–11, 13–15, 17, 20, 21 (öffentliche Endpunkte, einfach per `fetch`).
+> - **Kostenloses Konto + Key nötig:** **OpenAIP** (Lufträume) und **Groq** (KI) — beide in ~1 Minute registriert, Key gehört in den **Cloudflare Worker**.
+> - **Kostenloses Konto (kein Key im Code):** **GitHub** (Hosting) und **Cloudflare** (Secret-Proxy).
+
 ---
 
 # TEIL P · Fehlerbehebung (Troubleshooting)
