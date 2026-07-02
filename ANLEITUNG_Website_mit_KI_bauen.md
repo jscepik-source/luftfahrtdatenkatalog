@@ -1,217 +1,365 @@
-# Anleitung: Eine datengetriebene Luftfahrt-Website mit KI bauen
-### Vollständige Prompt- und Vorgehens-Dokumentation
+# Von Null zur fertigen Website — vollständige Anleitung
+### Wie der Luftfahrtdatenkatalog Schritt für Schritt mit KI gebaut wurde
 **Projekt:** Luftfahrtdatenkatalog · Hochschule RheinMain · Modul Avionik
-**Art:** Statische Single-Page-Webanwendung auf GitHub Pages (nur HTML/CSS/JavaScript, kein Backend)
-**Zweck dieses Dokuments:** Nachvollziehbare Schritt-für-Schritt-Anleitung, wie die Website mit Hilfe einer KI (Claude / vergleichbar) entwickelt wurde — inkl. der verwendeten Prompts.
+**Ergebnis:** Statische Single-Page-Webanwendung auf GitHub Pages — nur HTML/CSS/JavaScript, kein Backend.
+**Live:** https://jscepik-source.github.io/dfs-katalog/
+**Zielgruppe dieses Dokuments:** komplette Nachvollziehbarkeit — es wird **nichts** vorausgesetzt außer einem Computer mit Internet.
+
+> **Lesehinweis:** Die Anleitung ist chronologisch. Wer bei Null startet, arbeitet Teil A→I der Reihe nach ab. Jeder Bau-Schritt hat: **Ziel → Prompt (wörtlich verwendbar) → Datenquelle → Prüfen → typische Fehler.**
 
 ---
 
-## Inhaltsverzeichnis
-0. Methodik & Werkzeuge
-1. Projektrahmen (Meta-Prompt)
-2. Startseite
-3. Flughäfen-Seite (Kernstück)
-4. Flugzeug-Katalog
-5. Drohnen-Seite
-6. Lufträume-Karte
-7. Übergreifende Features (Navigation, Animationen, Statistik, Sicherheit)
-8. Automatisierung (GitHub Actions / Bots)
-9. Deployment (GitHub Pages)
-10. Iteration & Fehlerbehebung — echte Prompts aus der Entwicklung
-11. Prinzipien des Promptens (didaktische Zusammenfassung)
-12. Anhang: Authentische Prompt-Beispiele (im Original-Wortlaut)
+# INHALT
+- **Teil A** — Werkzeuge installieren (von absolut Null)
+- **Teil B** — Git & GitHub verstehen (Minimalwissen)
+- **Teil C** — Repository anlegen & GitHub Pages aktivieren
+- **Teil D** — Die erste Seite live bringen (Erfolgserlebnis)
+- **Teil E** — Arbeitsweise mit der KI (der wichtigste Teil)
+- **Teil F** — Startseite bauen
+- **Teil G** — Flughäfen-Seite bauen (in 8 Ausbaustufen)
+- **Teil H** — Flugzeug-Katalog bauen (in 7 Ausbaustufen)
+- **Teil I** — Drohnen-Seite bauen
+- **Teil J** — Lufträume-Karte bauen
+- **Teil K** — Übergreifend: Navigation, „Typ weltweit", Animationen
+- **Teil L** — Externe Dienste einrichten (OpenAIP, Groq, Cloudflare Worker)
+- **Teil M** — Automatisierung: Bots via GitHub Actions
+- **Teil N** — Sicherheit
+- **Teil O** — Kompletter Datei- & API-Überblick
+- **Teil P** — Fehlerbehebung (Troubleshooting)
+- **Teil Q** — Der gesamte Prompt-Ablauf als Checkliste
 
 ---
 
-## 0 · Methodik & Werkzeuge
+# TEIL A · Werkzeuge installieren (von absolut Null)
 
-### Grundidee der KI-gestützten Entwicklung
-Die Website wurde **nicht** in einem Rutsch erzeugt, sondern **iterativ**: ein Grundgerüst, dann Feature für Feature, jeweils mit Prüfen, Nachbessern und Fehlerbehebung. Die KI schreibt den Code, der Mensch gibt Ziel, Kontext, Datenquellen und Qualitätskriterien vor und prüft das Ergebnis.
+Du brauchst vier Dinge. Installationszeit gesamt ca. 30–45 Minuten.
 
-### Werkzeuge
-- **KI-Coding-Assistent** (Claude Code / Cursor / VS-Code-Erweiterung) — schreibt und ändert Dateien direkt im Projekt.
-- **Editor + Browser** — zum Prüfen jeder Änderung.
-- **Git + GitHub** — Versionskontrolle; **GitHub Pages** als kostenloses Hosting.
-- **Keine** Frameworks, **kein** Build-Schritt: reines HTML/CSS/JavaScript (Vanilla), damit alles direkt auf GitHub Pages läuft.
+### A.1 · Ein GitHub-Konto
+1. Auf **github.com** gehen → **Sign up**.
+2. Benutzername (z. B. `dein-name`), E-Mail, Passwort. Kostenlos.
+3. E-Mail bestätigen.
+→ GitHub speichert deinen Code und hostet die Website kostenlos (GitHub Pages).
 
-### Die vier Grundprinzipien (wurden bei fast jedem Prompt mitgegeben)
-1. **Statisch & serverlos** — kein Backend, keine Datenbank; jede Seite ist eine eigenständige `.html`-Datei.
-2. **Nur CORS-freie, öffentliche APIs** — die direkt aus dem Browser funktionieren.
-3. **Robustheit** — jede Funktion mit Fallback und Fehlerbehandlung.
-4. **Sicherheit** — Fremddaten escapen, keine Geheimnisse im Client-Code.
+### A.2 · Git (Versionskontrolle)
+- **Windows:** git-scm.com → „Download for Windows" → Installer ausführen (alle Standard-Optionen bestätigen).
+- **Mac:** Terminal öffnen, `git --version` eingeben → falls nicht vorhanden, installiert macOS es auf Nachfrage.
+- Prüfen: Terminal/Eingabeaufforderung öffnen, `git --version` → es sollte eine Versionsnummer erscheinen.
+- Einmalig einrichten:
+  ```bash
+  git config --global user.name "Dein Name"
+  git config --global user.email "deine@email.de"
+  ```
 
----
+### A.3 · Ein Code-Editor
+- **VS Code** empfohlen: code.visualstudio.com → herunterladen, installieren.
 
-## 1 · Projektrahmen (Meta-Prompt)
+### A.4 · Ein KI-Coding-Assistent
+Der Assistent schreibt und ändert die Dateien direkt im Projekt. Optionen:
+- **Claude Code** (Kommandozeile oder VS-Code-Erweiterung) — in diesem Projekt verwendet.
+- Alternativ **Cursor** (KI-Editor) oder die **Claude-/ChatGPT-Weboberfläche** (dann kopierst du Code selbst in die Dateien).
 
-Dieser Prompt wird **einmal zu Beginn** gesetzt und definiert den Rahmen für alles Weitere:
-
-> **Prompt 1.1 — Projektkontext**
-> „Ich baue ein studentisches Uni-Projekt (Hochschule RheinMain, Modul Avionik): einen weltweiten **Luftfahrtdatenkatalog** als **statische Website** für **GitHub Pages** — nur HTML/CSS/JavaScript, **kein Backend, keine Datenbank, kein Build-Tool**. Jede Seite ist eine einzelne, in sich geschlossene `.html`-Datei mit eingebettetem CSS und JavaScript (Vanilla, keine Frameworks). Nutze ausschließlich **kostenlose, CORS-freie öffentliche APIs**, die direkt aus dem Browser funktionieren. Schreibe sauberen, kommentierten Code und baue jede Funktion mit **Fallback/Fehlerbehandlung**. Sag mir bei jeder API vorab, ob sie ohne Key und mit CORS funktioniert. Design: modern, clean, responsive, Dark-Mode."
-
----
-
-## 2 · Startseite (`index.html`)
-
-> **Prompt 2.1**
-> „Baue eine `index.html` als **Themen-Auswahlseite** mit vier großen anklickbaren Karten: **Flughäfen, Flugzeuge, Drohnen, Lufträume**. Hero-Bereich mit Farbverlauf, responsive Grid, Dark-Mode über `prefers-color-scheme`, Icons als Inline-SVG, Hover-Effekte, Footer mit Impressum-Link."
-
-> **Prompt 2.2 — Verfeinerung**
-> „Füge eine sanfte, gestaffelte Einblende-Animation beim Laden hinzu (Hero + Karten faden nacheinander ein). `prefers-reduced-motion` respektieren."
-
-**Ergebnis/Technik:** CSS-Grid, CSS-Custom-Properties für das Farbschema, `@keyframes` mit gestaffelten `animation-delay`.
+→ Für „genau diese Website" ist ein Assistent ideal, der **Dateien direkt bearbeiten** kann (Claude Code / Cursor), weil das Projekt aus wenigen, aber großen HTML-Dateien besteht.
 
 ---
 
-## 3 · Flughäfen-Seite (`ourairports.html`) — Kernstück
+# TEIL B · Git & GitHub — das Minimalwissen
 
-Diese Seite entstand in vielen Schritten. Reihenfolge:
+Du brauchst nur fünf Begriffe:
+- **Repository (Repo):** der Projektordner, den GitHub verwaltet.
+- **Commit:** ein gespeicherter Stand mit Nachricht („was hab ich geändert").
+- **Push:** deine Commits zu GitHub hochladen.
+- **Pull / Fetch + Merge:** Änderungen von GitHub holen (wichtig, wenn Bots oder Teammitglieder committen).
+- **Branch:** eine Arbeitslinie (wir arbeiten hier auf `main`).
 
-> **Prompt 3.1 — Datengrundlage & Suche**
-> „Baue `ourairports.html`: einen durchsuchbaren Katalog von **~72.000 Flughäfen weltweit** aus dem **OurAirports-CSV** (`ourairports.com/data/`). Sofort-Suche nach ICAO, IATA, Name, Stadt, Land. Ergebnisliste mit **Infinite-Scroll** (batchweise nachladen, ~50 pro Batch). Filter-Chips nach Flughafentyp; Kontinent-Auswahl."
-
-> **Prompt 3.2 — Detailkarte je Flughafen**
-> „Mach jeden Treffer aufklappbar mit Detailansicht: **Leaflet-Karte** (OpenStreetMap + optional Satellit), Pisten (Länge/Belag/ILS), Frequenzen, Elevation, Koordinaten und externe Links (SkyVector, Google Maps, ChartFox)."
-
-> **Prompt 3.3 — Wetter & NOTAMs**
-> „Ergänze **Live-METAR und TAF** (Quelle: aviationweather.gov) mit dekodierter Darstellung, sowie Links zu nationalen **NOTAM/AIP**-Quellen (DFS, Eurocontrol, Austrocontrol …)."
-
-> **Prompt 3.4 — Infrastruktur aus OpenStreetMap**
-> „Lade pro Flughafen die **Infrastruktur aus OpenStreetMap** über die **Overpass-API**: Terminals, Gates, Tower, Betankung, Radar sowie Navaids (ILS/VOR/NDB/DME). Zeichne sie auf die Karte und liste sie kategorisiert auf. Nutze Overpass-Spiegelserver als Fallback."
-
-> **Prompt 3.5 — Live-ADS-B-Radar**
-> „Baue ein **Live-ADS-B-Radar**: hole aktuelle Flugzeuge im Umkreis eines Flughafens von **`api.airplanes.live/v2/point/<lat>/<lon>/<radius>`** (CORS-frei, kein Key). Zeige sie als drehbare Flugzeug-Marker auf der Leaflet-Karte mit **flüssiger 60-fps-Animation per Dead-Reckoning** (zwischen den Updates entlang Kurs+Geschwindigkeit weiterrechnen). Zusätzlich eine Live-Flugliste: Callsign, Kennzeichen, Typ, Höhe, Geschwindigkeit, Flugphase (farbcodiert)."
-
-> **Prompt 3.6 — KI-Assistent**
-> „Baue einen KI-Chat-Assistenten ('AeroGuide'), der Fragen zur Luftfahrt und zum aktuellen Kontext beantwortet. Der API-Schlüssel darf **nicht** im Client stehen — leite die Anfrage über einen **Cloudflare Worker** (serverseitig, Schlüssel als Umgebungsvariable). Baue Fallback-Anbieter ein, falls der Hauptanbieter ausfällt."
+Die einzigen vier Befehle im Alltag:
+```bash
+git add DATEINAME        # Änderung vormerken
+git commit -m "Nachricht" # Stand speichern
+git fetch && git merge origin/main   # fremde Änderungen holen (Bots!)
+git push                 # hochladen
+```
+> **Merkregel für dieses Projekt:** Die automatischen Bots committen regelmäßig selbst. **Vor jedem Push** deshalb erst `git fetch` + `git merge origin/main`, sonst wird der Push abgelehnt.
 
 ---
 
-## 4 · Flugzeug-Katalog (`Luftfahrt_Katalog_*.html`)
+# TEIL C · Repository anlegen & GitHub Pages aktivieren
 
-> **Prompt 4.1 — Grundgerüst**
-> „Baue einen Flugzeug-Katalog: Datenobjekt im JavaScript mit Flugzeugmustern (Name, Hersteller, Erstflug, technische Daten, Bewertung). Kategorien, Filter-Chips, Suche, aufklappbare Detailkarten mit dezenter Einblende-Animation."
-
-> **Prompt 4.2 — Fotos automatisch laden**
-> „Lade die **Fotos automatisch von Wikipedia** (`api/rest_v1/page/summary/<Titel>` bzw. `pageimages`). **Wichtig:** Viele Wikimedia-`thumb`-URLs liefern HTTP 400 — baue einen **Fallback**, der bei Bildfehler ein funktionierendes Thumbnail über die Wikipedia-REST-API nachlädt. **Filtere Firmenlogos** heraus; ist das Titelbild ein Logo, hole stattdessen ein echtes Foto aus **Wikimedia Commons** (`generator=search`, Dateien-Namespace)."
-
-> **Prompt 4.3 — Daten aus Wikidata**
-> „Reichere jede Flugzeugkarte beim Aufklappen mit **strukturierten Daten aus Wikidata** an: Wikipedia-Titel → QID (`pageprops`) → Eigenschaften (`wbgetentities`): Länge (P2043), Spannweite (P2050), Höhe (P2048), Stückzahl (P1092). Nur zuverlässige Einheiten (Meter/Anzahl). Bereits kuratierte Werte haben Vorrang (keine widersprüchlichen Doppelangaben). Alles CORS-frei via `origin=*`."
-
-> **Prompt 4.4 — ICAO Doc 8643 & Triebwerke**
-> „Baue eine **ICAO-Doc-8643-Ansicht** (Liste aller Typencodes mit Klasse/Triebwerk) und eine **Triebwerks-Ansicht**. Ergänze **jedes Triebwerk mit Foto** (Wikipedia-Suche → Foto; Logo-Filter; bei Logo → Wikimedia-Commons-Fallback)."
-
-> **Prompt 4.5 — Statistik-Dashboard**
-> „Werte die Statistik-Seite auf: statt nur Quellen-Links ein **Dashboard mit echten Diagrammen**, live aus den Katalog-Daten berechnet (Flugzeuge nach Jahrzehnt, Top-Hersteller, Triebwerke nach Typ) plus Kennzahlen. **Pure CSS/SVG-Balken, keine Chart-Bibliothek**, mit Wachstums-Animation; `prefers-reduced-motion` beachten."
-
-> **Prompt 4.6 — Live-Tracker**
-> „Baue einen Tracker: Nutzer gibt eine **Registrierung** ein und bekommt **letzte Flüge + Mode-S-Transpondercode + Flugzeugdaten**. Quellen, die aus dem Browser funktionieren: Flightradar24 (inoffiziell, `flight/list.json?query=<REG>&fetchBy=reg`) und adsbdb.com. Beide senden CORS `*`."
+1. Auf GitHub: **New repository** → Name z. B. `dfs-katalog` → **Public** → „Add a README" ankreuzen → **Create**.
+2. Repo lokal holen (klonen):
+   ```bash
+   cd Desktop
+   git clone https://github.com/DEIN-NAME/dfs-katalog.git "webseite avionik"
+   cd "webseite avionik"
+   ```
+3. **GitHub Pages einschalten:** Repo → **Settings** → **Pages** → „Source: Deploy from a branch" → Branch **main**, Ordner **/(root)** → **Save**.
+4. Nach ~1 Minute ist die Seite unter `https://DEIN-NAME.github.io/dfs-katalog/` erreichbar (noch leer).
 
 ---
 
-## 5 · Drohnen-Seite (`drohnen.html`)
+# TEIL D · Die erste Seite live bringen (Erfolgserlebnis)
 
-> **Prompt 5.1**
-> „Baue `drohnen.html`: eine Marktübersicht von **UAV-/Drohnen-Datenquellen** (Datenobjekt im JS), gruppiert nach Kategorie (Tracking/Remote-ID, Geo-Zonen, Regeln, Behörden, Wetter, NOTAMs). Filter-Chips, Suche, aufklappbare Detailkarten. Für Karten-Quellen eine kleine Leaflet-Karte mit OpenAIP-Lufträumen."
+Bevor die KI loslegt, einmal den kompletten Kreislauf selbst durchspielen:
 
-> **Prompt 5.2 — Interface verbessern**
-> „Überarbeite die Drohnen-Seite: prüfe auf Fehler, verbessere das Interface. Konkret: Barrierefreiheit (Screenreader-Label war unsichtbar definiert), **datengetriebene Kennzahlen und Chip-Zähler** (aus den Daten berechnet, bleiben automatisch korrekt), sichtbarer Tastatur-Fokus."
+1. In VS Code im Projektordner eine Datei `index.html` anlegen mit:
+   ```html
+   <!doctype html><html lang="de"><meta charset="utf-8">
+   <title>Test</title><h1>Hallo Luftfahrtdatenkatalog</h1>
+   ```
+2. Speichern, dann:
+   ```bash
+   git add index.html
+   git commit -m "Erste Testseite"
+   git push
+   ```
+3. `https://DEIN-NAME.github.io/dfs-katalog/` neu laden → „Hallo …" erscheint.
 
-> **Prompt 5.3 — Einklappbare Kategorien**
-> „Mach die Kategorie-Gruppen **einklappbar** (Überschrift zum Auf-/Zuklappen), damit man die Liste kompakt überblicken kann."
-
----
-
-## 6 · Lufträume-Karte (`luftraeume.html`)
-
-> **Prompt 6.1**
-> „Baue `luftraeume.html`: eine **Vollbild-Leaflet-Weltkarte** der Lufträume (ICAO-Klassen A–G, CTR, TMA, Restricted/Prohibited/Danger) auf Basis von **OpenAIP** (Kachel-Layer + klickbare Polygone via `api.core.openaip.net`). Filter nach Land, Typ und ICAO-Klasse. Farbcodierte Legende, Ortssuche via Nominatim."
-
-> **Prompt 6.2 — Modernisieren**
-> „Modernisiere die Optik (einheitliche Schrift, weiche Schatten, Pill-Filter, sanfte Einblendungen), mach die **Legende einklappbar** und die **Karte möglichst groß** (Filter-Leiste kompakt/einklappbar halten)."
-
-*(Zum OpenAIP-Schlüssel siehe Kapitel 7 · Sicherheit — hier wurde bewusst die Abwägung „Einfachheit vs. Sicherheit" thematisiert.)*
+→ Ab jetzt gilt für **jede** Änderung derselbe Dreisatz: **speichern → commit → push**. (Der KI-Assistent macht das Bearbeiten und oft auch das Committen für dich.)
 
 ---
 
-## 7 · Übergreifende Features
+# TEIL E · Arbeitsweise mit der KI (der wichtigste Teil)
 
-> **Prompt 7.1 — Einheitliche Navigation**
-> „Setze auf **allen** Seiten eine **identische Navigationsleiste** ein (Start · Flughäfen · Flugzeuge · Drohnen · Lufträume) — gleiches Markup und CSS, aktive Seite hervorgehoben."
+Der Rahmen wird **einmal** gesetzt, dann wird **iterativ** gebaut. Immer nur ein Feature, prüfen, weiter.
 
-> **Prompt 7.2 — „Flugzeugtyp weltweit"**
-> „Baue eine Funktion, die **jeden Flugzeugtyp weltweit live** auf einer Weltkarte zeigt: Vollbild-Overlay mit Leaflet (`preferCanvas` für tausende Marker), Daten von **`api.airplanes.live/v2/type/<ICAO-Typ>`** (z. B. A320 ≈ 880 weltweit), Auto-Refresh 30 s, Marker farbcodiert nach Flugphase. **Sicherheit:** Typcodes auf `[A-Z0-9]` begrenzen, alle Popup-Felder HTML-escapen. Mach das Feature **offen zugänglich** (fester Button in der Leiste) und integriere es sowohl auf der Flughäfen- als auch auf der Flugzeug-Seite (🌍-Chip an jedem Typencode)."
+> **PROMPT E.0 — Projektrahmen (einmal zu Beginn, immer im Hinterkopf):**
+> „Ich baue ein studentisches Uni-Projekt (Hochschule RheinMain, Modul Avionik): einen weltweiten **Luftfahrtdatenkatalog** als **statische Website** für **GitHub Pages** — nur HTML/CSS/JavaScript, **kein Backend, keine Datenbank, kein Build-Tool**. Jede Seite ist eine einzelne, in sich geschlossene `.html`-Datei mit eingebettetem CSS und JavaScript (Vanilla, keine Frameworks). Nutze ausschließlich **kostenlose, CORS-freie öffentliche APIs**, die direkt aus dem Browser funktionieren. Schreibe sauberen, kommentierten Code mit **Fallback/Fehlerbehandlung**. Sag mir bei jeder API vorab, ob sie ohne Key und mit CORS funktioniert. Design: modern, clean, responsive, Dark-Mode. Arbeite **schrittweise** — wir bauen Feature für Feature."
 
-> **Prompt 7.3 — Moderne Animationen**
-> „Füge **moderne, scroll-gekoppelte Animationen** hinzu: native **CSS Scroll-Driven Animations** (`animation-timeline: view()`) für Karten-Reveals, mit **IntersectionObserver als Fallback** für Safari/Firefox, plus dezenten **Hero-Parallax**. `prefers-reduced-motion` respektieren; ein sicheres Muster verwenden, bei dem **nie eine Karte unsichtbar hängen bleibt** (nur JS versteckt beobachtete Elemente kurzzeitig)."
-
-> **Prompt 7.4 — Sicherheit / API-Schlüssel**
-> „Der OpenAIP-Schlüssel steht im öffentlichen Client-Code. Erkläre mir das Risiko und die zwei sauberen Optionen:
-> (a) **Cloudflare-Worker als Proxy** — Schlüssel als verschlüsselte Umgebungsvariable, die Seiten rufen den Worker statt OpenAIP direkt; Schlüssel nirgends sichtbar.
-> (b) **Direkter, kostenloser Read-only-Schlüssel** im Client für sofortigen Betrieb.
-> Gib mir den vollständigen Worker-Code und beschreibe den Deploy. Härte außerdem den restlichen Code (Fremddaten escapen, Eingaben sanitisieren)."
+**Regeln, die den Unterschied machen (siehe auch Teil Q):**
+- Nach jedem Prompt **im Browser prüfen**, erst dann weiter.
+- Datenquellen **konkret** vorgeben (die KI rät sonst tote Endpunkte).
+- Fehler **mit konkretem Beispiel** melden (welcher Flughafen, welches Flugzeug, welcher Klick).
 
 ---
 
-## 8 · Automatisierung (GitHub Actions / Bots)
+# TEIL F · Startseite (`index.html`)
 
-> **Prompt 8.1**
-> „Schreibe **Python-Bots als GitHub Actions**, die alle 6 Stunden aktuelle Daten holen (z. B. DFS-VFR/IFR-Karten, NOTAMs, nationale Luftraumdaten) und die Ergebnis-JSONs automatisch ins Repository committen. Die Website liest diese JSONs zur Laufzeit. Achte darauf, dass die Bots nur Daten-Dateien ändern, nicht die HTML-Seiten."
+> **PROMPT F.1:** „Baue `index.html` als **Themen-Auswahlseite** mit vier großen anklickbaren Karten: **Flughäfen** (→ `ourairports.html`), **Flugzeuge** (→ Katalog), **Drohnen** (→ `drohnen.html`), **Lufträume** (→ `luftraeume.html`). Hero mit Farbverlauf, responsive CSS-Grid, Dark-Mode über `prefers-color-scheme`, Icons als Inline-SVG, Hover-Effekte, Footer mit Impressum."
 
----
+> **PROMPT F.2:** „Füge eine sanfte, gestaffelte Einblende-Animation beim Laden hinzu (Hero + Karten faden nacheinander ein). `prefers-reduced-motion` respektieren."
 
-## 9 · Deployment (GitHub Pages)
-
-> **Prompt 9.1**
-> „Erkläre mir Schritt für Schritt, wie ich das Projekt über **GitHub Pages** veröffentliche (Repository, `main`-Branch, Pages-Einstellung), und wie ich Änderungen sicher pushe, obwohl die Bots regelmäßig selbst committen (erst `git fetch` + `merge`, dann pushen)."
+**Prüfen:** vier Karten sichtbar, Links (kommen später) angelegt, Dark-Mode reagiert auf System-Einstellung.
 
 ---
 
-## 10 · Iteration & Fehlerbehebung — echte Prompts aus der Entwicklung
+# TEIL G · Flughäfen-Seite (`ourairports.html`) — in 8 Ausbaustufen
 
-Ein zentraler Teil der Arbeit ist **Nachbessern**. Beispiele echter Prompts (leicht geglättet), die zeigen, wie man iterativ verbessert:
+Das ist das Kernstück. **Jede Stufe einzeln bauen und prüfen.**
 
-- **Verknüpfung herstellen:** „Wenn ich im Live-Radar auf den **Flugzeugtyp** klicke, soll im Katalog **nur die passende Typ-Karte** aufgehen; klicke ich auf das **Kennzeichen**, soll **nur der Live-Tracker** dieses Flugzeugs erscheinen."
-- **Bug melden mit Beispiel:** „Die **Kennnummer** der Flugzeuge kann ich nicht anklicken." → (Ursache: war reiner Text, nicht verlinkt.)
-- **Datenlücke mit konkretem Fall:** „Warum gibt es bei **EDDF kein Terminal 2** in der Infrastruktur?" → (Ursache: in OSM nur als `building=terminal` getaggt → Abfrage erweitert.)
-- **Fehlendes Bild mit Beispiel:** „Das **GE90-Bild** fehlt." → (Ursache: Wikipedia-Titelbild war ein Logo → Commons-Fallback ergänzt.)
-- **Mehr Daten:** „Ergänze pro Flugzeug **so viele Daten wie möglich** (Baujahr, Größe, Passagierzahl, Zweck …)." → (Lösung: kuratierte Kernwerte + Wikidata-Anreicherung.)
-- **Design/UX:** „Kannst du **moderne Scroll-Animationen** einbauen, wie in ganz modernen Seiten?" → (Lösung: `animation-timeline: view()` + Fallback.)
-- **Zusammenarbeit/Merge:** „Mein Kommilitone hat die Seite verändert (einklappbare Filter), ohne es mir zu sagen — behalte seinen Filter, aber übernimm sonst alle meine Änderungen." → (Lösung: gezielter Merge beider Stände.)
-- **Sicherheitswunsch:** „Ich will nicht, dass man die Seite hacken kann / dass Daten über meinen Account laufen." → (Lösung: Aufklärung + Härtung + Worker-Proxy als Option.)
+### G.1 · Daten & Suche
+> „Baue `ourairports.html`: durchsuchbarer Katalog von **~72.000 Flughäfen weltweit** aus dem **OurAirports-CSV** (`https://davidmegginson.github.io/ourairports-data/airports.csv`). Sofort-Suche (ICAO, IATA, Name, Stadt, Land). Ergebnisliste mit **Infinite-Scroll** (~50 pro Batch). Filter-Chips nach Flughafentyp, Kontinent-Auswahl, Ergebniszähler."
+- **Datenquelle:** OurAirports-CSV (frei, CORS ok). Beim ersten Laden parsen und im Speicher halten.
+- **Prüfen:** „EDDF" eingeben → Frankfurt erscheint sofort.
 
-**Lernpunkt für die Lehre:** Gute Fehler-Prompts enthalten **ein konkretes Beispiel** (welcher Flughafen, welches Flugzeug, welcher Klick) — damit findet die KI die Ursache viel schneller.
+### G.2 · Aufklappbare Detailkarte + Leaflet
+> „Mach jeden Treffer aufklappbar: **Leaflet-Karte** (OpenStreetMap-Kacheln + optional Esri-Satellit), Pisten (Länge/Belag/ILS), Frequenzen, Elevation, Koordinaten, externe Links (SkyVector, Google Maps, ChartFox)."
+- **Bibliothek:** Leaflet per CDN einbinden (`unpkg.com/leaflet@1.9.4`).
+- **Prüfen:** Karte lädt beim Aufklappen; Marker sitzt korrekt.
 
----
+### G.3 · Wetter (METAR/TAF)
+> „Ergänze **Live-METAR und TAF** von `aviationweather.gov` mit dekodierter, lesbarer Darstellung (Wind, Sicht, Wolken, Temperatur, QNH)."
 
-## 11 · Prinzipien des Promptens (didaktische Zusammenfassung)
+### G.4 · NOTAM / AIP-Links
+> „Verlinke pro Land die passende **NOTAM/AIP-Quelle** (DFS für Deutschland, Eurocontrol, Austrocontrol …) und binde deutsche eAIP-Karten ein, wo verfügbar."
 
-1. **Rahmen einmal klar setzen** (statisch, CORS-frei, kein Backend) — spart bei jedem Folge-Prompt Erklärungen.
-2. **Klein & iterativ** statt „bau mir alles" — erst Gerüst, dann Feature für Feature.
-3. **Datenquellen konkret vorgeben** — „nutze `airplanes.live/v2/type`, CORS-frei". Sonst rät die KI oft nicht funktionierende Endpunkte.
-4. **Immer nach Fallbacks fragen** — „was, wenn die API/das Bild scheitert?".
-5. **Sicherheit explizit fordern** — Fremddaten escapen, keine Secrets im Client.
-6. **Fehler mit konkretem Beispiel melden** — Flughafen/Flugzeug/Klick nennen, idealerweise Konsolen-Log.
-7. **Design-Kriterien mitgeben** — modern, clean, responsive, Dark-Mode, dezente Animationen, Barrierefreiheit.
-8. **Nach jedem Schritt prüfen** — im Browser testen, dann erst weiter.
-9. **Robustheit vor Schönheit** — lieber eine Funktion mit sauberem Fallback als fünf ohne.
+### G.5 · Infrastruktur aus OpenStreetMap (Overpass)
+> „Lade pro Flughafen die **Infrastruktur aus OpenStreetMap** über die **Overpass-API**: Terminals, Gates, Tower, Betankung, Radar, Navaids (ILS/VOR/NDB/DME). Auf die Karte zeichnen und kategorisiert auflisten. Nutze mehrere Overpass-Spiegelserver als Fallback. **Wichtig:** Terminals sind in OSM teils `aeroway=terminal`, teils `building=terminal` — beide abfragen."
+- **Prüfen:** EDDF → Terminals 1 **und** 2 erscheinen.
 
----
+### G.6 · Live-ADS-B-Radar
+> „Baue ein **Live-ADS-B-Radar**: aktuelle Flugzeuge im Umkreis von `https://api.airplanes.live/v2/point/<lat>/<lon>/<radius>` (CORS-frei, kein Key; `api.adsb.lol` als Fallback). Zeige sie als drehbare Flugzeug-Marker mit **flüssiger 60-fps-Animation per Dead-Reckoning** (zwischen Updates entlang Kurs+Geschwindigkeit weiterrechnen). Zusätzlich Live-Flugliste: Callsign, Kennzeichen, Typ, Höhe, Geschwindigkeit, Flugphase (farbcodiert). Auto-Refresh."
+- **Prüfen:** Großflughafen mit Verkehr (EDDF/EDDM) → Flugzeuge bewegen sich.
 
-## 12 · Anhang: Authentische Prompt-Beispiele (Original-Wortlaut)
+### G.7 · Verlinkung ins Flugzeug (Deep-Links)
+> „Mach in der Live-Flugliste **Kennzeichen und Flugzeugtyp anklickbar**: Klick auf den **Typ** öffnet im Katalog nur die passende Typ-Karte, Klick auf das **Kennzeichen** öffnet dort nur den Live-Tracker dieses Flugzeugs (per URL-Parameter `?q=` bzw. `?reg=`)."
 
-Zur Veranschaulichung, wie Prompts in der Praxis tatsächlich formuliert wurden (bewusst unpoliert — die KI kommt auch mit knappen, umgangssprachlichen Anweisungen zurecht, wenn der Rahmen einmal steht):
-
-- „ich will wenn ich auf den flugzeug typ klicke, dass ich direkt die infos nur über den typ angezeigt bekomme, und wenn ich auf den icao code des flugzeugs drücke, will ich die historie [Flüge] und die infos über das flugzeug."
-- „und die einzelnen flugzeuge, daten so viele wie möglich hinzufügen, wie baujahr, größe, passagieranzahl, zweck etc."
-- „kannst du auch sowas einfügen [Scroll-Animation wie WOW.js] … also diese animation dinger."
-- „kannst du auch scroll down animationen machen, wie in den ganz modernen sachen."
-- „bitte alle triebwerke mit foto ergänzen."
-- „statistik verbessern."
-- „kannst du besser offener integrieren und das auch bei der flugzeug seite reinholen."
-
-**Fazit:** Entscheidend ist nicht die perfekte Formulierung, sondern **klarer Rahmen + konkretes Ziel + konkretes Beispiel + iteratives Prüfen**.
+### G.8 · KI-Assistent (optional)
+> „Baue einen KI-Chat ('AeroGuide') zu Luftfahrtfragen. Der API-Schlüssel darf **nicht** im Client stehen — Anfrage über einen **Cloudflare Worker** (Schlüssel als Umgebungsvariable). Fallback-Anbieter einbauen." *(Einrichtung → Teil L.)*
 
 ---
 
-*Erstellt als Lehr-/Vorführmaterial für das Modul Avionik. Ergänzt die technische Übersicht in `VERBESSERUNGEN_Praesentation.md`.*
+# TEIL H · Flugzeug-Katalog — in 7 Ausbaustufen
+
+### H.1 · Grundgerüst
+> „Baue einen Flugzeug-Katalog (eigene `.html`): Datenobjekt im JS mit Flugzeugmustern (Name, Hersteller, Erstflug, technische Daten, Bewertung). Kategorien, Filter-Chips, Suche, aufklappbare Detailkarten mit dezenter Animation."
+
+### H.2 · Fotos automatisch (mit Fallback + Logo-Filter)
+> „Lade Fotos automatisch von **Wikipedia** (`api/rest_v1/page/summary/<Titel>` / `pageimages`). Baue einen **Fallback**: wenn eine Bild-URL scheitert (viele Wikimedia-`thumb`-URLs liefern HTTP 400), lade ein funktionierendes Thumbnail über die Wikipedia-REST-API nach. **Filtere Firmenlogos**; ist das Titelbild ein Logo, hole ein echtes Foto aus **Wikimedia Commons** (`generator=search`, Datei-Namespace)."
+
+### H.3 · Daten aus Wikidata
+> „Reichere jede Karte beim Aufklappen mit **Wikidata** an: Wikipedia-Titel → QID (`pageprops`) → Eigenschaften (`wbgetentities`): Länge (P2043), Spannweite (P2050), Höhe (P2048), Stückzahl (P1092). Nur zuverlässige Einheiten. Kuratierte Werte haben Vorrang. CORS via `origin=*`."
+
+### H.4 · ICAO Doc 8643 & Triebwerke (mit Foto)
+> „Baue eine **ICAO-Doc-8643-Ansicht** (alle Typencodes) und eine **Triebwerks-Ansicht**. Jedes Triebwerk mit **Foto** (Wikipedia-Suche → Foto; Logo-Filter; Commons-Fallback bei Logo, z. B. GE90)."
+
+### H.5 · Statistik-Dashboard
+> „Werte die Statistik-Seite auf: **Dashboard mit echten Diagrammen**, live aus den Katalog-Daten berechnet (Flugzeuge nach Jahrzehnt, Top-Hersteller, Triebwerke nach Typ) + Kennzahlen. **Pure CSS/SVG-Balken, keine Chart-Bibliothek**, animiert, `prefers-reduced-motion`."
+
+### H.6 · Live-Tracker
+> „Tracker: Nutzer gibt **Registrierung** ein → **letzte Flüge + Mode-S-Code + Flugzeugdaten**. Quellen (funktionieren aus dem Browser): Flightradar24 inoffiziell (`flight/list.json?query=<REG>&fetchBy=reg`) und `adsbdb.com`. Beide CORS `*`."
+
+### H.7 · „Typ weltweit" integrieren
+> „Integriere die 🌍-Funktion (siehe Teil K.2) auch hier: fester Button in der Leiste + 🌍-Chip an jedem ICAO-Typencode."
+
+---
+
+# TEIL I · Drohnen-Seite (`drohnen.html`)
+
+> „Baue `drohnen.html`: Marktübersicht von **UAV-/Drohnen-Datenquellen** (Datenobjekt im JS), gruppiert nach Kategorie (Tracking/Remote-ID, Geo-Zonen, Regeln, Behörden, Wetter, NOTAMs). Filter-Chips mit **datengetriebenen Zählern**, Suche, **einklappbare Kategorie-Gruppen**, aufklappbare Detailkarten, Barrierefreiheit (Screenreader-Label, Tastatur-Fokus). Für Karten-Quellen eine kleine Leaflet-Karte mit OpenAIP-Lufträumen."
+
+---
+
+# TEIL J · Lufträume-Karte (`luftraeume.html`)
+
+> „Baue `luftraeume.html`: **Vollbild-Leaflet-Weltkarte** der Lufträume (ICAO-Klassen A–G, CTR, TMA, Restricted/Prohibited/Danger) auf Basis von **OpenAIP** (Kachel-Layer + klickbare Polygone via `api.core.openaip.net`, **benötigt API-Key** → Teil L.1). Filter nach Land, Typ, Klasse. Farbcodierte, **einklappbare Legende**, Ortssuche via Nominatim. **Karte möglichst groß halten** (Filter-Leiste kompakt/einklappbar)."
+
+---
+
+# TEIL K · Übergreifende Features
+
+### K.1 · Einheitliche Navigation
+> „Setze auf **allen** Seiten eine **identische Navigationsleiste** ein (Start · Flughäfen · Flugzeuge · Drohnen · Lufträume), gleiches Markup + CSS, aktive Seite hervorgehoben."
+
+### K.2 · „Flugzeugtyp weltweit" (🌍)
+> „Baue ein Vollbild-Overlay mit **Weltkarte** (Leaflet, `preferCanvas`), das über `https://api.airplanes.live/v2/type/<ICAO-Typ>` **alle Flugzeuge eines Typs weltweit live** zeigt (A320 ≈ 880). Eingabefeld für den Typcode, Auto-Refresh 30 s, Marker farbcodiert nach Flugphase, ESC schließt. **Sicherheit:** Typcodes auf `[A-Z0-9]` begrenzen, alle Popup-Felder HTML-escapen. Mach es **offen zugänglich** (fester Button in der Leiste) auf Flughäfen- **und** Flugzeug-Seite."
+
+### K.3 · Moderne Animationen
+> „Füge **scroll-gekoppelte Animationen** hinzu: native **CSS Scroll-Driven Animations** (`animation-timeline: view()`) für Karten-Reveals, mit **IntersectionObserver als Fallback** für Safari/Firefox, plus dezenten **Hero-Parallax**. `prefers-reduced-motion` respektieren; sicheres Muster, bei dem **nie eine Karte unsichtbar hängen bleibt** (nur JS versteckt beobachtete Elemente kurz)."
+
+---
+
+# TEIL L · Externe Dienste einrichten
+
+### L.1 · OpenAIP-Key (für Lufträume)
+1. **openaip.net/register** → kostenloses Konto anlegen (dauert ~1 Min).
+2. Im Konto einen **API-Key** erzeugen.
+3. Zwei Betriebs-Optionen:
+   - **Einfach:** Key direkt im Client-Code (funktioniert sofort, ist aber im Quelltext sichtbar — bei read-only Kartendaten geringes Risiko).
+   - **Sicher:** Key in einen **Cloudflare Worker** legen (Teil L.3) und die Seite über den Worker leiten → Key bleibt unsichtbar.
+
+### L.2 · Groq-Key (für den KI-Assistenten)
+1. **console.groq.com** → kostenloses Konto → **API-Key** erstellen (Format `gsk_…`).
+2. Diesen Key **nicht** ins HTML schreiben, sondern in den Cloudflare Worker (Teil L.3).
+
+### L.3 · Cloudflare Worker (Schlüssel serverseitig verstecken)
+1. **dash.cloudflare.com** → kostenloses Konto → **Workers & Pages** → **Create Worker** → Name z. B. `deploy` → **Deploy**.
+2. **Edit code** → den Worker-Code einfügen (die KI liefert ihn; er nimmt Anfragen entgegen und leitet sie mit dem Schlüssel an Groq bzw. OpenAIP weiter, mit CORS-Headern).
+3. **Settings → Variables → Add variable** (jeweils „Encrypt"):
+   - `GROQ_KEY` = dein Groq-Key
+   - `OPENAIP_KEY` = dein OpenAIP-Key
+4. **Save & Deploy.** Die Worker-URL (`https://deploy.DEIN-NAME.workers.dev/`) trägst du in den Seiten als `WORKER_URL` bzw. Proxy-Basis ein.
+5. **Test:** `…/oaip/airspaces?country=DE&limit=1` im Browser → muss JSON liefern.
+
+> **Prompt dazu:** „Gib mir einen kompletten Cloudflare-Worker (ES-Modul), der 1) POST-Anfragen als Groq-Proxy weiterleitet (Key `env.GROQ_KEY`) und 2) `/oaip/tiles/*` und `/oaip/airspaces` als OpenAIP-Proxy bedient (Key `env.OPENAIP_KEY`), jeweils mit CORS. Erkläre das Deploy im Dashboard."
+
+---
+
+# TEIL M · Automatisierung — Bots via GitHub Actions
+
+Manche Daten (nationale NOTAMs, VFR/IFR-Karten, Länder-Lufträume) ändern sich laufend. Statt sie manuell zu pflegen, holen **Python-Bots** sie automatisch.
+
+> **PROMPT M.1:** „Schreibe **Python-Bots als GitHub Actions**, die alle 6 Stunden aktuelle Daten holen (z. B. DFS-VFR/IFR-Karten, deutsche NfL/NOTAMs, Schweizer Luftraum als GeoJSON) und die Ergebnis-JSONs automatisch ins Repository committen. Die Website liest diese JSONs zur Laufzeit per `fetch`. Achte darauf, dass die Bots **nur Daten-Dateien** ändern, nicht die HTML-Seiten (damit keine Merge-Konflikte mit meiner Arbeit entstehen)."
+
+**So funktioniert eine Action (Kurzform):**
+- Datei `.github/workflows/bots.yml` mit `on: schedule: - cron: "0 */6 * * *"`.
+- Sie führt die Python-Skripte aus (`python dfs_bot.py` …) und committet die aktualisierten JSONs.
+- Geheimnisse (falls nötig) unter **Settings → Secrets and variables → Actions**.
+
+> **Wichtig fürs Teamwork:** Weil die Bots selbst pushen, **immer** vor dem eigenen Push `git fetch` + `git merge origin/main`.
+
+---
+
+# TEIL N · Sicherheit (Kernthema für die Präsentation)
+
+- Die Seite ist **statisch**: kein Server, keine Datenbank, **kein Login** → nichts zum „Einloggen/Übernehmen".
+- Alle Daten-APIs sind **anonyme öffentliche Endpunkte** — laufen über keinen persönlichen Account.
+- **Geheimnisse** (Groq-, ggf. OpenAIP-Key) gehören in den **Cloudflare Worker**, nicht in den Client.
+- **Fremddaten** (aus ADS-B/APIs) vor der Anzeige **HTML-escapen**; Eingaben (z. B. Typcodes) **sanitisieren** → keine Injection.
+- Merksatz: *„Der einzige Ort für einen API-Schlüssel ist der Server — nie der Browser."*
+
+> **PROMPT N.1:** „Prüfe den Code auf Sicherheit: escape alle Fremddaten aus APIs vor der Anzeige, sanitisiere Nutzereingaben, und stelle sicher, dass keine Geheimnisse im Client stehen."
+
+---
+
+# TEIL O · Kompletter Datei- & API-Überblick
+
+### Dateien (Auszug)
+| Datei | Zweck |
+|---|---|
+| `index.html` | Startseite mit vier Themen-Karten |
+| `ourairports.html` | Flughäfen-Katalog (Suche, Karten, METAR, NOTAM, Infrastruktur, ADS-B, KI) |
+| `Luftfahrt_Katalog_*.html` | Flugzeug-Katalog (Muster, ICAO Doc 8643, Triebwerke, Statistik, Tracker, 🌍) |
+| `drohnen.html` | UAV-/Drohnen-Datenquellen (einklappbare Gruppen) |
+| `luftraeume.html` | OpenAIP-Luftraumkarte |
+| `notam.html`, `eurocontrol.html`, `austrocontrol.html` | Zusatz-/Länder-Ansichten |
+| `*.json` | von den Bots aktualisierte Exportdaten |
+| `*_bot.py` + `.github/workflows/*.yml` | Automatisierung |
+| `worker_complete.js` | Cloudflare-Worker (Groq- + OpenAIP-Proxy) |
+
+### APIs (alle browser-tauglich)
+| Zweck | Quelle | Key? | CORS |
+|---|---|---|---|
+| Flughafen-Stammdaten | OurAirports-CSV | nein | ok |
+| Live-ADS-B (Umkreis + Typ weltweit) | airplanes.live `/v2/point`, `/v2/type` | nein | `*` |
+| ADS-B-Fallback | adsb.lol | nein | `*` |
+| Wetter | aviationweather.gov (METAR/TAF) | nein | ok |
+| Infrastruktur | OpenStreetMap Overpass-API | nein | ok |
+| Geocoding (Ortssuche) | Nominatim (OSM) | nein | ok |
+| Lufträume | OpenAIP (`api.core.openaip.net`, Tiles) | **ja** | via Header/Proxy |
+| Flugzeug-/Triebwerk-Bilder & -Daten | Wikipedia REST, Wikidata, Wikimedia Commons | nein | `*` (`origin=*`) |
+| Registrierungs-Tracker | Flightradar24 (inoffiziell), adsbdb.com | nein | `*` |
+| KI-Assistent | Groq (über Cloudflare Worker) | **ja** (im Worker) | via Worker |
+| Karten-Bibliothek | Leaflet (CDN) | nein | — |
+
+---
+
+# TEIL P · Fehlerbehebung (Troubleshooting)
+
+| Symptom | Ursache | Lösung |
+|---|---|---|
+| Änderung nicht live | GitHub-Pages-Cache | 1–2 Min warten, dann **Strg+F5** (Hard-Reload) |
+| `git push` abgelehnt | Bots haben zwischenzeitlich gepusht | `git fetch` + `git merge origin/main`, dann erneut pushen |
+| Karte/Bild lädt nicht | API blockt (CORS/Rate-Limit/404) | Fallback prüfen; anderen Endpunkt/Proxy nutzen; Bild-Fallback über Wikipedia-REST |
+| Flugzeugbild ist ein Logo | Wikipedia-Titelbild ist Firmenlogo | Logo-Filter + **Wikimedia-Commons-Fallback** |
+| Terminal fehlt (z. B. EDDF T2) | in OSM nur `building=terminal` getaggt | Overpass-Abfrage um `building=terminal` erweitern |
+| Lufträume leer | OpenAIP-Key fehlt/ungültig | Key eintragen (Teil L.1) bzw. Worker deployen |
+| 🌍 nicht sichtbar | erschien früher nur bei Live-Verkehr | fester Button in der Leiste (Teil K.2) |
+| Karten „springen"/unsichtbar | Animations-Zustand | sicheres Reveal-Muster (nur JS versteckt beobachtete Elemente) |
+
+> **Bester Fehler-Prompt:** „Bei **[konkretes Beispiel]** passiert **[was]** statt **[erwartet]**. Hier der Konsolen-Fehler: **[Text]**. Bitte Ursache finden und beheben."
+
+---
+
+# TEIL Q · Der gesamte Ablauf als Checkliste
+
+**Setup (einmal):**
+- [ ] GitHub-Konto, Git, VS Code, KI-Assistent installiert
+- [ ] Repo erstellt, geklont, **GitHub Pages** aktiviert
+- [ ] Test-`index.html` live gesehen (commit→push→Browser)
+- [ ] Projektrahmen-Prompt (E.0) gesetzt
+
+**Seiten bauen (jeweils: Prompt → im Browser prüfen → commit → push):**
+- [ ] Startseite (F.1, F.2)
+- [ ] Flughäfen G.1 → G.8 (Suche, Karte, Wetter, NOTAM, Infrastruktur, ADS-B, Deep-Links, KI)
+- [ ] Flugzeuge H.1 → H.7 (Gerüst, Fotos, Wikidata, ICAO/Triebwerke, Statistik, Tracker, 🌍)
+- [ ] Drohnen (Teil I)
+- [ ] Lufträume (Teil J)
+
+**Übergreifend:**
+- [ ] Einheitliche Navigation (K.1)
+- [ ] „Typ weltweit" 🌍 (K.2)
+- [ ] Moderne Animationen (K.3)
+
+**Dienste & Automatisierung:**
+- [ ] OpenAIP-Key (L.1), Groq-Key (L.2), Cloudflare Worker (L.3)
+- [ ] Bots als GitHub Actions (Teil M)
+
+**Abschluss:**
+- [ ] Sicherheits-Durchgang (Teil N)
+- [ ] Alles live geprüft; Doku (`VERBESSERUNGEN_Praesentation.md`) aktualisiert
+
+---
+
+## Kernbotschaft für die Lehre
+Der Weg von Null zu dieser Website ist **kein einzelner Riesen-Prompt**, sondern **viele kleine, geprüfte Schritte**: Rahmen setzen → Feature bauen → im Browser prüfen → Fehler mit konkretem Beispiel melden → nachbessern → committen. Die KI liefert den Code; **Zielklarheit, richtige Datenquellen und Prüfen** liefert der Mensch.
+
+*Ergänzt die technische Ergebnis-Übersicht in `VERBESSERUNGEN_Praesentation.md`. Die lückenlose reale Zeitleiste steht in der Git-Commit-Historie (`git log`).*
