@@ -28,6 +28,30 @@ Das Projekt nutzt bewusst **zwei getrennte Quellen-Ebenen** (siehe auch `ANLEITU
 
 > Hinweis: „Präfixe" = ICAO-Code-Anfangsbuchstaben (z. B. `ED` = Deutschland, `LF` = Frankreich). Mehrere Präfixe können auf denselben Anbieter zeigen (z. B. mehrere `Z…`-Präfixe → CAAC China) — daher die niedrigere Zahl eindeutiger Anbieter.
 
+### 2b · Vollständige Kategorie-Taxonomie des Recherche-Katalogs (Ebene B)
+
+Die Recherche-Tabelle gliedert die Quellen in **elf Fachkategorien**. Anzahl laut Tabellen-Beschriftung (Zähler mit „ca." = in den Vorlagen nicht eindeutig lesbar):
+
+| # | Kategorie | Quellen | Beispiel-Anbieter | Bezug auf der Website |
+|---|---|---|---|---|
+| 1 | **AIP** (national) | 191 Anbieter (Code) | DFS BasicAIP, ASECNA (17 Staaten), FAA d-TPP, SkyVector, Eurocontrol EAD | Flughäfen-Seite: AIP-Link je Land |
+| 2 | **NOTAM** | **11** | AVWX, CheckWX, ICAO iSTARS, FAA DINS, autorouter, NOAA | NOTAM-Ansicht + nationale Portale |
+| 3 | **Flugplan** | ca. 11 | Aviation Edge, Cirium, Eurocontrol NM B2B/PPS, FAA SWIM, IATA, ICAO Doc 4444/FIXM, Lufthansa API, OpenNav, STATFOR | Recherche-Ebene (Live-Flüge via ADS-B) |
+| 4 | **Verkehr** | **8** | ADS-B Exchange, OpenSky, FlightAware, Plane Finder, Spire Aviation, DFS Stanly | Live-ADS-B (umgesetzt via airplanes.live) |
+| 5 | **Luftraum** | **9** | OpenAIP, Eurocontrol AIRAC, Open Flightmaps, LXNAV, ChartFox, DHV | Lufträume-Seite |
+| 6 | **Flugzeuge** | ca. 11 | ICAO Doc 8643, FAA Aircraft Registry, EASA Register, Planespotters, SKYbrary, TCDS | Flugzeug-Katalog |
+| 7 | **Triebwerke** | **11** | CFM, GE Aviation, Pratt & Whitney, Rolls-Royce, Safran, Honeywell, ICAO EEDB, EASA/FAA TCDS | Triebwerks-Ansicht |
+| 8 | **Technische Infos** | **18** | CS-25 / CS-E, FAR 25/33, RTCA DO-178C / DO-160, Jane's, NASA, EASA/FAA Certification Specs | Katalog „Technische Infos" |
+| 9 | **Wetter** | **24** | AWC/NOAA (METAR/TAF/SIGMET), ECMWF, Meteoblue, Meteomatics, DWD, GAFOR, SkySight | METAR/TAF (umgesetzt via aviationweather.gov) |
+| 10 | **Statistik** | **15** | Eurostat, DESTATIS, ICAO WATS, IATA Economics, Boeing/Airbus Forecast, NTSB, ASN | Statistik-Dashboard |
+| 11 | **UAVs / Drohnen** | **17** (Code: 18) | OpenAIP UAV, DJI FlySafe, Dronetag, EASA/LBA/DFS/Dipul, Drone-Check | Drohnen-Seite |
+
+**Zwei Umsetzungswege je Kategorie:**
+- **Als kuratierte, bewertete Quellen-Seite** (aus `src(...)`-Daten): AIP, Flugzeuge, Triebwerke, Technische Infos, Statistik, Drohnen, Lufträume.
+- **Als technisch umgesetztes Live-Feature** (Ebene-A-API): Verkehr → Live-ADS-B (airplanes.live), Wetter → METAR/TAF (aviationweather.gov), Flugplan → Registrierungs-Tracker (Flightradar24/adsbdb). Hier diente die Recherche als **Auswahl-/Bewertungsgrundlage**, umgesetzt wurde die jeweils beste browser-taugliche Quelle.
+
+> Damit ist belegt: Es wurden **~11 Fachkategorien** systematisch recherchiert und je nach Eignung entweder als **bewertete Quellenliste** oder als **funktionierendes Feature** in die Website überführt.
+
 ---
 
 ## 3 · Abgleich mit der Recherche-Tabelle (Screenshot)
