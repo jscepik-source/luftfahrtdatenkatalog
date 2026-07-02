@@ -333,6 +333,19 @@
   .nn .n{width:11px;height:11px;border-radius:50%;background:#46597f}
   .blackbox{background:#0a1020;border-color:#2a3a5e}
 
+  /* ---------- ALFUS Achsen-Skala ---------- */
+  .alfus{display:flex;flex-direction:column;gap:18px;margin:14px 0 6px}
+  .alfus .axis{display:grid;grid-template-columns:250px 1fr;gap:18px;align-items:center}
+  @media(max-width:760px){.alfus .axis{grid-template-columns:1fr;gap:6px}}
+  .alfus .lab{font-weight:700;font-size:18px;color:#cdd8ee}
+  .alfus .lab small{display:block;font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400}
+  .alfus .track{height:26px;border-radius:14px;background:#26375f;position:relative;overflow:hidden}
+  .alfus .fill{height:100%;border-radius:14px;background:linear-gradient(90deg,#2f6df0,#5e92ff)}
+  .alfus .fill.low{background:linear-gradient(90deg,#f5a623,#e3242b)}
+  .alfus .tag{position:absolute;top:50%;transform:translateY(-50%);right:12px;font-family:var(--mono);font-size:12px;color:#fff;font-weight:700}
+  .alfus-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:4px;padding-left:268px}
+  @media(max-width:760px){.alfus-scale{padding-left:0}}
+
   /* ---------- A320 fly-by (real cutout, cinematic) ---------- */
   .flyby{position:fixed;inset:0;z-index:130;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .25s ease}
   .flyby.go{opacity:1}
@@ -1038,13 +1051,14 @@
   <p class="lead reveal"><b>Hochautomatisiert, aber nicht autonom</b> — kein echtes Situationsverständnis, nur reaktiv</p>
 
   <div class="dgm reveal" style="padding:40px 26px">
-    <div class="dgm-cap" style="margin:0 0 24px;color:var(--blue);font-size:16px;letter-spacing:1px">ALFUS (Autonomy Levels for Unmanned Systems) — drei Achsen der Autonomie</div>
-    <div class="flowrow" style="gap:20px">
-      <div class="dbox big" style="font-size:21px;padding:26px 22px;min-width:200px">Mission<small style="font-size:14px;margin-top:6px">Aufgaben-Komplexität</small></div>
-      <div class="dbox big" style="font-size:21px;padding:26px 22px;min-width:200px">Environment<small style="font-size:14px;margin-top:6px">Umgebung · Wetter · Verkehr</small></div>
-      <div class="dbox big" style="font-size:21px;padding:26px 22px;min-width:200px">Human Independence<small style="font-size:14px;margin-top:6px">Unabhängigkeit vom Menschen</small></div>
+    <div class="dgm-cap" style="margin:0 0 6px;color:var(--blue);font-size:16px;letter-spacing:1px">ALFUS — Autonomie ist eine <b>Skala</b>, kein Schalter (drei Achsen)</div>
+    <div class="alfus">
+      <div class="axis"><div class="lab">Mission-Komplexität<small>Wie komplex ist die Aufgabe?</small></div><div class="track"><div class="fill" style="width:72%"></div><span class="tag">hoch</span></div></div>
+      <div class="axis"><div class="lab">Umgebung<small>Wetter · Verkehr · Dynamik</small></div><div class="track"><div class="fill" style="width:66%"></div><span class="tag">hoch</span></div></div>
+      <div class="axis"><div class="lab">Human Independence<small>Unabhängigkeit vom Menschen</small></div><div class="track"><div class="fill low" style="width:26%"></div><span class="tag">gering</span></div></div>
     </div>
-    <div class="dfeedback" style="font-size:15px;margin-top:18px">Hochautomatisiert ≠ autonom · technische ≠ menschliche (ethische) Autonomie<a class="cite" href="#quellen">[20,21,6]</a></div>
+    <div class="alfus-scale"><span>Mensch macht alles</span><span>Maschine macht alles</span></div>
+    <div class="dfeedback" style="font-size:15px;margin-top:18px">Heute stark bei Aufgabe &amp; Umgebung — aber die entscheidende Achse <b>Human Independence bleibt niedrig</b>: hochautomatisiert, <b>nicht autonom</b>. Technische ≠ menschliche (ethische) Autonomie.<a class="cite" href="#quellen">[20,21,6]</a></div>
   </div>
 
   <div class="reveal" style="margin-top:60px;border-radius:24px;padding:clamp(48px,8vw,110px) 30px;text-align:center;background:linear-gradient(150deg,rgba(47,109,240,.16),rgba(227,36,43,.13));border:1px solid var(--line)">
