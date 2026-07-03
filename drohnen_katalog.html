@@ -8,273 +8,174 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-/* ── CSS VARIABLEN ── */
 :root{
   --bg:#eef3fa;--s1:#ffffff;--s2:#f3f7fc;--s3:#e7eef8;
-  --b0:rgba(15,23,42,0.07);--b1:rgba(15,23,42,0.13);--b2:rgba(15,23,42,0.22);
+  --b0:rgba(15,23,42,.07);--b1:rgba(15,23,42,.13);--b2:rgba(15,23,42,.22);
   --tx:#1f2a3d;--mu:#5b6b82;--fa:#9aa7bd;
-  --ac:#2563eb;
-  /* Farben je Bauform */
-  --mc:#0891b2;   /* Multicopter – Cyan */
-  --fw:#059669;   /* Fixed Wing  – Grün */
-  --vt:#7c3aed;   /* VTOL        – Violett */
+  --ac:#2563eb;--mc:#0891b2;--fw:#059669;--vt:#7c3aed;
   --r:12px;--rs:8px;
 }
-
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;min-height:100vh}
-
-/* Gitternetz-Hintergrund */
-body::before{content:'';position:fixed;inset:0;
-  background-image:linear-gradient(rgba(15,23,42,0.035) 1px,transparent 1px),
-                   linear-gradient(90deg,rgba(15,23,42,0.035) 1px,transparent 1px);
-  background-size:46px 46px;pointer-events:none;z-index:0}
-body::after{content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(59,130,246,0.045) 0%,transparent 65%);
-  pointer-events:none;z-index:0}
-
-/* ── DROHNEN-HINTERGRUND-ANIMATION ── */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(15,23,42,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,.035) 1px,transparent 1px);background-size:46px 46px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 45% at 50% -5%,rgba(59,130,246,.045) 0%,transparent 65%);pointer-events:none;z-index:0}
 .sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .sky-drone{position:absolute;font-size:22px;opacity:0;animation:droneFly linear infinite}
-.d1{top:12%;left:-80px;animation-duration:22s;animation-delay:0s}
-.d2{top:28%;left:-80px;animation-duration:31s;animation-delay:-10s;font-size:16px;opacity:0}
-.d3{top:18%;left:-80px;animation-duration:18s;animation-delay:-6s;font-size:28px;opacity:0}
-.d4{top:8%;left:-80px;animation-duration:38s;animation-delay:-20s;font-size:13px;opacity:0}
-@keyframes droneFly{
-  0%  {transform:translate(-10vw,0) scale(1);opacity:0}
-  5%  {opacity:.18}
-  50% {opacity:.18}
-  95% {opacity:.18}
-  100%{transform:translate(115vw,-8vh) scale(.7);opacity:0}
-}
+.d1{top:12%;left:-80px;animation-duration:22s}.d2{top:28%;left:-80px;animation-duration:31s;animation-delay:-10s;font-size:16px}.d3{top:18%;left:-80px;animation-duration:18s;animation-delay:-6s;font-size:28px}.d4{top:8%;left:-80px;animation-duration:38s;animation-delay:-20s;font-size:13px}
+@keyframes droneFly{0%{transform:translate(-10vw,0);opacity:0}5%{opacity:.16}95%{opacity:.16}100%{transform:translate(115vw,-8vh) scale(.7);opacity:0}}
 @media(prefers-reduced-motion:reduce){.sky-drone{animation:none;opacity:0}}
-
-/* ── GLOBALE TOPNAV ── */
-.avx-topnav{position:fixed;top:0;left:0;right:0;z-index:300;box-sizing:border-box;
-  min-height:48px;display:flex;align-items:center;gap:14px;
-  background:#0f172a;border-bottom:1px solid #334155;
-  padding:7px 16px;font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-  overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.avx-topnav{position:fixed;top:0;left:0;right:0;z-index:300;min-height:48px;display:flex;align-items:center;gap:14px;background:#0f172a;border-bottom:1px solid #334155;padding:7px 16px;font-family:'Inter',system-ui,sans-serif;overflow-x:auto;white-space:nowrap}
 .avx-topnav a{text-decoration:none}
 .avx-brand{color:#fff;font-weight:800;font-size:.9rem;flex:0 0 auto}
 .avx-links{display:flex;gap:8px;flex:0 0 auto;margin-left:auto}
-.avx-pill{color:#cbd5e1;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:999px;
-  border:1px solid #334155;transition:background .15s,color .15s,border-color .15s}
+.avx-pill{color:#cbd5e1;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid #334155;transition:background .15s,color .15s,border-color .15s}
 .avx-pill:hover{color:#fff;border-color:#4fc3f7}
 .avx-pill.avx-active{background:#2563eb;border-color:#2563eb;color:#fff}
-
-/* ── TOPBAR (Seiten-interne Navigation) ── */
-.tb{position:fixed;top:48px;left:0;right:0;z-index:200;height:54px;
-  background:rgba(255,255,255,0.90);backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--b1);display:flex;align-items:center;
-  padding:0 clamp(1rem,4vw,2.5rem);gap:10px}
-.tb-logo{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;
-  color:var(--tx);cursor:pointer;text-decoration:none;background:none;border:none;font-family:inherit}
+.tb{position:fixed;top:48px;left:0;right:0;z-index:200;height:54px;background:rgba(255,255,255,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 clamp(1rem,4vw,2.5rem);gap:10px}
+.tb-logo{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:var(--tx);cursor:pointer;background:none;border:none;font-family:inherit}
 .tb-logo svg{width:20px;height:20px;fill:none;stroke:#2563eb;stroke-width:2;flex-shrink:0}
 .tb-div{width:1px;height:16px;background:var(--b1)}
 .tb-cr{font-size:12px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
 .tb-cr b{color:var(--tx);font-weight:500}
-.tb-badge{margin-left:auto;font-size:11px;padding:3px 11px;border-radius:20px;
-  background:rgba(59,130,246,0.09);border:1px solid rgba(59,130,246,0.18);
-  color:#1d4ed8;letter-spacing:.03em;white-space:nowrap}
-
-/* ── VIEWS ── */
+.tb-badge{margin-left:auto;font-size:11px;padding:3px 11px;border-radius:20px;background:rgba(59,130,246,.09);border:1px solid rgba(59,130,246,.18);color:#1d4ed8;white-space:nowrap}
 .view{position:relative;z-index:1;padding-top:102px}
 .hide{display:none!important}
-
-/* ────────────────────────────────────────────────
-   STARTSEITE (Bauform-Auswahl)
-──────────────────────────────────────────────── */
+/* STARTSEITE */
 .hh{text-align:center;padding:4.5rem clamp(1rem,4vw,2.5rem) 2.5rem;max-width:820px;margin:0 auto}
-.ey{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;color:#2563eb;margin-bottom:1.4rem;
-  padding:5px 14px;border-radius:20px;background:rgba(59,130,246,0.08);
-  border:1px solid rgba(59,130,246,0.14)}
+.ey{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2563eb;margin-bottom:1.4rem;padding:5px 14px;border-radius:20px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.14)}
 .ey svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
-.hh h1{font-size:clamp(1.9rem,4.5vw,2.9rem);font-weight:700;line-height:1.1;
-  letter-spacing:-.03em;color:#0f172a;margin-bottom:.9rem}
+.hh h1{font-size:clamp(1.9rem,4.5vw,2.9rem);font-weight:700;line-height:1.1;letter-spacing:-.03em;color:#0f172a;margin-bottom:.9rem}
 .hh h1 em{font-style:normal;color:#2563eb}
 .hh p{font-size:14.5px;color:var(--mu);line-height:1.7;max-width:500px;margin:0 auto 2.2rem}
-
-/* Statistik-Leiste */
-.hs{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b1);
-  border-radius:var(--r);overflow:hidden;border:1px solid var(--b1);max-width:360px;margin:0 auto 3.5rem}
+.hs{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b1);border-radius:var(--r);overflow:hidden;border:1px solid var(--b1);max-width:380px;margin:0 auto 3.5rem}
 .hsc{background:var(--s1);padding:1.1rem .8rem;text-align:center}
 .hsc-n{font-size:24px;font-weight:700;font-family:'Space Mono',monospace;color:#0f172a}
-.hsc-l{font-size:10px;color:var(--mu);margin-top:2px;letter-spacing:.02em}
-
-/* Bauform-Karten */
-.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;
-  padding:0 clamp(1rem,4vw,2.5rem) 5rem;max-width:min(1000px,94vw);margin:0 auto}
-.cc{background:var(--s1);border:1px solid var(--b0);border-radius:16px;cursor:pointer;
-  text-align:left;overflow:hidden;display:flex;flex-direction:column;padding:0;
-  transition:transform .2s,box-shadow .2s,border-color .2s;border:none}
-.cc:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(15,23,42,.13);border-color:var(--b2)}
-.cc-banner{height:130px;display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden}
-.cc-banner::before{content:'';position:absolute;inset:0;opacity:.55;
-  background-image:radial-gradient(circle at 1px 1px,rgba(15,23,42,.09) 1px,transparent 0);
-  background-size:15px 15px}
-.cc-banner .drone-icon{font-size:54px;position:relative;z-index:1;
-  filter:drop-shadow(0 2px 6px rgba(0,0,0,.15))}
+.hsc-l{font-size:10px;color:var(--mu);margin-top:2px}
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;padding:0 clamp(1rem,4vw,2.5rem) 5rem;max-width:min(1000px,94vw);margin:0 auto}
+.cc{background:var(--s1);border:1px solid var(--b0);border-radius:16px;cursor:pointer;text-align:left;overflow:hidden;display:flex;flex-direction:column;padding:0;transition:transform .2s,box-shadow .2s}
+.cc:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(15,23,42,.13)}
+.cc-banner{height:130px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.cc-banner::before{content:'';position:absolute;inset:0;opacity:.55;background-image:radial-gradient(circle at 1px 1px,rgba(15,23,42,.09) 1px,transparent 0);background-size:15px 15px}
+.cc-banner .drone-icon{font-size:54px;position:relative;z-index:1}
 .cc-info{padding:1.2rem 1.35rem 1.4rem;display:flex;flex-direction:column;gap:7px;flex:1}
-.cc-info h3{font-size:19px;font-weight:700;color:#0f172a;letter-spacing:-.01em}
+.cc-info h3{font-size:19px;font-weight:700;color:#0f172a}
 .cc-sub{font-size:12.5px;color:var(--mu);line-height:1.55;flex:1}
 .cc-go{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin-top:6px}
 .cc-go svg{width:15px;height:15px;fill:none;stroke-width:2;transition:transform .18s}
 .cc:hover .cc-go svg{transform:translateX(4px)}
-
-/* Bauform-Farben */
-.cc.mc{background:var(--s1);border:1px solid var(--b0)}
 .cc.mc .cc-banner{background:linear-gradient(135deg,rgba(8,145,178,.16),rgba(8,145,178,.03))}
-.cc.mc .cc-go{color:var(--mc)}.cc.mc .cc-go svg{stroke:var(--mc)}
-.cc.fw{background:var(--s1);border:1px solid var(--b0)}
 .cc.fw .cc-banner{background:linear-gradient(135deg,rgba(5,150,105,.16),rgba(5,150,105,.03))}
-.cc.fw .cc-go{color:var(--fw)}.cc.fw .cc-go svg{stroke:var(--fw)}
-.cc.vt{background:var(--s1);border:1px solid var(--b0)}
 .cc.vt .cc-banner{background:linear-gradient(135deg,rgba(124,58,237,.16),rgba(124,58,237,.03))}
-.cc.vt .cc-go{color:var(--vt)}.cc.vt .cc-go svg{stroke:var(--vt)}
-
-/* ────────────────────────────────────────────────
-   DETAIL-ANSICHT (Drohnen-Liste)
-──────────────────────────────────────────────── */
-.dh{border-bottom:1px solid var(--b0);padding:1.8rem clamp(1rem,4vw,2.5rem);
-  max-width:min(1440px,94vw);margin:0 auto}
-.bk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--mu);
-  background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
-  margin-bottom:.7rem;transition:color .15s}
+/* DETAIL */
+.dh{border-bottom:1px solid var(--b0);padding:1.8rem clamp(1rem,4vw,2.5rem);max-width:min(1440px,94vw);margin:0 auto}
+.bk{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--mu);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:.7rem;transition:color .15s}
 .bk:hover{color:var(--tx)}.bk svg{width:14px;height:14px;stroke:currentColor;fill:none}
-.dh h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.02em;
-  color:#0f172a;margin-bottom:.35rem}
+.dh h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.02em;color:#0f172a;margin-bottom:.35rem}
 .dh p{font-size:13.5px;color:var(--mu);max-width:580px;line-height:1.6}
 .dh-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.2rem}
-.ds{padding:8px 16px;background:var(--s1);border:1px solid var(--b0);
-  border-radius:var(--rs);display:flex;flex-direction:column;align-items:center;min-width:80px}
+.ds{padding:8px 16px;background:var(--s1);border:1px solid var(--b0);border-radius:var(--rs);display:flex;flex-direction:column;align-items:center;min-width:80px}
 .ds-n{font-size:19px;font-weight:700;font-family:'Space Mono',monospace}
 .ds-l{font-size:10px;color:var(--mu);margin-top:1px}
-
-/* Toolbar */
-.dtb{position:sticky;top:102px;z-index:100;background:rgba(255,255,255,.92);
-  backdrop-filter:blur(14px);border-bottom:1px solid var(--b0);
-  padding:.7rem clamp(1rem,4vw,2.5rem)}
+/* TOOLBAR */
+.dtb{position:sticky;top:102px;z-index:100;background:rgba(255,255,255,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--b0);padding:.7rem clamp(1rem,4vw,2.5rem)}
 .dtb-in{max-width:min(1440px,94vw);margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sw{position:relative;flex:1;min-width:150px;max-width:280px}
+.sw{position:relative;flex:1;min-width:150px;max-width:250px}
 .sw svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;stroke:var(--fa);fill:none}
-.si{width:100%;padding:7px 9px 7px 30px;background:var(--s2);border:1px solid var(--b1);
-  border-radius:var(--rs);color:var(--tx);font-family:inherit;font-size:12.5px;outline:none;transition:border-color .15s}
+.si{width:100%;padding:7px 9px 7px 30px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);color:var(--tx);font-family:inherit;font-size:12.5px;outline:none;transition:border-color .15s}
 .si:focus{border-color:var(--b2)}.si::placeholder{color:var(--fa)}
-.sl{padding:7px 10px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);
-  color:var(--tx);font-family:inherit;font-size:12px;outline:none;cursor:pointer}
+.sl{padding:7px 10px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);color:var(--tx);font-family:inherit;font-size:12px;outline:none;cursor:pointer}
+.price-filter{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.price-filter label{font-size:11.5px;color:var(--mu);white-space:nowrap}
+.price-filter input[type=range]{width:85px;accent-color:var(--ac);cursor:pointer}
+.price-val{font-size:11px;font-weight:700;font-family:'Space Mono',monospace;color:var(--tx);white-space:nowrap;min-width:58px}
 .ri{margin-left:auto;font-size:11.5px;color:var(--mu);white-space:nowrap}.ri b{color:var(--tx)}
-
-/* ────────────────────────────────────────────────
-   DROHNEN-KARTEN
-──────────────────────────────────────────────── */
-.drone-grid{display:flex;flex-direction:column;gap:10px;
-  max-width:min(1440px,94vw);margin:0 auto;
-  padding:1.2rem clamp(1rem,4vw,2.5rem) 5rem}
-
-.dc{background:var(--s1);border:1px solid var(--b0);border-radius:var(--r);
-  overflow:hidden;transition:border-color .15s,box-shadow .15s}
+/* EU-LEGENDE */
+.eu-legende{background:var(--s1);border:1px solid var(--b0);border-radius:8px;padding:.85rem 1rem;margin:0 clamp(1rem,4vw,2.5rem);max-width:min(1440px,94vw);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.eu-legende-title{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fa);flex-basis:100%;margin-bottom:2px}
+.eu-legende-item{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--mu)}
+/* KARTEN */
+.drone-grid{display:flex;flex-direction:column;gap:10px;max-width:min(1440px,94vw);margin:0 auto;padding:1.2rem clamp(1rem,4vw,2.5rem) 5rem}
+.dc{background:var(--s1);border:1px solid var(--b0);border-radius:var(--r);overflow:hidden;transition:border-color .15s,box-shadow .15s}
 .dc:hover{border-color:var(--b1);box-shadow:0 4px 18px rgba(15,23,42,.08)}
-
-/* Thumbnail-Bereich (immer sichtbar) */
-.dc-top{display:grid;grid-template-columns:80px 1fr auto;gap:0;align-items:stretch}
-.dc-thumb{width:80px;min-height:80px;background:var(--s2);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  border-right:1px solid var(--b0);position:relative;overflow:hidden}
-.dc-thumb-icon{font-size:32px;z-index:1;position:relative}
-.dc-thumb-ph{position:absolute;inset:0;display:flex;align-items:center;
-  justify-content:center;opacity:.08}
-.dc-thumb-ph svg{width:36px;height:36px;stroke:var(--tx)}
-
-.dc-meta{padding:.8rem 1rem;display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0}
-.dc-name{font-size:15px;font-weight:700;color:#0f172a;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.dc-top{display:grid;grid-template-columns:110px 1fr auto;align-items:stretch}
+/* Bild-Thumbnail */
+.dc-thumb{width:110px;min-height:90px;background:var(--s2);flex-shrink:0;border-right:1px solid var(--b0);position:relative;overflow:hidden;cursor:zoom-in}
+.dc-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;position:absolute;inset:0}
+.dc-thumb:hover img{transform:scale(1.07)}
+.dc-thumb::after{content:'\1F50D';position:absolute;bottom:5px;right:5px;font-size:12px;opacity:0;transition:opacity .2s;pointer-events:none}
+.dc-thumb:hover::after{opacity:.8}
+.dc-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;position:absolute;inset:0;background:linear-gradient(90deg,var(--s2) 25%,var(--s3) 50%,var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.8s infinite}
+.dc-ph-icon{font-size:26px;opacity:.5}
+.dc-ph-txt{font-size:8.5px;color:var(--fa);text-transform:uppercase;letter-spacing:.06em}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.dc-img-bdg{position:absolute;top:5px;left:5px;display:flex;flex-direction:column;gap:3px;z-index:2}
+.dc-img-b{font-size:8.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:3px;backdrop-filter:blur(8px)}
+.dc-img-b-bf{background:rgba(255,255,255,.88);color:var(--tx);border:1px solid rgba(15,23,42,.12)}
+.dc-img-b-yr{background:rgba(59,130,246,.25);color:#1d4ed8;border:1px solid rgba(59,130,246,.3)}
+.dc-meta{padding:.8rem 1rem;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0}
+.dc-name{font-size:15px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
 .dc-hersteller{font-size:11.5px;color:var(--mu)}
-
-/* Quick-Stats (Gewicht, Flugdauer, Reichweite) – immer sichtbar im Thumbnail */
-.dc-quickstats{display:flex;gap:0;border-top:1px solid var(--b0);
-  background:var(--s2)}
+.dc-price{font-size:13px;font-weight:700;font-family:'Space Mono',monospace;color:var(--ac);margin-top:2px}
+.dc-price.classified{font-family:'Inter',sans-serif;color:var(--fa);font-size:11px;font-weight:400}
+.dc-quickstats{display:flex;border-top:1px solid var(--b0);background:var(--s2)}
 .dc-qs-item{flex:1;padding:.45rem .6rem;text-align:center;border-right:1px solid var(--b0)}
 .dc-qs-item:last-child{border-right:none}
 .dc-qs-val{font-size:12px;font-weight:700;font-family:'Space Mono',monospace;color:#0f172a;line-height:1.2}
 .dc-qs-lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--fa);font-weight:700;margin-top:1px}
-
-/* Bauform-Badge & Kostenlos-Badge */
-.dc-badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;
-  padding:.8rem .9rem;flex-shrink:0;justify-content:center}
-.bdg-bauform{display:inline-flex;align-items:center;padding:3px 9px;border-radius:4px;
-  font-size:10.5px;font-weight:700;white-space:nowrap;letter-spacing:.02em}
+.dc-badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding:.6rem .9rem;flex-shrink:0;justify-content:center}
+.bdg-bauform{display:inline-flex;align-items:center;padding:3px 9px;border-radius:4px;font-size:10.5px;font-weight:700;white-space:nowrap}
 .bdg-mc{background:rgba(8,145,178,.1);color:#0891b2;border:1px solid rgba(8,145,178,.22)}
 .bdg-fw{background:rgba(5,150,105,.1);color:#059669;border:1px solid rgba(5,150,105,.22)}
 .bdg-vt{background:rgba(124,58,237,.1);color:#7c3aed;border:1px solid rgba(124,58,237,.22)}
-
-/* Toggle-Button */
-.dc-toggle{width:100%;background:none;border:none;border-top:1px solid var(--b0);
-  padding:.55rem 1rem;color:var(--mu);font-family:inherit;font-size:12px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s}
+.bdg-eu{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap;margin-top:2px}
+.eu-c0{background:rgba(22,163,74,.12);color:#16a34a;border:1px solid rgba(22,163,74,.25)}
+.eu-c1{background:rgba(37,99,235,.1);color:#1d4ed8;border:1px solid rgba(37,99,235,.22)}
+.eu-c2{background:rgba(217,119,6,.12);color:#b45309;border:1px solid rgba(217,119,6,.25)}
+.eu-c3{background:rgba(220,38,38,.1);color:#b91c1c;border:1px solid rgba(220,38,38,.22)}
+.eu-spc{background:rgba(124,58,237,.1);color:#7c3aed;border:1px solid rgba(124,58,237,.22)}
+.dc-toggle{width:100%;background:none;border:none;border-top:1px solid var(--b0);padding:.55rem 1rem;color:var(--mu);font-family:inherit;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s}
 .dc-toggle:hover{background:rgba(0,0,0,.02)}
 .dc-toggle svg{width:12px;height:12px;stroke:currentColor;fill:none;transition:transform .2s}
 .dc-toggle.open svg{transform:rotate(180deg)}
-
-/* Ausgeklappter Body */
 .dc-body{display:none;padding:1rem 1.1rem;border-top:1px solid var(--b0);background:var(--bg)}
 .dc-body.open{display:block}
-
-/* Info-Beschreibung */
-.dc-desc{font-size:13px;color:var(--tx);line-height:1.65;padding:.8rem 1rem;
-  background:var(--s1);border-radius:6px;border-left:2px solid var(--b2);margin-bottom:.9rem}
-
-/* Daten-Grid im Body */
-.dc-datengrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:1px;background:var(--b0);border-radius:6px;overflow:hidden;
-  border:1px solid var(--b0);margin-bottom:.9rem}
+.dc-desc{font-size:13px;color:var(--tx);line-height:1.65;padding:.8rem 1rem;background:var(--s1);border-radius:6px;border-left:2px solid var(--b2);margin-bottom:.9rem}
+.dc-eu-box{background:var(--s1);border:1px solid var(--b0);border-radius:6px;padding:.75rem 1rem;margin-bottom:.9rem;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
+.dc-eu-box-title{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--fa);font-weight:700;width:100%;margin-bottom:2px}
+.dc-eu-col{display:flex;flex-direction:column;gap:4px;min-width:110px;flex:1}
+.dc-eu-label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--fa);font-weight:700}
+.dc-eu-val{font-size:12px;color:var(--tx);font-weight:500;line-height:1.35}
+.dc-eu-note{font-size:10.5px;color:var(--mu);font-style:italic;width:100%;margin-top:2px}
+.fs-chip{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+.fs-yes{background:rgba(220,38,38,.1);color:#b91c1c;border:1px solid rgba(220,38,38,.2)}
+.fs-no{background:rgba(22,163,74,.1);color:#15803d;border:1px solid rgba(22,163,74,.2)}
+.fs-a1{background:rgba(22,163,74,.1);color:#15803d;border:1px solid rgba(22,163,74,.2)}
+.fs-a2{background:rgba(217,119,6,.1);color:#b45309;border:1px solid rgba(217,119,6,.2)}
+.fs-a3{background:rgba(220,38,38,.1);color:#b91c1c;border:1px solid rgba(220,38,38,.2)}
+.fs-spc{background:rgba(124,58,237,.1);color:#7c3aed;border:1px solid rgba(124,58,237,.2)}
+.fs-mil{background:rgba(15,23,42,.08);color:var(--tx);border:1px solid var(--b1)}
+.dc-datengrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--b0);border-radius:6px;overflow:hidden;border:1px solid var(--b0);margin-bottom:.9rem}
 .dc-daten-cell{background:var(--s1);padding:.6rem .8rem}
-.dc-daten-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;
-  color:var(--fa);font-weight:700;margin-bottom:2px}
+.dc-daten-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--fa);font-weight:700;margin-bottom:2px}
 .dc-daten-val{font-size:12px;color:var(--tx);font-weight:500;line-height:1.3}
-
-/* Link-Bereich */
+.dc-daten-cell.price-cell .dc-daten-val{font-family:'Space Mono',monospace;color:var(--ac);font-weight:700;font-size:13px}
+.dc-daten-cell.price-cell .dc-daten-val.classified{font-family:'Inter',sans-serif;color:var(--mu);font-size:12px;font-weight:400}
 .dc-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:.3rem}
-.dc-link-btn{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
-  padding:6px 13px;border-radius:6px;cursor:pointer;border:1px solid;
-  text-decoration:none;transition:all .15s;font-family:inherit}
+.dc-link-btn{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:6px 13px;border-radius:6px;cursor:pointer;border:1px solid;text-decoration:none;transition:all .15s;font-family:inherit}
 .dc-link-ext{background:rgba(37,99,235,.09);border-color:rgba(37,99,235,.22);color:#2563eb}
 .dc-link-ext:hover{background:#2563eb;color:#fff;border-color:#2563eb}
-
-/* Kein Ergebnis */
 .no-results{text-align:center;padding:3rem 1rem;color:var(--mu);font-size:14px}
 .no-results svg{width:40px;height:40px;stroke:var(--fa);fill:none;margin:0 auto .8rem;display:block}
-
-/* ────────────────────────────────────────────────
-   RESPONSIVE
-──────────────────────────────────────────────── */
-@media(max-width:600px){
-  .dc-top{grid-template-columns:64px 1fr}
-  .dc-badges{display:none}
-  .dc-qs-lbl{display:none}
-  .cg{grid-template-columns:1fr}
-}
-@media(max-width:760px){
-  .tb .tb-badge{display:none}
-  .avx-brand span{display:none}
-}
+@media(max-width:600px){.dc-top{grid-template-columns:64px 1fr}.dc-badges{display:none}.price-filter label{display:none}}
+@media(max-width:760px){.tb .tb-badge{display:none}.price-filter input[type=range]{width:65px}}
 </style>
 </head>
 <body>
-
-<!-- ── Drohnen-Animations-Hintergrund ── -->
 <div class="sky" aria-hidden="true">
-  <span class="sky-drone d1">🚁</span>
-  <span class="sky-drone d2">✈️</span>
-  <span class="sky-drone d3">🛸</span>
-  <span class="sky-drone d4">🚁</span>
+  <span class="sky-drone d1">🚁</span><span class="sky-drone d2">✈️</span>
+  <span class="sky-drone d3">🛸</span><span class="sky-drone d4">🚁</span>
 </div>
-
-<!-- ── Globale Themen-Navigation ── -->
-<nav class="avx-topnav" aria-label="Themenbereiche">
+<nav class="avx-topnav">
   <a class="avx-brand" href="index.html">&#9992; Start</a>
   <span class="avx-links">
     <a class="avx-pill" href="ourairports.html">Flughäfen</a>
@@ -283,10 +184,8 @@ body::after{content:'';position:fixed;inset:0;
     <a class="avx-pill" href="luftraeume.html">Lufträume</a>
   </span>
 </nav>
-
-<!-- ── Seiteninterme Topbar ── -->
 <nav class="tb">
-  <button class="tb-logo" onclick="goHome()" aria-label="Zur Startseite">
+  <button class="tb-logo" onclick="goHome()">
     <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
     UAV & Drohnen
   </button>
@@ -294,395 +193,444 @@ body::after{content:'';position:fixed;inset:0;
   <div class="tb-cr" id="tbCr">Übersicht</div>
   <span class="tb-badge">HS RheinMain · Avionik</span>
 </nav>
-
-<!-- ══════════════════════════════════════════════
-     STARTSEITE – Bauform-Auswahl
-══════════════════════════════════════════════ -->
+<!-- STARTSEITE -->
 <div class="view" id="vHome">
   <div class="hh">
-    <div class="ey">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      Studentisches Projekt · Fachbereich Ingenieurwissenschaften
-    </div>
+    <div class="ey"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Studentisches Projekt · Fachbereich Ingenieurwissenschaften</div>
     <h1>UAV & <em>Drohnen</em> Katalog</h1>
-    <p>Übersicht kommerzieller und professioneller Drohnen nach Bauform — mit technischen Daten, Verwendungszweck und Herstellerinfos. Wähle eine Bauform, um die passenden Modelle zu sehen.</p>
+    <p>100+ kommerzielle, industrielle und militärische Drohnen — mit EU-Regulierung, Führerscheinpflicht und Preisen. Wähle eine Bauform.</p>
     <div class="hs">
       <div class="hsc"><div class="hsc-n" id="statTotal">0</div><div class="hsc-l">Drohnen</div></div>
       <div class="hsc"><div class="hsc-n">3</div><div class="hsc-l">Bauformen</div></div>
-      <div class="hsc"><div class="hsc-n">★</div><div class="hsc-l">Bewertet</div></div>
+      <div class="hsc"><div class="hsc-n" id="statH">0</div><div class="hsc-l">Hersteller</div></div>
     </div>
   </div>
-
-  <!-- Bauform-Auswahl-Karten -->
   <div class="cg">
-
-    <!-- Multicopter -->
     <button class="cc mc" onclick="loadBauform('Multicopter')">
-      <div class="cc-banner">
-        <span class="drone-icon">🚁</span>
-      </div>
-      <div class="cc-info">
-        <h3>Multicopter</h3>
-        <p class="cc-sub">Drohnen mit mehreren Rotoren (Quadro-, Hexa-, Oktocopter). Hohe Manövrierfähigkeit, VTOL-fähig. Ideal für Fotografie, Inspektion und kurze Einsätze.</p>
-        <span class="cc-go" style="color:var(--mc)">Öffnen
-          <svg viewBox="0 0 24 24" stroke="var(--mc)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </span>
-      </div>
+      <div class="cc-banner"><span class="drone-icon">🚁</span></div>
+      <div class="cc-info"><h3>Multicopter</h3><p class="cc-sub">Von der 135g Selfie-Drohne bis zum 120kg Agrar-Oktokopter. Consumer, Pro, Enterprise, Agrar & Militär.</p>
+      <span class="cc-go" style="color:var(--mc)">Öffnen <svg viewBox="0 0 24 24" stroke="var(--mc)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </button>
-
-    <!-- VTOL -->
     <button class="cc vt" onclick="loadBauform('VTOL')">
-      <div class="cc-banner">
-        <span class="drone-icon">🛸</span>
-      </div>
-      <div class="cc-info">
-        <h3>VTOL</h3>
-        <p class="cc-sub">Vertical Take-Off and Landing — kombiniert Vorteile von Multicoptern und Starrflüglern. Höhere Reichweite & Effizienz im Reiseflug.</p>
-        <span class="cc-go" style="color:var(--vt)">Öffnen
-          <svg viewBox="0 0 24 24" stroke="var(--vt)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </span>
-      </div>
+      <div class="cc-banner"><span class="drone-icon">🛸</span></div>
+      <div class="cc-info"><h3>VTOL</h3><p class="cc-sub">Hybrid-Systeme: senkrechter Start, Starrflügler-Effizienz. Vermessung, Logistik, militärische ISR.</p>
+      <span class="cc-go" style="color:var(--vt)">Öffnen <svg viewBox="0 0 24 24" stroke="var(--vt)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </button>
-
-    <!-- Fixed Wing -->
     <button class="cc fw" onclick="loadBauform('Fixed Wing')">
-      <div class="cc-banner">
-        <span class="drone-icon">✈️</span>
-      </div>
-      <div class="cc-info">
-        <h3>Fixed Wing</h3>
-        <p class="cc-sub">Starrflügler-Drohnen mit fester Tragfläche. Maximale Reichweite und Ausdauer. Geeignet für Flächenmapping, Überwachung und Langstreckenmissionen.</p>
-        <span class="cc-go" style="color:var(--fw)">Öffnen
-          <svg viewBox="0 0 24 24" stroke="var(--fw)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </span>
-      </div>
+      <div class="cc-banner"><span class="drone-icon">✈️</span></div>
+      <div class="cc-info"><h3>Fixed Wing</h3><p class="cc-sub">Maximale Reichweite und Ausdauer — von handgestarteten ISR-Aufklärern bis zu bewaffneten MALE-UAS.</p>
+      <span class="cc-go" style="color:var(--fw)">Öffnen <svg viewBox="0 0 24 24" stroke="var(--fw)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </button>
-
   </div>
 </div>
-
-<!-- ══════════════════════════════════════════════
-     DETAIL-ANSICHT – Drohnen-Liste
-══════════════════════════════════════════════ -->
+<!-- DETAIL -->
 <div class="view hide" id="vDetail">
-
-  <!-- Header -->
   <div class="dh">
-    <button class="bk" onclick="goHome()">
-      <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-      Zurück zur Übersicht
-    </button>
-    <h2 id="dTitle">Multicopter</h2>
-    <p id="dDesc"></p>
+    <button class="bk" onclick="goHome()"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Zurück</button>
+    <h2 id="dTitle"></h2><p id="dDesc"></p>
     <div class="dh-stats" id="dStats"></div>
   </div>
-
-  <!-- Toolbar: Suche + Sortierung -->
+  <div class="eu-legende" id="euLegende" style="display:none">
+    <div class="eu-legende-title">🇪🇺 EU-Drohnenklassen (EASA) — Kurzreferenz</div>
+    <span class="eu-legende-item"><span class="bdg-eu eu-c0">C0</span> &lt;250g · Open A1 · Kein Führerschein</span>
+    <span class="eu-legende-item"><span class="bdg-eu eu-c1">C1</span> &lt;900g · Open A1 · A1/A3-Nachweis</span>
+    <span class="eu-legende-item"><span class="bdg-eu eu-c2">C2</span> &lt;4kg · Open A2 · A2-Fernpilotenzeugnis</span>
+    <span class="eu-legende-item"><span class="bdg-eu eu-c3">C3</span> &lt;25kg · Open A3 · A1/A3-Nachweis</span>
+    <span class="eu-legende-item"><span class="bdg-eu eu-spc">Specific</span> Individuelle Genehmigung</span>
+    <span class="eu-legende-item"><span class="bdg-eu eu-spc">Militär</span> Nat. Verteidigungsrecht</span>
+  </div>
   <div class="dtb">
     <div class="dtb-in">
-      <div class="sw">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input class="si" id="dSrch" type="search" placeholder="Drohne suchen…"
-               oninput="filterAll()" aria-label="Drohnen suchen">
-      </div>
-      <select class="sl" id="dSort" onchange="filterAll()" aria-label="Sortierung">
+      <div class="sw"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="si" id="dSrch" type="search" placeholder="Drohne suchen…" oninput="filterAll()"></div>
+      <select class="sl" id="dSort" onchange="filterAll()">
         <option value="def">Sortierung: Standard</option>
         <option value="az">A → Z</option>
-        <option value="gewicht">Gewicht (aufst.)</option>
-        <option value="reichweite">Reichweite (abst.)</option>
-        <option value="flugdauer">Flugdauer (abst.)</option>
+        <option value="preis_asc">Preis ↑ günstig zuerst</option>
+        <option value="preis_desc">Preis ↓ teuer zuerst</option>
+        <option value="eu">EU-Klasse</option>
+        <option value="fd">Flugdauer ↓</option>
       </select>
+      <div class="price-filter">
+        <label>Max. Preis:</label>
+        <input type="range" id="priceSlider" min="0" max="15000" step="100" value="15000" oninput="filterAll();updatePD()">
+        <span class="price-val" id="priceDisplay">Alle</span>
+      </div>
       <span class="ri"><b id="dCnt">0</b> <span id="dCntLbl">Drohnen</span></span>
     </div>
   </div>
-
-  <!-- Drohnen-Karten Container -->
   <div class="drone-grid" id="droneGrid"></div>
-
-</div><!-- /vDetail -->
-
-<!-- ══════════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════════ -->
+</div>
 <script>
 'use strict';
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// n,h,bf,bj,zw,gw,fd,rw,nl,kq,se,eg,di,url,preis,eu,kat,fschein
+function d(n,h,bf,bj,zw,gw,fd,rw,nl,kq,se,eg,di,url,preis,eu,kat,fs){return{n,h,bf,bj,zw,gw,fd,rw,nl,kq,se,eg,di,url:url||'#',preis:preis||0,eu:eu||'—',kat:kat||'—',fs:fs||'—'};}
 
-/* ── HILFSFUNKTIONEN ── */
-const esc = s => String(s == null ? '' : s)
-  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const DROHNEN=[
+// ══════════════════════════════════════
+//  MULTICOPTER
+// ══════════════════════════════════════
 
-/* ── DATEN-FORMAT
-   Drohne: {
-     n  – Name (Hersteller + Modell)
-     h  – Hersteller
-     bf – Bauform: 'Multicopter' | 'VTOL' | 'Fixed Wing'
-     bj – Baujahr (erste Markteinführung)
-     zw – Verwendungszweck
-     gw – Leergewicht (z. B. "0,9 kg")
-     fd – Flugdauer (z. B. "31 min")
-     rw – Reichweite (z. B. "8 km")
-     nl – Nutzlast (z. B. "200 g")
-     kq – Kameraqualität (z. B. "4K / 48 MP")
-     se – Verbauter Sensor (z. B. "CMOS 1/1.3\"")
-     eg – Einsatzgebiet (z. B. "Fotografie, Inspektion")
-     di – Kurze Beschreibung
-     url – Offizielle Webseite
-   }
-── */
-function drone(n, h, bf, bj, zw, gw, fd, rw, nl, kq, se, eg, di, url) {
-  return { n, h, bf, bj, zw, gw, fd, rw, nl, kq, se, eg, di, url: url || '#' };
-}
+// ── DJI Nano/Selfie ──
+d('DJI Neo','DJI (China)','Multicopter','2024','Selfie, Vlog, Einsteiger FPV','135 g','18 min','500 m (Wi-Fi)','—','4K 30fps / 12 MP','1/2" CMOS Einachs-Gimbal','Hobby, Social Media','Leichteste DJI-Drohne (135 g). Handstart/Handlandung, Sprachsteuerung, Palmstart-Quickshots ohne Controller. Nachfolger des DJI Spark. C0, kein Führerschein.','https://www.dji.com/neo',159,'C0','Open A1','Nein'),
+d('DJI Neo 2','DJI (China)','Multicopter','2025','Selfie, FPV, Content Creation','162 g','19 min','500 m (Wi-Fi, 150 m getestet)','—','4K 60fps / 12 MP','1/2" CMOS Zweiachsen-Gimbal + LiDAR','Hobby, Social Media, FPV','Upgrade des Neo 1 mit Zweiachsen-Gimbal, f/2.2-Blende (62% mehr Licht), LiDAR-Hindernisschutz, Front-Display. Erweiterte Quickshot-Modi. C0, kein Führerschein.','https://www.dji.com/neo-2',249,'C0','Open A1','Nein'),
+d('DJI Flip','DJI (China)','Multicopter','2025','Einsteiger, Selfie, Reise','249 g','31 min','13 km (O4)','—','4K 60fps / 48 MP','1/1.3" CMOS','Hobby, Einsteiger, Reise','Sub-249g-Drohne mit FPV-Goggles-Support und Omnidirektionaler Hinderniswahrnehmung. Kombiniert Selfie-Drohne mit klassischer Kameradrohne. C0 ab Werk.','https://www.dji.com/flip',299,'C0','Open A1','Nein'),
 
-/* ── DATENSATZ (Gerüst – noch leer, wird später befüllt) ── */
-const DROHNEN = [
-  /* Multicopter ─────────────────────────────── */
-  /* Hier kommen die Multicopter-Einträge rein */
+// ── DJI Mini-Serie ──
+d('DJI Mavic Mini (Mini 1)','DJI (China)','Multicopter','2019','Einstieg, Reise','249 g','30 min','4 km (Wi-Fi)','—','2,7K 30fps / 12 MP','1/2.3" CMOS','Hobby, Einsteiger','Erste DJI-Drohne unter 250 g. Wi-Fi-Übertragung, kein Hindernisschutz. Bestandsdrohne: Open A1 als <250g.','https://www.dji.com/mini',299,'C0','Open A1','Nein'),
+d('DJI Mini 2','DJI (China)','Multicopter','2020','Luftfotografie, Einsteiger','249 g','31 min','10 km (OcuSync 2.0)','—','4K 30fps / 12 MP','1/2.3" CMOS','Hobby, Reise','Nachfolger mit 4K und OcuSync 2.0. Beliebtes Einstiegsmodell. C0 (Bestandsdrohne <250g).','https://www.dji.com/mini-2',299,'C0','Open A1','Nein'),
+d('DJI Mini 3','DJI (China)','Multicopter','2022','Luftfotografie, Social Media','248 g','38 min','12 km (O3)','—','4K 30fps / 12 MP','1/1.3" CMOS','Hobby, Reise','1/1.3"-Sensor, vertikaler Gimbal. C0 ab Werk, Open A1, kein Führerschein.','https://www.dji.com/mini-3',399,'C0','Open A1','Nein'),
+d('DJI Mini 3 Pro','DJI (China)','Multicopter','2022','Profi-Einsteiger, Content','249 g','34 min / 47 min (Plus-Akku)','20 km (O3)','—','4K 60fps / 48 MP','1/1.3" CMOS','Profis, YouTube','Erste Mini mit Dreiachsen-Hindernisschutz. C0 ab Werk. Freiwillige C1-Hochklassifizierung möglich.','https://www.dji.com/mini-3-pro',759,'C0','Open A1','Nein'),
+d('DJI Mini 4 Pro','DJI (China)','Multicopter','2023','Profi-Luftfotografie','249 g','34 min / 47 min (Plus-Akku)','20 km (O4)','—','4K 100fps / 48 MP','1/1.3" CMOS','Profis, Inspektion','Omnidirektionaler Hindernisschutz, ActiveTrack 360°, 4K/100fps. C0 ab Werk, freiwillig auf C1 hochklassifizierbar.','https://www.dji.com/mini-4-pro',799,'C0','Open A1','Nein'),
+d('DJI Mini 5 Pro','DJI (China)','Multicopter','2025','Hochwertige Luftfotografie','249,9 g','36 min / 52 min (Plus-Akku)','21 km (O4+)','—','4K 120fps / 50 MP','1-Zoll CMOS f/1.8','Profis, Kino','Erster Mini mit 1-Zoll-Sensor. LiDAR-Hindernisschutz, 42 GB internem Speicher. C0 ab Werk.','https://www.dji.com/mini-5-pro',899,'C0','Open A1','Nein'),
 
-  /* VTOL ─────────────────────────────────────── */
-  /* Hier kommen die VTOL-Einträge rein */
+// ── DJI Air-Serie ──
+d('DJI Air 2S','DJI (China)','Multicopter','2021','Profi-Luftfotografie','595 g','31 min','12 km (O3)','—','5,4K 30fps / 20 MP','1-Zoll CMOS','Profis, Film','Erster DJI-Consumer mit 1-Zoll-Sensor. Nachklassifizierung auf C1 verfügbar. Open A1, A1/A3-Nachweis.','https://www.dji.com/air-2s',699,'C1','Open A1','A1/A3-Nachweis'),
+d('DJI Air 3','DJI (China)','Multicopter','2023','Dual-Kamera Fotografie','720 g','46 min','20 km (O4)','—','4K 60fps / 48 MP Dual','1/1.3" CMOS ×2','Profis, YouTube','Dual-Kamera, C1 ab Werk. Open A1, A1/A3-Nachweis.','https://www.dji.com/air-3',899,'C1','Open A1','A1/A3-Nachweis'),
+d('DJI Air 3S','DJI (China)','Multicopter','2024','Profi-Luftfotografie','723 g','45 min','20 km (O4)','—','4K 60fps HDR / 50 MP','1-Zoll CMOS + 1/1.3" Tele','Profis, Werbung, Film','1-Zoll-Hauptsensor, LiDAR, ActiveTrack 360°. C1 ab Werk.','https://www.dji.com/air-3s',1099,'C1','Open A1','A1/A3-Nachweis'),
 
-  /* Fixed Wing ───────────────────────────────── */
-  /* Hier kommen die Fixed-Wing-Einträge rein */
+// ── DJI Mavic-Serie ──
+d('DJI Mavic 2 Pro','DJI (China)','Multicopter','2018','Profi-Luftfotografie','907 g','31 min','8 km (OcuSync 2.0)','—','4K 30fps / 20 MP','1-Zoll Hasselblad CMOS var. Blende','Profis, Cineasten','Erste DJI-Drohne mit Hasselblad-Kamera und 1-Zoll-Sensor. Bestandsdrohne ohne C-Klasse → A3. C1-Nachklassifizierung nicht erwartet.','https://www.dji.com/mavic-2',749,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('DJI Mavic 3 Classic','DJI (China)','Multicopter','2022','Profi Hasselblad-Kamera','895 g','46 min','15 km (O3+)','—','5,1K 50fps / 20 MP','4/3" Hasselblad CMOS var. Blende','Profis, Cineasten','Hasselblad ohne Telekamera. C1 ab Werk, Open A1, A1/A3-Nachweis.','https://www.dji.com/mavic-3-classic',1099,'C1','Open A1','A1/A3-Nachweis'),
+d('DJI Mavic 3 Pro','DJI (China)','Multicopter','2023','Dreikamera-Kino','958 g','43 min','15 km (O3+)','—','5,1K 50fps / 20 MP + Tele','4/3" Hasselblad + 1/1.3" + 1/2" CMOS','Profis, Kino, Werbung','Drei optische Kameras. C1 ab Werk, Open A1.','https://www.dji.com/mavic-3-pro',2069,'C1','Open A1','A1/A3-Nachweis'),
+d('DJI Mavic 4 Pro','DJI (China)','Multicopter','2025','Profi-Kino-Flaggschiff','1,06 kg','51 min','30 km (O4+)','—','6K / 100 MP Hasselblad','4/3" Hasselblad var. Blende','Profis, Kino, Werbung','360°-Infinity-Gimbal, 3 Kameras, 51 min. C2 ab Werk. Open A2/A3, A2-Zeugnis für A2.','https://www.dji.com/mavic-4-pro',2099,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+
+// ── DJI Phantom-Serie ──
+d('DJI Phantom 4 Pro V2.0','DJI (China)','Multicopter','2018','Profi-Luftfotografie, Mapping','1.375 g','30 min','7 km (OcuSync)','—','4K 60fps / 20 MP mech. Shutter','1-Zoll CMOS f/2.8–f/11','Profis, Vermessung, Inspektion','Ikonische Profi-Drohne mit 1-Zoll-Sensor und mechanischem Verschluss. Nicht mehr produziert. Bestandsdrohne >250g → Open A3. Sehr verbreitet in der Vermessung.','https://www.dji.com/phantom-4-pro-v2',799,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+
+// ── DJI FPV/Avata ──
+d('DJI Avata 2','DJI (China)','Multicopter','2024','Immersive FPV, Cinewhoop','377 g','23 min','10 km (O4)','—','4K 60fps / 12 MP','1/1.7" CMOS, 155° Weitwinkel','FPV-Piloten, Filmproduktion','Kompakter Cinewhoop mit integr. Propellerschutz. Extrem agile Kameradrohne für Innenräume/Durchflüge. C1 ab Werk.','https://www.dji.com/avata-2',649,'C1','Open A1','A1/A3-Nachweis'),
+
+// ── DJI Inspire-Serie ──
+d('DJI Inspire 2','DJI (China)','Multicopter','2016','Professionelle Filmproduktion','3,44 kg (mit X5S)','27 min','7 km (Lightbridge 2)','—','5,2K 30fps / 20,8 MP (X5S)','MFT-Sensor X5S oder X4S','Kino, TV-Produktion','Klassisches Kino-Drone-System mit transformierbarem Landegestell. X5S ermöglicht ProRes, CinemaDNG. Nicht mehr produziert. C3-Klasse.','https://www.dji.com/inspire-2',2999,'C3','Open A3','A1/A3-Nachweis (A3)'),
+d('DJI Inspire 3','DJI (China)','Multicopter','2023','Hochprofessionelle Filmproduktion','ca. 4 kg (mit X9-8K)','28 min','15 km (O3 Pro)','—','8K 25fps CinemaDNG / 8K 75fps ProRes RAW','Vollformat X9-8K Air 45 MP','Kinofilme, Werbung, TV','8K Vollformat, RTK, 360°-Gimbal, Dual-Steuerungsmodus. C3 ab Werk.','https://www.dji.com/inspire-3',13999,'C3','Open A3','A1/A3-Nachweis (A3)'),
+
+// ── DJI Matrice Enterprise ──
+d('DJI Matrice 4E','DJI (China)','Multicopter','2025','Enterprise Inspektion, Mapping','ca. 1,4 kg','49 min','15 km','—','Triple 20+48+48 MP','4/3"+1/1.5"+1/1.3" CMOS + RTK','Inspektion, Behörden','Nachfolger M3E. Triple-Kamera, KI, Dock-3-kompatibel. C2 ab Werk.','https://www.dji.com/matrice-4',4299,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('DJI Matrice 4T','DJI (China)','Multicopter','2025','Thermographie, SAR','ca. 1,4 kg','49 min','15 km','—','48 MP Tele + 1280×1024 Thermal','1/1.3" + Thermal 1280×1024 + RTK','Feuerwehr, SAR, Sicherheit','Wärmebildvariante des M4. C2 ab Werk.','https://www.dji.com/matrice-4',4799,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('DJI Matrice 30','DJI (China)','Multicopter','2022','Enterprise Inspektion','3,77 kg','41 min','15 km','—','4K 20 MP + 12 MP Wide + LRF','1/2" Zoom + Wide + LRF','Energie, Sicherheit','Kompakte faltbare Enterprise-Drohne, IP55. C2.','https://www.dji.com/matrice-30',7499,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('DJI Matrice 30T','DJI (China)','Multicopter','2022','Thermographie, Enterprise','3,77 kg','41 min','15 km','—','4K Zoom (200×) + 640×512 Thermal','1/2" + Thermal + LRF','Energie, Feuerwehr, SAR','Matrice 30 mit Thermal-Gimbal. IP55, Dock-kompatibel. C2.','https://www.dji.com/matrice-30',10899,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('DJI Matrice 350 RTK','DJI (China)','Multicopter','2023','Schwerlast Mapping, Industrie','6,47 kg','55 min (Dual-Akku)','20 km','2,7 kg','Zenmuse Payload-System modular','Wechselbar (RGB/LiDAR/Thermal)','Industrie, Energie, Infrastruktur','Flaggschiff Enterprise. IP55, Dual-Akku, C3 ab Werk.','https://www.dji.com/matrice-350-rtk',12999,'C3','Open A3','A1/A3-Nachweis (A3)'),
+d('DJI Matrice 400','DJI (China)','Multicopter','2025','BVLOS, Schwerlast Industrie','ca. 8,5 kg','55 min','30 km','bis 2,8 kg','PSDK-Payload-System','Wechselbar (PSDK)','Energie, Infrastruktur, Behörden','Topmodell 2025, Dock-3-kompatibel. C3 ab Werk.','https://www.dji.com/matrice-400',15000,'C3','Open A3','A1/A3-Nachweis (A3)'),
+d('DJI Mavic 3 Multispectral','DJI (China)','Multicopter','2022','Agrar-Mapping, Pflanzenzustand','951 g','43 min','15 km','—','5-Band Multispektral + 20 MP RGB','1/2.3" CMOS × 5 Multispektral + 4/3" RGB','Präzisionslandwirtschaft, Forstwirtschaft','Pflanzenzustandsanalyse: NDVI, GNDVI, NDRE, LCI, OSAVI. Integriertes RTK, PPK. C2 ab Werk.','https://www.dji.com/mavic-3-m',2999,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+
+// ── DJI Agras ──
+d('DJI Agras T10','DJI (China)','Multicopter','2019','Kleiner Pflanzenschutz','ca. 24 kg (MTOW)','17 min (leer)','7 km','10 L Tank','—','Radar-Bodenfolge','Landwirtschaft, Kleinstbetriebe','Einstiegs-Agrardrohne für kleine Flächen. >25 kg MTOW → Specific.','https://www.dji.com/agras-t10',5999,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('DJI Agras T25','DJI (China)','Multicopter','2023','Pflanzenschutz mittlere Flächen','24,8 kg (MTOW)','~10 min/Tank','7 km','25 L Tank','—','Radar + Phased Array','Landwirtschaft','Kompakter Agrar-Quadcopter. >25 kg → Specific.','https://www.dji.com/agras-t25',11499,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('DJI Agras T50','DJI (China)','Multicopter','2023','Pflanzenschutz Großfläche','47,5 kg (MTOW)','~10 min/Tank','7 km','50 L Tank / 40 kg Streugut','Multispektral optional','Phased Array + Radar','Landwirtschaft, Forstwirtschaft','Oktokopter, 50-L-Tank, 16 m Sprühbreite. Specific-Kategorie.','https://www.dji.com/agras-t50',19999,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('DJI Agras T70','DJI (China)','Multicopter','2024','Mittlere bis große Agrarbetriebe','ca. 75 kg (MTOW voll)','~10 min/Tank','7 km','70 L Tank','FPV Kamera','LiDAR + Radar + Vision','Landwirtschaft','Neues Modell 2024 mit 70-Liter-Tank und Upgrade-Batterie für volle Tanknutzung. Specific-Kategorie.','https://ag.dji.com/t70',0,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('DJI Agras T100','DJI (China)','Multicopter','2024','Schwerlast Großbetriebe','ca. 120 kg (MTOW voll)','~10 min/Tank','7 km','100 kg Nutzlast','FPV-Fisheye-Kamera','LiDAR + Radar + Vision-Fusion','Landwirtschaft, Desinfektion','100-Liter-Tank, bis 100 kg Zuladung. Certified-/Specific-Kategorie wegen MTOW.','https://ag.dji.com/t100',0,'Specific','Specific (Genehmigung)','Spezielle Genehmigung'),
+d('DJI FlyCart 30','DJI (China)','Multicopter','2023','Warentransport, Lieferung','ca. 65 kg (MTOW)','28 km Dist. (ohne Last)','20 km (O3)','30–40 kg','FPV Gimbal','Radar + Binocular + ADS-B','Logistik, Katastrophenschutz','Erste DJI-Lieferdrohne. IP55, Notfallsystem-Fallschirm. Cargo- und Winch-Modus.','https://www.dji.com/flycart-30',30000,'Specific','Specific (BVLOS)','Spezielle Genehmigung'),
+
+// ── Autel Robotics ──
+d('Autel EVO Nano','Autel Robotics (China)','Multicopter','2021','Einsteiger, Hobby','249 g','28 min','10 km','—','4K 30fps / 48 MP','1/2" CMOS f/2.8','Hobby, Reise','DJI Mini 2-Konkurrent. C0 über Autel-Website beantragbar.','https://www.autelrobotics.com/productdetail/evo-nano-series-drones/',649,'C0','Open A1','Nein'),
+d('Autel EVO Nano+','Autel Robotics (China)','Multicopter','2021','Einsteiger, Low-Light','249 g','28 min','10 km','—','4K 30fps / 50 MP','1/1.28" CMOS RYYB f/1.9','Hobby, Low-Light','RYYB-Sensor für bessere Nachtaufnahmen. C0 beantragbar.','https://www.autelrobotics.com/productdetail/evo-nano-series-drones/',799,'C0','Open A1','Nein'),
+d('Autel EVO Lite','Autel Robotics (China)','Multicopter','2022','Consumer Luftfotografie','835 g','40 min','12 km','—','4K 60fps / 12 MP','1/1.28" CMOS RYYB f/1.9 4-Achsen','Hobby, Social Media','4-Achsen-Gimbal für Hochformat-Videos. C1 über Autel-Firmware.','https://www.autelrobotics.com/productdetail/evo-lite-series-drones/',1049,'C1','Open A1','A1/A3-Nachweis'),
+d('Autel EVO Lite+','Autel Robotics (China)','Multicopter','2022','Profi-Luftfotografie','835 g','40 min','12 km','—','6K 30fps / 20 MP','1-Zoll CMOS var. Blende f/2.8–11','Profis, Werbung','1-Zoll-Sensor, variable Blende. C1 via Autel.','https://www.autelrobotics.com/productdetail/evo-lite-series-drones/',1149,'C1','Open A1','A1/A3-Nachweis'),
+d('Autel EVO II (8K)','Autel Robotics (China)','Multicopter','2020','8K Luftfotografie','1,13 kg','40 min','9 km','—','8K 25fps / 48 MP','1/2" CMOS f/1.8','Profis, Film','Erste Consumer-8K-Drohne. C2 via Autel-Firmware.','https://www.autelrobotics.com/evo2/',1699,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('Autel EVO II Pro V3','Autel Robotics (China)','Multicopter','2022','Profi-Luftfotografie','1,13 kg','42 min','15 km','—','6K 30fps / 20 MP','1-Zoll CMOS var. Blende','Profis, Kino','Direktkonkurrent Mavic 3 Classic. C2 via Autel.','https://www.autelrobotics.com/productdetail/evo2-pro/',1899,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('Autel EVO II Dual 640T V3','Autel Robotics (China)','Multicopter','2022','Thermographie, Inspektion','1,13 kg','38 min','25 km','—','50 MP RGB + 640×512 Thermal','1/1.28" CMOS + FLIR 640×512','Inspektion, SAR, Sicherheit','Dual-Sensor: RGB + Thermal in einem Gimbal. C2 via Autel.','https://www.autelrobotics.com/evo2/',3999,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('Autel EVO Max 4T','Autel Robotics (China)','Multicopter','2023','Enterprise ISR, SAR, Sicherheit','1,62 kg','42 min','20 km (SkyLink 3.0)','—','4K 10× Zoom + 640×512 Thermal + Wide','1/2" + Millimeterwellen-Radar','Behörden, SAR, Infrastruktur','Einzige Drohne mit Millimeterwellen-Radar (720°). A-Mesh Netzwerktechnik. C2 via Autel.','https://www.autelrobotics.com/productdetail/evo-max-4t/',8999,'C2','Open A2 / Specific','A2-Fernpilotenzeugnis (A2)'),
+
+// ── Parrot ──
+d('Parrot ANAFI','Parrot (Frankreich)','Multicopter','2018','Portabilität, Reise, 4K HDR','320 g','25 min','4 km','—','4K 60fps / 21 MP 180°-Tilt','1/2.4" CMOS 180° Tilt-Gimbal','Hobby, Reise','Besonderes Merkmal: 180°-Tilt-Gimbal (Upward-Shooting). Sehr kompakt und leicht. Bestandsdrohne >250g → A3. Keine Nachklassifizierung erwartet.','https://www.parrot.com/en/drones/anafi',399,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('Parrot ANAFI USA','Parrot (Frankreich)','Multicopter','2020','Behörden, Militär, Ersthelfer','500 g','32 min','4 km','—','21 MP EO 32× Zoom + FLIR Thermal','1/2.4" CMOS + FLIR 320×256','Polizei, Feuerwehr, Militär','AES-512 Verschlüsselung, in USA hergestellt, NDAA-konform. Keine C-Klasse.','https://www.parrot.com/en/drones/anafi-usa',7990,'Specific','Specific/Open A3','A1/A3-Nachweis (A3)'),
+d('Parrot ANAFI Ai','Parrot (Frankreich)','Multicopter','2022','Mapping, Inspektion, 4G','898 g','32 min','22,5 km (4G LTE)','—','4K / 48 MP','1/2" CMOS + 4G LTE SIM','Industrie, Vermessung','Erste professionelle 4G-Drohne. Stereovision-Rundumschutz, MAVLink-kompatibel.','https://www.parrot.com/en/drones/anafi-ai',3999,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+
+// ── Skydio ──
+d('Skydio 2+','Skydio (USA)','Multicopter','2022','Autonomes Verfolgen, Behörden','800 g','27 min','9 km','—','4K 60fps / 12 MP','1/2.3" CMOS, 6 KI-Navigationskameras','Behörden, Sport, Film','Beste autonome Verfolgung der Branche. 6×32 MP Navigationskameras. Keine EU-C-Klasse.','https://www.skydio.com',1500,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('Skydio X10','Skydio (USA)','Multicopter','2023','Enterprise ISR, Militär, BVLOS','2,11 kg','40 min','12 km (5G: unbegrenzt)','340 g','64 MP Narrow + FLIR 640×512 Thermal','NVIDIA Jetson Orin + 6 Navigationskameras','Öffentl. Sicherheit, Militär','NVIDIA KI, NightSense-Nulllichtnav., AES-256. Blue UAS. US Army RQ-28A-Ersatz.','https://www.skydio.com/x10',0,'Specific','Specific','Spezielle Genehmigung (EU)'),
+
+// ── Teledyne FLIR ──
+d('Teledyne FLIR Black Hornet 3','Teledyne FLIR (USA)','Multicopter','2016','Militär Nahaufklärung','33 g','25 min','2 km','—','EO + IR Kamera','CMOS + Infrarot','Militär, Spezialeinheiten','33g Nano-Drohne, fast lautlos. >10.000 Systeme, 19+ Nationen.','https://defense.flir.com/defense-products/black-hornet-3-prs/',0,'Militär','Militär','Militär'),
+d('Teledyne FLIR Black Hornet 4','Teledyne FLIR (USA)','Multicopter','2023','Nano-ISR, Militär, Spezialops','70 g','30+ min','2+ km','—','12 MP EO + 640×512 Thermal','CMOS + Thermal + 3 Nav-Kameras','Militär, Spezialoperationen','70g, 12MP+Thermal, Hinderniserkennung. ~20 dB bei 30m.','https://defense.flir.com/defense-products/black-hornet-4-prs/',0,'Militär','Militär','Militär'),
+
+// ── Anduril ──
+d('Anduril Ghost-X SUAS','Anduril Industries (USA)','Multicopter','2022','Autonome Militär-Aufklärung','Klass.','Klass.','Klass.','EO/IR modular','EO/IR + Lattice OS KI','Lattice AI Autonomie','Militär, Spezialops','Autonomes Militär-UAS, Lattice OS, GNSS-unabhängig. Blue UAS.','https://www.anduril.com/hardware/ghost-autonomous-suas/',0,'Militär','Militär','Militär'),
+
+// ── XAG ──
+d('XAG V40','XAG (China)','Multicopter','2021','Agrar Sprühung, kompakt','29,8 kg (leer)','16 min (leer)','7 km','40 L Flüssigkeit','—','RTK + Radar Geländefolge','Landwirtschaft','Kipp-Zweirotordesign für bessere Spruhdurchdringung. Specific (MTOW >25kg).','https://www.xa.com/en/v40',14999,'Specific','Specific','Spezielle Genehmigung'),
+d('XAG P100 Pro','XAG (China)','Multicopter','2024','Schwerlast Agrar, Großbetriebe','ca. 42 kg (MTOW voll)','~15 min/Tank','7 km','100 kg gesamt','Patrol-Kamera optional','SuperX 4 Pro KI + RTK','Landwirtschaft, Desinfektion','100 kg Zuladung, GC4000+ Schnellladung (11 min). Specific-/Certified-Kategorie.','https://www.xa.com/en/p100',0,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('XAG P150 Max','XAG (China)','Multicopter','2024','Schwerste Agrar-Sprühdrohne','ca. 160 kg (MTOW max.)','~8–12 min/Tank','7 km','150 kg Nutzlast','Multispektral optional','SuperX 5 KI + RTK + LiDAR','Landwirtschaft Großbetriebe','Leistungsfähigstes XAG-Modell 2024. Octo-Quad-Design, 150 kg Zuladung. Certified-Kategorie.','https://www.xa.com/en/p150max',0,'Specific','Specific (Genehmigung)','Spezielle Genehmigung'),
+
+// ══════════════════════════════════════
+//  VTOL
+// ══════════════════════════════════════
+d('Wingtra WingtraOne GEN II','Wingtra (Schweiz)','VTOL','2020','Geodaten, Photogrammetrie','3,7 kg','59 min','10 km (LOS)','800 g','61 MP Sony RX1R II / Multispektral / LiDAR','PPK GNSS multi-freq.','Vermessung, GIS, Bergbau','EASA C3-zertifiziert. Tailsitter VTOL, kein Runway. Seit 2025 durch WingtraRAY abgelöst.','https://wingtra.com/mapping-drone-wingtraone/',16000,'C3','Open A3','A1/A3-Nachweis (A3)'),
+d('Wingtra WingtraRAY','Wingtra (Schweiz)','VTOL','2025','Vermessung, BVLOS, Kartierung','ca. 4 kg','ca. 70 min','k.A.','bis 1 kg','61 MP / Oblique / Multispektral / LiDAR','PPK GNSS + EASA-zertif. Fallschirm','Vermessung, Infrastruktur','Zertifizierter Fallschirm ermöglicht Flüge über Personen/Straßen in EU.','https://wingtra.com/wingtraray/',18000,'C3','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+d('Quantum Systems Trinity F90+','Quantum Systems (Deutschland)','VTOL','2019','Kartierung, Vermessung, Aufklärung','5,0 kg (MTOW)','90+ min','700 ha/Flug','700 g','42 MP Sony RGB / MicaSense Multispektral','PPK GNSS (u-blox) + optionaler ADS-B','Vermessung, Agrar, Behörden, Verteidigung','Deutsches eVTOL. Kipprottoren-Patent 2012. Gleitzahl 14:1. Bundeswehr-Einsatz.','https://quantum-systems.com/us/trinity-pro/',28000,'C3','Open A3','A1/A3-Nachweis (A3)'),
+d('Quantum Systems Trinity Pro','Quantum Systems (Deutschland)','VTOL','2022','BVLOS Mapping, Sicherheit','5,5 kg (MTOW)','90+ min','700 ha/Flug','700 g','42 MP / LiDAR Qube 240 / Multispektral','PPK GNSS + IP55 + Quantum-Skynode','Verteidigung, Behörden, BVLOS','Weiterentwicklung des F90+ mit IP55, neuer Skynode-Autopilot, ADS-B down, RTH-KI, A/B-Missionen.','https://quantum-systems.com/us/trinity-pro/',35000,'C3','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+d('Autel Dragonfish Pro','Autel Robotics (China)','VTOL','2021','Langstrecken ISR, Enterprise','7,8 kg (MTOW)','179 min','45 km','1,5 kg','4K 20× optischer Zoom + 48 MP Wide + Thermal','Triple-Sensor-Gimbal, RTK','Inspektion, Behörden, ISR','Hybrides VTOL mit 3h Flugzeit. Schnellwechsel-Payload-Nase. Centimeter-genaue Positionierung.','https://www.autelrobotics.com',0,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('JOUAV CW-30E','JOUAV (China)','VTOL','2021','Langstrecken ISR, Pipeline','ca. 18 kg (MTOW)','480 min (8h Hybrid)','200 km','6 kg','LiDAR / 61 MP / Thermal','PPK GNSS + LiDAR (Hesai)','Pipeline, Forstwirtschaft, Militär','Hybrid-Benzin/Elektro, 8 Stunden Flugzeit, 200 km Steuerreichweite.','https://www.jouav.com/products/cw-30e.html',0,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('JOUAV CW-100','JOUAV (China)','VTOL','2021','Großflächen Mapping, Langstrecke','14 kg (MTOW)','210 min','200 km','3 kg','61 MP Vollformat / Thermal / LiDAR','PPK GNSS multi-freq.','Vermessung, Pipeline, Forstwirtschaft','3,5 Stunden Flugzeit, 200 km. Quad-Rotordesign für Stabilität.','https://www.jouav.com/vtol-drone',0,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+d('Shield AI V-BAT (MQ-35)','Shield AI (USA)','VTOL','2019','Militär ISR, Maritime Überwachung','ca. 25 kg','ca. 11 Std.','ca. 200 km','18 kg','EO/IR Gimbal modular','Ducted-Fan + Hivemind KI','Militär, Marine, Küstenwacht','Ducted-Fan, keine exponierten Rotoren. GPS-verweigert überlebensfähig. US Navy, Coast Guard, Indien.','https://shield.ai/v-bat/',0,'Militär','Militär','Militär'),
+d('AgEagle senseFly eBee X','AgEagle (USA/Schweiz)','VTOL','2018','Flächenmapping, Vermessung','1,0–1,4 kg','90 min (Endurance-Akku)','55 km','~250 g Kamera','senseFly SODA 3D / Aeria X / Duet T','PPK GNSS on-demand RTK','Vermessung, GIS, Bergbau, Katastrophenschutz','Meistgenutzte Fixed-Wing-Drohne in den USA (FAA-Daten 2016–2021). RTK/PPK, 500 ha/Flug, Handstart. Keine EU-C-Klasse (Bestandsdrohne <2kg).','https://www.sensefly.com/drones/ebee-x/',13000,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+d('AeroVironment Quantix Recon','AeroVironment (USA)','VTOL','2020','ISR-Aufklärung, VTOL-Mapping','ca. 1,6 kg','45 min','20 km (LOS)','—','2× 18 MP RGB Kameras','Dual RGB für Mapping','Militär, Aufklärung, Mapping','Hybrid-VTOL-Quadcopter für autonome Aufklärung und Kartierung. RF-Stille-Modus für verdeckte Missionen.','https://www.avinc.com/uas/quantix',0,'Militär / Specific','Militär / Specific','Militär / Spez. Genehmigung'),
+
+// ══════════════════════════════════════
+//  FIXED WING
+// ══════════════════════════════════════
+d('DJI Matrice 3D / 3TD','DJI (China)','Fixed Wing','2024','Autonomes Mapping, Dock-Betrieb','ca. 3,5 kg','50 min','15 km','—','20 MP + 12 MP Tele (3TD: + Thermal)','4/3" + 1/2" CMOS + RTK','Infrastruktur, Energie, Behörden','Enterprise für DJI Dock 2. C2.','https://www.dji.com/matrice-3d',0,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('AeroVironment RQ-11B Raven','AeroVironment (USA)','Fixed Wing','2003','Taktische Nahaufklärung (Infanterie)','1,9 kg','60–90 min','10 km','—','EO-Farbkamera + IR-Kamera','EO + IR Gimbal','Militär, Infanterie, Spezialops','Meistverbreitetes UAS der Welt (>19.000 Airframes). Handgestartet, rucksackportabel. US SOCOM, 20+ Nationen inkl. Australien, Estland, Italien, Dänemark.','https://www.avinc.com/uas/view/raven',0,'Militär','Militär','Militär'),
+d('AeroVironment RQ-20B Puma AE','AeroVironment (USA)','Fixed Wing','2013','Militär-ISR, Maritime Überwachung','6,3 kg','3+ Std.','20 km','—','Gimbaled EO/IR 50× optisch','Mantis i45 EO/IR + SDR','Militär, Spezialops, Marine','Wasserfest, Handstart. >1.000 Systeme, Bundeswehr, Ukraine, US SOCOM.','https://www.avinc.com/uas/view/puma',0,'Militär','Militär','Militär'),
+d('AeroVironment Switchblade 300','AeroVironment (USA)','Fixed Wing','2012','Loitering Munition Anti-Personell','2,5 kg','15 min','40 km','Antipersonell-Gefechtskopf','EO/IR Zielkamera','GPS + INS','Infanterie, Präzisionsschlag','Aus Röhre gestartete Loitering-Munition. Keine zivile Nutzung. Ukraine: 700+ geliefert.','https://www.avinc.com/uas/view/switchblade',0,'Militär','Militär','Militär'),
+d('AeroVironment Switchblade 600','AeroVironment (USA)','Fixed Wing','2019','Loitering Munition Anti-Fahrzeug','23 kg','40 min','80 km','Hohlladungsgefechtskopf','EO/IR + Laser-Designator','GPS + IMU','Anti-Panzer, Anti-Fahrzeug','Anti-Panzer-Variante. Block 2: 110 km, 30,8 kg. In der Ukraine im Einsatz.','https://www.avinc.com/uas/view/switchblade',0,'Militär','Militär','Militär'),
+d('General Atomics MQ-1C Gray Eagle','General Atomics (USA)','Fixed Wing','2009','MALE ISR, US Army Schlag','1.633 kg','25 Std.','400 km','488 kg','AN/AAS-52 EO/IR + Lynx SAR','MTS-B EO/IR + SAR','US Army, ISR, Schlag','MALE-UAS, Hellfire-Bewaffnung. GE-ER Extended Range und STOL-Variante.','https://www.ga-asi.com/remotely-piloted-aircraft/gray-eagle',0,'Militär','Militär','Militär'),
+d('General Atomics MQ-9A Reaper','General Atomics (USA)','Fixed Wing','2007','Langzeit-ISR, UCAV','2.223 kg','27 Std.','1.850 km','1.746 kg (extern)','AN/AAS-52 MTS + Lynx SAR','MTS + SAR-Radar','USAF, NATO, ISR, Schlag','Wichtigstes MALE-UAS der USAF. 4× Hellfire, bis 15.000 m. >300 ausgeliefert.','https://www.ga-asi.com/remotely-piloted-aircraft/mq-9a',0,'Militär','Militär','Militär'),
+d('General Atomics MQ-9B SkyGuardian','General Atomics (USA)','Fixed Wing','2018','MALE ISR, Maritime Überwachung','ca. 2.800 kg','40 Std.','ca. 6.000 km','ca. 2.150 kg','HD EO/IR + opt. Seaspray 7500E Radar','MTS + Seaspray-Maritime-Radar','Militär, Küstenwacht, Grenzschutz','Zivil-zertifizierungsfähige Reaper-Variante. NATO STANAG 4671. RAF als Protector RG.1 ab 2023.','https://www.ga-asi.com/remotely-piloted-aircraft/mq-9b-skyguardian',0,'Militär','Militär / Certified','Militär / Sondergenehmigung'),
+
+// ── Weitere Multicopter ──
+d('DJI Mavic Air 2','DJI (China)','Multicopter','2020','Consumer Luftfotografie','570 g','34 min','10 km (OcuSync 2.0)','—','4K 60fps / 48 MP','1/2" CMOS','Hobby, Reise','Vorgänger des Air 2S. 48 MP, 4K/60fps, Vierrichtungs-Hindernisschutz. Bestandsdrohne >250g → A3.','https://www.dji.com/mavic-air-2',499,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('DJI Mavic 3 Multispektral','DJI (China)','Multicopter','2022','Agrar-Mapping, Pflanzenzustand','951 g','43 min','15 km','—','5-Band Multispektral + 20 MP RGB','1/2.3" × 5 Multispektral + 4/3" RGB','Präzisionslandwirtschaft','NDVI, GNDVI, NDRE, LCI, OSAVI-Analysen. RTK, PPK. C2 ab Werk.','https://www.dji.com/mavic-3-m',2999,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('DJI Inspire 2','DJI (China)','Multicopter','2016','Profi-Filmproduktion (Vorgänger)','3,44 kg','27 min','7 km','—','5,2K 30fps (X5S) / ProRes','MFT-Sensor X5S oder X4S','Kino, TV-Produktion','Transformierbares Landegestell, 360°-Gimbal. Nicht mehr produziert. C3-Klasse.','https://www.dji.com/inspire-2',2999,'C3','Open A3','A1/A3-Nachweis (A3)'),
+d('DJI Agras T10','DJI (China)','Multicopter','2019','Kleiner Pflanzenschutz','ca. 24 kg (MTOW)','17 min (leer)','7 km','10 L Tank','—','Radar-Bodenfolge','Landwirtschaft, Kleinstbetriebe','Einstiegs-Agrardrohne. Specific-Kategorie wegen MTOW.','https://www.dji.com/agras-t10',5999,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('Autel EVO II Dual 640T V3','Autel Robotics (China)','Multicopter','2022','Thermographie, Inspektion','1,13 kg','38 min','25 km','—','50 MP RGB + 640×512 Thermal','1/1.28" CMOS + FLIR 640×512','Inspektion, SAR, Sicherheit','Dual-Sensor in einem Gimbal. C2 via Autel-Firmware.','https://www.autelrobotics.com/evo2/',3999,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('Autel EVO Lite','Autel Robotics (China)','Multicopter','2022','Consumer Luftfotografie','835 g','40 min','12 km','—','4K 60fps / 12 MP','1/1.28" CMOS RYYB 4-Achsen','Hobby, Social Media','4-Achsen-Gimbal für Hochformat-Videos. C1 via Autel-Firmware.','https://www.autelrobotics.com/productdetail/evo-lite-series-drones/',1049,'C1','Open A1','A1/A3-Nachweis'),
+d('Parrot Bebop 2 Power','Parrot (Frankreich)','Multicopter','2017','Einsteiger, FPV, Reise','500 g','30 min','2 km (Wi-Fi)','—','4K 14 MP 180°-Fisheye','1/3" CMOS elektronische Stabilisierung','Hobby, FPV-Einsteiger','Kompakter FPV-Einstieg mit Fisheye-Kamera und digitaler Stabilisierung. Kein Gimbal. Bestandsdrohne >250g → A3.','https://www.parrot.com',149,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('Skydio 2','Skydio (USA)','Multicopter','2020','Autonomes Verfolgen (Consumer)','775 g','23 min','6 km','—','4K 60fps / 12,3 MP','Sony 1/2.3" CMOS, 6 × 4K Navigationskameras','Sport, Content Creation','Ursprüngliches Consumer-Modell von Skydio. KI-Verfolgung, 6 × 4K-Navigationskameras. Eingestellt, da Skydio auf Enterprise wechselte.','https://www.skydio.com',499,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('DJI Matrice 300 RTK','DJI (China)','Multicopter','2020','Enterprise-Vorgänger (Industrie)','6,3 kg','55 min','15 km','2,7 kg','Zenmuse-Payload modular','Wechselbar (H20T, L1, P1)','Inspektion, Mapping, Energie','Vorgänger des M350 RTK. IP45, Dual-Operator, ADS-B. C3, Open A3.','https://www.dji.com/matrice-300',8999,'C3','Open A3','A1/A3-Nachweis (A3)'),
+d('Teledyne FLIR SIRAS','Teledyne FLIR (USA)','Multicopter','2023','Thermographie, Inspektion, NDAA','1,2 kg','31 min','7 km','—','RGB + 640×512 Thermal austauschbar','1/2.8" CMOS RGB + Thermal','Inspektion, Öffentl. Sicherheit, NDAA','NDAA-konformes Enterprise-Modell von Teledyne FLIR. Austauschbare RGB/Thermal-Kameras. Keine EU-C-Klasse.','https://www.teledyneflir.com/products/siras/',9999,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+
+// ── Weitere VTOL ──
+d('DJI Matrice 3D / 3TD','DJI (China)','VTOL','2024','Autonomes Mapping, Dock-Betrieb','ca. 3,5 kg','50 min','15 km','—','20 MP + 12 MP Tele (3TD: + Thermal)','4/3" + 1/2" CMOS + RTK','Infrastruktur, Energie, Behörden','Enterprise für DJI Dock 2. C2. Starre Arme für präzises Dock-Andocken.','https://www.dji.com/matrice-3d',0,'C2','Open A2/A3','A2-Fernpilotenzeugnis (A2)'),
+d('Parrot ANAFI Ai (VTOL-Klasse)','Parrot (Frankreich)','VTOL','2022','Mapping, Inspektion, Photogrammetrie','898 g','32 min','22,5 km (4G)','—','4K / 48 MP','1/2" CMOS + 4G LTE','Industrie, Vermessung','4G-Drohne, Stereovision-Rundumschutz, MAVLink. Als VTOL-Klasse auch für Mapping geeignet.','https://www.parrot.com/en/drones/anafi-ai',3999,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+d('Quantum Systems Vector','Quantum Systems (Deutschland)','VTOL','2023','Militärische ISR, Grenzschutz','ca. 7 kg (MTOW)','180+ min','200+ km','1,5 kg','EO/IR Modular-Payload','Multi-Payload-VTOL Militär','Verteidigung, Grenzschutz, Behörden','Militärisches VTOL-UAS von Quantum Systems für lange Ausdauer-ISR-Missionen. Einsatz bei Bundeswehr und NATO-Partnern. Specific/Militärisch.','https://quantum-systems.com',0,'Militär','Militär / Specific','Militär / Spez. Genehmigung'),
+d('Autel Dragonfish Standard','Autel Robotics (China)','VTOL','2021','Enterprise ISR, Inspektion','6,3 kg (MTOW)','120 min','30 km','1,5 kg','4K 20× Zoom + 48 MP Wide','Dual-Sensor-Gimbal, RTK','Inspektion, SAR, Behörden','Einstiegsmodell der Dragonfish-Linie. 2 Stunden Flugzeit, 30 km Steuerreichweite. Specific-Kategorie.','https://www.autelrobotics.com',0,'Specific','Specific','Spezielle Genehmigung'),
+d('JOUAV CW-25E','JOUAV (China)','VTOL','2022','Mittelstrecken Mapping, Inspektion','ca. 10 kg (MTOW)','150 min (2,5h)','100 km','2 kg','61 MP RGB / Thermal / LiDAR','PPK GNSS multi-freq.','Vermessung, Energie, Inspektion','2,5 Stunden Flugzeit. Quad-Rotor-Hybrid-VTOL für mittlere bis große Mapping-Projekte.','https://www.jouav.com/vtol-drone',0,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+d('Shield AI V-BAT 128','Shield AI (USA)','VTOL','2022','Erweiterte ISR, Schiff-basiert','ca. 35 kg','ca. 12 Std.','ca. 220 km','22 kg','Erweitertes EO/IR','Ducted-Fan + Hivemind 2.0 KI','Militär, US Navy, Marine','Verbesserte V-BAT-Variante mit größerer Nutzlast und erweiterter Ausdauer. US Navy MQ-35B-Kandidat.','https://shield.ai/v-bat/',0,'Militär','Militär','Militär'),
+
+// ── Weitere Fixed Wing ──
+d('AeroVironment RQ-11B Raven','AeroVironment (USA)','Fixed Wing','2003','Infanterie-Nahaufklärung','1,9 kg','60–90 min','10 km','—','EO Farb + IR Kamera','EO + IR Gimbal','Militär, Infanterie, Spezialops','Meistverbreitetes UAS der Welt (>19.000 Airframes). Handgestartet, rucksackportabel. US SOCOM, 20+ Nationen.','https://www.avinc.com/uas/view/raven',0,'Militär','Militär','Militär'),
+d('AeroVironment HAPS Sunglider','AeroVironment (USA)','Fixed Wing','2020','Stratosphären-ISR, Konnektivität','ca. 80 kg','90 Tage (Solarantrieb)','Stratosphärisch (20 km Höhe)','2 kg','EO + Kommunikations-Payload','Solarmodul + EO/IR','Militär, Telekommunikation','Hochausdauerndes Solar-UAV in der Stratosphäre (HAPS). Konkurrent zu Google Loon. Extrem langer ISR-Einsatz.','https://www.avinc.com',0,'Militär / Certified','Militär / Certified','Militär / Sondergenehmigung'),
+d('Anduril Fury (UCAV)','Anduril Industries (USA)','Fixed Wing','2023','Autonomes Kampfflugzeug (Wingman)','Klassifiziert','Klassifiziert','Klassifiziert','Waffensystem','KI-Targeting','Lattice OS + KI-Autonomie','Militär, Air Force CCA','Autonomes Kampf-UCAV im Rahmen des USAF Collaborative Combat Aircraft (CCA) Programms. Anduril/General Atomics für Increment 1 ausgewählt.','https://www.anduril.com',0,'Militär','Militär','Militär'),
+d('General Atomics MQ-1C Gray Eagle ER','General Atomics (USA)','Fixed Wing','2012','MALE ISR Langausdauer, US Army','1.633 kg','25+ Std.','400+ km','600 kg','AN/AAS-52 MTS + Lynx SAR','MTS + SAR-Radar','US Army, MALE-ISR','Extended-Range-Variante des Gray Eagle mit STOL-Fähigkeit. Mehr Ausdauer und Nutzlast.','https://www.ga-asi.com/remotely-piloted-aircraft/gray-eagle',0,'Militär','Militär','Militär'),
+d('AgEagle senseFly eBee Geo','AgEagle (USA/Schweiz)','Fixed Wing','2019','Geodäsie, Vermessung, GIS','1,0 kg','45 min','37 km (standard)','~200g Kamera','senseFly SODA RGB Kamera','PPK GNSS + senseFly SODA','Vermessung, GIS, Katastrophenschutz','Einstiegs-Mapping-Drohne für Vermesser und GIS-Fachleute. Handstart, 160 ha/Flug bei 120m Höhe.','https://www.sensefly.com',9000,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+d('AgEagle senseFly eBee Ag','AgEagle (USA/Schweiz)','Fixed Wing','2019','Agrar-Mapping, Multispektral','1,1 kg','55 min (Endurance)','37 km','~250g Dual-Sensor','senseFly SODA RGB + Parrot Sequoia+','PPK GNSS + Multispektral','Präzisionslandwirtschaft','Agrar-optimierte eBee mit RGB + Multispektral-Sensor (SODA + Sequoia+). 200 ha/Flug, 45–55 min.','https://www.sensefly.com',11000,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+
+// ── Weitere Multicopter (Ergänzung) ──
+d('DJI Mavic Air 2','DJI (China)','Multicopter','2020','Consumer Luftfotografie','570 g','34 min','10 km (OcuSync 2.0)','—','4K 60fps / 48 MP','1/2" CMOS','Hobby, Reise','Vorgänger des Air 2S. 48 MP, 4K/60fps, Vierrichtungs-Hindernisschutz. Bestandsdrohne.','https://www.dji.com/mavic-air-2',499,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('DJI Avata 360','DJI (China)','Multicopter','2025','Immersive 360°-FPV, Kino','455 g','23 min','10 km','—','8K 60fps HDR 360° / 120 MP','Omnidirektionaler 360°-Sensor','FPV, Kino, immersiver Content','Weltweit erste native 360°-FPV-Drohne. 8K/60fps HDR-360°-Aufnahmen, reframing in Post-Production. 42 GB intern.','https://www.dji.com/avata-360',829,'C1','Open A1','A1/A3-Nachweis'),
+d('DJI Matrice 300 RTK','DJI (China)','Multicopter','2020','Enterprise Vorgänger M350','6,3 kg','55 min','15 km','2,7 kg','Zenmuse H20T / L1 / P1 modular','Wechselbar (H20T, L1, P1)','Inspektion, Mapping, Energie','Vorgänger des M350 RTK. IP45, ADS-B. C3, Open A3, weit verbreitet.','https://www.dji.com/matrice-300',8999,'C3','Open A3','A1/A3-Nachweis (A3)'),
+d('Teledyne FLIR SIRAS','Teledyne FLIR (USA)','Multicopter','2023','Thermographie, Inspektion, NDAA','1,2 kg','31 min','7 km','—','RGB + 640×512 Thermal austauschbar','1/2.8" CMOS RGB + FLIR Thermal','Inspektion, Öffentl. Sicherheit','NDAA-konformes Enterprise-Modell. Austauschbare RGB/Thermal-Kameramodule. Keine EU-C-Klasse.','https://www.teledyneflir.com/products/siras/',9999,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+d('Skydio 2','Skydio (USA)','Multicopter','2020','Autonomes Verfolgen (Consumer)','775 g','23 min','6 km','—','4K 60fps / 12,3 MP','Sony 1/2.3" CMOS + 6×4K Navigationskameras','Sport, Content Creation','Ursprüngliches Consumer-Modell von Skydio. KI-Verfolgung. Eingestellt (Enterprise-Fokus).','https://www.skydio.com',499,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('Parrot Bebop 2 Power','Parrot (Frankreich)','Multicopter','2017','FPV-Einsteiger, Hobby','500 g','30 min','2 km (Wi-Fi)','—','4K 14 MP 180°-Fisheye','1/3" CMOS elektronische Stabilisierung','Hobby, FPV-Einsteiger','Kompakter FPV-Einstieg, digitale Stabilisierung ohne physischen Gimbal. Eingestellt.','https://www.parrot.com',149,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('DJI Phantom 4 Pro V2.0','DJI (China)','Multicopter','2018','Profi-Luftfotografie, Mapping','1.375 g','30 min','7 km','—','4K 60fps / 20 MP mech. Shutter','1-Zoll CMOS f/2.8–f/11 mech. Shutter','Profis, Vermessung, Inspektion','Ikonische Profi-Drohne, 1-Zoll-Sensor + mechanischer Verschluss. Eingestellt. Bestandsdrohne A3.','https://www.dji.com/phantom-4-pro-v2',799,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('DJI Mavic 2 Pro','DJI (China)','Multicopter','2018','Profi-Luftfotografie (Vorgänger)','907 g','31 min','8 km (OcuSync 2.0)','—','4K 30fps / 20 MP','1-Zoll Hasselblad CMOS var. Blende','Profis, Cineasten','Erste DJI-Drohne mit Hasselblad-Kamera. Eingestellt. Bestandsdrohne >250g → A3.','https://www.dji.com/mavic-2',749,'—','Open A3 (Bestandsdrohne)','A1/A3-Nachweis (A3)'),
+d('XAG P40','XAG (China)','Multicopter','2021','Mittlere Agrarbetriebe, Sprühen','ca. 35 kg (MTOW voll)','~10 min/Tank','7 km','40 L Flüssigkeit','—','RTK + Radar','Landwirtschaft, Forstwirtschaft','Allrounder aus dem XAG P-Lineup für mittlere Betriebe: Sprühen, Streuen und Mapping in einem System. Specific.','https://www.xa.com/en/p40',0,'Specific','Specific (>25kg MTOW)','Spezielle Genehmigung'),
+d('Anduril Ghost-X UGV-Begleiter','Anduril Industries (USA)','Multicopter','2023','Taktische Luftaufklärung (Feld)','Klass.','Klass.','Klass.','EO/IR modular','EO/IR + Lattice OS','Lattice AI','Militär, kombinierter Einsatz','Kombination aus Ghost-X SUAS und Ghost-X UGV für gemeinsame Boden-Luft-Missionen. Blue UAS.','https://www.anduril.com/hardware/',0,'Militär','Militär','Militär'),
+
+// ── Weitere VTOL-Ergänzungen ──
+d('Quantum Systems Vector','Quantum Systems (Deutschland)','VTOL','2023','Militärische ISR, Grenzschutz','ca. 7 kg (MTOW)','180+ min','200+ km','1,5 kg','EO/IR Modular-Payload','Multi-Payload militärisch','Verteidigung, Grenzschutz, Behörden','Militärisches VTOL-UAS von Quantum Systems. Einsatz bei Bundeswehr und NATO-Partnern.','https://quantum-systems.com',0,'Militär','Militär / Specific','Militär'),
+d('Autel Dragonfish Standard','Autel Robotics (China)','VTOL','2021','Enterprise ISR, Inspektion','6,3 kg (MTOW)','120 min','30 km','1,5 kg','4K 20× Zoom + 48 MP Wide','Dual-Sensor-Gimbal + RTK','Inspektion, SAR, Behörden','Einstiegsmodell der Dragonfish-Linie. 2 Stunden Flugzeit, RTK.','https://www.autelrobotics.com',0,'Specific','Specific','Spezielle Genehmigung'),
+d('JOUAV CW-25E','JOUAV (China)','VTOL','2022','Mittelstrecken Mapping, Inspektion','ca. 10 kg (MTOW)','150 min','100 km','2 kg','61 MP RGB / Thermal / LiDAR','PPK GNSS multi-freq.','Vermessung, Energie, Inspektion','2,5 Stunden Flugzeit. Quad-Rotor VTOL-Hybrid.','https://www.jouav.com/vtol-drone',0,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
+
+// ── Weitere Fixed Wing ──
+d('Anduril Fury (UCAV)','Anduril Industries (USA)','Fixed Wing','2023','Autonomes UCAV, CCA-Programm','Klassifiziert','Klassifiziert','Klassifiziert','Waffensystem','KI-Targeting','Lattice OS + KI','Militär, USAF CCA','Autonomes Kampf-UCAV im USAF CCA-Programm. Anduril für Increment 1 ausgewählt.','https://www.anduril.com',0,'Militär','Militär','Militär'),
+d('General Atomics MQ-1C Gray Eagle ER','General Atomics (USA)','Fixed Wing','2012','MALE ISR Langausdauer','1.633 kg','25+ Std.','400+ km','600 kg','MTS EO/IR + Lynx SAR','MTS + SAR + erw. Payload','US Army, MALE-ISR','Extended-Range-Variante mit STOL-Fähigkeit. Mehr Ausdauer und Nutzlast als Standard GE.','https://www.ga-asi.com/remotely-piloted-aircraft/gray-eagle',0,'Militär','Militär','Militär'),
+d('AgEagle senseFly eBee Geo','AgEagle (USA/Schweiz)','Fixed Wing','2019','Geodäsie, Vermessung, GIS','1,0 kg','45 min','37 km (standard)','~200g Kamera','senseFly SODA RGB','PPK GNSS + SODA','Vermessung, GIS, Katastrophenschutz','Einstiegs-Mapping-Drohne für Vermesser und GIS-Fachleute. 160 ha/Flug bei 120m.','https://www.sensefly.com',9000,'—','Open A3 / Specific','A1/A3-Nachweis (A3)'),
 ];
 
-/* ── STATE ── */
-let aktiveBauform = null;
-
-/* ── Statistik aktualisieren ── */
-function updateStats() {
-  document.getElementById('statTotal').textContent = DROHNEN.length;
-}
-
-/* ── Bauform-Beschreibungen ── */
-const BAUFORM_DESC = {
-  'Multicopter': 'Multicopter mit mehreren Rotoren — von der kompakten Hobby-Drohne bis zur professionellen Industrie-UAV. Besonders wendig, einfach zu bedienen, VTOL-fähig.',
-  'VTOL':        'VTOL-Systeme (Vertical Take-Off and Landing) vereinen die Flexibilität des senkrechten Starts mit der Effizienz und Reichweite von Starrflüglern.',
-  'Fixed Wing':  'Starrflügler-UAV für maximale Flächenleistung, Reichweite und Ausdauer. Ideal für Kartierung, Fernerkundung und Langstreckenmissionen.'
+// ── STATE ──
+let aktiveBauform=null;
+const MAX_PREIS=15000;
+function updateStats(){document.getElementById('statTotal').textContent=DROHNEN.length;document.getElementById('statH').textContent=new Set(DROHNEN.map(d=>d.h)).size;}
+function updatePD(){const v=parseInt(document.getElementById('priceSlider').value);document.getElementById('priceDisplay').textContent=(v>=MAX_PREIS)?'Alle':'≤'+v.toLocaleString('de')+'€';}
+const BAUFORM_DESC={
+  'Multicopter':'Multi-Rotor-Drohnen — vom 135g Selfie-Nano bis zum 120kg Agrar-Oktokopter. Consumer, Profi, Enterprise, Agrar und Militär.',
+  'VTOL':'VTOL-Systeme vereinen Multicopter-Flexibilität mit Starrflügler-Effizienz. Vermessungs-, Liefer- und Militär-UAS mit langen Flugzeiten.',
+  'Fixed Wing':'Starrflügler-UAV — von handgestarteten ISR-Aufklärern bis zu bewaffneten MALE-UAS für Langzeit-ISR und Präzisionsschlag.'
 };
-
-const BAUFORM_FARBE = {
-  'Multicopter': 'var(--mc)',
-  'VTOL':        'var(--vt)',
-  'Fixed Wing':  'var(--fw)'
-};
-
-/* ── Bauform laden ── */
-function loadBauform(bf) {
-  aktiveBauform = bf;
+const BAUFORM_FARBE={'Multicopter':'var(--mc)','VTOL':'var(--vt)','Fixed Wing':'var(--fw)'};
+function loadBauform(bf){
+  aktiveBauform=bf;
   document.getElementById('vHome').classList.add('hide');
   document.getElementById('vDetail').classList.remove('hide');
-  document.getElementById('dTitle').textContent = bf;
-  document.getElementById('dDesc').textContent = BAUFORM_DESC[bf] || '';
-  document.getElementById('tbCr').innerHTML = `<b>${esc(bf)}</b>`;
-  document.getElementById('dSrch').value = '';
-  document.getElementById('dSort').value = 'def';
-
-  const liste = DROHNEN.filter(d => d.bf === bf);
-  document.getElementById('dStats').innerHTML = `
-    <div class="ds">
-      <div class="ds-n" style="color:${BAUFORM_FARBE[bf]}">${liste.length}</div>
-      <div class="ds-l">Modelle</div>
-    </div>`;
-
+  document.getElementById('dTitle').textContent=bf;
+  document.getElementById('dDesc').textContent=BAUFORM_DESC[bf]||'';
+  document.getElementById('tbCr').innerHTML=`<b>${esc(bf)}</b>`;
+  document.getElementById('dSrch').value='';
+  document.getElementById('dSort').value='def';
+  document.getElementById('priceSlider').value=MAX_PREIS;
+  document.getElementById('euLegende').style.display='flex';
+  updatePD();
+  const liste=DROHNEN.filter(d=>d.bf===bf);
+  document.getElementById('dStats').innerHTML=`<div class="ds"><div class="ds-n" style="color:${BAUFORM_FARBE[bf]}">${liste.length}</div><div class="ds-l">Modelle</div></div>`;
   renderDrohnen();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goHome(){aktiveBauform=null;document.getElementById('vDetail').classList.add('hide');document.getElementById('vHome').classList.remove('hide');document.getElementById('tbCr').innerHTML='Übersicht';document.getElementById('euLegende').style.display='none';window.scrollTo({top:0,behavior:'smooth'});}
+function filterAll(){renderDrohnen();}
+function euSortVal(eu){const m={'C0':0,'C1':1,'C2':2,'C3':3,'Specific':4,'—':5,'Militär':6};return m[eu]??5;}
+function renderDrohnen(){
+  if(!aktiveBauform)return;
+  const grid=document.getElementById('droneGrid');
+  const query=(document.getElementById('dSrch').value||'').toLowerCase().trim();
+  const sort=document.getElementById('dSort').value;
+  const maxP=parseInt(document.getElementById('priceSlider').value);
+  const openSet=new Set();
+  grid.querySelectorAll('.dc-body.open').forEach(b=>openSet.add(b.dataset.id));
+  let liste=DROHNEN.filter(d=>d.bf===aktiveBauform);
+  if(query) liste=liste.filter(d=>(d.n+d.h+d.eg+d.zw+d.di+d.eu+d.kat).toLowerCase().includes(query));
+  if(maxP<MAX_PREIS) liste=liste.filter(d=>d.preis===0||d.preis<=maxP);
+  if(sort==='az') liste.sort((a,b)=>a.n.localeCompare(b.n,'de'));
+  else if(sort==='preis_asc') liste.sort((a,b)=>(a.preis||99999)-(b.preis||99999));
+  else if(sort==='preis_desc') liste.sort((a,b)=>(b.preis||0)-(a.preis||0));
+  else if(sort==='eu') liste.sort((a,b)=>euSortVal(a.eu)-euSortVal(b.eu));
+  else if(sort==='fd') liste.sort((a,b)=>parseFloat(b.fd)-parseFloat(a.fd));
+  document.getElementById('dCnt').textContent=liste.length;
+  document.getElementById('dCntLbl').textContent=liste.length===1?'Drohne':'Drohnen';
+  if(liste.length===0){grid.innerHTML=`<div class="no-results"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Keine Drohnen gefunden. <button onclick="document.getElementById('dSrch').value='';document.getElementById('priceSlider').value=${MAX_PREIS};updatePD();filterAll()" style="background:none;border:none;color:var(--ac);cursor:pointer;font-family:inherit;text-decoration:underline">Filter zurücksetzen</button></div>`;return;}
+  grid.innerHTML=liste.map((d,i)=>buildCard(d,i)).join('');
+  openSet.forEach(id=>{const body=grid.querySelector(`.dc-body[data-id="${id}"]`);const toggle=grid.querySelector(`.dc-toggle[data-id="${id}"]`);if(body)body.classList.add('open');if(toggle){toggle.classList.add('open');toggle.setAttribute('aria-expanded','true');toggle.innerHTML='Weniger anzeigen <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>';}});
+  // Bilder lazy-loaden
+  grid.querySelectorAll('.dc-thumb[data-drone]').forEach(el=>observeThumb(el));
+}
+// Feste Bild-URLs — DJI Store CDN (bestätigt aus store.dji.com)
+const DRONE_IMGS = {
+  "DJI Neo": "https://se-cdn.djiits.com/stormsend/uploads/7225f09e7b4eeb64ff072bb248341eef.png",
+  "DJI Neo 2": "https://se-cdn.djiits.com/stormsend/uploads/7225f09e7b4eeb64ff072bb248341eef.png",
+  "DJI Flip": "https://se-cdn.djiits.com/stormsend/uploads/affa9acde8419f1b0b06d5b7163f2759.png",
+  "DJI Mavic Mini (Mini 1)": "https://se-cdn.djiits.com/stormsend/uploads/1a5e7e29798ba6ba8936bea14b026c9e.png",
+  "DJI Mini 2": "https://se-cdn.djiits.com/stormsend/uploads/1a5e7e29798ba6ba8936bea14b026c9e.png",
+  "DJI Mini 3": "https://se-cdn.djiits.com/stormsend/uploads/1a5e7e29798ba6ba8936bea14b026c9e.png",
+  "DJI Mini 3 Pro": "https://se-cdn.djiits.com/stormsend/uploads/91688462582838579ea1d595eca57dd7.png",
+  "DJI Mini 4 Pro": "https://se-cdn.djiits.com/stormsend/uploads/91688462582838579ea1d595eca57dd7.png",
+  "DJI Mini 5 Pro": "https://se-cdn.djiits.com/stormsend/uploads/91688462582838579ea1d595eca57dd7.png",
+  "DJI Mavic Air 2": "https://se-cdn.djiits.com/stormsend/uploads/ac239a1e759728a00689a5eca54f70b6.png",
+  "DJI Air 2S": "https://se-cdn.djiits.com/stormsend/uploads/ac239a1e759728a00689a5eca54f70b6.png",
+  "DJI Air 3": "https://se-cdn.djiits.com/stormsend/uploads/ac239a1e759728a00689a5eca54f70b6.png",
+  "DJI Air 3S": "https://se-cdn.djiits.com/stormsend/uploads/ac239a1e759728a00689a5eca54f70b6.png",
+  "DJI Mavic 2 Pro": "https://se-cdn.djiits.com/stormsend/uploads/b90b7b3cb4b8d1c8d0c6276ed1ae8568.png",
+  "DJI Mavic 3 Classic": "https://se-cdn.djiits.com/stormsend/uploads/b90b7b3cb4b8d1c8d0c6276ed1ae8568.png",
+  "DJI Mavic 3 Pro": "https://se-cdn.djiits.com/stormsend/uploads/ea5780b0052cbf8ee984cade3324bb56.png",
+  "DJI Mavic 3 Multispektral": "https://se-cdn.djiits.com/stormsend/uploads/b90b7b3cb4b8d1c8d0c6276ed1ae8568.png",
+  "DJI Mavic 4 Pro": "https://se-cdn.djiits.com/stormsend/uploads/ea5780b0052cbf8ee984cade3324bb56.png",
+  "DJI Phantom 4 Pro V2.0": "https://se-cdn.djiits.com/stormsend/uploads/b90b7b3cb4b8d1c8d0c6276ed1ae8568.png",
+  "DJI Avata 2": "https://se-cdn.djiits.com/stormsend/uploads/8c589c83d271830075bf5151d0e141f2.png",
+  "DJI Avata 360": "https://se-cdn.djiits.com/stormsend/uploads/8c589c83d271830075bf5151d0e141f2.png",
+  "DJI Inspire 2": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Inspire 3": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Matrice 4E": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Matrice 4T": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Matrice 30": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Matrice 30T": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Matrice 300 RTK": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Matrice 350 RTK": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Matrice 400": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Matrice 3D / 3TD": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Agras T10": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Agras T25": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Agras T50": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Agras T70": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI Agras T100": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+  "DJI FlyCart 30": "https://se-cdn.djiits.com/stormsend/uploads/ccff0a0c82c69fbed6b39ccb8cf6ed4a.png",
+};
+
+function loadDroneImg(name, el) {
+  const url = DRONE_IMGS[name];
+  if (!url) return; // kein Bild → Emoji-Platzhalter bleibt
+  const ph = el.querySelector('.dc-ph');
+  const img = document.createElement('img');
+  img.alt = name;
+  img.loading = 'lazy';
+  img.onload = function() { if (ph) ph.style.display = 'none'; };
+  img.onerror = function() { img.remove(); }; // bei 404 → Platzhalter bleibt
+  el.appendChild(img);
+  img.src = url;
 }
 
-/* ── Zurück zur Startseite ── */
-function goHome() {
-  aktiveBauform = null;
-  document.getElementById('vDetail').classList.add('hide');
-  document.getElementById('vHome').classList.remove('hide');
-  document.getElementById('tbCr').innerHTML = 'Übersicht';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-/* ── Filter + Sortierung ── */
-function filterAll() { renderDrohnen(); }
-
-function renderDrohnen() {
-  if (!aktiveBauform) return;
-  const grid   = document.getElementById('droneGrid');
-  const query  = (document.getElementById('dSrch').value || '').toLowerCase().trim();
-  const sort   = document.getElementById('dSort').value;
-
-  // Offene Karten merken
-  const openIds = new Set();
-  grid.querySelectorAll('.dc-body.open').forEach(b => openIds.add(b.dataset.id));
-
-  let liste = DROHNEN.filter(d => d.bf === aktiveBauform);
-
-  // Suche
-  if (query) {
-    liste = liste.filter(d =>
-      (d.n + d.h + d.eg + d.zw + d.di).toLowerCase().includes(query));
-  }
-
-  // Sortierung
-  if (sort === 'az')         liste.sort((a, b) => a.n.localeCompare(b.n, 'de'));
-  else if (sort === 'gewicht')   liste.sort((a, b) => parseFloat(a.gw) - parseFloat(b.gw));
-  else if (sort === 'reichweite') liste.sort((a, b) => parseFloat(b.rw) - parseFloat(a.rw));
-  else if (sort === 'flugdauer')  liste.sort((a, b) => parseFloat(b.fd) - parseFloat(a.fd));
-
-  document.getElementById('dCnt').textContent = liste.length;
-  document.getElementById('dCntLbl').textContent = liste.length === 1 ? 'Drohne' : 'Drohnen';
-
-  if (liste.length === 0) {
-    grid.innerHTML = `
-      <div class="no-results">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Keine Drohnen gefunden.<br>Suchbegriff anpassen oder
-        <button onclick="document.getElementById('dSrch').value='';filterAll()"
-                style="background:none;border:none;color:var(--ac);cursor:pointer;font-family:inherit;text-decoration:underline">
-          Filter zurücksetzen
-        </button>
-      </div>`;
-    return;
-  }
-
-  grid.innerHTML = liste.map((d, i) => buildCard(d, i)).join('');
-
-  // Offene Karten wiederherstellen
-  openIds.forEach(id => {
-    const body   = grid.querySelector(`.dc-body[data-id="${id}"]`);
-    const toggle = grid.querySelector(`.dc-toggle[data-id="${id}"]`);
-    if (body)   { body.classList.add('open'); }
-    if (toggle) { toggle.classList.add('open'); toggle.setAttribute('aria-expanded','true'); toggle.textContent = ''; toggle.innerHTML = 'Weniger anzeigen <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>'; }
+const imgObserver = new IntersectionObserver((entries, obs) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    loadDroneImg(e.target.dataset.drone, e.target);
+    obs.unobserve(e.target);
   });
+}, { rootMargin: '300px' });
+
+function observeThumb(el) { imgObserver.observe(el); }
+
+function badgeClass(bf){return bf==='Multicopter'?'bdg-mc':bf==='VTOL'?'bdg-vt':'bdg-fw';}
+function bauformIcon(bf){return bf==='Multicopter'?'🚁':bf==='VTOL'?'🛸':'✈️';}
+function euBadgeClass(eu){const m={'C0':'eu-c0','C1':'eu-c1','C2':'eu-c2','C3':'eu-c3','Specific':'eu-spc','Militär':'eu-spc','—':'eu-spc'};return m[eu]||'eu-spc';}
+function fscheinChip(fs){
+  if(fs==='Nein') return `<span class="fs-chip fs-no">✓ Kein Führerschein</span>`;
+  if(fs.includes('A1/A3')) return `<span class="fs-chip fs-a1">A1/A3-Nachweis</span>`;
+  if(fs.includes('A2')) return `<span class="fs-chip fs-a2">A2-Fernpilotenzeugnis</span>`;
+  if(fs==='Militär') return `<span class="fs-chip fs-mil">Militär</span>`;
+  return `<span class="fs-chip fs-spc">Spez. Genehmigung</span>`;
 }
-
-/* ── Bauform → Badge-Klasse ── */
-function badgeClass(bf) {
-  if (bf === 'Multicopter') return 'bdg-mc';
-  if (bf === 'VTOL')        return 'bdg-vt';
-  if (bf === 'Fixed Wing')  return 'bdg-fw';
-  return '';
+function katChip(kat){
+  if(kat.includes('A1')) return `<span class="fs-chip fs-a1">${esc(kat)}</span>`;
+  if(kat.includes('A2')) return `<span class="fs-chip fs-a2">${esc(kat)}</span>`;
+  if(kat.includes('A3')) return `<span class="fs-chip fs-a3">${esc(kat)}</span>`;
+  if(kat.includes('Militär')) return `<span class="fs-chip fs-mil">${esc(kat)}</span>`;
+  return `<span class="fs-chip fs-spc">${esc(kat)}</span>`;
 }
-
-/* ── Drohnen-Icon je Bauform ── */
-function bauformIcon(bf) {
-  if (bf === 'Multicopter') return '🚁';
-  if (bf === 'VTOL')        return '🛸';
-  if (bf === 'Fixed Wing')  return '✈️';
-  return '🛩️';
+function euNote(d){
+  if(d.eu==='Militär') return 'Rein militärische Nutzung — EU-Drohnenverordnung nicht anwendbar. Nationale Verteidigungsregelungen gelten.';
+  if(d.eu==='C0') return 'Kein EU-Führerschein erforderlich. Keine Registrierungspflicht in den meisten Ländern (Freizeitnutzung). Pflichtversicherung und 120m-Höhenlimit beachten.';
+  if(d.eu==='C1') return 'EU-Kompetenznachweis A1/A3 erforderlich (Online-Kurs + Prüfung, ~30 Min.). Registrierung als Betreiber beim LBA. Open A1: nahe an Einzelpersonen, keine Menschenmengen überfliegen.';
+  if(d.eu==='C2') return 'A2-Fernpilotenzeugnis (Theorie + Praxis + Selbsterklärung) für Open A2 nötig: min. 30 m zu Personen (5 m im Langsamflug). Ohne A2-Zeugnis nur Open A3 (150 m von Gebäuden/Personen).';
+  if(d.eu==='C3') return 'A1/A3-Nachweis reicht, da nur Open A3 erlaubt. Mindestabstand 150 m zu Wohn-/Gewerbe-/Erholungsgebieten und Personen. Keine unbeteiligten Personen im Flugbereich.';
+  return 'Betrieb in der Specific-Kategorie: Individuelle Betriebsgenehmigung oder STS (Standard-Szenario) nötig. Gilt für MTOW >25 kg, BVLOS-Flüge oder nicht-klassifizierte Systeme.';
 }
-
-/* ── Karte bauen ── */
-function buildCard(d, i) {
-  const idx = esc(d.n + i); // eindeutiger Schlüssel
-  return `
-<div class="dc" id="card-${i}">
-
-  <!-- Thumbnail-Bereich (immer sichtbar) -->
+function buildCard(d,i){
+  const idx=`c${i}`;
+  const isCl=(d.preis===0);
+  const preisStr=isCl?'Auf Anfrage / Militär':`ab ${d.preis.toLocaleString('de')} €`;
+  return `<div class="dc">
   <div class="dc-top">
-    <div class="dc-thumb">
-      <span class="dc-thumb-icon">${bauformIcon(d.bf)}</span>
-      <div class="dc-thumb-ph">
-        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    <div class="dc-thumb" data-drone="${d.n.replace(/"/g,'&quot;')}" id="thumb_${i}">
+      <div class="dc-ph">
+        <span class="dc-ph-icon">${bauformIcon(d.bf)}</span>
+        <span class="dc-ph-txt">Lade Bild…</span>
+      </div>
+      <div class="dc-img-bdg">
+        <span class="dc-img-b dc-img-b-bf">${d.bf}</span>
+        <span class="dc-img-b dc-img-b-yr">${d.bj}</span>
       </div>
     </div>
-
     <div class="dc-meta">
       <div class="dc-name">${esc(d.n)}</div>
       <div class="dc-hersteller">${esc(d.h)}</div>
+      ${isCl?`<span class="dc-price classified">Auf Anfrage / Militär</span>`:`<span class="dc-price">ab ${d.preis.toLocaleString('de')} €</span>`}
     </div>
-
     <div class="dc-badges">
       <span class="bdg-bauform ${badgeClass(d.bf)}">${esc(d.bf)}</span>
+      ${d.eu!=='—'?`<span class="bdg-eu ${euBadgeClass(d.eu)}">${esc(d.eu)}</span>`:''}
     </div>
   </div>
-
-  <!-- Quick-Stats: Gewicht, Flugdauer, Reichweite -->
   <div class="dc-quickstats">
-    <div class="dc-qs-item">
-      <div class="dc-qs-val">${esc(d.gw) || '—'}</div>
-      <div class="dc-qs-lbl">Gewicht (leer)</div>
-    </div>
-    <div class="dc-qs-item">
-      <div class="dc-qs-val">${esc(d.fd) || '—'}</div>
-      <div class="dc-qs-lbl">Flugdauer</div>
-    </div>
-    <div class="dc-qs-item">
-      <div class="dc-qs-val">${esc(d.rw) || '—'}</div>
-      <div class="dc-qs-lbl">Reichweite</div>
-    </div>
+    <div class="dc-qs-item"><div class="dc-qs-val">${esc(d.gw)||'—'}</div><div class="dc-qs-lbl">Gewicht (leer)</div></div>
+    <div class="dc-qs-item"><div class="dc-qs-val">${esc(d.fd)||'—'}</div><div class="dc-qs-lbl">Flugdauer</div></div>
+    <div class="dc-qs-item"><div class="dc-qs-val">${esc(d.rw)||'—'}</div><div class="dc-qs-lbl">Reichweite</div></div>
   </div>
-
-  <!-- Toggle-Button -->
-  <button class="dc-toggle" data-id="${idx}"
-          onclick="toggleCard(this)" aria-expanded="false">
-    Mehr Details
-    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-  </button>
-
-  <!-- Ausgeklappter Body mit allen Details -->
+  <button class="dc-toggle" data-id="${idx}" onclick="toggleCard(this)" aria-expanded="false">Mehr Details <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
   <div class="dc-body" data-id="${idx}">
-
-    <!-- Kurze Beschreibung -->
-    ${d.di ? `<div class="dc-desc">${esc(d.di)}</div>` : ''}
-
-    <!-- Detaillierte Daten-Grid -->
-    <div class="dc-datengrid">
-      <div class="dc-daten-cell">
-        <div class="dc-daten-label">Bauform</div>
-        <div class="dc-daten-val">${esc(d.bf) || '—'}</div>
-      </div>
-      <div class="dc-daten-cell">
-        <div class="dc-daten-label">Baujahr</div>
-        <div class="dc-daten-val">${esc(d.bj) || '—'}</div>
-      </div>
-      <div class="dc-daten-cell">
-        <div class="dc-daten-label">Verwendungszweck</div>
-        <div class="dc-daten-val">${esc(d.zw) || '—'}</div>
-      </div>
-      <div class="dc-daten-cell">
-        <div class="dc-daten-label">Nutzlast</div>
-        <div class="dc-daten-val">${esc(d.nl) || '—'}</div>
-      </div>
-      <div class="dc-daten-cell">
-        <div class="dc-daten-label">Reichweite</div>
-        <div class="dc-daten-val">${esc(d.rw) || '—'}</div>
-      </div>
-      <div class="dc-daten-cell">
-        <div class="dc-daten-label">Kameraqualität</div>
-        <div class="dc-daten-val">${esc(d.kq) || '—'}</div>
-      </div>
-      <div class="dc-daten-cell">
-        <div class="dc-daten-label">Verbauter Sensor</div>
-        <div class="dc-daten-val">${esc(d.se) || '—'}</div>
-      </div>
-      <div class="dc-daten-cell">
-        <div class="dc-daten-label">Einsatzgebiet</div>
-        <div class="dc-daten-val">${esc(d.eg) || '—'}</div>
-      </div>
+    ${d.di?`<div class="dc-desc">${esc(d.di)}</div>`:''}
+    <div class="dc-eu-box">
+      <div class="dc-eu-box-title">🇪🇺 EU-Regulierung (EASA)</div>
+      <div class="dc-eu-col"><div class="dc-eu-label">Drohnenklasse</div><div class="dc-eu-val"><span class="bdg-eu ${euBadgeClass(d.eu)}">${esc(d.eu)}</span></div></div>
+      <div class="dc-eu-col"><div class="dc-eu-label">Flugkategorie</div><div class="dc-eu-val">${katChip(d.kat)}</div></div>
+      <div class="dc-eu-col"><div class="dc-eu-label">Führerschein (EU)</div><div class="dc-eu-val">${fscheinChip(d.fs)}</div></div>
+      <div class="dc-eu-note">${euNote(d)}</div>
     </div>
-
-    <!-- Offizieller Link -->
-    ${d.url && d.url !== '#' ? `
-    <div class="dc-links">
-      <a class="dc-link-btn dc-link-ext" href="${esc(d.url)}" target="_blank" rel="noopener">
-        🔗 Offizielle Webseite ↗
-      </a>
-    </div>` : ''}
-
-  </div><!-- /dc-body -->
-</div><!-- /dc -->`;
+    <div class="dc-datengrid">
+      <div class="dc-daten-cell price-cell"><div class="dc-daten-label">Preis (UVP)</div><div class="dc-daten-val ${isCl?'classified':''}">${preisStr}</div></div>
+      <div class="dc-daten-cell"><div class="dc-daten-label">Bauform</div><div class="dc-daten-val">${esc(d.bf)}</div></div>
+      <div class="dc-daten-cell"><div class="dc-daten-label">Baujahr</div><div class="dc-daten-val">${esc(d.bj)}</div></div>
+      <div class="dc-daten-cell"><div class="dc-daten-label">Verwendungszweck</div><div class="dc-daten-val">${esc(d.zw)}</div></div>
+      <div class="dc-daten-cell"><div class="dc-daten-label">Nutzlast</div><div class="dc-daten-val">${esc(d.nl)||'—'}</div></div>
+      <div class="dc-daten-cell"><div class="dc-daten-label">Reichweite</div><div class="dc-daten-val">${esc(d.rw)}</div></div>
+      <div class="dc-daten-cell"><div class="dc-daten-label">Kameraqualität</div><div class="dc-daten-val">${esc(d.kq)||'—'}</div></div>
+      <div class="dc-daten-cell"><div class="dc-daten-label">Verbauter Sensor</div><div class="dc-daten-val">${esc(d.se)||'—'}</div></div>
+      <div class="dc-daten-cell"><div class="dc-daten-label">Einsatzgebiet</div><div class="dc-daten-val">${esc(d.eg)}</div></div>
+    </div>
+    ${d.url&&d.url!=='#'?`<div class="dc-links"><a class="dc-link-btn dc-link-ext" href="${esc(d.url)}" target="_blank" rel="noopener">🔗 Offizielle Webseite ↗</a></div>`:''}
+  </div></div>`;
 }
-
-/* ── Karte auf-/zuklappen ── */
-function toggleCard(btn) {
-  const id   = btn.dataset.id;
-  const body = btn.parentElement.querySelector(`.dc-body[data-id="${id}"]`);
-  if (!body) return;
-  const isOpen = body.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
-  btn.setAttribute('aria-expanded', isOpen);
-  btn.innerHTML = isOpen
-    ? 'Weniger anzeigen <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>'
-    : 'Mehr Details <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
-}
-
-/* ── Init ── */
+function toggleCard(btn){const id=btn.dataset.id;const body=btn.closest('.dc').querySelector(`.dc-body[data-id="${id}"]`);if(!body)return;const isOpen=body.classList.toggle('open');btn.classList.toggle('open',isOpen);btn.setAttribute('aria-expanded',isOpen);btn.innerHTML=isOpen?'Weniger anzeigen <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>':'Mehr Details <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';}
 updateStats();
 </script>
 </body>
