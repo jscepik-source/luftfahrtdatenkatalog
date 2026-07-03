@@ -1,0 +1,4 @@
+# Persönliche Tools / potenzielle Secrets — NICHT ins öffentliche Repo
+telegram_claude_bridge.py
+*.env
+tmp_*.txt
