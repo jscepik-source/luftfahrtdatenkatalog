@@ -526,6 +526,60 @@ LAND_KONFIGS = [
         'mode':     'selenium',
         'output':   'nz_katalog_export.json',
     },
+
+    # ── NEUE AIP-LÄNDER (Standard-eAIP) — hinzugefügt, wird beim nächsten
+    #    GitHub-Actions-Lauf validiert. Nicht funktionierende einfach entfernen.
+    #    VORLAGE zum Ergänzen weiterer Länder (URL aus AIP_PREFIXES übernehmen):
+    #    { 'prefix':'XX', 'name':'… AIP (Land)', 'start_url':'https://…', 'mode':'selenium', 'output':'xx_katalog_export.json' },
+    {
+        'prefix':   'LM',
+        'name':     'Malta MATS AIP',
+        'start_url':'https://www.mats.com.mt/aip',
+        'mode':     'selenium',
+        'output':   'lm_katalog_export.json',
+    },
+    {
+        'prefix':   'LW',
+        'name':     'M-NAV AIP (Nordmazedonien)',
+        'start_url':'https://www.m-nav.com.mk/en/aeronautical-information',
+        'mode':     'selenium',
+        'output':   'lw_katalog_export.json',
+    },
+    {
+        'prefix':   'HT',
+        'name':     'TCAA AIP (Tansania)',
+        'start_url':'https://www.tcaa.go.tz/aip',
+        'mode':     'selenium',
+        'output':   'ht_katalog_export.json',
+    },
+    {
+        'prefix':   'HU',
+        'name':     'UCAA AIP (Uganda)',
+        'start_url':'https://www.caa.go.ug/aip',
+        'mode':     'selenium',
+        'output':   'hu_katalog_export.json',
+    },
+    {
+        'prefix':   'HR',
+        'name':     'RCAA AIP (Ruanda)',
+        'start_url':'https://www.rcaa.gov.rw/aip',
+        'mode':     'selenium',
+        'output':   'hr_katalog_export.json',
+    },
+    {
+        'prefix':   'FB',
+        'name':     'CAAB AIP (Botswana)',
+        'start_url':'https://www.caab.co.bw/aip',
+        'mode':     'selenium',
+        'output':   'fb_katalog_export.json',
+    },
+    {
+        'prefix':   'HA',
+        'name':     'ECAA AIP (Äthiopien)',
+        'start_url':'https://www.ecaa.gov.et/aip',
+        'mode':     'selenium',
+        'output':   'ha_katalog_export.json',
+    },
 ]
 
 
