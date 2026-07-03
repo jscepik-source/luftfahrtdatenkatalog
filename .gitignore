@@ -1,5 +1,6 @@
 # Persönliche Tools / potenzielle Secrets — NICHT ins öffentliche Repo
 telegram_claude_bridge.py
 telegram_bridge.log
+start_telegram_bridge.bat
 *.env
 tmp_*.txt
