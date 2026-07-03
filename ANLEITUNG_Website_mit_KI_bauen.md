@@ -266,6 +266,16 @@ Manche Daten (nationale NOTAMs, VFR/IFR-Karten, Länder-Lufträume) ändern sich
 
 > **Wichtig fürs Teamwork:** Weil die Bots selbst pushen, **immer** vor dem eigenen Push `git fetch` + `git merge origin/main`.
 
+### Die Bot-Architektur konkret (im Projekt: ~30 Bots)
+Das Projekt hat **~30 Bots**, gesteuert von **einem** Workflow (`.github/workflows/update-katalog.yml`, alle 6 h):
+- **Generischer eAIP-Bot** (`eaip_bot.py`): ein Scraper für **alle Länder mit EUROCONTROL-Standard-eAIP**. Neue Länder werden nur als **Config-Eintrag** in der Liste `LAND_KONFIGS` ergänzt (prefix, name, start_url, output) — **kein neuer Bot nötig**.
+- **Spezial-Bots** je Land/Quelle (DFS, FAA, Kanada, China, Russland, Thailand …) für **Nicht-Standard-AIPs** (eigene Portale/Formate).
+- Jeder Bot schreibt eine **`<präfix>_katalog_export.json`**; die Website lädt sie über die Zuordnung `KATALOG_DATEI` (Präfix → Datei) und `ladeKatalogDatei()`.
+
+> **PROMPT M.2 — Neues AIP-Land hinzufügen:** „Füge in `eaip_bot.py` einen neuen `LAND_KONFIGS`-Eintrag für **\<Land\>** hinzu (`prefix`, `name`, `start_url` aus dem Quellenkatalog, `mode:'selenium'`, `output:'<prefix>_katalog_export.json'`). Ergänze die Ausgabedatei im Workflow (`git add`) und die Zuordnung `KATALOG_DATEI` in `ourairports.html`, damit die Seite die Daten lädt. Bei Nicht-Standard-AIP stattdessen einen eigenen Länder-Bot nach dem Muster von `belgium_bot.py`."
+
+**Coverage-Hinweis:** Von 208 AIP-Präfixen sind ~120 durch Bots abgedeckt; die restlichen sind überwiegend **login-geschützte oder Nicht-Standard-AIPs** (Naher Osten, Teile Asiens/Afrikas/Lateinamerikas), die einen individuellen Bot bräuchten. Standard-eAIP-Länder lassen sich dagegen in Minuten ergänzen (siehe Prompt M.2).
+
 ---
 
 # TEIL N · Sicherheit (Kernthema für die Präsentation)
