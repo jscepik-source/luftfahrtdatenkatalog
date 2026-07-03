@@ -6,6 +6,15 @@
     <title>Luftraumkarte — weltweit</title>
     <meta name="theme-color" content="#0f172a">
     <meta name="description" content="Interaktive weltweite Luftraumkarte: ICAO-Klassen A–G, CTR, TMA, Restricted/Prohibited/Danger und mehr — auf Basis von OpenAIP.">
+    <meta name="keywords" content="Luftraumkarte, Lufträume, ICAO-Klassen, CTR, TMA, Restricted, Danger, OpenAIP, Luftfahrt, Hochschule RheinMain">
+    <meta name="author" content="Hochschule RheinMain">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://jscepik-source.github.io/dfs-katalog/luftraeume.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Luftraumkarte — weltweit (OpenAIP)">
+    <meta property="og:description" content="Interaktive Luftraumkarte: ICAO-Klassen A–G, CTR, TMA, Restricted/Prohibited/Danger — weltweit.">
+    <meta property="og:locale" content="de_DE">
+    <meta name="twitter:card" content="summary">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -261,6 +270,7 @@
     <a class="avx-pill avx-active" href="luftraeume.html">Lufträume</a>
   </span>
 </nav>
+<div id="nav-container"></div>
 
 <header>
     <span class="header-title">🗺 Lufträume</span>
@@ -818,5 +828,6 @@ function buildLegend() {
     if (activeCountries.size > 0) ladeAirspaces();   // Standardländer (DE/AT/CH) laden
 })();
 </script>
+<script src="navigation.js"></script>
 </body>
 </html>

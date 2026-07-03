@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jscepik-source.github.io/dfs-katalog/sitemap.xml
