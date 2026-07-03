@@ -188,6 +188,9 @@ jobs:
                   lm_katalog_export.json lw_katalog_export.json ht_katalog_export.json \
                   hu_katalog_export.json hr_katalog_export.json fb_katalog_export.json \
                   ha_katalog_export.json \
+                  oi_katalog_export.json oy_katalog_export.json os_katalog_export.json \
+                  or_katalog_export.json ol_katalog_export.json op_katalog_export.json \
+                  oa_katalog_export.json mp_katalog_export.json mr_katalog_export.json \
                   ep_ifr_katalog_export.json ep_vfr_katalog_export.json pansa_notam_export.json \
                   u_katalog_export.json \
                   eurocontrol_katalog_export.json 2>/dev/null || true

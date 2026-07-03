@@ -580,6 +580,73 @@ LAND_KONFIGS = [
         'mode':     'selenium',
         'output':   'ha_katalog_export.json',
     },
+
+    # ── EXPERIMENTELL: restliche Welt (Naher Osten + Mittelamerika) ──────────
+    #    Viele dieser AIPs sind login-geschützt/nicht-standard -> ggf. 0 Treffer.
+    #    Wird beim Actions-Lauf validiert; nicht funktionierende Länder entfernen.
+    {
+        'prefix':   'OI',
+        'name':     "CAAI AIP Iran",
+        'start_url':'https://ais.airport.ir/',
+        'mode':     'selenium',
+        'output':   'oi_katalog_export.json',
+    },
+    {
+        'prefix':   'OY',
+        'name':     "CAMA AIP Yemen",
+        'start_url':'https://www.cama.gov.ye/',
+        'mode':     'selenium',
+        'output':   'oy_katalog_export.json',
+    },
+    {
+        'prefix':   'OS',
+        'name':     "GACA AIP Saudi Arabia",
+        'start_url':'https://www.gaca.gov.sa/en/services/Pages/aip.aspx',
+        'mode':     'selenium',
+        'output':   'os_katalog_export.json',
+    },
+    {
+        'prefix':   'OR',
+        'name':     "ICAA AIP Iraq",
+        'start_url':'https://www.icaa.gov.iq/en/',
+        'mode':     'selenium',
+        'output':   'or_katalog_export.json',
+    },
+    {
+        'prefix':   'OL',
+        'name':     "DGCA AIP Lebanon",
+        'start_url':'https://www.dgca.gov.lb/aip',
+        'mode':     'selenium',
+        'output':   'ol_katalog_export.json',
+    },
+    {
+        'prefix':   'OP',
+        'name':     "CAA AIP Pakistan",
+        'start_url':'https://www.caapakistan.com.pk/aip',
+        'mode':     'selenium',
+        'output':   'op_katalog_export.json',
+    },
+    {
+        'prefix':   'OA',
+        'name':     "ACAA AIP Afghanistan",
+        'start_url':'https://www.acaa.gov.af/en/',
+        'mode':     'selenium',
+        'output':   'oa_katalog_export.json',
+    },
+    {
+        'prefix':   'MP',
+        'name':     "AAC AIP Panama",
+        'start_url':'https://www.aac.gob.pa/aip',
+        'mode':     'selenium',
+        'output':   'mp_katalog_export.json',
+    },
+    {
+        'prefix':   'MR',
+        'name':     "DGCA AIP Costa Rica",
+        'start_url':'https://www.dgac.go.cr/aip',
+        'mode':     'selenium',
+        'output':   'mr_katalog_export.json',
+    },
 ]
 
 
