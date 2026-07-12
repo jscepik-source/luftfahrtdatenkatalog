@@ -2932,21 +2932,17 @@ const NOTAM_INFO_URL        = 'https://raw.githubusercontent.com/jscepik-source/
 const FLUGZEUG_KATALOG_URL  = 'Luftfahrt_Katalog_FINAL_CLEAN_10.html';   // Live-ADS-B-Typ -> Flugzeug-Katalog
 const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/eurocontrol_katalog_export.json';
 const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/lxnav_latest.json';
-// Geteilter OpenAIP-Key (read-only Kartendaten) -> Karten laufen sofort ohne Setup.
-// Ein eigener Key (localStorage) hat Vorrang und nutzt das eigene Limit.
-function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '2800111e267cd352c035b2df2102fbdf').trim(); }
-// OpenAIP läuft standardmäßig über den Worker-Proxy (Key liegt geheim im Worker,
-// nie im Seiten-Code). Wer einen eigenen Key einträgt, nutzt OpenAIP direkt.
-const OAIP_PROXY = 'https://deploy.jscepik.workers.dev/oaip';
+// Jede*r nutzt den EIGENEN kostenlosen OpenAIP-Key (nur im Browser gespeichert, nie übertragen).
+// Kein geteilter Key, kein Proxy über fremde Konten. Ohne eigenen Key bleiben Luftraumdaten aus.
+function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
+function hasOpenAipKey(){ return getOpenAipKey().length > 0; }
 function oaipTileTemplate(){
     const k = getOpenAipKey();
-    return k ? `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${k}`
-             : `${OAIP_PROXY}/tiles/{z}/{x}/{y}.png`;
+    return k ? `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${k}` : null;
 }
 function oaipAirspaceFetch(qs){
     const k = getOpenAipKey();
-    return k ? fetch(`https://api.core.openaip.net/api/airspaces?${qs}`, { headers: { 'x-openaip-api-key': k } })
-             : fetch(`${OAIP_PROXY}/airspaces?${qs}`);
+    return fetch(`https://api.core.openaip.net/api/airspaces?${qs}`, { headers: { 'x-openaip-api-key': k } });
 }
 function setOpenAipKey(){
     const cur = localStorage.getItem('openaip_key') || '';
@@ -3696,12 +3692,16 @@ async function ladeKarte(icao, lat, lon) {
     ).addTo(map);
 
     // OpenAIP Tile-Layer (optional, standardmäßig aus — Polygone sind der Primär-Layer).
-    // Läuft über den Worker-Proxy -> kein Key im Code nötig, funktioniert für alle.
-    const oaipTile = L.tileLayer(
-        oaipTileTemplate(),
-        { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.75 }
-    );
-    layerCtrl.addOverlay(oaipTile, '🌐 OpenAIP Tiles');
+    // Nur mit eigenem OpenAIP-Key; sonst 🔑-Button zum kostenlosen Eintragen des eigenen Keys.
+    if (hasOpenAipKey()) {
+        const oaipTile = L.tileLayer(
+            oaipTileTemplate(),
+            { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.75 }
+        );
+        layerCtrl.addOverlay(oaipTile, '🌐 OpenAIP Tiles');
+    } else {
+        addOaipKeyControl(map);
+    }
 
     requestAnimationFrame(() => requestAnimationFrame(() => map.invalidateSize()));
     ladeFlughafenLayout(map, lat, lon);
@@ -6989,8 +6989,8 @@ function globusZoomAuf(lat, lon, icao) {
 
 <script>
 // ── KI-Assistent (v4) ────────────────────────────────────────────────────────
-const WORKER_URL       = 'https://deploy.jscepik.workers.dev/'; // Cloudflare Worker – Key sicher serverseitig
-const GROQ_API_KEY     = ''; // leer – Key liegt im Worker
+const WORKER_URL       = ''; // kein geteilter Worker mehr – jede*r nutzt eigenen Groq-Key oder keyless Pollinations
+const GROQ_API_KEY     = ''; // nie im Client – eigener Key via ⚙ (localStorage 'user_groq_key')
 const GEMINI_API_KEY   = '';
 const AI_MODELS        = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
 let   aiModelIdx       = 0;
@@ -7806,25 +7806,8 @@ async function aiSend() {
         }
     }
 
-    // ── 2) Geteilter Cloudflare-Worker (Fallback, nur wenn kein eigener Key gesetzt) ──
-    if (!reply && WORKER_URL) {
-        const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
-        for (const model of groqModels) {
-            try {
-                const messages = [{ role:'system', content: systemWithCtx }, ...toOAI(aiHistory)];
-                const res = await fetchTimed(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ payload: { model, messages, max_tokens: 1200, temperature: 0.65 } })
-                }, 12000);
-                if (!res.ok) { lastErr = new Error(`Worker HTTP ${res.status}`); continue; }
-                const data = await res.json();
-                const txt  = data.choices?.[0]?.message?.content;
-                if (!txt)  { lastErr = new Error('Worker: Leere Antwort'); continue; }
-                reply = txt; usedModel = `Groq ${model}`; break;
-            } catch(e) { lastErr = e; }
-        }
-    }
+    // ── 2) Kein geteilter Worker mehr: ohne eigenen Groq-Key geht es direkt auf den
+    //       keyless Pollinations-Fallback (läuft über kein persönliches Konto). ──
 
     // ── Pollinations.ai (kein Key nötig) ─────────────────────────────────────
     const pollinationsModels = ['openai', 'mistral', 'llama', 'mistral-large', 'openai-large'];

@@ -1,5 +1,5 @@
 // ============================================================================
-//  KOMPLETTER Cloudflare-Worker für  deploy.jscepik.workers.dev
+//  KOMPLETTER Cloudflare-Worker für  deploy.DEIN-NAME.workers.dev
 //  Ersetzt deinen bisherigen Worker-Code 1:1 und kann zusätzlich OpenAIP.
 //
 //  Aufgaben:
@@ -10,8 +10,8 @@
 //
 //  EINRICHTUNG (Cloudflare Dashboard -> Worker "deploy"):
 //   A) Settings -> Variables -> zwei Variablen (jeweils "Encrypt"):
-//        GROQ_KEY     = <dein bisheriger Groq-Key>      (hast du schon)
-//        OPENAIP_KEY  = 2800111e267cd352c035b2df2102fbdf
+//        GROQ_KEY     = <dein Groq-Key>
+//        OPENAIP_KEY  = <dein OpenAIP-Key>   (NIE einen echten Key hier im Klartext ablegen)
 //   B) Den GESAMTEN Code unten in den Worker-Editor einfügen -> Save & Deploy.
 //
 //  HINWEIS: Falls dein bisheriger Worker noch ANDERE Dinge macht (außer der KI),

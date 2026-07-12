@@ -1471,10 +1471,10 @@ document.addEventListener('keydown', e=>{
 });
 
 // ── Interaktive Karte: Leaflet + OpenStreetMap + OpenAIP-Lufträume ──
-// Hinweis: öffentlicher Client-seitiger OpenAIP-Key (wie auf der Flughafen-Seite eingebunden,
-// damit beide Seiten beim Zusammenführen konsistent bleiben). Bei Bedarf eigenen kostenlosen
-// OpenAIP-Key unter openaip.net eintragen.
-const OPENAIP_KEY = '2800111e267cd352c035b2df2102fbdf';
+// Jede*r nutzt den EIGENEN kostenlosen OpenAIP-Key (kostenlos auf openaip.net/register),
+// origin-weit im Browser gespeichert (localStorage['openaip_key']) — derselbe Key wie auf der
+// Flughäfen-/Lufträume-Seite. Ohne eigenen Key bleiben die OpenAIP-Lufträume hier einfach aus.
+const OPENAIP_KEY = (localStorage.getItem('openaip_key') || '').trim();
 
 const OAIP_UNIT       = {0:'ft', 1:'FL', 2:'m'};
 const OAIP_REF        = {0:'GND', 1:'MSL', 2:'STD'};

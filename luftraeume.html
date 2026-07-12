@@ -196,6 +196,28 @@
         .lr-alt input[type=range] { width: 128px; accent-color: var(--primary); cursor: pointer; }
         .lr-alt .alt-val { min-width: 70px; text-align: right; color: var(--primary); font-weight: 700; }
 
+        /* ── „Ohne Key"-Hinweis ── */
+        .lr-nokey {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 620;
+            width: 380px; max-width: calc(100vw - 32px);
+            background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+            box-shadow: var(--shadow); padding: 22px 24px 24px; text-align: center; display: none;
+        }
+        .lr-nokey.show { display: block; }
+        .lr-nokey h3 { font-size: 1.05rem; margin-bottom: 9px; }
+        .lr-nokey p { font-size: 0.83rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 16px; }
+        .lr-nokey-x { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--text-dim); font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 2px 6px; border-radius: 8px; }
+        .lr-nokey-x:hover { background: var(--surface-2); color: var(--text); }
+        .lr-nokey-btns { display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; }
+        .lr-nokey-btn {
+            border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+            padding: 9px 16px; border-radius: var(--radius-sm); cursor: pointer; text-decoration: none;
+            font-family: var(--font); font-size: 0.83rem; font-weight: 600; transition: all 0.15s;
+        }
+        .lr-nokey-btn:hover { border-color: var(--primary); }
+        .lr-nokey-btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .lr-nokey-btn.primary:hover { background: var(--primary-hov); }
+
         /* ── Legende ── */
         #legend {
             position: absolute; bottom: 76px; right: 12px; z-index: 500;
@@ -360,7 +382,7 @@
             <input id="country-search" class="lr-cs" placeholder="Land suchen (DE, Frankreich…)" oninput="buildChips()" aria-label="Land suchen">
             <div id="country-chips"></div>
             <button class="lr-load" id="load-btn" onclick="ladeAirspaces()">▶ Ausgewählte Länder laden</button>
-            <p class="lr-hint">Klickbare Luftraum-Polygone werden pro Land geladen. Der weltweite OpenAIP-Kachel-Overlay ist immer sichtbar.</p>
+            <p class="lr-hint">Klickbare Luftraum-Polygone werden pro Land geladen. Benötigt deinen eigenen OpenAIP-Key (siehe unten).</p>
         </div>
 
         <div class="lr-section">
@@ -384,14 +406,14 @@
         </div>
 
         <div class="lr-section">
-            <h4>OpenAIP API-Key <span style="margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0">optional</span></h4>
-            <input id="key-input" type="password" class="settings-input" placeholder="eigener OpenAIP-Key">
+            <h4>OpenAIP API-Key <span style="margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0">erforderlich</span></h4>
+            <input id="key-input" type="password" class="settings-input" placeholder="dein OpenAIP-Key">
             <div class="settings-row">
                 <button class="settings-save" onclick="saveKey()">Speichern</button>
                 <a href="https://www.openaip.net/register" target="_blank" rel="noopener" class="settings-link">→ Kostenlos registrieren</a>
             </div>
             <span id="key-status"></span>
-            <p class="lr-hint">Die Karte läuft auch ohne eigenen Key. Ein eigener Key nutzt dein eigenes Limit (schneller bei vielen Ländern).</p>
+            <p class="lr-hint">Für die Luftraumdaten brauchst du einen eigenen, kostenlosen OpenAIP-Key (Registrierung ~1 Min). Er wird <strong>nur in deinem Browser</strong> gespeichert (localStorage) und nie an uns übertragen.</p>
         </div>
     </aside>
 
@@ -401,6 +423,17 @@
         <span>Höhe</span>
         <input type="range" id="alt-slider" min="0" max="200" step="5" value="200" oninput="onAltChange()" aria-label="Höhenfilter">
         <span class="alt-val" id="alt-val">alle Höhen</span>
+    </div>
+
+    <!-- „Ohne Key"-Hinweis: jede*r nutzt den eigenen kostenlosen OpenAIP-Key -->
+    <div id="no-key-note" class="lr-nokey" role="dialog" aria-label="OpenAIP-Key erforderlich">
+        <button class="lr-nokey-x" onclick="hideKeyPrompt()" aria-label="Schließen">×</button>
+        <h3>🔑 OpenAIP-Key erforderlich</h3>
+        <p>Die Luftraumdaten kommen von <strong>OpenAIP</strong> und brauchen einen <strong>kostenlosen</strong> API-Key. Registrierung dauert ~1&nbsp;Minute — jede*r nutzt den eigenen Key (nur im Browser gespeichert, nichts läuft über fremde Konten).</p>
+        <div class="lr-nokey-btns">
+            <a href="https://www.openaip.net/register" target="_blank" rel="noopener" class="lr-nokey-btn primary">→ Kostenlos registrieren</a>
+            <button class="lr-nokey-btn" onclick="openDrawerToKey()">Key eingeben</button>
+        </div>
     </div>
 
     <!-- Legende -->
@@ -546,17 +579,17 @@ const DATUM_LABEL = { 1:'GND', 2:'MSL', 3:'STD' };
 
 let map, geoLayer, profileMarker = null, locMarker = null;
 
-function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '2800111e267cd352c035b2df2102fbdf').trim(); }
-const OAIP_PROXY = 'https://deploy.jscepik.workers.dev/oaip';
+// Jede*r nutzt den EIGENEN kostenlosen OpenAIP-Key (nur im Browser gespeichert, nie übertragen).
+// Kein geteilter Key, kein Proxy über fremde Konten.
+function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '').trim(); }
+function hasKey(){ return getOpenAipKey().length > 0; }
 function oaipTileTemplate(){
     const k = getOpenAipKey();
-    return k ? `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${k}`
-             : `${OAIP_PROXY}/tiles/{z}/{x}/{y}.png`;
+    return k ? `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=${k}` : null;
 }
 function oaipAirspaceFetch(qs){
     const k = getOpenAipKey();
-    return k ? fetch(`https://api.core.openaip.net/api/airspaces?${qs}`, { headers: { 'x-openaip-api-key': k, 'Accept': 'application/json' } })
-             : fetch(`${OAIP_PROXY}/airspaces?${qs}`, { headers: { 'Accept': 'application/json' } });
+    return fetch(`https://api.core.openaip.net/api/airspaces?${qs}`, { headers: { 'x-openaip-api-key': k, 'Accept': 'application/json' } });
 }
 let activeCountries = new Set(COUNTRIES.filter(c => c.default).map(c => c.code));
 let activeTypes = new Set(Object.keys(TYPE_META).map(Number));
@@ -615,15 +648,17 @@ function initMap() {
     });
     osm.addTo(map);
 
-    const airspaceTiles = L.tileLayer(
-        oaipTileTemplate(),
-        { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.85 }
-    );
-    airspaceTiles.addTo(map);
+    // Luftraum-Kacheln nur mit eigenem OpenAIP-Key (sonst nur Basiskarte).
+    let airspaceTiles = null;
+    if (hasKey()) {
+        airspaceTiles = L.tileLayer(oaipTileTemplate(),
+            { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.85 });
+        airspaceTiles.addTo(map);
+    }
 
     L.control.layers(
         { 'Karte (OSM)': osm, 'Satellit': sat },
-        { 'Lufträume (OpenAIP, weltweit)': airspaceTiles },
+        airspaceTiles ? { 'Lufträume (OpenAIP, weltweit)': airspaceTiles } : {},
         { position: 'topright' }
     ).addTo(map);
 
@@ -666,6 +701,8 @@ async function fetchCountry(country) {
 }
 
 async function ladeAirspaces() {
+    if (!hasKey()) { showKeyPrompt(); return; }
+    hideKeyPrompt();
     document.getElementById('loading').classList.add('show');
     document.getElementById('load-btn').disabled = true;
     allFeatures = [];
@@ -992,6 +1029,15 @@ function closeDrawer() {
     document.getElementById('backdrop').classList.remove('show');
 }
 
+// „Ohne Key"-Hinweis
+function showKeyPrompt() { document.getElementById('no-key-note').classList.add('show'); }
+function hideKeyPrompt() { document.getElementById('no-key-note').classList.remove('show'); }
+function openDrawerToKey() {
+    hideKeyPrompt();
+    openDrawer();
+    setTimeout(() => document.getElementById('key-input').focus(), 300);
+}
+
 // ── API-Key ──────────────────────────────────────────────────────────────────────
 
 function saveKey() {
@@ -1176,7 +1222,9 @@ function readHash() {
 
     if (window.innerWidth < 680) toggleLegend();
 
-    if (activeCountries.size > 0) ladeAirspaces();   // Standardländer (DE/AT/CH) laden
+    // Nur mit eigenem OpenAIP-Key laden; sonst zur kostenlosen Registrierung führen.
+    if (hasKey()) { if (activeCountries.size > 0) ladeAirspaces(); }
+    else showKeyPrompt();
 })();
 </script>
 </body>
