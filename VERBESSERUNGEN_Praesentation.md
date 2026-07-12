@@ -1,7 +1,7 @@
 # Luftfahrtdatenkatalog — Verbesserungen & Weiterentwicklung
 ### Dokumentation für die Präsentation · Hochschule RheinMain · Avionik
 **Projekt:** Weltweiter Luftfahrtdatenkatalog (GitHub Pages, Single-Page-Webanwendung)
-**Repository:** github.com/jscepik-source/dfs-katalog · **Live:** jscepik-source.github.io/dfs-katalog
+**Repository:** github.com/jscepik-source/luftfahrtdatenkatalog · **Live:** jscepik-source.github.io/luftfahrtdatenkatalog
 **Stand der Überarbeitung:** Juni 2026 (18 Commits)
 
 ---

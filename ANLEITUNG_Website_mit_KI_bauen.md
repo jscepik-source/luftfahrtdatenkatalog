@@ -2,10 +2,12 @@
 ### Wie der Luftfahrtdatenkatalog Schritt für Schritt mit KI gebaut wurde
 **Projekt:** Luftfahrtdatenkatalog · Hochschule RheinMain · Modul Avionik
 **Ergebnis:** Statische Single-Page-Webanwendung auf GitHub Pages — nur HTML/CSS/JavaScript, kein Backend.
-**Live:** https://jscepik-source.github.io/dfs-katalog/
+**Live:** https://jscepik-source.github.io/luftfahrtdatenkatalog/
 **Zielgruppe dieses Dokuments:** komplette Nachvollziehbarkeit — es wird **nichts** vorausgesetzt außer einem Computer mit Internet.
 
-> **Lesehinweis:** Die Anleitung ist chronologisch. Wer bei Null startet, arbeitet Teil A→I der Reihe nach ab. Jeder Bau-Schritt hat: **Ziel → Prompt (wörtlich verwendbar) → Datenquelle → Prüfen → typische Fehler.**
+> **Lesehinweis:** Die Anleitung ist chronologisch. Wer bei Null startet, arbeitet Teil A→Q der Reihe nach ab. Jeder Bau-Schritt hat: **Ziel → Prompt (wörtlich verwendbar) → Datenquelle → Prüfen → typische Fehler.**
+>
+> **Auch als Wiki:** Dieselben Inhalte liegen als navigierbares **GitHub-Wiki** im Ordner [`wiki/`](wiki/) (Einzelseiten mit Sidebar und Querverweisen). Diese Datei ist die zusammenhängende Langfassung.
 
 ---
 
@@ -84,15 +86,15 @@ git push                 # hochladen
 
 # TEIL C · Repository anlegen & GitHub Pages aktivieren
 
-1. Auf GitHub: **New repository** → Name z. B. `dfs-katalog` → **Public** → „Add a README" ankreuzen → **Create**.
+1. Auf GitHub: **New repository** → Name z. B. `luftfahrtdatenkatalog` → **Public** → „Add a README" ankreuzen → **Create**.
 2. Repo lokal holen (klonen):
    ```bash
    cd Desktop
-   git clone https://github.com/DEIN-NAME/dfs-katalog.git "webseite avionik"
+   git clone https://github.com/DEIN-NAME/luftfahrtdatenkatalog.git "webseite avionik"
    cd "webseite avionik"
    ```
 3. **GitHub Pages einschalten:** Repo → **Settings** → **Pages** → „Source: Deploy from a branch" → Branch **main**, Ordner **/(root)** → **Save**.
-4. Nach ~1 Minute ist die Seite unter `https://DEIN-NAME.github.io/dfs-katalog/` erreichbar (noch leer).
+4. Nach ~1 Minute ist die Seite unter `https://DEIN-NAME.github.io/luftfahrtdatenkatalog/` erreichbar (noch leer).
 
 ---
 
@@ -111,7 +113,7 @@ Bevor die KI loslegt, einmal den kompletten Kreislauf selbst durchspielen:
    git commit -m "Erste Testseite"
    git push
    ```
-3. `https://DEIN-NAME.github.io/dfs-katalog/` neu laden → „Hallo …" erscheint.
+3. `https://DEIN-NAME.github.io/luftfahrtdatenkatalog/` neu laden → „Hallo …" erscheint.
 
 → Ab jetzt gilt für **jede** Änderung derselbe Dreisatz: **speichern → commit → push**. (Der KI-Assistent macht das Bearbeiten und oft auch das Committen für dich.)
 

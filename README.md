@@ -2,7 +2,7 @@
 
 Automatisch aktualisierte Flughafen- und Kartenkataloge, gehostet via GitHub Pages.
 
-**Basis-URL:** `https://jscepik-source.github.io/dfs-katalog/`
+**Basis-URL:** `https://jscepik-source.github.io/luftfahrtdatenkatalog/`
 
 ---
 
@@ -10,11 +10,11 @@ Automatisch aktualisierte Flughafen- und Kartenkataloge, gehostet via GitHub Pag
 
 | Seite | URL | Beschreibung | Datenquelle |
 |---|---|---|---|
-| [DFS VFR Katalog](index.html) | [/](https://jscepik-source.github.io/dfs-katalog/) | Alle deutschen VFR-Flugplätze mit Karten aus dem DFS BasicVFR AIP | DFS AIP BasicVFR |
-| [NOTAM](notam.html) | [/notam.html](https://jscepik-source.github.io/dfs-katalog/notam.html) | Aktuelles DFS VFR-NOTAM-Heftchen als eingebettetes PDF | DFS VFR-Info |
-| [Weltweiter Flughafen-Katalog](ourairports.html) | [/ourairports.html](https://jscepik-source.github.io/dfs-katalog/ourairports.html) | ~72.000 Flughäfen weltweit mit Runways, Frequenzen, Nav-Aids, METAR/TAF, NOTAMs | OurAirports + Aviation Weather Center |
-| [EUROCONTROL Karten](eurocontrol.html) | [/eurocontrol.html](https://jscepik-source.github.io/dfs-katalog/eurocontrol.html) | Europäische ATC-Karten (ERC, URC, MUAC…) von EUROCONTROL Cartography | EUROCONTROL |
-| [Austrocontrol Katalog](austrocontrol.html) | [/austrocontrol.html](https://jscepik-source.github.io/dfs-katalog/austrocontrol.html) | Österreichische Flugplatzkarten aus dem eAIP Austrocontrol | Austrocontrol eAIP |
+| [DFS VFR Katalog](index.html) | [/](https://jscepik-source.github.io/luftfahrtdatenkatalog/) | Alle deutschen VFR-Flugplätze mit Karten aus dem DFS BasicVFR AIP | DFS AIP BasicVFR |
+| [NOTAM](notam.html) | [/notam.html](https://jscepik-source.github.io/luftfahrtdatenkatalog/notam.html) | Aktuelles DFS VFR-NOTAM-Heftchen als eingebettetes PDF | DFS VFR-Info |
+| [Weltweiter Flughafen-Katalog](ourairports.html) | [/ourairports.html](https://jscepik-source.github.io/luftfahrtdatenkatalog/ourairports.html) | ~72.000 Flughäfen weltweit mit Runways, Frequenzen, Nav-Aids, METAR/TAF, NOTAMs | OurAirports + Aviation Weather Center |
+| [EUROCONTROL Karten](eurocontrol.html) | [/eurocontrol.html](https://jscepik-source.github.io/luftfahrtdatenkatalog/eurocontrol.html) | Europäische ATC-Karten (ERC, URC, MUAC…) von EUROCONTROL Cartography | EUROCONTROL |
+| [Austrocontrol Katalog](austrocontrol.html) | [/austrocontrol.html](https://jscepik-source.github.io/luftfahrtdatenkatalog/austrocontrol.html) | Österreichische Flugplatzkarten aus dem eAIP Austrocontrol | Austrocontrol eAIP |
 
 ---
 
@@ -33,7 +33,7 @@ Automatisch aktualisierte Flughafen- und Kartenkataloge, gehostet via GitHub Pag
 ## 📁 Dateistruktur
 
 ```
-📦 dfs-katalog/
+📦 luftfahrtdatenkatalog/
 ├── 🌐 index.html                     ← DFS VFR Flughafen-Katalog
 ├── 🌐 notam.html                     ← NOTAM PDF Viewer
 ├── 🌐 ourairports.html               ← Weltweiter Flughafen-Katalog

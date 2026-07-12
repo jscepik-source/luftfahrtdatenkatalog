@@ -5,33 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Luftraumkarte — weltweit</title>
     <meta name="theme-color" content="#0f172a">
-    <meta name="description" content="Interaktive weltweite Luftraumkarte: ICAO-Klassen A–G, CTR, TMA, Restricted/Prohibited/Danger und mehr — auf Basis von OpenAIP.">
-    <meta name="keywords" content="Luftraumkarte, Lufträume, ICAO-Klassen, CTR, TMA, Restricted, Danger, OpenAIP, Luftfahrt, Hochschule RheinMain">
+    <meta name="description" content="Interaktive weltweite Luftraumkarte: ICAO-Klassen A–G, CTR, TMA, Restricted/Prohibited/Danger und mehr — auf Basis von OpenAIP. Mit Vertikalprofil, Höhenfilter und Suche.">
+    <meta name="keywords" content="Luftraumkarte, Lufträume, ICAO-Klassen, CTR, TMA, Restricted, Danger, OpenAIP, Vertikalprofil, Luftfahrt, Hochschule RheinMain">
     <meta name="author" content="Hochschule RheinMain">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://jscepik-source.github.io/dfs-katalog/luftraeume.html">
+    <link rel="canonical" href="https://jscepik-source.github.io/luftfahrtdatenkatalog/luftraeume.html">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Luftraumkarte — weltweit (OpenAIP)">
-    <meta property="og:description" content="Interaktive Luftraumkarte: ICAO-Klassen A–G, CTR, TMA, Restricted/Prohibited/Danger — weltweit.">
+    <meta property="og:description" content="Interaktive Luftraumkarte: ICAO-Klassen A–G, CTR, TMA, Restricted/Prohibited/Danger — weltweit. Mit Vertikalprofil & Höhenfilter.">
     <meta property="og:locale" content="de_DE">
     <meta name="twitter:card" content="summary_large_image">
-    <meta property="og:image" content="https://jscepik-source.github.io/dfs-katalog/og-image.png">
+    <meta property="og:image" content="https://jscepik-source.github.io/luftfahrtdatenkatalog/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta name="twitter:image" content="https://jscepik-source.github.io/dfs-katalog/og-image.png">
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://jscepik-source.github.io/dfs-katalog/"},{"@type":"ListItem","position":2,"name":"Lufträume","item":"https://jscepik-source.github.io/dfs-katalog/luftraeume.html"}]}</script>
+    <meta name="twitter:image" content="https://jscepik-source.github.io/luftfahrtdatenkatalog/og-image.png">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://jscepik-source.github.io/luftfahrtdatenkatalog/"},{"@type":"ListItem","position":2,"name":"Lufträume","item":"https://jscepik-source.github.io/luftfahrtdatenkatalog/luftraeume.html"}]}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
         :root {
             --bg: #f1f5f9; --surface: #ffffff; --surface-2: #f8fafc; --border: #e2e8f0;
             --text: #0f172a; --text-dim: #64748b;
             --primary: #2563eb; --primary-hov: #1d4ed8; --primary-bg: #eff6ff;
-            --radius: 12px; --radius-sm: 8px;
-            --shadow: 0 4px 20px rgba(15,23,42,0.10), 0 1px 3px rgba(15,23,42,0.06);
+            --radius: 14px; --radius-sm: 10px;
+            --shadow: 0 8px 30px rgba(15,23,42,0.12), 0 2px 6px rgba(15,23,42,0.06);
             --shadow-sm: 0 1px 3px rgba(15,23,42,0.08);
             --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
@@ -39,7 +38,7 @@
             --bg: #0b1220; --surface: #1e293b; --surface-2: #162032; --border: #334155;
             --text: #f1f5f9; --text-dim: #94a3b8;
             --primary: #60a5fa; --primary-hov: #93c5fd; --primary-bg: #172554;
-            --shadow: 0 4px 24px rgba(0,0,0,0.45); --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow: 0 10px 34px rgba(0,0,0,0.5); --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -51,221 +50,266 @@
             outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 6px;
         }
 
-        /* ── Header ── */
-        header {
-            background: linear-gradient(100deg, #0f172a 0%, #1e3a8a 100%); color: #fff;
-            padding: 10px 16px; display: flex; align-items: center; gap: 10px;
-            flex-shrink: 0; box-shadow: 0 1px 0 rgba(0,0,0,.2), var(--shadow-sm); z-index: 1001;
-            overflow-x: auto; white-space: nowrap;
-        }
-        header::-webkit-scrollbar { height: 0; }
-        .header-title { font-weight: 800; font-size: 1rem; letter-spacing: -0.01em; flex: 0 0 auto; }
-        .header-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            color: #fff; padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer;
-            font-family: var(--font); font-size: 0.8rem; font-weight: 600; white-space: nowrap;
-            transition: background 0.15s, border-color 0.15s;
-        }
-        .header-btn:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
-        .header-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        #load-btn { background: var(--primary); border-color: transparent; }
-        #load-btn:hover:not(:disabled) { background: var(--primary-hov); }
-        /* ── Bereichs-Navigation im Header ── */
-        .lr-nav { display: flex; gap: 6px; align-items: center; }
-        .lr-nav a { color: #cbd5e1; font-size: 0.8rem; font-weight: 600; text-decoration: none; padding: 6px 13px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.16); white-space: nowrap; transition: all 0.15s; }
-        .lr-nav a:hover { color: #fff; border-color: #60a5fa; background: rgba(255,255,255,0.06); }
-        .lr-nav a.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+        /* ── Themen-Navigation (einheitlich auf allen Seiten) ── */
+        .avx-topnav{position:sticky;top:0;z-index:10000;box-sizing:border-box;min-height:48px;display:flex;align-items:center;gap:14px;background:#0f172a;border-bottom:1px solid #334155;padding:7px 16px;font-family:var(--font);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0}
+        .avx-topnav a{text-decoration:none}
+        .avx-topnav .avx-brand{color:#fff;font-weight:800;font-size:.9rem;flex:0 0 auto}
+        .avx-topnav .avx-links{display:flex;gap:8px;flex:0 0 auto;margin-left:auto}
+        .avx-topnav .avx-pill{color:#cbd5e1;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid #334155;transition:background .15s,color .15s,border-color .15s}
+        .avx-topnav .avx-pill:hover{color:#fff;border-color:#4fc3f7}
+        .avx-topnav .avx-pill.avx-active{background:#2563eb;border-color:#2563eb;color:#fff}
 
-        /* ── Settings Panel ── */
-        #settings-panel {
-            display: none; background: var(--surface-2); border-bottom: 1px solid var(--border);
-            padding: 12px 16px; gap: 10px; align-items: center; flex-wrap: wrap;
-            font-size: 0.8rem; flex-shrink: 0;
-        }
-        #settings-panel.open { display: flex; }
-        .settings-label { font-weight: 600; color: var(--text-dim); white-space: nowrap; }
-        .settings-input {
-            flex: 1; min-width: 220px; max-width: 360px;
-            border: 1px solid var(--border); border-radius: var(--radius-sm);
-            padding: 7px 11px; font-size: 0.82rem; background: var(--surface); color: var(--text);
-            font-family: 'Courier New', monospace;
-        }
-        .settings-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
-        .settings-save {
-            background: var(--primary); color: #fff; border: none; font-family: var(--font); font-weight: 600;
-            padding: 7px 16px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem;
-            transition: background 0.15s;
-        }
-        .settings-save:hover { background: var(--primary-hov); }
-        .settings-link { color: var(--primary); text-decoration: none; font-size: 0.76rem; font-weight: 600; }
-        .settings-link:hover { text-decoration: underline; }
-        #key-status { color: var(--text-dim); font-size: 0.75rem; }
-
-        /* ── Toolbar ── */
-        #toolbar {
-            background: var(--surface); border-bottom: 1px solid var(--border);
-            padding: 9px 16px; display: flex; gap: 7px; flex-wrap: wrap;
-            align-items: center; flex-shrink: 0; min-height: 44px;
+        /* ── Schlanke App-Leiste ── */
+        .lr-bar {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 14px; background: var(--surface);
+            border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 900;
             box-shadow: var(--shadow-sm);
         }
-        .toolbar-sep { width: 1px; height: 22px; background: var(--border); margin: 0 6px; flex-shrink: 0; }
-        .toolbar-label {
-            font-size: 0.66rem; font-weight: 700; color: var(--text-dim); white-space: nowrap;
-            text-transform: uppercase; letter-spacing: 0.07em; margin-right: 1px;
+        .lr-brand { font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 7px; flex: 0 0 auto; }
+        .lr-brand small { font-weight: 500; color: var(--text-dim); font-size: 0.72rem; }
+        .lr-actions { display: flex; gap: 6px; flex: 0 0 auto; margin-left: auto; }
+        .icon-btn {
+            width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border);
+            background: var(--surface-2); color: var(--text); cursor: pointer; font-size: 1rem;
+            display: inline-flex; align-items: center; justify-content: center;
+            position: relative; transition: all 0.15s; flex-shrink: 0;
         }
+        .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .icon-btn.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .icon-btn .badge {
+            position: absolute; top: -5px; right: -5px; background: var(--primary); color: #fff;
+            font-size: 0.6rem; font-weight: 700; min-width: 16px; height: 16px; border-radius: 999px;
+            display: flex; align-items: center; justify-content: center; padding: 0 3px; line-height: 1;
+        }
+
+        /* ── Suche ── */
+        .lr-search-wrap { position: relative; flex: 1 1 auto; max-width: 440px; }
+        .lr-search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); opacity: 0.45; pointer-events: none; font-size: 0.9rem; }
+        #lr-search {
+            width: 100%; height: 38px; border: 1px solid var(--border); border-radius: 999px;
+            background: var(--surface-2); color: var(--text); padding: 0 14px 0 38px;
+            font-family: var(--font); font-size: 0.85rem;
+        }
+        #lr-search:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); background: var(--surface); }
+        .lr-results {
+            position: absolute; top: 45px; left: 0; right: 0; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow);
+            max-height: 340px; overflow: auto; z-index: 2000; display: none; padding: 5px;
+        }
+        .lr-results.show { display: block; }
+        .lr-result {
+            padding: 9px 11px; cursor: pointer; display: flex; gap: 9px; align-items: center;
+            font-size: 0.82rem; border-radius: 8px;
+        }
+        .lr-result:hover, .lr-result.sel { background: var(--surface-2); }
+        .lr-result .rdot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .lr-result .rname { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .lr-result .rmeta { color: var(--text-dim); font-size: 0.72rem; margin-left: auto; flex-shrink: 0; }
+
+        /* ── Karten-Bereich ── */
+        .lr-main { position: relative; flex: 1; overflow: hidden; }
+        #map { position: absolute; inset: 0; z-index: 0; background: var(--surface-2); }
+
+        /* ── Filter-Schublade ── */
+        .lr-backdrop {
+            position: absolute; inset: 0; background: rgba(15,23,42,0.35); z-index: 1100;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s;
+        }
+        .lr-backdrop.show { opacity: 1; pointer-events: auto; }
+        .lr-drawer {
+            position: absolute; top: 0; left: 0; bottom: 0; width: 330px; max-width: 86vw;
+            background: var(--surface); border-right: 1px solid var(--border); box-shadow: var(--shadow);
+            z-index: 1200; transform: translateX(-102%); transition: transform 0.26s cubic-bezier(.4,0,.2,1);
+            overflow-y: auto; display: flex; flex-direction: column;
+        }
+        .lr-drawer.open { transform: none; }
+        .lr-drawer-head {
+            position: sticky; top: 0; background: var(--surface); z-index: 2;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 15px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1rem;
+        }
+        .lr-x { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 1.3rem; line-height: 1; padding: 2px 6px; border-radius: 8px; transition: all 0.15s; }
+        .lr-x:hover { background: var(--surface-2); color: var(--text); }
+        .lr-section { padding: 15px 16px; border-bottom: 1px solid var(--border); }
+        .lr-section:last-child { border-bottom: none; }
+        .lr-section h4 {
+            font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em;
+            color: var(--text-dim); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+        }
+        .lr-section h4 .lr-quick { margin-left: auto; display: flex; gap: 5px; }
+        .lr-load {
+            width: 100%; margin-top: 11px; background: var(--primary); color: #fff; border: none;
+            padding: 10px; border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font);
+            font-weight: 700; font-size: 0.85rem; transition: background 0.15s;
+            display: flex; align-items: center; justify-content: center; gap: 7px;
+        }
+        .lr-load:hover:not(:disabled) { background: var(--primary-hov); }
+        .lr-load:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        /* Chips */
         .chip {
             padding: 4px 11px; border-radius: 999px; font-size: 0.74rem; font-weight: 600;
-            border: 1px solid var(--border); cursor: pointer; user-select: none;
-            background: var(--surface-2); color: var(--text); transition: all 0.15s;
+            border: 1px solid var(--border); cursor: pointer; -webkit-user-select: none; user-select: none;
+            background: var(--surface-2); color: var(--text); transition: all 0.12s;
             display: inline-flex; align-items: center; gap: 5px; line-height: 1.4;
         }
         .chip:hover { border-color: var(--primary); }
         .chip.active { color: #fff !important; border-color: transparent; box-shadow: var(--shadow-sm); }
-        .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .chip.mini { font-weight: 700; background: var(--primary-bg); color: var(--primary); border-color: transparent; }
-        .chip.mini:hover { filter: brightness(0.97); }
-        .lr-search {
-            border: 1px solid var(--border); border-radius: 999px; padding: 5px 13px;
-            font-family: var(--font); font-size: 0.74rem; background: var(--surface-2); color: var(--text); width: 130px;
+        .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.2); }
+        .chip.mini { font-weight: 700; font-size: 0.68rem; padding: 3px 9px; background: var(--primary-bg); color: var(--primary); border-color: transparent; }
+        .chip.mini:hover { filter: brightness(0.96); }
+        .lr-cs {
+            width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm);
+            padding: 7px 11px; font-family: var(--font); font-size: 0.78rem; margin-bottom: 9px;
+            background: var(--surface-2); color: var(--text);
         }
-        .lr-search:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
+        .lr-cs:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
+        #country-chips { display: flex; flex-wrap: wrap; gap: 6px; max-height: 168px; overflow-y: auto; align-content: flex-start; }
+        #type-chips, #class-chips { display: flex; flex-wrap: wrap; gap: 6px; }
         #country-chips::-webkit-scrollbar { width: 7px; }
         #country-chips::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-        /* ── Map ── */
-        #map { flex: 1; z-index: 0; background: var(--surface-2); }
+        /* Einstellungen im Drawer */
+        .settings-input {
+            width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm);
+            padding: 8px 11px; font-size: 0.8rem; background: var(--surface-2); color: var(--text);
+            font-family: 'Courier New', monospace; margin-bottom: 9px;
+        }
+        .settings-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
+        .settings-row { display: flex; gap: 8px; align-items: center; }
+        .settings-save { background: var(--primary); color: #fff; border: none; font-family: var(--font); font-weight: 600; padding: 8px 15px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.8rem; transition: background 0.15s; }
+        .settings-save:hover { background: var(--primary-hov); }
+        .settings-link { color: var(--primary); text-decoration: none; font-size: 0.76rem; font-weight: 600; }
+        .settings-link:hover { text-decoration: underline; }
+        #key-status { color: var(--text-dim); font-size: 0.74rem; display: block; margin-top: 7px; }
+        .lr-hint { color: var(--text-dim); font-size: 0.73rem; line-height: 1.5; margin-top: 4px; }
 
-        /* ── Legend ── */
+        /* ── Höhen-Slider (schwebende Pille) ── */
+        .lr-alt {
+            position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 500;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+            box-shadow: var(--shadow); padding: 8px 16px; display: flex; align-items: center; gap: 12px;
+            font-size: 0.76rem; font-weight: 600;
+        }
+        .lr-alt .alt-ico { opacity: 0.8; }
+        .lr-alt input[type=range] { width: 128px; accent-color: var(--primary); cursor: pointer; }
+        .lr-alt .alt-val { min-width: 70px; text-align: right; color: var(--primary); font-weight: 700; }
+
+        /* ── Legende ── */
         #legend {
-            position: absolute; bottom: 26px; right: 12px; z-index: 500;
+            position: absolute; bottom: 76px; right: 12px; z-index: 500;
             background: var(--surface); border: 1px solid var(--border);
             border-radius: var(--radius); padding: 11px 14px;
-            box-shadow: var(--shadow); font-size: 0.73rem; min-width: 150px;
-            transition: opacity 0.2s;
+            box-shadow: var(--shadow); font-size: 0.73rem; min-width: 152px;
         }
-        .legend-title {
-            font-weight: 700; font-size: 0.76rem; margin-bottom: 8px;
-            display: flex; align-items: center; justify-content: space-between; gap: 10px;
-        }
-        .legend-toggle {
-            background: none; border: none; color: var(--text-dim); cursor: pointer;
-            font-size: 0.85rem; padding: 0 2px; line-height: 1; transition: color 0.15s;
-        }
+        .legend-title { font-weight: 700; font-size: 0.76rem; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .legend-toggle { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 0.85rem; padding: 0 2px; line-height: 1; transition: color 0.15s; }
         .legend-toggle:hover { color: var(--text); }
         #legend.collapsed #legend-items { display: none; }
         #legend.collapsed { min-width: 0; }
-        .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; cursor: pointer; padding: 1px 3px; border-radius: 5px; transition: background 0.12s; }
+        .legend-row:hover { background: var(--surface-2); }
         .legend-row:last-child { margin-bottom: 0; }
+        .legend-row.off { opacity: 0.4; }
         .legend-swatch { width: 22px; height: 12px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.15); }
 
-        /* ── Stats bar ── */
+        /* ── Statusleiste ── */
         #stats-bar {
-            position: absolute; bottom: 26px; left: 12px; z-index: 500;
+            position: absolute; bottom: 76px; left: 12px; z-index: 500;
             background: var(--surface); border: 1px solid var(--border);
             border-radius: var(--radius); padding: 8px 14px; font-size: 0.75rem; font-weight: 500;
-            box-shadow: var(--shadow); display: none;
+            box-shadow: var(--shadow); display: none; max-width: 42vw;
         }
         #stats-bar.show { display: block; }
 
-        /* ── Loading overlay ── */
-        #loading {
-            position: absolute; inset: 0; z-index: 600;
-            background: rgba(15,23,42,0.4); backdrop-filter: blur(2px);
-            display: none; align-items: center; justify-content: center;
+        /* ── Vertikalprofil-Panel ── */
+        .lr-profile {
+            position: absolute; top: 14px; right: 14px; width: 320px; max-width: calc(100vw - 28px);
+            max-height: calc(100% - 100px); background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; box-shadow: var(--shadow); z-index: 650; display: none;
+            flex-direction: column; overflow: hidden;
         }
+        .lr-profile.show { display: flex; }
+        .lr-profile-head { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .lr-profile-head .pf-title { font-weight: 700; font-size: 0.9rem; }
+        .lr-profile-head .pf-sub { font-size: 0.7rem; color: var(--text-dim); font-family: 'Courier New', monospace; }
+        .lr-profile-body { overflow: auto; padding: 14px 15px 16px; }
+
+        /* Profil-Diagramm */
+        .pf-chart { position: relative; height: 216px; margin: 2px 0 8px; }
+        .pf-grid { position: absolute; inset: 0 0 0 46px; }
+        .pf-tick { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--border); }
+        .pf-tick span { position: absolute; left: -46px; top: -7px; width: 42px; text-align: right; font-size: 0.62rem; color: var(--text-dim); font-family: 'Courier New', monospace; }
+        .pf-cols { position: absolute; inset: 0 0 0 48px; display: flex; gap: 4px; align-items: flex-end; }
+        .pf-col { position: relative; flex: 1 1 0; min-width: 26px; height: 100%; }
+        .pf-band {
+            position: absolute; left: 0; right: 0; border-radius: 4px; border: 1.5px solid;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            cursor: pointer; transition: filter 0.12s;
+        }
+        .pf-band:hover { filter: brightness(1.06); }
+        .pf-band span { font-size: 0.6rem; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.4); padding: 0 2px; white-space: nowrap; }
+        .pf-empty { color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 26px 8px; line-height: 1.5; }
+
+        /* Profil-Liste */
+        .pf-list { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+        .pf-item { display: flex; align-items: center; gap: 9px; padding: 7px 8px; border-radius: 9px; cursor: pointer; transition: background 0.12s; }
+        .pf-item:hover { background: var(--surface-2); }
+        .pf-item .pf-idot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.2); }
+        .pf-item .pf-iname { font-weight: 600; font-size: 0.78rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pf-item .pf-imeta { font-size: 0.68rem; color: var(--text-dim); }
+        .pf-item .pf-ialt { margin-left: auto; font-size: 0.68rem; font-family: 'Courier New', monospace; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; text-align: right; }
+        .pf-cls { display: inline-block; background: #475569; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 1px 5px; border-radius: 5px; margin-left: 4px; }
+
+        /* ── Loading ── */
+        #loading { position: absolute; inset: 0; z-index: 600; background: rgba(15,23,42,0.4); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; }
         #loading.show { display: flex; }
-        .loading-box {
-            background: var(--surface); border-radius: var(--radius); padding: 22px 30px;
-            text-align: center; box-shadow: var(--shadow); min-width: 220px;
-        }
-        .spinner {
-            width: 30px; height: 30px; border: 3px solid var(--border);
-            border-top-color: var(--primary); border-radius: 50%;
-            animation: spin 0.75s linear infinite; margin: 0 auto 12px;
-        }
+        .loading-box { background: var(--surface); border-radius: var(--radius); padding: 22px 30px; text-align: center; box-shadow: var(--shadow); min-width: 220px; }
+        .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.75s linear infinite; margin: 0 auto 12px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         #loading-text { font-size: 0.85rem; font-weight: 600; color: var(--text); }
         #loading-progress { margin-top: 6px; font-size: 0.76rem; color: var(--text-dim); }
 
-        /* ── No-key message ── */
-        #no-key-msg {
-            position: absolute; inset: 0; z-index: 550;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(15,23,42,0.55); backdrop-filter: blur(3px);
-        }
-        .no-key-box {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 30px 38px; text-align: center;
-            box-shadow: var(--shadow); max-width: 400px; width: 90%;
-        }
-        .no-key-box h2 { font-size: 1.1rem; margin-bottom: 10px; }
-        .no-key-box p { font-size: 0.83rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 10px; }
-        .no-key-box a { color: var(--primary); font-weight: 600; }
-        .no-key-btn {
-            display: inline-block; margin-top: 6px; background: var(--primary); color: #fff;
-            border: none; padding: 9px 20px; border-radius: var(--radius-sm); cursor: pointer;
-            font-family: var(--font); font-size: 0.85rem; font-weight: 600; transition: background 0.15s;
-        }
-        .no-key-btn:hover { background: var(--primary-hov); }
-
         /* ── Popup ── */
         .airspace-popup { font-size: 0.79rem; line-height: 1.55; min-width: 195px; }
         .airspace-popup h3 { font-size: 0.87rem; margin-bottom: 6px; font-weight: 700; }
-        .ap-badge {
-            display: inline-block; padding: 2px 9px; border-radius: 999px; color: #fff;
-            font-size: 0.69rem; font-weight: 700; margin-bottom: 7px; margin-right: 4px;
-        }
+        .ap-badge { display: inline-block; padding: 2px 9px; border-radius: 999px; color: #fff; font-size: 0.69rem; font-weight: 700; margin-bottom: 7px; margin-right: 4px; }
         .ap-grid { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; }
         .ap-key { color: #64748b; font-size: 0.75rem; }
         .ap-val { font-weight: 600; font-size: 0.79rem; }
         .ap-remark { font-size: 0.71rem; color: #94a3b8; margin-top: 6px; line-height: 1.4; }
         .leaflet-popup-content-wrapper { border-radius: 10px; }
 
-        /* ── Error toast ── */
-        #toast {
-            position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
-            z-index: 700; background: #dc2626; color: #fff; border-radius: var(--radius-sm);
-            padding: 9px 18px; font-size: 0.8rem; font-weight: 500; box-shadow: var(--shadow);
-            display: none; white-space: nowrap;
-        }
+        /* ── Toast ── */
+        #toast { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 700; background: #dc2626; color: #fff; border-radius: var(--radius-sm); padding: 9px 18px; font-size: 0.8rem; font-weight: 500; box-shadow: var(--shadow); display: none; white-space: nowrap; }
         #toast.show { display: block; }
 
-        /* ── Dezente Einblend-Animationen (animate.css-Keyframes) ── */
-        :root { --animate-duration: 0.5s; }
-        #legend { animation: fadeInUp 0.5s ease both; }
-        #stats-bar.show { animation: fadeInUp 0.4s ease both; }
+        /* ── Animationen ── */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+        #legend, #stats-bar.show { animation: fadeInUp 0.4s ease both; }
+        .lr-profile.show { animation: fadeInUp 0.3s ease both; }
         #loading.show .loading-box { animation: zoomIn 0.3s ease both; }
-        #no-key-msg { animation: fadeIn 0.3s ease both; }
-        #no-key-msg .no-key-box { animation: fadeInUp 0.4s ease both; }
-        #settings-panel.open { animation: fadeIn 0.25s ease both; }
         #toast.show { animation: fadeInUp 0.3s ease both; }
         .leaflet-popup { animation: fadeIn 0.2s ease both; }
-        @media (prefers-reduced-motion: reduce) {
-            #legend, #stats-bar.show, #loading.show .loading-box, #no-key-msg,
-            #no-key-msg .no-key-box, #settings-panel.open, #toast.show, .leaflet-popup { animation: none !important; }
-        }
+        @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
         /* ── Responsive ── */
-        @media (max-width: 640px) {
-            .lr-nav a { padding: 5px 10px; font-size: 0.76rem; }
-            #legend { bottom: 14px; right: 8px; padding: 9px 11px; font-size: 0.7rem; }
-            #stats-bar { bottom: 14px; left: 8px; font-size: 0.7rem; }
-            .legend-row { margin-bottom: 4px; }
+        @media (max-width: 680px) {
+            .lr-brand small { display: none; }
+            .lr-alt { bottom: 14px; padding: 7px 12px; gap: 8px; }
+            .lr-alt input[type=range] { width: 96px; }
+            #legend { bottom: 66px; right: 8px; padding: 9px 11px; font-size: 0.7rem; }
+            #stats-bar { bottom: 66px; left: 8px; font-size: 0.68rem; }
+            .lr-profile { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-width: none; max-height: 62%; border-radius: 18px 18px 0 0; }
         }
     </style>
 </head>
 <body>
 
-<!-- ── Themen-Navigation (einheitlich auf allen Seiten) ── -->
-<style>
-.avx-topnav{position:sticky;top:0;z-index:10000;box-sizing:border-box;min-height:48px;display:flex;align-items:center;gap:14px;background:#0f172a;border-bottom:1px solid #334155;padding:7px 16px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;flex-shrink:0}
-.avx-topnav a{text-decoration:none}
-.avx-topnav .avx-brand{color:#fff;font-weight:800;font-size:.9rem;flex:0 0 auto}
-.avx-topnav .avx-links{display:flex;gap:8px;flex:0 0 auto;margin-left:auto}
-.avx-topnav .avx-pill{color:#cbd5e1;font-size:.85rem;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid #334155;transition:background .15s,color .15s,border-color .15s}
-.avx-topnav .avx-pill:hover{color:#fff;border-color:#4fc3f7}
-.avx-topnav .avx-pill.avx-active{background:#2563eb;border-color:#2563eb;color:#fff}
-</style>
+<!-- ── Themen-Navigation ── -->
 <nav class="avx-topnav" aria-label="Themenbereiche">
   <a class="avx-brand" href="index.html">&#9992; Start</a>
   <span class="avx-links">
@@ -275,82 +319,129 @@
     <a class="avx-pill avx-active" href="luftraeume.html">Lufträume</a>
   </span>
 </nav>
-<div id="nav-container"></div>
 
-<header>
-    <span class="header-title">🗺 Lufträume</span>
-    <span style="flex:1 0 8px"></span>
-    <button class="header-btn" id="load-btn" onclick="ladeAirspaces()">▶ Details laden</button>
-    <button class="header-btn" onclick="toggleSettings()" title="OpenAIP API-Key">⚙</button>
-    <button class="header-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
-</header>
-
-<div id="settings-panel">
-    <span class="settings-label">OpenAIP API-Key:</span>
-    <input id="key-input" type="password" class="settings-input" placeholder="dein OpenAIP-Key (kostenlos auf openaip.net/register)">
-    <button class="settings-save" onclick="saveKey()">Speichern</button>
-    <a href="https://www.openaip.net/register" target="_blank" rel="noopener" class="settings-link">→ Kostenlos registrieren</a>
-    <span id="key-status"></span>
-</div>
-
-<div id="toolbar">
-    <span class="toolbar-label">Länder</span>
-    <input id="country-search" class="lr-search" placeholder="Code (DE…)" oninput="buildChips()" aria-label="Land suchen">
-    <button class="chip mini" onclick="setCountries('eu')">🇪🇺 EU</button>
-    <button class="chip mini" onclick="setCountries('all')">Alle</button>
-    <button class="chip mini" onclick="setCountries('none')">Keine</button>
-    <div id="country-chips" style="display:flex;flex-wrap:wrap;gap:6px;max-height:72px;overflow-y:auto;align-content:flex-start"></div>
-    <div class="toolbar-sep"></div>
-    <span class="toolbar-label">Typen</span>
-    <button class="chip mini" onclick="setTypes('all')">Alle</button>
-    <button class="chip mini" onclick="setTypes('none')">Keine</button>
-    <div id="type-chips"></div>
-    <div class="toolbar-sep"></div>
-    <span class="toolbar-label">Klasse</span>
-    <button class="chip mini" onclick="setClasses('all')">Alle</button>
-    <button class="chip mini" onclick="setClasses('none')">Keine</button>
-    <div id="class-chips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-</div>
-
-<div id="map"></div>
-
-<div id="legend">
-    <div class="legend-title">
-        <span>Legende</span>
-        <button class="legend-toggle" onclick="toggleLegend()" title="Legende ein-/ausklappen" aria-label="Legende ein-/ausklappen">▾</button>
+<!-- ── Schlanke App-Leiste ── -->
+<div class="lr-bar">
+    <span class="lr-brand">🗺 Lufträume <small>OpenAIP</small></span>
+    <div class="lr-search-wrap">
+        <span class="lr-search-icon">🔍</span>
+        <input id="lr-search" type="search" autocomplete="off" placeholder="Luftraum, Flughafen oder Ort suchen…" aria-label="Suche">
+        <div id="lr-results" class="lr-results"></div>
     </div>
-    <div id="legend-items"></div>
-</div>
-
-<div id="stats-bar"></div>
-
-<div id="loading">
-    <div class="loading-box">
-        <div class="spinner"></div>
-        <div id="loading-text">Lade Lufträume…</div>
-        <div id="loading-progress"></div>
+    <div class="lr-actions">
+        <button class="icon-btn" id="loc-btn" onclick="locateMe()" title="Mein Standort">📍</button>
+        <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Hell/Dunkel">🌙</button>
+        <button class="icon-btn" id="filter-btn" onclick="openDrawer()" title="Filter & Einstellungen">
+            🎚<span class="badge" id="filter-badge">3</span>
+        </button>
     </div>
 </div>
 
-<div id="no-key-msg">
-    <div class="no-key-box">
-        <h2>🗺 Luftraumkarte</h2>
-        <p>Für Luftraumdaten wird ein kostenloser <strong>OpenAIP API-Key</strong> benötigt.<br>
-        Registrierung dauert ca. 1 Minute — es fallen keine Kosten an.</p>
-        <p><a href="https://www.openaip.net/register" target="_blank" rel="noopener">→ Kostenlos registrieren (openaip.net)</a></p>
-        <p style="font-size:0.74rem;margin-top:4px">Nach Registrierung: <strong>⚙ OpenAIP Key</strong> → Key eingeben → <strong>▶ Laden</strong></p>
-        <button class="no-key-btn" onclick="toggleSettings(); document.getElementById('no-key-msg').style.display='none'">⚙ API-Key eingeben</button>
-    </div>
-</div>
+<!-- ── Karte + Overlays ── -->
+<div class="lr-main">
+    <div id="map"></div>
 
-<div id="toast"></div>
+    <!-- Filter-Schublade -->
+    <div class="lr-backdrop" id="backdrop" onclick="closeDrawer()"></div>
+    <aside class="lr-drawer" id="drawer" aria-label="Filter">
+        <div class="lr-drawer-head">
+            <span>Filter &amp; Einstellungen</span>
+            <button class="lr-x" onclick="closeDrawer()" aria-label="Schließen">×</button>
+        </div>
+
+        <div class="lr-section">
+            <h4>Länder
+                <span class="lr-quick">
+                    <button class="chip mini" onclick="setCountries('eu')">🇪🇺 EU</button>
+                    <button class="chip mini" onclick="setCountries('all')">Alle</button>
+                    <button class="chip mini" onclick="setCountries('none')">Keine</button>
+                </span>
+            </h4>
+            <input id="country-search" class="lr-cs" placeholder="Land suchen (DE, Frankreich…)" oninput="buildChips()" aria-label="Land suchen">
+            <div id="country-chips"></div>
+            <button class="lr-load" id="load-btn" onclick="ladeAirspaces()">▶ Ausgewählte Länder laden</button>
+            <p class="lr-hint">Klickbare Luftraum-Polygone werden pro Land geladen. Der weltweite OpenAIP-Kachel-Overlay ist immer sichtbar.</p>
+        </div>
+
+        <div class="lr-section">
+            <h4>Typen
+                <span class="lr-quick">
+                    <button class="chip mini" onclick="setTypes('all')">Alle</button>
+                    <button class="chip mini" onclick="setTypes('none')">Keine</button>
+                </span>
+            </h4>
+            <div id="type-chips"></div>
+        </div>
+
+        <div class="lr-section">
+            <h4>ICAO-Klasse
+                <span class="lr-quick">
+                    <button class="chip mini" onclick="setClasses('all')">Alle</button>
+                    <button class="chip mini" onclick="setClasses('none')">Keine</button>
+                </span>
+            </h4>
+            <div id="class-chips"></div>
+        </div>
+
+        <div class="lr-section">
+            <h4>OpenAIP API-Key <span style="margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0">optional</span></h4>
+            <input id="key-input" type="password" class="settings-input" placeholder="eigener OpenAIP-Key">
+            <div class="settings-row">
+                <button class="settings-save" onclick="saveKey()">Speichern</button>
+                <a href="https://www.openaip.net/register" target="_blank" rel="noopener" class="settings-link">→ Kostenlos registrieren</a>
+            </div>
+            <span id="key-status"></span>
+            <p class="lr-hint">Die Karte läuft auch ohne eigenen Key. Ein eigener Key nutzt dein eigenes Limit (schneller bei vielen Ländern).</p>
+        </div>
+    </aside>
+
+    <!-- Höhen-Slider -->
+    <div class="lr-alt" title="Blendet Lufträume aus, deren Untergrenze über der gewählten Höhe liegt">
+        <span class="alt-ico">🎚</span>
+        <span>Höhe</span>
+        <input type="range" id="alt-slider" min="0" max="200" step="5" value="200" oninput="onAltChange()" aria-label="Höhenfilter">
+        <span class="alt-val" id="alt-val">alle Höhen</span>
+    </div>
+
+    <!-- Legende -->
+    <div id="legend">
+        <div class="legend-title">
+            <span>Legende</span>
+            <button class="legend-toggle" onclick="toggleLegend()" title="Ein-/ausklappen" aria-label="Legende ein-/ausklappen">▾</button>
+        </div>
+        <div id="legend-items"></div>
+    </div>
+
+    <div id="stats-bar"></div>
+
+    <!-- Vertikalprofil -->
+    <div class="lr-profile" id="profile">
+        <div class="lr-profile-head">
+            <div>
+                <div class="pf-title">🧊 Vertikalprofil</div>
+                <div class="pf-sub" id="pf-coords"></div>
+            </div>
+            <button class="lr-x" onclick="closeProfile()" aria-label="Schließen">×</button>
+        </div>
+        <div class="lr-profile-body" id="pf-body"></div>
+    </div>
+
+    <div id="loading">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <div id="loading-text">Lade Lufträume…</div>
+            <div id="loading-progress"></div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ── Konfiguration ─────────────────────────────────────────────────────────────
 
 const COUNTRIES = [
-    // Europa
     { code:'DE', label:'DE 🇩🇪', default:true  },
     { code:'AT', label:'AT 🇦🇹', default:true  },
     { code:'CH', label:'CH 🇨🇭', default:true  },
@@ -383,16 +474,13 @@ const COUNTRIES = [
     { code:'LV', label:'LV 🇱🇻', default:false },
     { code:'LT', label:'LT 🇱🇹', default:false },
     { code:'TR', label:'TR 🇹🇷', default:false },
-    // Nordamerika
     { code:'US', label:'US 🇺🇸', default:false },
     { code:'CA', label:'CA 🇨🇦', default:false },
     { code:'MX', label:'MX 🇲🇽', default:false },
-    // Südamerika
     { code:'BR', label:'BR 🇧🇷', default:false },
     { code:'AR', label:'AR 🇦🇷', default:false },
     { code:'CL', label:'CL 🇨🇱', default:false },
     { code:'CO', label:'CO 🇨🇴', default:false },
-    // Asien
     { code:'JP', label:'JP 🇯🇵', default:false },
     { code:'CN', label:'CN 🇨🇳', default:false },
     { code:'IN', label:'IN 🇮🇳', default:false },
@@ -402,21 +490,17 @@ const COUNTRIES = [
     { code:'ID', label:'ID 🇮🇩', default:false },
     { code:'MY', label:'MY 🇲🇾', default:false },
     { code:'PH', label:'PH 🇵🇭', default:false },
-    // Naher Osten
     { code:'AE', label:'AE 🇦🇪', default:false },
     { code:'SA', label:'SA 🇸🇦', default:false },
     { code:'IL', label:'IL 🇮🇱', default:false },
-    // Ozeanien
     { code:'AU', label:'AU 🇦🇺', default:false },
     { code:'NZ', label:'NZ 🇳🇿', default:false },
-    // Afrika
     { code:'ZA', label:'ZA 🇿🇦', default:false },
     { code:'EG', label:'EG 🇪🇬', default:false },
     { code:'MA', label:'MA 🇲🇦', default:false },
     { code:'KE', label:'KE 🇰🇪', default:false },
 ];
 
-// Deutsche Ländernamen (für die Suche)
 const COUNTRY_NAMES = {
     DE:'Deutschland', AT:'Österreich', CH:'Schweiz', FR:'Frankreich', NL:'Niederlande',
     BE:'Belgien', LU:'Luxemburg', GB:'Vereinigtes Königreich Großbritannien', IE:'Irland', DK:'Dänemark',
@@ -452,25 +536,17 @@ const TYPE_META = {
     26: { label:'Klasse',     color:'#3b82f6', fill:0.08, weight:1   },
     29: { label:'Sport',      color:'#10b981', fill:0.13, weight:1   },
 };
-// Wichtige Typen für Chip-Filter
 const IMPORTANT_TYPES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 21, 29];
 
-// OpenAIP Klassen-Codes
 const CLASS_LABEL = { 0:'–', 1:'A', 2:'B', 3:'C', 4:'D', 5:'E', 6:'F', 7:'G', 8:'E(SFC)' };
 const UNIT_LABEL  = { 1:'FL', 6:'ft', 3:'m' };
 const DATUM_LABEL = { 1:'GND', 2:'MSL', 3:'STD' };
 
 // ── Zustand ───────────────────────────────────────────────────────────────────
 
-let map, geoLayer;
+let map, geoLayer, profileMarker = null, locMarker = null;
 
-// Geteilter Standard-OpenAIP-Key, damit die Karte OHNE eigenen Key funktioniert.
-// Ein eigener Key (⚙) hat Vorrang und nutzt das eigene Limit.
-// Geteilter OpenAIP-Key (read-only Kartendaten) -> Karten laufen sofort ohne Setup.
-// Ein eigener Key (localStorage, ⚙-Panel) hat Vorrang und nutzt das eigene Limit.
 function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '2800111e267cd352c035b2df2102fbdf').trim(); }
-// OpenAIP läuft standardmäßig über den Worker-Proxy (Key geheim im Worker, nie im Code).
-// Eigener Key (optional, Settings) -> OpenAIP direkt.
 const OAIP_PROXY = 'https://deploy.jscepik.workers.dev/oaip';
 function oaipTileTemplate(){
     const k = getOpenAipKey();
@@ -484,10 +560,16 @@ function oaipAirspaceFetch(qs){
 }
 let activeCountries = new Set(COUNTRIES.filter(c => c.default).map(c => c.code));
 let activeTypes = new Set(Object.keys(TYPE_META).map(Number));
-let activeClasses = new Set([0,1,2,3,4,5,6,7,8]);   // ICAO-Luftraumklassen A–G (+ ohne)
+let activeClasses = new Set([0,1,2,3,4,5,6,7,8]);
 let allFeatures = [];
 
+// Höhenfilter (FL); 200 = aus ("alle Höhen")
+let altMaxFL = 200;
+function altFilterOn(){ return altMaxFL < 200; }
+
 // ── Hilfsfunktionen ───────────────────────────────────────────────────────────
+
+function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function fmtAlt(lim) {
     if (!lim) return '?';
@@ -496,6 +578,15 @@ function fmtAlt(lim) {
     const u = UNIT_LABEL[lim.unit] || '';
     const d = lim.referenceDatum === 2 ? '' : ` ${DATUM_LABEL[lim.referenceDatum] || ''}`;
     return `${lim.value.toLocaleString('de')} ${u}${d}`.trim();
+}
+
+// Grenze in Fuß (MSL-genähert) — für Höhenfilter und Vertikalprofil
+function limitToFeet(lim) {
+    if (!lim || lim.value == null) return null;
+    if (lim.unit === 1) return lim.value * 100;      // FL
+    if (lim.unit === 6) return lim.value;            // ft
+    if (lim.unit === 3) return lim.value * 3.28084;  // m
+    return lim.value;
 }
 
 function featureStyle(feature) {
@@ -514,18 +605,16 @@ function showToast(msg, ms = 4000) {
 // ── Leaflet ───────────────────────────────────────────────────────────────────
 
 function initMap() {
-    map = L.map('map', { center: [51.2, 10.5], zoom: 6, preferCanvas: true });
+    map = L.map('map', { center: [51.2, 10.5], zoom: 6, preferCanvas: true, zoomControl: true });
 
     const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 18
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 18
     });
     const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: '© Esri, Maxar', maxZoom: 18
     });
     osm.addTo(map);
 
-    // Weltweite Luftraum-Kacheln von OpenAIP – über Worker-Proxy (kein Key im Code nötig)
     const airspaceTiles = L.tileLayer(
         oaipTileTemplate(),
         { attribution: '© <a href="https://www.openaip.net">OpenAIP</a>', maxZoom: 17, opacity: 0.85 }
@@ -541,33 +630,22 @@ function initMap() {
     geoLayer = L.geoJSON([], {
         style: featureStyle,
         onEachFeature(feature, layer) {
-            const p = feature.properties;
-            const m = TYPE_META[p.type] || TYPE_META[0];
-            const cls = p.icaoClass ?? p.class ?? 0;
-
-            layer.on('click', () => {
-                const html = `<div class="airspace-popup">
-                    <h3>${p.name || '–'}</h3>
-                    <span class="ap-badge" style="background:${m.color}">${m.label}</span>
-                    ${cls > 0 ? `<span class="ap-badge" style="background:#475569">Klasse ${CLASS_LABEL[cls]||cls}</span>` : ''}
-                    <div class="ap-grid">
-                        <span class="ap-key">Oben</span><span class="ap-val">${fmtAlt(p.upperLimit)}</span>
-                        <span class="ap-key">Unten</span><span class="ap-val">${fmtAlt(p.lowerLimit)}</span>
-                        ${p.country ? `<span class="ap-key">Land</span><span class="ap-val">${p.country}</span>` : ''}
-                    </div>
-                    ${p.remarks ? `<div class="ap-remark">${p.remarks.slice(0,160)}${p.remarks.length>160?'…':''}</div>` : ''}
-                </div>`;
-                layer.bindPopup(html, { maxWidth: 290 }).openPopup();
-            });
-            layer.on('mouseover', () => layer.setStyle({ fillOpacity: Math.min((m.fill || 0.1) + 0.12, 0.6) }));
+            const m = TYPE_META[feature.properties.type] || TYPE_META[0];
+            layer.on('mouseover', () => layer.setStyle({ fillOpacity: Math.min((m.fill || 0.1) + 0.14, 0.6), weight: (m.weight||1)+0.8 }));
             layer.on('mouseout',  () => geoLayer.resetStyle(layer));
         }
     }).addTo(map);
+
+    // Klick auf die Karte -> Vertikalprofil an diesem Punkt
+    map.on('click', e => showProfile(e.latlng.lat, e.latlng.lng));
+
+    // Kartenausschnitt in der URL merken (teilbar)
+    map.on('moveend', updateHash);
 }
 
 // ── Daten laden ───────────────────────────────────────────────────────────────
 
-async function fetchCountry(country, key) {
+async function fetchCountry(country) {
     const items = [];
     let page = 1, total = Infinity;
     while (items.length < total) {
@@ -588,22 +666,22 @@ async function fetchCountry(country, key) {
 }
 
 async function ladeAirspaces() {
-    const key = getOpenAipKey();   // eigener Key (optional); sonst läuft alles über den Worker-Proxy
-    document.getElementById('no-key-msg').style.display = 'none';
     document.getElementById('loading').classList.add('show');
     document.getElementById('load-btn').disabled = true;
     allFeatures = [];
 
     const selected = [...activeCountries];
-    let loaded = 0, total = 0;
+    let loaded = 0;
 
     for (const country of selected) {
         document.getElementById('loading-text').textContent = `Lade ${country}…`;
         document.getElementById('loading-progress').textContent = `${loaded}/${selected.length} Länder`;
         try {
-            const items = await fetchCountry(country, key);
+            const items = await fetchCountry(country);
             for (const item of items) {
                 if (!item.geometry) continue;
+                const upperLimit = item.upperLimit ?? null;
+                const lowerLimit = item.lowerLimit ?? null;
                 allFeatures.push({
                     type: 'Feature',
                     geometry: item.geometry,
@@ -611,13 +689,13 @@ async function ladeAirspaces() {
                         name: item.name || '',
                         type: item.type ?? 0,
                         icaoClass: item.icaoClass ?? item.class ?? 0,
-                        upperLimit: item.upperLimit ?? null,
-                        lowerLimit: item.lowerLimit ?? null,
+                        upperLimit, lowerLimit,
+                        upperFt: limitToFeet(upperLimit),
+                        lowerFt: limitToFeet(lowerLimit),
                         country: item.country || country,
                         remarks: item.remarks || ''
                     }
                 });
-                total++;
             }
             loaded++;
         } catch(e) {
@@ -633,18 +711,22 @@ async function ladeAirspaces() {
     document.getElementById('load-btn').textContent = '↺ Neu laden';
 }
 
-// Filter: Typ UND ICAO-Klasse müssen aktiv sein
+// Filter: Typ UND ICAO-Klasse UND (optional) Höhe
 function featurePasses(f) {
     const p = f.properties;
-    return activeTypes.has(p.type) && activeClasses.has(p.icaoClass ?? 0);
+    if (!activeTypes.has(p.type)) return false;
+    if (!activeClasses.has(p.icaoClass ?? 0)) return false;
+    if (altFilterOn()) {
+        const lo = p.lowerFt ?? 0;
+        if (lo > altMaxFL * 100) return false;   // Untergrenze über Filterhöhe -> nicht relevant
+    }
+    return true;
 }
 
 function renderFeatures() {
     geoLayer.clearLayers();
     const filtered = allFeatures.filter(featurePasses);
-    if (filtered.length > 0) {
-        geoLayer.addData({ type: 'FeatureCollection', features: filtered });
-    }
+    if (filtered.length > 0) geoLayer.addData({ type: 'FeatureCollection', features: filtered });
 }
 
 function updateStats() {
@@ -652,35 +734,279 @@ function updateStats() {
     if (allFeatures.length === 0) { bar.classList.remove('show'); return; }
     bar.classList.add('show');
     const shown = allFeatures.filter(featurePasses).length;
-    bar.textContent = `${shown.toLocaleString('de')} Lufträume angezeigt · ${allFeatures.length.toLocaleString('de')} geladen`;
+    bar.textContent = `${shown.toLocaleString('de')} angezeigt · ${allFeatures.length.toLocaleString('de')} geladen`;
 }
 
-// ── Settings ──────────────────────────────────────────────────────────────────
+// ── Vertikalprofil ("Schichttorte") ─────────────────────────────────────────────
 
-function toggleSettings() {
-    const panel = document.getElementById('settings-panel');
-    const open = !panel.classList.contains('open');
-    panel.classList.toggle('open', open);
-    if (open) {
-        const k = localStorage.getItem('openaip_key') || '';
-        document.getElementById('key-input').value = k;
-        document.getElementById('key-status').textContent = k ? '✓ Key vorhanden' : '';
+function pointInRing(lon, lat, ring) {
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+        if (((yi > lat) !== (yj > lat)) && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi)) inside = !inside;
+    }
+    return inside;
+}
+function pointInPolygon(lon, lat, coords) {
+    if (!coords || !coords.length || !pointInRing(lon, lat, coords[0])) return false;
+    for (let k = 1; k < coords.length; k++) if (pointInRing(lon, lat, coords[k])) return false; // Loch
+    return true;
+}
+function pointInFeature(lon, lat, geom) {
+    if (!geom) return false;
+    if (geom.type === 'Polygon') return pointInPolygon(lon, lat, geom.coordinates);
+    if (geom.type === 'MultiPolygon') return geom.coordinates.some(poly => pointInPolygon(lon, lat, poly));
+    return false;
+}
+
+function niceCeil(ft) {
+    const step = 5000;
+    return Math.max(step, Math.ceil(ft / step) * step);
+}
+
+function showProfile(lat, lon) {
+    const hits = allFeatures.filter(f => pointInFeature(lon, lat, f.geometry));
+    // nach Untergrenze sortieren (unten zuerst)
+    hits.sort((a, b) => (a.properties.lowerFt ?? 0) - (b.properties.lowerFt ?? 0));
+
+    // Marker setzen
+    if (profileMarker) map.removeLayer(profileMarker);
+    profileMarker = L.circleMarker([lat, lon], { radius: 6, color: '#2563eb', weight: 2, fillColor: '#fff', fillOpacity: 1 }).addTo(map);
+
+    document.getElementById('pf-coords').textContent = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+    const body = document.getElementById('pf-body');
+
+    if (hits.length === 0) {
+        const hint = allFeatures.length === 0
+            ? 'Noch keine Luftraum-Polygone geladen.<br>Wähle im Filter (🎚) Länder und lade sie.'
+            : 'Keine geladenen Lufträume an diesem Punkt.<br>Ggf. anderes Land im Filter laden.';
+        body.innerHTML = `<div class="pf-empty">${hint}</div>`;
+        document.getElementById('profile').classList.add('show');
+        return;
+    }
+
+    // Höhenskala
+    const uppers = hits.map(h => h.properties.upperFt).filter(v => v != null);
+    const lowers = hits.map(h => h.properties.lowerFt ?? 0);
+    const maxUpper = uppers.length ? Math.max(...uppers) : Math.max(...lowers) + 5000;
+    const scaleMax = niceCeil(maxUpper);
+
+    // Achsen-Ticks (5 Linien)
+    let grid = '';
+    for (let i = 0; i <= 4; i++) {
+        const ft = scaleMax * i / 4;
+        const topPct = (1 - i / 4) * 100;
+        const lbl = ft === 0 ? 'GND' : 'FL' + Math.round(ft / 100);
+        grid += `<div class="pf-tick" style="top:${topPct}%"><span>${lbl}</span></div>`;
+    }
+
+    // Säulen (eine je Luftraum, nebeneinander)
+    let cols = '';
+    hits.forEach((h, idx) => {
+        const p = h.properties;
+        const m = TYPE_META[p.type] || TYPE_META[0];
+        const lo = p.lowerFt ?? 0;
+        const hi = p.upperFt ?? scaleMax;
+        const bottomPct = Math.max(0, Math.min(100, lo / scaleMax * 100));
+        const topPct = Math.max(0, Math.min(100, hi / scaleMax * 100));
+        const heightPct = Math.max(2, topPct - bottomPct);
+        const rgb = hexToRgb(m.color);
+        cols += `<div class="pf-col">
+            <div class="pf-band" data-idx="${idx}" onclick="highlightHit(${idx})"
+                 style="bottom:${bottomPct}%;height:${heightPct}%;background:rgba(${rgb},0.72);border-color:${m.color}"
+                 title="${escapeHtml(p.name)} — ${fmtAlt(p.lowerLimit)} bis ${fmtAlt(p.upperLimit)}">
+                <span>${escapeHtml(m.label)}</span>
+            </div></div>`;
+    });
+
+    // Liste
+    let list = '';
+    hits.forEach((h, idx) => {
+        const p = h.properties;
+        const m = TYPE_META[p.type] || TYPE_META[0];
+        const cls = p.icaoClass ?? 0;
+        list += `<div class="pf-item" onclick="highlightHit(${idx})">
+            <span class="pf-idot" style="background:${m.color}"></span>
+            <div style="min-width:0">
+                <div class="pf-iname">${escapeHtml(p.name || m.label)}</div>
+                <div class="pf-imeta">${escapeHtml(m.label)}${cls > 0 ? `<span class="pf-cls">Kl. ${CLASS_LABEL[cls] || cls}</span>` : ''}</div>
+            </div>
+            <span class="pf-ialt">${fmtAlt(p.upperLimit)}<br>${fmtAlt(p.lowerLimit)}</span>
+        </div>`;
+    });
+
+    body.innerHTML = `
+        <div class="pf-chart">
+            <div class="pf-grid">${grid}</div>
+            <div class="pf-cols">${cols}</div>
+        </div>
+        <div class="pf-list">${list}</div>`;
+
+    window._profileHits = hits;
+    document.getElementById('profile').classList.add('show');
+}
+
+function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
+    return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+}
+
+function highlightHit(idx) {
+    const h = window._profileHits && window._profileHits[idx];
+    if (!h) return;
+    const bounds = L.geoJSON(h).getBounds();
+    if (bounds.isValid()) map.fitBounds(bounds, { maxZoom: 11, padding: [40, 40] });
+    const p = h.properties, m = TYPE_META[p.type] || TYPE_META[0];
+    const cls = p.icaoClass ?? 0;
+    L.popup({ maxWidth: 290 })
+        .setLatLng(bounds.getCenter())
+        .setContent(`<div class="airspace-popup">
+            <h3>${escapeHtml(p.name || '–')}</h3>
+            <span class="ap-badge" style="background:${m.color}">${escapeHtml(m.label)}</span>
+            ${cls > 0 ? `<span class="ap-badge" style="background:#475569">Klasse ${CLASS_LABEL[cls] || cls}</span>` : ''}
+            <div class="ap-grid">
+                <span class="ap-key">Oben</span><span class="ap-val">${fmtAlt(p.upperLimit)}</span>
+                <span class="ap-key">Unten</span><span class="ap-val">${fmtAlt(p.lowerLimit)}</span>
+                ${p.country ? `<span class="ap-key">Land</span><span class="ap-val">${escapeHtml(p.country)}</span>` : ''}
+            </div>
+            ${p.remarks ? `<div class="ap-remark">${escapeHtml(p.remarks.slice(0,160))}${p.remarks.length>160?'…':''}</div>` : ''}
+        </div>`)
+        .openOn(map);
+}
+
+function closeProfile() {
+    document.getElementById('profile').classList.remove('show');
+    if (profileMarker) { map.removeLayer(profileMarker); profileMarker = null; }
+}
+
+// ── Höhenfilter ─────────────────────────────────────────────────────────────────
+
+function onAltChange() {
+    altMaxFL = +document.getElementById('alt-slider').value;
+    document.getElementById('alt-val').textContent = altFilterOn()
+        ? (altMaxFL === 0 ? 'nur GND' : '≤ FL' + altMaxFL)
+        : 'alle Höhen';
+    renderFeatures();
+    updateStats();
+}
+
+// ── Suche ────────────────────────────────────────────────────────────────────────
+
+let searchTimer;
+function onSearchInput() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(runSearch, 180);
+}
+function runSearch() {
+    const q = document.getElementById('lr-search').value.trim();
+    const box = document.getElementById('lr-results');
+    if (!q) { box.classList.remove('show'); box.innerHTML = ''; return; }
+    const ql = q.toLowerCase();
+
+    // 1) lokale Lufträume nach Name
+    const seen = new Set();
+    const local = [];
+    for (const f of allFeatures) {
+        const nm = (f.properties.name || '');
+        if (nm.toLowerCase().includes(ql) && !seen.has(nm)) { seen.add(nm); local.push(f); }
+        if (local.length >= 7) break;
+    }
+
+    let html = '';
+    for (let i = 0; i < local.length; i++) {
+        const p = local[i].properties, m = TYPE_META[p.type] || TYPE_META[0];
+        html += `<div class="lr-result" onclick="gotoFeature(${allFeatures.indexOf(local[i])})">
+            <span class="rdot" style="background:${m.color}"></span>
+            <span class="rname">${escapeHtml(p.name)}</span>
+            <span class="rmeta">${escapeHtml(m.label)}</span>
+        </div>`;
+    }
+    // 2) Orts-/Flughafensuche (Nominatim) als letzte Option
+    html += `<div class="lr-result" onclick="geocodePlace()">
+        <span class="rdot" style="background:var(--primary)"></span>
+        <span class="rname">🌍 Ort/Flughafen suchen: „${escapeHtml(q)}"</span>
+        <span class="rmeta">↵</span>
+    </div>`;
+
+    box.innerHTML = html;
+    box.classList.add('show');
+}
+function gotoFeature(idx) {
+    const f = allFeatures[idx];
+    if (!f) return;
+    hideResults();
+    const bounds = L.geoJSON(f).getBounds();
+    if (bounds.isValid()) {
+        map.fitBounds(bounds, { maxZoom: 11, padding: [40, 40] });
+        const c = bounds.getCenter();
+        showProfile(c.lat, c.lng);
     }
 }
+async function geocodePlace() {
+    const q = document.getElementById('lr-search').value.trim();
+    if (!q) return;
+    hideResults();
+    try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`, { headers: { 'Accept': 'application/json' } });
+        const data = await r.json();
+        if (data && data.length) {
+            map.setView([+data[0].lat, +data[0].lon], 10);
+        } else {
+            showToast('Kein Ort gefunden: ' + q);
+        }
+    } catch(e) { showToast('Ortssuche fehlgeschlagen'); }
+}
+function hideResults() {
+    document.getElementById('lr-results').classList.remove('show');
+}
+
+// ── Standort ─────────────────────────────────────────────────────────────────────
+
+function locateMe() {
+    if (!navigator.geolocation) { showToast('Standort wird nicht unterstützt'); return; }
+    document.getElementById('loc-btn').textContent = '⏳';
+    navigator.geolocation.getCurrentPosition(pos => {
+        const { latitude, longitude } = pos.coords;
+        map.setView([latitude, longitude], 10);
+        if (locMarker) map.removeLayer(locMarker);
+        locMarker = L.circleMarker([latitude, longitude], { radius: 8, color: '#2563eb', weight: 3, fillColor: '#60a5fa', fillOpacity: 0.9 }).addTo(map).bindPopup('Dein Standort');
+        document.getElementById('loc-btn').textContent = '📍';
+    }, () => {
+        showToast('Standort konnte nicht ermittelt werden');
+        document.getElementById('loc-btn').textContent = '📍';
+    }, { enableHighAccuracy: true, timeout: 8000 });
+}
+
+// ── Schublade ────────────────────────────────────────────────────────────────────
+
+function openDrawer() {
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('backdrop').classList.add('show');
+    const k = localStorage.getItem('openaip_key') || '';
+    document.getElementById('key-input').value = k;
+    document.getElementById('key-status').textContent = k ? '✓ eigener Key aktiv' : '';
+}
+function closeDrawer() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('backdrop').classList.remove('show');
+}
+
+// ── API-Key ──────────────────────────────────────────────────────────────────────
 
 function saveKey() {
     const key = document.getElementById('key-input').value.trim();
     if (key) {
         localStorage.setItem('openaip_key', key);
-        document.getElementById('key-status').textContent = '✓ Gespeichert – lädt neu…';
-        setTimeout(() => location.reload(), 700);   // Neu laden, damit Kacheln + Lufträume aktiv werden
+        document.getElementById('key-status').textContent = '✓ gespeichert – lädt neu…';
+        setTimeout(() => location.reload(), 700);
         return;
     }
-    localStorage.removeItem('openaip_key'); document.getElementById('key-status').textContent = 'Key gelöscht';
-    setTimeout(() => document.getElementById('settings-panel').classList.remove('open'), 1000);
+    localStorage.removeItem('openaip_key');
+    document.getElementById('key-status').textContent = 'Key gelöscht';
 }
 
-// ── Theme ─────────────────────────────────────────────────────────────────────
+// ── Theme ────────────────────────────────────────────────────────────────────────
 
 function toggleTheme() {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -689,33 +1015,33 @@ function toggleTheme() {
     localStorage.setItem('luftraeume_theme', dark ? 'light' : 'dark');
 }
 
-// ── Chips ─────────────────────────────────────────────────────────────────────
+// ── Chips ────────────────────────────────────────────────────────────────────────
 
-// Schnellauswahl Länder / Typen
 const EU_CODES = ['DE','AT','CH','FR','NL','BE','LU','GB','IE','DK','NO','SE','FI','IS','PL','CZ','SK','HU','SI','HR','IT','ES','PT','GR','RO','BG','RS','UA','EE','LV','LT','TR'];
 function setCountries(mode) {
     if (mode === 'all')  activeCountries = new Set(COUNTRIES.map(c => c.code));
     if (mode === 'none') activeCountries = new Set();
     if (mode === 'eu')   activeCountries = new Set(EU_CODES);
     buildChips();
+    updateFilterBadge();
 }
 function setTypes(mode) {
     if (mode === 'all')  activeTypes = new Set(Object.keys(TYPE_META).map(Number));
     if (mode === 'none') activeTypes = new Set();
-    buildChips();
-    renderFeatures();
-    updateStats();
+    buildChips(); buildLegend(); renderFeatures(); updateStats();
 }
 function setClasses(mode) {
     if (mode === 'all')  activeClasses = new Set([0,1,2,3,4,5,6,7,8]);
     if (mode === 'none') activeClasses = new Set();
-    buildChips();
-    renderFeatures();
-    updateStats();
+    buildChips(); renderFeatures(); updateStats();
+}
+
+function updateFilterBadge() {
+    document.getElementById('filter-badge').textContent = activeCountries.size;
 }
 
 function buildChips() {
-    // Länder-Chips (optional nach Suchtext gefiltert)
+    // Länder-Chips
     const cc = document.getElementById('country-chips');
     cc.innerHTML = '';
     const q = (document.getElementById('country-search')?.value || '').trim().toLowerCase();
@@ -729,9 +1055,8 @@ function buildChips() {
         btn.title = name;
         btn.textContent = label;
         btn.onclick = () => {
-            if (activeCountries.has(code)) activeCountries.delete(code);
-            else activeCountries.add(code);
-            buildChips();
+            if (activeCountries.has(code)) activeCountries.delete(code); else activeCountries.add(code);
+            buildChips(); updateFilterBadge();
         };
         cc.appendChild(btn);
     }
@@ -746,75 +1071,86 @@ function buildChips() {
         const btn = document.createElement('button');
         btn.className = 'chip' + (active ? ' active' : '');
         btn.style.background = active ? m.color : '';
-
-        const dot = document.createElement('span');
-        dot.className = 'chip-dot';
-        dot.style.background = m.color;
-        dot.style.border = '1px solid rgba(0,0,0,0.2)';
+        const dot = document.createElement('span'); dot.className = 'chip-dot'; dot.style.background = m.color;
         btn.appendChild(dot);
         btn.appendChild(document.createTextNode(m.label));
         btn.onclick = () => {
-            if (activeTypes.has(typeId)) activeTypes.delete(typeId);
-            else activeTypes.add(typeId);
-            buildChips();
-            renderFeatures();
-            updateStats();
+            if (activeTypes.has(typeId)) activeTypes.delete(typeId); else activeTypes.add(typeId);
+            buildChips(); buildLegend(); renderFeatures(); updateStats();
         };
         tc.appendChild(btn);
     }
 
-    // Klassen-Chips (ICAO-Luftraumklasse A–G + ohne Klasse)
+    // Klassen-Chips
     const klc = document.getElementById('class-chips');
-    if (klc) {
-        klc.innerHTML = '';
-        for (const id of [1,2,3,4,5,6,7,8,0]) {
-            const lbl = id === 0 ? 'o. Kl.' : (CLASS_LABEL[id] || id);
-            const active = activeClasses.has(id);
-            const btn = document.createElement('button');
-            btn.className = 'chip' + (active ? ' active' : '');
-            btn.style.background = active ? '#475569' : '';
-            btn.textContent = lbl;
-            btn.onclick = () => {
-                if (activeClasses.has(id)) activeClasses.delete(id); else activeClasses.add(id);
-                buildChips();
-                renderFeatures();
-                updateStats();
-            };
-            klc.appendChild(btn);
-        }
+    klc.innerHTML = '';
+    for (const id of [1,2,3,4,5,6,7,8,0]) {
+        const lbl = id === 0 ? 'o. Kl.' : (CLASS_LABEL[id] || id);
+        const active = activeClasses.has(id);
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (active ? ' active' : '');
+        btn.style.background = active ? '#475569' : '';
+        btn.textContent = lbl;
+        btn.onclick = () => {
+            if (activeClasses.has(id)) activeClasses.delete(id); else activeClasses.add(id);
+            buildChips(); renderFeatures(); updateStats();
+        };
+        klc.appendChild(btn);
     }
 }
 
-// ── Legende ───────────────────────────────────────────────────────────────────
+// ── Legende (klickbar -> filtert Typen) ──────────────────────────────────────────
 
+const LEGEND_ENTRIES = [
+    { types:[3],   color:'#991b1b', label:'Prohibited (ED-P)' },
+    { types:[2],   color:'#dc2626', label:'Danger (ED-D)' },
+    { types:[1],   color:'#7c3aed', label:'Restricted (ED-R)' },
+    { types:[4],   color:'#ef4444', label:'CTR' },
+    { types:[7],   color:'#f97316', label:'TMA' },
+    { types:[5],   color:'#f59e0b', label:'TMZ' },
+    { types:[6],   color:'#84cc16', label:'RMZ' },
+    { types:[8,9], color:'#a78bfa', label:'TRA / TSA' },
+    { types:[21],  color:'#0ea5e9', label:'Segelflug' },
+    { types:[29],  color:'#10b981', label:'Sport' },
+];
+function buildLegend() {
+    document.getElementById('legend-items').innerHTML = LEGEND_ENTRIES.map((e, i) => {
+        const on = e.types.some(t => activeTypes.has(t));
+        return `<div class="legend-row ${on ? '' : 'off'}" onclick="toggleLegendType(${i})" title="Typ ein-/ausblenden">
+            <span class="legend-swatch" style="background:${e.color}"></span>
+            <span>${e.label}</span>
+        </div>`;
+    }).join('');
+}
+function toggleLegendType(i) {
+    const e = LEGEND_ENTRIES[i];
+    const on = e.types.some(t => activeTypes.has(t));
+    for (const t of e.types) { if (on) activeTypes.delete(t); else activeTypes.add(t); }
+    buildChips(); buildLegend(); renderFeatures(); updateStats();
+}
 function toggleLegend() {
     const lg = document.getElementById('legend');
     const collapsed = lg.classList.toggle('collapsed');
     lg.querySelector('.legend-toggle').textContent = collapsed ? '▸' : '▾';
 }
 
-function buildLegend() {
-    const entries = [
-        { color: '#991b1b', label: 'Prohibited (ED-P)' },
-        { color: '#dc2626', label: 'Danger (ED-D)' },
-        { color: '#7c3aed', label: 'Restricted (ED-R)' },
-        { color: '#ef4444', label: 'CTR' },
-        { color: '#f97316', label: 'TMA' },
-        { color: '#f59e0b', label: 'TMZ' },
-        { color: '#84cc16', label: 'RMZ' },
-        { color: '#a78bfa', label: 'TRA / TSA' },
-        { color: '#0ea5e9', label: 'Segelflug' },
-        { color: '#10b981', label: 'Sport' },
-    ];
-    document.getElementById('legend-items').innerHTML = entries.map(e =>
-        `<div class="legend-row">
-            <span class="legend-swatch" style="background:${e.color}"></span>
-            <span>${e.label}</span>
-        </div>`
-    ).join('');
+// ── URL-Hash (teilbarer Kartenausschnitt) ────────────────────────────────────────
+
+let hashTimer;
+function updateHash() {
+    clearTimeout(hashTimer);
+    hashTimer = setTimeout(() => {
+        const c = map.getCenter();
+        history.replaceState(null, '', `#${c.lat.toFixed(4)}/${c.lng.toFixed(4)}/${map.getZoom()}`);
+    }, 400);
+}
+function readHash() {
+    const m = location.hash.match(/^#(-?\d+\.?\d*)\/(-?\d+\.?\d*)\/(\d+)/);
+    if (m) { map.setView([+m[1], +m[2]], +m[3]); return true; }
+    return false;
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// ── Init ─────────────────────────────────────────────────────────────────────────
 
 (function init() {
     const theme = localStorage.getItem('luftraeume_theme') || 'light';
@@ -824,15 +1160,24 @@ function buildLegend() {
     initMap();
     buildChips();
     buildLegend();
+    updateFilterBadge();
+    readHash();
 
-    // Auf schmalen Bildschirmen Legende eingeklappt starten (mehr Kartenfläche)
-    if (window.innerWidth < 640) toggleLegend();
+    // Suche verdrahten
+    const s = document.getElementById('lr-search');
+    s.addEventListener('input', onSearchInput);
+    s.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); geocodePlace(); } });
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.lr-search-wrap')) hideResults();
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { hideResults(); closeDrawer(); closeProfile(); }
+    });
 
-    // OpenAIP läuft über den Worker-Proxy -> kein Key nötig, Karte sofort nutzbar.
-    document.getElementById('no-key-msg').style.display = 'none';
+    if (window.innerWidth < 680) toggleLegend();
+
     if (activeCountries.size > 0) ladeAirspaces();   // Standardländer (DE/AT/CH) laden
 })();
 </script>
-<script src="navigation.js"></script>
 </body>
 </html>

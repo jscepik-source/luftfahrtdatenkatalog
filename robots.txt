@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jscepik-source.github.io/dfs-katalog/sitemap.xml
+Sitemap: https://jscepik-source.github.io/luftfahrtdatenkatalog/sitemap.xml

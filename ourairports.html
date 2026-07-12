@@ -15,20 +15,20 @@
     <meta name="keywords" content="Flughafen, ICAO, IATA, METAR, TAF, NOTAM, ADS-B, Runway, ILS, Luftfahrt, Aviation, Airport, Flugwetter, AIP">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Jan Scepik, Hochschule RheinMain">
-    <link rel="canonical" href="https://jscepik-source.github.io/dfs-katalog/">
+    <link rel="canonical" href="https://jscepik-source.github.io/luftfahrtdatenkatalog/">
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jscepik-source.github.io/dfs-katalog/">
+    <meta property="og:url" content="https://jscepik-source.github.io/luftfahrtdatenkatalog/">
     <meta property="og:title" content="Luftfahrtdatenkatalog — 72.000 Flughäfen, METAR & Live ADS-B">
     <meta property="og:description" content="ICAO, IATA, Name oder Stadt eingeben: Live-METAR, TAF, NOTAMs, ILS-Kategorien, Runways und ADS-B Radar für jeden Flughafen weltweit.">
     <meta property="og:locale" content="de_DE">
     <meta name="twitter:card" content="summary_large_image">
-    <meta property="og:image" content="https://jscepik-source.github.io/dfs-katalog/og-image.png">
+    <meta property="og:image" content="https://jscepik-source.github.io/luftfahrtdatenkatalog/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta name="twitter:image" content="https://jscepik-source.github.io/dfs-katalog/og-image.png">
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://jscepik-source.github.io/dfs-katalog/"},{"@type":"ListItem","position":2,"name":"Flughäfen","item":"https://jscepik-source.github.io/dfs-katalog/ourairports.html"}]}</script>
+    <meta name="twitter:image" content="https://jscepik-source.github.io/luftfahrtdatenkatalog/og-image.png">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://jscepik-source.github.io/luftfahrtdatenkatalog/"},{"@type":"ListItem","position":2,"name":"Flughäfen","item":"https://jscepik-source.github.io/luftfahrtdatenkatalog/ourairports.html"}]}</script>
     <meta name="twitter:title" content="Luftfahrtdatenkatalog — 72.000 Flughäfen">
     <meta name="twitter:description" content="Live METAR, NOTAMs, ADS-B Radar und ILS-Daten für 72.000 Airports weltweit.">
 
@@ -38,7 +38,7 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "Luftfahrtdatenkatalog",
-      "url": "https://jscepik-source.github.io/dfs-katalog/",
+      "url": "https://jscepik-source.github.io/luftfahrtdatenkatalog/",
       "description": "Weltweiter Flughafen-Katalog mit Live-METAR, TAF, NOTAMs, ILS-Kategorien, Runways und ADS-B Radar für 72.000 Airports.",
       "applicationCategory": "NavigationApplication",
       "operatingSystem": "Any",
@@ -2761,14 +2761,14 @@ if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)
 </div>
 
 <script>
-const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/ourairports_export.json';
+const JSON_URL = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/ourairports_export.json';
 
 // Katalog-Stand im Footer: letztes Update von ourairports_export.json (GitHub-Commit-Datum, Kategorie API/Dump)
 (async () => {
     const el = document.getElementById('katalog-stand');
     if (!el || !window.Zeitstempel) return;
     try {
-        const r = await fetch('https://api.github.com/repos/jscepik-source/dfs-katalog/commits?path=ourairports_export.json&per_page=1');
+        const r = await fetch('https://api.github.com/repos/jscepik-source/luftfahrtdatenkatalog/commits?path=ourairports_export.json&per_page=1');
         const j = await r.json();
         const d = j && j[0] && j[0].commit && (j[0].commit.committer || j[0].commit.author).date;
         const iso = Zeitstempel.toISO(d);
@@ -2927,11 +2927,11 @@ function ilsBadge(icao, desig) {
     return `<span class="ils-badge ${cls}" title="ILS-Kategorie ${kat}">${label}</span>`;
 }
 
-const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json';
-const NOTAM_INFO_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/notam_info.json';
+const NFL_JSON_URL          = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/nfl_notams_export.json';
+const NOTAM_INFO_URL        = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/notam_info.json';
 const FLUGZEUG_KATALOG_URL  = 'Luftfahrt_Katalog_FINAL_CLEAN_10.html';   // Live-ADS-B-Typ -> Flugzeug-Katalog
-const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/eurocontrol_katalog_export.json';
-const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/lxnav_latest.json';
+const EUROCONTROL_JSON_URL  = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/eurocontrol_katalog_export.json';
+const LXNAV_JSON_URL        = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/lxnav_latest.json';
 // Geteilter OpenAIP-Key (read-only Kartendaten) -> Karten laufen sofort ohne Setup.
 // Ein eigener Key (localStorage) hat Vorrang und nutzt das eigene Limit.
 function getOpenAipKey(){ return (localStorage.getItem('openaip_key') || '2800111e267cd352c035b2df2102fbdf').trim(); }
@@ -2969,8 +2969,8 @@ function addOaipKeyControl(map){
     }});
     map.addControl(new C());
 }
-const SHV_AIRSPACE_URL      = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/shv_airspace.geojson';
-const SHV_WILDLIFE_URL      = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/shv_wildlife.geojson';
+const SHV_AIRSPACE_URL      = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/shv_airspace.geojson';
+const SHV_WILDLIFE_URL      = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/shv_wildlife.geojson';
 let nflJsonCache         = null;
 let notamInfoCache       = null;
 let eurocontrolCache     = null;
@@ -2996,7 +2996,7 @@ let _dfsPromise = null;
 function ladeDfsDaten() {
     if (_dfsPromise) return _dfsPromise;
     _dfsPromise = Promise.all([
-        fetch('https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/dfs_katalog_export.json').then(r => r.json()).catch(() => ({})),
+        fetch('https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/dfs_katalog_export.json').then(r => r.json()).catch(() => ({})),
         fetch('https://raw.githubusercontent.com/jscepik-source/dfs-ifr-katalog/main/ifr_katalog_export.json').then(r => r.json()).catch(() => ({}))
     ]).then(([vfr, ifr]) => {
         vfrKatalog = {};
@@ -3025,7 +3025,7 @@ ladeDfsDaten().then(() => {
     });
 });
 
-fetch('https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/nfl_notams_export.json')
+fetch('https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/nfl_notams_export.json')
     .then(r => r.json())
     .then(d => { nflDaten = d.eintraege || []; })
     .catch(() => {});
@@ -3992,7 +3992,7 @@ function zeichneRunwaySVG(runways) {
 
 // ── Generisches Länder-Kartenkatalog-System ─────────────────────────────────
 
-const RAW = 'https://raw.githubusercontent.com/jscepik-source/dfs-katalog/main/';
+const RAW = 'https://raw.githubusercontent.com/jscepik-source/luftfahrtdatenkatalog/main/';
 
 // ICAO-Präfix → Dateiname ohne .json (null = eigener Loader)
 const KATALOG_DATEI = {
