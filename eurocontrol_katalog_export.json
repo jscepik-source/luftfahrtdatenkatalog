@@ -23,10 +23,10 @@
       "Download": "https://www.eurocontrol.int/sites/default/files/2021-05/eurocontrol-dcts-europe-map-rad-2106.pdf"
     }
   },
-  "Flight information region (FIR/UIR) charts - 2024": {
-    "_url": "https://www.eurocontrol.int/publication/flight-information-region-firuir-charts-2024",
+  "Flight information region (FIR/UIR) charts": {
+    "_url": "https://www.eurocontrol.int/publication/flight-information-region-firuir-charts",
     "karten": {
-      "Download": "https://www.eurocontrol.int/sites/default/files/2024-05/eurocontrol-firuir-lower-airspace-europe-2024.pdf"
+      "Download": "https://www.eurocontrol.int/sites/default/files/2026-07/eurocontrol-firuir-lower-airspace-europe-2026.pdf"
     }
   },
   "Free route airspace (FRA) implementation projection charts": {
