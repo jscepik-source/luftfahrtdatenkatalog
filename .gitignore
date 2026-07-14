@@ -4,3 +4,17 @@ telegram_bridge.log
 start_telegram_bridge.bat
 *.env
 tmp_*.txt
+
+# Windows-Verknüpfungen / Python-Cache / Backups
+*.lnk
+__pycache__/
+*.pyc
+*.bak
+
+# Präsentations-Material — gehört in ein eigenes Repo (anderes Thema)
+praesi/
+
+# Projektbericht — nur lokal, nicht ins öffentliche Repo
+PROJEKTBERICHT.md
+PROJEKTBERICHT.dokuwiki.txt
+wiki/Projektbericht.md
