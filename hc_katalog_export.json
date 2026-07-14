@@ -35,6 +35,12 @@
       "Aerodrome Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/HCGR_AD-CHART.pdf"
     }
   },
+  "HCMB": {
+    "_url": "https://aip.scaa.gov.so/eAIP/HC-AD-2.HCMB-en-GB.html",
+    "karten": {
+      "Aerodrome Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/HCMB_AD-CHART.pdf"
+    }
+  },
   "HCMF": {
     "_url": "https://aip.scaa.gov.so/eAIP/HC-AD-2.HCMF-en-GB.html",
     "karten": {
