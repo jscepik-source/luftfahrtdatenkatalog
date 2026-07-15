@@ -136,7 +136,7 @@ Jetzt der komplette Kreislauf einmal von Hand.
    ```
 5. `https://DEIN-NAME.github.io/meine-website/` neu laden → **„Hallo Welt 🚀"** erscheint.
 
-> 🖼️ **Screenshot:** *Browser mit der Live-Seite „Hallo Welt".* — `![](screenshots/07-hallo-welt.png)`
+> 🖼️ **Screenshot:** *Browser mit der Live-Seite „Hallo Welt".* — `<img width="1334" height="558" alt="image" src="https://github.com/user-attachments/assets/fbe78f0c-6d50-4bca-b9f0-a1ac4c271650" />
 
 🎉 **Geschafft — deine erste Seite ist im Internet!**
 
