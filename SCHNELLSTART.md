@@ -44,7 +44,8 @@ Git lädt deine Dateien zu GitHub hoch.
    ```
    Es sollte eine Versionsnummer erscheinen (z. B. `git version 2.45`).
 
-> 🖼️ **Screenshot:** *Eingabeaufforderung mit der Ausgabe von `git --version`.* — `![](screenshots/02-git-version.png)`
+ <img width="550" height="80" alt="image" src="https://github.com/user-attachments/assets/bb31c542-0475-4613-8f2c-3b1763413b2f" />
+
 
 **Einmalig einrichten** (Name + E-Mail; ersetze durch deine Daten):
 ```
