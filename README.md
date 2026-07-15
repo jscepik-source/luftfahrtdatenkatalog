@@ -5,6 +5,7 @@ Weltweiter, automatisch aktualisierter Katalog von Luftfahrtdatenquellen mit int
 **Live:** https://jscepik-source.github.io/luftfahrtdatenkatalog/
 **Hochschule RheinMain · Modul Avionik**
 
+> 🚀 **Für Anfänger:** [`SCHNELLSTART.md`](SCHNELLSTART.md) — von Null zur Live-Seite in 8 Schritten
 > 📚 Ausführliche Bau-Doku: [`ANLEITUNG_Website_mit_KI_bauen.md`](ANLEITUNG_Website_mit_KI_bauen.md) · als Wiki unter [`wiki/`](wiki/)
 
 ---
