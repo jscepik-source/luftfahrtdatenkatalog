@@ -5,6 +5,10 @@
 **Live:** https://jscepik-source.github.io/luftfahrtdatenkatalog/
 **Zielgruppe dieses Dokuments:** komplette Nachvollziehbarkeit — es wird **nichts** vorausgesetzt außer einem Computer mit Internet.
 
+> ## 🚀 Ganz neu? **Zuerst den Schnellstart ausführen.**
+> Wenn du **bei Null** anfängst (kein GitHub-Konto, kein Git, kein Editor), arbeite **erst** die kompakte Schritt-für-Schritt-Anleitung **[`SCHNELLSTART.md`](SCHNELLSTART.md)** durch. Sie bringt dich in ~45 Minuten von Null bis zur ersten **live sichtbaren Seite** — mit genauen Links und Screenshot-Stellen.
+> **Danach hierher zurückkehren:** Diese Anleitung baut ab **[Teil E](#teil-e--arbeitsweise-mit-der-ki-der-wichtigste-teil)** die eigentliche Website Feature für Feature. *(Teil A–D unten sind die ausführliche Fassung dessen, was der Schnellstart kompakt zeigt — du kannst sie überspringen, wenn der Schnellstart klappte.)*
+
 > **Lesehinweis:** Die Anleitung ist chronologisch. Wer bei Null startet, arbeitet Teil A→Q der Reihe nach ab. Jeder Bau-Schritt hat: **Ziel → Prompt (wörtlich verwendbar) → Datenquelle → Prüfen → typische Fehler.**
 >
 > **Auch als Wiki:** Dieselben Inhalte liegen als navigierbares **GitHub-Wiki** im Ordner [`wiki/`](wiki/) (Einzelseiten mit Sidebar und Querverweisen). Diese Datei ist die zusammenhängende Langfassung.
