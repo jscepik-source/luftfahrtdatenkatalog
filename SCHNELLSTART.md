@@ -171,14 +171,7 @@ Danach im Browser mit **Strg + F5** neu laden.
 
 ---
 
-## Screenshots einfügen (optional, 5 Min)
 
-Willst du echte Bilder statt der Platzhalter?
-
-1. Mach die Screenshots (Windows: **Windows-Taste + Umschalt + S**).
-2. Lege sie in einen Ordner **`screenshots/`** neben diese Datei.
-3. Benenne sie wie oben: `01-signup.png`, `02-git-version.png`, …
-4. Ersetze im Text die Zeile `> 🖼️ **Screenshot:** …` durch `![Beschreibung](screenshots/01-signup.png)`.
 
 ---
 
