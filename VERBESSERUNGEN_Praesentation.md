@@ -67,20 +67,19 @@ Die Überarbeitung umfasst **fünf Themenblöcke**:
 
 ## 4. Sicherheit & Architektur (Kernthema der Präsentation)
 
-**Ausgangslage:** Der OpenAIP-API-Schlüssel (für die Luftraumkarten) war im öffentlichen Seiten-Code sichtbar.
+**Ausgangslage:** Der OpenAIP-API-Schlüssel (für die Luftraumkarten) war anfangs im öffentlichen Seiten-Code sichtbar; auch der KI-Assistent bräuchte einen serverseitigen Schlüssel.
 
 **Bewertung des Risikos:** Read-only Kartendaten, kostenlos → kein Account-Zugriff, keine Kosten, kein echtes „Hacking"-Risiko; höchstens Kontingent-Mitnutzung. Dennoch ist ein exponierter Schlüssel unsaubere Praxis.
 
-**Lösung — serverseitiger Proxy (Cloudflare Worker) als saubere Architektur:**
-- Der Schlüssel kann als **verschlüsselte Umgebungsvariable im Worker** liegen, nie im Seiten-Code (Code liegt fertig als `worker_complete.js` bereit).
-- Die Seiten rufen dann den Worker (`/oaip/tiles`, `/oaip/airspaces`) statt OpenAIP direkt.
-- **Ergebnis:** Karten funktionieren für alle Besucher ohne eigenen Key, und der Schlüssel ist nirgends öffentlich sichtbar.
+**Zwei Wege wurden abgewogen:**
+- **A – Serverseitiger Proxy (Cloudflare Worker):** Der Schlüssel liegt als **verschlüsselte Umgebungsvariable im Worker**, nie im Seiten-Code (Code liegt fertig als `worker_complete.js` bereit); die Seiten rufen den Worker statt OpenAIP/Groq direkt. *Vorteil:* funktioniert für alle Besucher ohne eigenen Key. *Nachteil:* läuft dann über **ein** Konto (Kontingent & Verantwortung der Betreiber).
+- **B – Jede*r bringt den eigenen Key (gewählte Endlösung):** **Kein geteilter Schlüssel, kein fremdes Konto im Spiel.** Für die Luftraumkarte hinterlegt jede*r einen eigenen, kostenlosen OpenAIP-Key — ausschließlich **lokal im Browser (localStorage)** gespeichert, **nie übertragen**. Ohne Key zeigt die Seite einen klaren Registrierungshinweis. Der KI-Assistent nutzt analog den **eigenen Groq-Key** des Nutzers oder den schlüssellosen Dienst **Pollinations**.
 
-**Aktueller Betriebsmodus:** Für den sofortigen, aufwandsfreien Betrieb (ohne Deploy) wird derzeit ein geteilter, kostenloser Read-only-Kartenschlüssel direkt genutzt; ein eigener Key kann optional lokal (Browser) als Override hinterlegt werden. Der Worker-Proxy ist als **umschaltbare, sicherere Variante** vorbereitet. → Zeigt bewusst die **Abwägung Sicherheit ↔ Einfachheit**.
+**Warum B gewählt wurde:** Damit steckt **nirgends** ein Geheimnis im veröffentlichten Client, und **niemand** nutzt Ressourcen auf Kosten der Autoren — die sauberste Variante für eine öffentliche, studentische Abgabe. Der Worker (A) bleibt als **dokumentierte Alternativarchitektur** erhalten. → Zeigt bewusst die **Abwägung Sicherheit ↔ Einfachheit** und eine **begründete** Entscheidung.
 
-**Architektur-Prinzip:** Trennung von Geheimnis (Server) und Darstellung (Client) — dasselbe Muster, das bereits der KI-Assistent (Groq-Schlüssel im Worker) nutzt.
+**Zusätzliche Härtung:** Fremddaten aus APIs werden vor der Anzeige **HTML-escaped**, Eingaben (z. B. Typcodes) auf `[A-Z0-9]` **sanitisiert** → keine Injection. Die Seite ist **statisch, ohne Login/Backend** → minimale Angriffsfläche.
 
-> Merksatz für die Folie: *„Der einzige Ort für einen API-Schlüssel ist der Server — nie der Browser."*
+> Merksatz für die Folie: *„Der einzige Ort für einen API-Schlüssel ist der Server — oder der eigene Browser des Nutzers; nie der veröffentlichte Code."*
 
 ---
 
@@ -104,10 +103,10 @@ Identische dunkle Themen-Leiste (Start · Flughäfen · Flugzeuge · Drohnen · 
 
 ## 6. Technische Highlights (für Nachfragen)
 
-- **Serverlose Architektur:** statische GitHub-Pages-Seite + Cloudflare Worker als schlanker Secret-Proxy — kein eigener Server, kein Backend, keine Datenbank.
-- **Ausschließlich CORS-freie, öffentliche APIs** im Browser: airplanes.live (ADS-B), Wikipedia/Wikidata (Daten & Bilder), OpenStreetMap/Overpass (Infrastruktur), OpenAIP (Lufträume, via Proxy).
+- **Serverlose Architektur:** rein statische GitHub-Pages-Seite — kein eigener Server, kein Backend, keine Datenbank. (Ein Cloudflare-Worker-Proxy ist als optionale Alternative dokumentiert, wird für den Betrieb aber nicht benötigt.)
+- **Ausschließlich CORS-freie, öffentliche APIs** im Browser: airplanes.live (ADS-B), Wikipedia/Wikidata (Daten & Bilder), OpenStreetMap/Overpass (Infrastruktur), OpenAIP (Lufträume, mit eigenem Key).
 - **Robustheit:** Fallback-Ketten überall (Bild-Fallback, API-Fallback, Animations-Fallback) → die Seite bleibt bei Einzelausfällen benutzbar.
-- **Sicherheit:** Eingaben/Fremddaten werden sanitisiert & escaped; Secrets serverseitig.
+- **Sicherheit:** Eingaben/Fremddaten werden sanitisiert & escaped; **keine Secrets im Client** — schlüsselpflichtige Dienste nutzen den eigenen Key des Nutzers (localStorage) oder einen schlüssellosen Fallback.
 - **Barrierefreiheit & Performance:** Reduced-Motion, Tastatur-Fokus, Canvas-Rendering für Massendaten, Lazy-Loading von Bildern.
 
 ---

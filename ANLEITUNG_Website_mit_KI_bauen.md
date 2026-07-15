@@ -234,9 +234,8 @@ Das ist das Kernstück. **Jede Stufe einzeln bauen und prüfen.**
 ### L.1 · OpenAIP-Key (für Lufträume)
 1. **openaip.net/register** → kostenloses Konto anlegen (dauert ~1 Min).
 2. Im Konto einen **API-Key** erzeugen.
-3. Zwei Betriebs-Optionen:
-   - **Einfach:** Key direkt im Client-Code (funktioniert sofort, ist aber im Quelltext sichtbar — bei read-only Kartendaten geringes Risiko).
-   - **Sicher:** Key in einen **Cloudflare Worker** legen (Teil L.3) und die Seite über den Worker leiten → Key bleibt unsichtbar.
+3. **Gewählter Ansatz — eigener Key pro Nutzer:** Der Key wird **nur im Browser** gespeichert (`localStorage`), **nie im Seiten-Code**. Jede\*r trägt den eigenen kostenlosen Key ein (⚙-Panel auf der Lufträume-Seite bzw. 🔑-Button auf der Flughäfen-Seite); ohne Key zeigt die Karte einen Registrierungshinweis. So steckt **kein geteilter Schlüssel** im öffentlichen Code, und nichts läuft über ein fremdes Konto.
+   - *Optionale Alternative:* Key serverseitig in einem **Cloudflare Worker** verstecken (Teil L.3) → Karten laufen für alle ohne eigenen Key, dann aber über **ein** Konto.
 
 ### L.2 · Groq-Key (für den KI-Assistenten)
 1. **console.groq.com** → kostenloses Konto → **API-Key** erstellen (Format `gsk_…`).
@@ -284,7 +283,7 @@ Das Projekt hat **~30 Bots**, gesteuert von **einem** Workflow (`.github/workflo
 
 - Die Seite ist **statisch**: kein Server, keine Datenbank, **kein Login** → nichts zum „Einloggen/Übernehmen".
 - Alle Daten-APIs sind **anonyme öffentliche Endpunkte** — laufen über keinen persönlichen Account.
-- **Geheimnisse** (Groq-, ggf. OpenAIP-Key) gehören in den **Cloudflare Worker**, nicht in den Client.
+- **Keine Geheimnisse im Client:** schlüsselpflichtige Dienste (OpenAIP, Groq) nutzen den **eigenen Key des Nutzers** (nur im Browser-`localStorage`, nie übertragen) — kein geteilter Schlüssel im Code. *(Alternative: Schlüssel serverseitig im **Cloudflare Worker** verstecken.)*
 - **Fremddaten** (aus ADS-B/APIs) vor der Anzeige **HTML-escapen**; Eingaben (z. B. Typcodes) **sanitisieren** → keine Injection.
 - Merksatz: *„Der einzige Ort für einen API-Schlüssel ist der Server — nie der Browser."*
 
