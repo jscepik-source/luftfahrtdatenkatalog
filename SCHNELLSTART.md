@@ -26,7 +26,7 @@ GitHub speichert deinen Code und zeigt deine Website kostenlos an.
 2. E-Mail eingeben → Passwort → Benutzername (z. B. `max-mustermann`) wählen
 3. E-Mail bestätigen (Code aus der Mail eingeben)
 
-> 🖼️ **Screenshot:** *GitHub-Anmeldeseite (github.com/signup).* — später ersetzen durch `![](screenshots/01-signup.png)`
+![GitHub-Anmeldeseite (github.com/signup)](screenshots/01-signup.png)
 
 **Danach siehst du:** deine leere GitHub-Startseite („Dashboard").
 
@@ -62,7 +62,7 @@ VS Code ist der Editor, in dem du (bzw. die KI) die Dateien schreibt.
 2. Großen blauen Button **„Download for Windows"** klicken
 3. Installer öffnen → **„Ich stimme zu"** → **„Weiter"** → **„Installieren"**
 
-> 🖼️ **Screenshot:** *VS-Code-Startseite mit dem Download-Button.* — `![](screenshots/03-vscode.png)`
+![VS-Code-Startseite mit dem Download-Button](screenshots/03-vscode.png)
 
 **Danach siehst du:** VS Code öffnet sich mit einer Willkommensseite.
 
@@ -89,7 +89,7 @@ Ein „Repository" ist dein Projektordner bei GitHub.
 4. Häkchen bei **„Add a README file"** setzen
 5. Grünen Button **„Create repository"** klicken
 
-> 🖼️ **Screenshot:** *Die „Create a new repository"-Seite (github.com/new) mit ausgefülltem Namen.* — `![](screenshots/05-new-repo.png)`
+![Die "Create a new repository"-Seite (github.com/new) mit ausgefülltem Namen](screenshots/05-new-repo.png)
 
 **Danach siehst du:** dein neues (fast leeres) Repository.
 
@@ -104,7 +104,7 @@ Damit wird aus deinem Repository eine echte Website.
 3. Unter **„Source"**: **„Deploy from a branch"** wählen
 4. Branch auf **`main`** stellen, Ordner auf **`/ (root)`** → **„Save"**
 
-> 🖼️ **Screenshot:** *Settings → Pages, mit „Deploy from a branch: main / root".* — `![](screenshots/06-pages.png)`
+![Settings → Pages, mit "Deploy from a branch: main / root"](screenshots/06-pages.png)
 
 **Danach siehst du (nach ~1 Minute):** oben erscheint deine Web-Adresse:
 `https://DEIN-NAME.github.io/meine-website/`
