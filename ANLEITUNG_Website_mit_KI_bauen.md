@@ -16,6 +16,9 @@
 ---
 
 # INHALT
+
+- **[🚀 SCHNELLSTART](SCHNELLSTART.md)** — bei Null anfangen: in 8 Schritten zur ersten Live-Seite · **zuerst ausführen**
+
 - **Teil A** — Werkzeuge installieren (von absolut Null)
 - **Teil B** — Git & GitHub verstehen (Minimalwissen)
 - **Teil C** — Repository anlegen & GitHub Pages aktivieren
