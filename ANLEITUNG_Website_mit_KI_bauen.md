@@ -482,7 +482,9 @@ Jede Quelle wird nach **einheitlichen Kriterien** erfasst und bewertet (die Spal
 | 10 | **Statistik** | 15 | Eurostat, DESTATIS, ICAO WATS, IATA, Boeing/Airbus Forecast, NTSB, ASN | **H.5** (Statistik-Dashboard) |
 | 11 | **UAVs / Drohnen** | 17 (Code: 18) | OpenAIP UAV, DJI FlySafe, Dronetag, EASA/LBA/DFS/Dipul, Drone-Check | **Teil I** (Drohnen) |
 
-*(Zähler laut Recherche-Tabelle; „ca." = in der Vorlage nicht eindeutig lesbar. Die vollständige Liste aller **539 Einzelquellen** liegt in **`QUELLENKATALOG.csv`**; Zählungen & Methodik in **`QUELLENKATALOG.md`**.)*
+*(Zähler laut Recherche-Tabelle; „ca." = in der Vorlage nicht eindeutig lesbar. Die vollständige Liste aller **229 bewerteten Quellen** liegt in **`QUELLENKATALOG.csv`**; Zählungen & Methodik in **`QUELLENKATALOG.md`**.)*
+
+> **➜ Web-Ansicht des Quellenkatalogs (öffentlich):** [Luftfahrt-Datenkatalog — alle 229 Quellen mit Bewertung](https://jscepik-source.github.io/luftfahrtdatenkatalog/quellenkatalog.html)
 
 **So verbindet sich Recherche und Bau:** Vor dem Bau einer Seite steht die **Recherche der passenden Kategorie** (z. B. „Wetter": 24 Quellen vergleichen und bewerten). Beim Bauen wird dann entweder die **beste browser-taugliche Quelle als Live-Feature** umgesetzt (Wetter → aviationweather.gov, Verkehr → airplanes.live) **oder die kuratierte, bewertete Quellenliste** als filterbare Katalog-Seite gerendert (AIP, Flugzeuge, Triebwerke, Statistik, Drohnen). **Merke:** erst recherchieren & bewerten, dann bauen — nicht umgekehrt.
 

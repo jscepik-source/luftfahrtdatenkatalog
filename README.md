@@ -19,6 +19,7 @@ Weltweiter, automatisch aktualisierter Katalog von Luftfahrtdatenquellen mit int
 | Flugzeuge | `Luftfahrt_Katalog_FINAL_CLEAN_10.html` | Muster-Katalog, ICAO Doc 8643, Triebwerke, Statistik, Live-Tracker |
 | Drohnen | `drohnen.html` | UAV-/Drohnen-Datenquellen (kuratiert) |
 | Lufträume | `luftraeume.html` | OpenAIP-Luftraumkarte (Vertikalprofil, Höhenfilter, Suche) |
+| **Quellenkatalog** | `quellenkatalog.html` | **Alle 229 bewerteten Luftfahrt-Datenquellen** als filterbare Tabelle → [live ansehen](https://jscepik-source.github.io/luftfahrtdatenkatalog/quellenkatalog.html) |
 | Zusatz | `notam.html`, `eurocontrol.html`, `austrocontrol.html`, `nfl.html` | NOTAM-/Länder-Ansichten |
 
 ---
