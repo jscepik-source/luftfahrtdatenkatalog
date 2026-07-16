@@ -44,7 +44,7 @@ Git lädt deine Dateien zu GitHub hoch.
    ```
    Es sollte eine Versionsnummer erscheinen (z. B. `git version 2.45`).
 
- <img width="550" height="80" alt="image" src="https://github.com/user-attachments/assets/bb31c542-0475-4613-8f2c-3b1763413b2f" />
+<img width="550" height="80" alt="Eingabeaufforderung mit der Ausgabe von git --version" src="https://github.com/user-attachments/assets/bb31c542-0475-4613-8f2c-3b1763413b2f" />
 
 
 **Einmalig einrichten** (Name + E-Mail; ersetze durch deine Daten):
@@ -136,7 +136,7 @@ Jetzt der komplette Kreislauf einmal von Hand.
    ```
 5. `https://DEIN-NAME.github.io/meine-website/` neu laden → **„Hallo Welt 🚀"** erscheint.
 
-> 🖼️ **Screenshot:** *Browser mit der Live-Seite „Hallo Welt".* — `<img width="1334" height="558" alt="image" src="https://github.com/user-attachments/assets/fbe78f0c-6d50-4bca-b9f0-a1ac4c271650" />
+<img width="1334" height="558" alt="Browser mit der Live-Seite „Hallo Welt“" src="https://github.com/user-attachments/assets/fbe78f0c-6d50-4bca-b9f0-a1ac4c271650" />
 
 🎉 **Geschafft — deine erste Seite ist im Internet!**
 
@@ -168,10 +168,6 @@ Danach im Browser mit **Strg + F5** neu laden.
 | Claude Code (KI) | https://claude.com/claude-code |
 | Neues Repository | https://github.com/new |
 | Fertiges Beispiel (dieses Projekt) | https://jscepik-source.github.io/luftfahrtdatenkatalog/ |
-
----
-
-
 
 ---
 
