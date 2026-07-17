@@ -11,12 +11,6 @@
       "Aerodrome Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/HCDB_AD-CHART.pdf"
     }
   },
-  "HCDL": {
-    "_url": "https://aip.scaa.gov.so/eAIP/HC-AD-2.HCDL-en-GB.html",
-    "karten": {
-      "Aerodrome Chart — ICAO": "https://aip.scaa.gov.so/graphics/eAIP/HCDL_AD-CHART.pdf"
-    }
-  },
   "HCDM": {
     "_url": "https://aip.scaa.gov.so/eAIP/HC-AD-2.HCDM-en-GB.html",
     "karten": {
