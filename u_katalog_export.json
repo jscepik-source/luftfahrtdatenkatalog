@@ -416,10 +416,20 @@
       "(70) STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-070.pdf",
       "(87) STANDARD ARRIVAL CHART INSTRUMENT (STAR) - ICAO. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-087.pdf",
       "(88) STANDARD ARRIVAL CHART INSTRUMENT (STAR) - ICAO. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-088.pdf",
-      "(97) INSTRUMENT APPROACH CHART - ICAO. ILS CAT I, LOC. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-097.pdf",
-      "(98) INSTRUMENT APPROACH CHART - ICAO. ILS CAT I, LOC. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-098.pdf",
-      "(99) INSTRUMENT APPROACH CHART - ICAO. NDB. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-099.pdf",
-      "(100) INSTRUMENT APPROACH CHART - ICAO. NDB. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-100.pdf"
+      "(97) INSTRUMENT APPROACH CHART - ICAO. ILS Y CAT I, LOC Y. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-097.pdf",
+      "(98) INSTRUMENT APPROACH CHART - ICAO. ILS Y CAT I, LOC Y. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-098.pdf",
+      "(99) INSTRUMENT APPROACH CHART - ICAO. ILS X CAT I. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-099.pdf",
+      "(100) INSTRUMENT APPROACH CHART - ICAO. ILS X CAT I, LOC X. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-100.pdf",
+      "(101) INSTRUMENT APPROACH CHART - ICAO. LOC X. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-101.pdf",
+      "(103) INSTRUMENT APPROACH CHART - ICAO. NDB. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-103.pdf",
+      "(104) INSTRUMENT APPROACH CHART - ICAO. NDB. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-104.pdf",
+      "(135) COORDINATES OF RNAV WAYPOINTS": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-135.pdf",
+      "(139) STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO. RNAV. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-139.pdf",
+      "(140) STANDARD DEPARTURE CHART INSTRUMENT (SID) - ICAO. RNAV. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-140.pdf",
+      "(147) STANDARD ARRIVAL CHART INSTRUMENT (STAR) - ICAO. RNAV. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-147.pdf",
+      "(148) STANDARD ARRIVAL CHART INSTRUMENT (STAR) - ICAO. RNAV. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-148.pdf",
+      "(155) INSTRUMENT APPROACH CHART - ICAO. RNP. RWY 06": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-155.pdf",
+      "(156) INSTRUMENT APPROACH CHART - ICAO. RNP. RWY 24": "https://www.caica.ru/common/AirInter/validaip/aip/ad/ad2/uwks/1-ad2-rus-uwks-156.pdf"
     }
   },
   "USCC": {
