@@ -1,315 +1,176 @@
 {
-  "ZBDT": {
+  "ZBAA": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZBDT-DATONG/Yungang": "https://eaip.flyisfp.com/#/eAIP",
-      "ZBDT-4P-2:STAR RNP RWY14(IVTIN/TODAM)": "https://eaip.flyisfp.com/#/eAIP"
+      "ZBAA-BEIJING/Capital": "https://eaip.flyisfp.com/#/eAIP",
+      "ZBAA-2A-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
+      "ZBAA-2P-1:APDC RWY01/36L/36R": "https://eaip.flyisfp.com/#/eAIP",
+      "ZBAA-2P-2:APDC RWY18L/18R/19": "https://eaip.flyisfp.com/#/eAIP",
+      "ZBAA-2R-1:GMC Taxiing Route": "https://eaip.flyisfp.com/#/eAIP",
+      "ZBAA-2R-2:GMC Taxiing Route RWY36R": "https://eaip.flyisfp.com/#/eAIP",
+      "ZBAA-2R-3:GMC Taxiing Route RWY01": "https://eaip.flyisfp.com/#/eAIP"
+    }
+  },
+  "ZBSJ": {
+    "_url": "https://eaip.flyisfp.com/#/eAIP",
+    "karten": {
+      "ZBSJ-SHIJIAZHUANG/Zhengding": "https://eaip.flyisfp.com/#/eAIP",
+      "ZBSJ-5N-3:IAC NDB RWY15": "https://eaip.flyisfp.com/#/eAIP",
+      "ZBSJ-5N-4:IAC NDB RWY33": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
   "ZBYN": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZBYN-TAIYUAN/Wusu": "https://eaip.flyisfp.com/#/eAIP",
-      "ZBYN-2P-1:APDC": "https://eaip.flyisfp.com/#/eAIP"
+      "ZBYN-TAIYUAN/Wusu": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
-  "ZGKL": {
+  "ZGGG": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZGKL-GUILIN/Liangjiang": "https://eaip.flyisfp.com/#/eAIP",
-      "ZGKL-0W-1:WAYPOINT LIST": "https://eaip.flyisfp.com/#/eAIP",
-      "ZGKL-3P-1:SID RNAV RWY01/19(ONEMI/GMC/UGRIG)": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZHCC": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZHCC-ZHENGZHOU/Xinzheng": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZHEC": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZHEC-EZHOU/Huahu": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-0G-1:DGS": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-0G-2:DGS": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-0G-3:DGS": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-0G-4:DGS": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-0G-5:DGS": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-1M-1:ATCSMAC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-2R-1:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-2R-2:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-2R-3:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-2R-4:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3P-1:SID RNAV RWY01L/01R/19L/19R(URGEB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3P-2:SID RNAV RWY01L/01R/19L/19R(TULMU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3P-3:SID RNAV RWY19L/19R(OLMIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3P-4:SID RNAV RWY01L/01R(OLMIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3P-5:SID RNAV RWY19L/19R(GUGAM)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3P-6:SID RNAV RWY01L/01R(GUGAM)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3P-7:SID RNAV RWY19L/19R(BENBI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3P-8:SID RNAV RWY01L/01R(BENBI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3V-1:SID RWY01L/01R/19L/19R(URGEB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3V-2:SID RWY01L/01R/19L/19R(TULMU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3V-3:SID RWY19L/19R(OLMIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3V-4:SID RWY01L/01R(OLMIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3V-5:SID RWY19L/19R(GUGAM)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3V-6:SID RWY01L/01R(GUGAM)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3V-7:SID RWY19L/19R(BENBI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-3V-8:SID RWY01L/01R(BENBI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4P-1:STAR RNAV RWY01L/01R(OTBUG)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4P-2:STAR RNAV RWY19L/19R(OTBUG)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4P-3:STAR RNAV RWY01L/01R(TULMU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4P-4:STAR RNAV RWY19L/19R(TULMU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4P-5:STAR RNAV RWY01L/01R(UPMAT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4P-6:STAR RNAV RWY01L/01R(WTM)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4P-7:STAR RNAV RWY01L/01R(ENLAB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4V-1:STAR RWY01L/01R(OTBUG)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4V-2:STAR RWY19L/19R(OTBUG)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4V-3:STAR RWY01L/01R(TULMU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4V-4:STAR RWY19L/19R(TULMU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4V-5:STAR RWY01L/01R(UPMAT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4V-6:STAR RWY01L/01R(WTM)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-4V-7:STAR RWY01L/01R(ENLAB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-1:IAC RNAV ILS/DME z RWY01L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-2:IAC ILS/DME y RWY01L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-3:IAC RNAV ILS/DME z RWY01R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-4:IAC ILS/DME y RWY01R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-5:IAC RNAV CAT-I/II ILS/DME z RWY19L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-6:IAC CAT-I/II ILS/DME y RWY19L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-7:IAC RNAV CAT-I/II ILS/DME z RWY19R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-8:IAC CAT-I/II ILS/DME y RWY19R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-9:IAC RNAV ILS/DME x RWY01L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-10:IAC ILS/DME w RWY01L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-11:IAC RNAV ILS/DME x RWY01R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHEC-5L-12:IAC ILS/DME w RWY01R": "https://eaip.flyisfp.com/#/eAIP"
+      "ZGGG-GUANGZHOU/Baiyun": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2A-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2P-1:APDC": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-1:GMC Taxiing Route RWY01L": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-2:GMC Taxiing Route RWY19R": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-3:GMC Taxiing Route RWY02R/03": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-4:GMC Taxiing Route RWY20L/21": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-5:GMC Taxiing Route RWY01L": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-6:GMC Taxiing Route RWY19R": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-7:GMC Taxiing Route RWY01R": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-8:GMC Taxiing Route RWY19L": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-9:GMC Taxiing Route RWY02L": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-10:GMC Taxiing Route RWY20R": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-11:GMC Taxiing Route RWY03": "https://eaip.flyisfp.com/#/eAIP",
+      "ZGGG-2R-12:GMC Taxiing Route RWY21": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
   "ZHHH": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZHHH-WUHAN/Tianhe": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHHH-2A-1:ADC": "https://eaip.flyisfp.com/#/eAIP"
+      "ZHHH-WUHAN/Tianhe": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
-  "ZHYC": {
+  "ZJQH": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZHYC-YICHANG/Sanxia": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHYC-2A-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZHYC-2P-1:APDC": "https://eaip.flyisfp.com/#/eAIP"
+      "ZJQH-QIONGHAI/Boao": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
-  "ZLLL": {
+  "ZJSY": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZLLL-LANZHOU/Zhongchuan": "https://eaip.flyisfp.com/#/eAIP",
-      "ZLLL-2A-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZLLL-3V-1:SID RWY01(OLSUG/ADPUX/UKBIN/IRMUB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZLLL-3V-2:SID RWY01(LELUX)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZLLL-3V-4:SID RWY19(OLSUG/ADPUX/LELUX)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZLLL-3V-5:SID RWY18L/18R(OLSUG/ADPUX/LELUX)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZLLL-5L-12:IAC ILS/DME y RWY18R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZLLL-5V-1:IAC VOR/DME RWY18R": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZPJH": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZPJH-XISHUANGBANNA/Gasa": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPJH-0W-1:WAYPOINT LIST": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPJH-0C-1:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPJH-1M-1:ATCSMAC": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZPLJ": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZPLJ-LIJIANG/Sanyi": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPLJ-5L-3:IAC RNP ILS/DME z RWY20": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZPPP": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZPPP-KUNMING/Changshui": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0W-1:WAYPOINT LIST": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0W-2:WAYPOINT LIST": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-1:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-2:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-3:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-4:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-5:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-6:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-7:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-8:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-9:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-10:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-11:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-12:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-0C-13:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-1M-1:ATCSMAC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-2A-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-2A-2:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-2P-1:APDC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-1:SID RNAV RWY03/04R(DADOL)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-2:SID RNAV RWY03/04R(NODIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-3:SID RNAV RWY03/04R(NODIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-4:SID RNAV RWY03/04R(LXI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-5:SID RNAV RWY03/04R(ELASU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-6:SID RNAV RWY03/04R(GULOT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-7:SID RNAV RWY21/22L(DADOL)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-8:SID RNAV RWY21/22L(NODIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-9:SID RNAV RWY21/22L(LXI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-10:SID RNAV RWY21/22L(ELASU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-11:SID RNAV RWY21/22L(GULOT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-12:SID RNAV RWY21/22L(NIXAS)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-13:SID RNAV RWY03/04R(NODIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-14:SID RNAV RWY03/04R(GULOT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-15:SID RNAV RWY21/22L(DADOL)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-16:SID RNAV RWY21/22L(NODIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3P-17:SID RNAV RWY21/22L(LXI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-1:SID RWY03/04R(DADOL)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-2:SID RWY03/04R(NODIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-3:SID RWY03/04R(LXI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-4:SID RWY03/04R(ELASU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-5:SID RWY03/04R(GULOT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-6:SID RWY21/22L(DADOL)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-7:SID RWY21/22L(NODIB)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-8:SID RWY21/22L(LXI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-9:SID RWY21/22L(ELASU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-10:SID RWY21/22L(GULOT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-3V-11:SID RWY21/22L(NIXAS)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-1:STAR RNAV RWY03/04R(XISLI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-2:STAR RNAV RWY03/04R(LXI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-3:STAR RNAV RWY03/04R(ELASU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-4:STAR RNAV RWY03/04R(GULOT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-5:STAR RNAV RWY03/04R(MEBNA)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-6:STAR RNAV RWY21/22L(XISLI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-7:STAR RNAV RWY21/22L(LXI)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-8:STAR RNAV RWY21/22L(ELASU)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-9:STAR RNAV RWY21/22L(GULOT)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-10:STAR RNAV RWY21/22L(MEBNA/NIXAS)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-11:STAR RNAV RWY03/04R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4P-12:STAR RNAV RWY21/22L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4V-1:STAR RWY03/04R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-4V-2:STAR RWY21/22L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-5L-1:IAC RNAV CAT-I/II ILS/DME z RWY03": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-5L-2:IAC CAT-I/II ILS/DME y RWY03": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-5L-3:IAC RNAV ILS/DME z RWY04R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-5L-4:IAC ILS/DME y RWY04R": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-5L-5:IAC RNAV ILS/DME z RWY21": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-5L-6:IAC ILS/DME y RWY21": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-5L-7:IAC RNAV ILS/DME z RWY22L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZPPP-5L-8:IAC ILS/DME y RWY22L": "https://eaip.flyisfp.com/#/eAIP"
+      "ZJSY-SANYA/Phoenix": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
   "ZSCN": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZSCN-NANCHANG/Changbei": "https://eaip.flyisfp.com/#/eAIP"
+      "ZSCN-NANCHANG/Changbei": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSCN-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSCN-2:APDC": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
   "ZSFZ": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
       "ZSFZ-FUZHOU/Changle": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSFZ-0C-4:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSFZ-0C-5:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSFZ-0C-6:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSFZ-0C-7:DATABASE CODING TABLE": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSFZ-5L-7:IAC RNAV ILS/DME z RWY22": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSFZ-5L-8:IAC ILS/DME y RWY22": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZSLY": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZSLY-LINYI/Qiyang": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZSNJ": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZSNJ-NANJING/Lukou": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSNJ-1A:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSNJ-1B:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSNJ-2A:APDC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSNJ-2R01:GMC": "https://eaip.flyisfp.com/#/eAIP"
+      "ZSFZ-0W-1:WAYPOINT LIST": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSFZ-2A-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSFZ-2P-1:APDC": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSFZ-6A-2:AOC RWY04/22": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
   "ZSPD": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
       "ZSPD-SHANGHAI/Pudong": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2A-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2P-1:APDC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2R-1:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2R-2:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2R-3:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2R-4:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2R-5:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2R-6:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-2R-7:GMC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-3P-3:SID RNAV RWY16L/16R/17L/17R(PIKAS)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-3P-12:SID RNAV RWY16L/16R/34L/34R(LAMEN)": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSPD-3V-1:SID RWY16L/16R/17L/17R(PIKAS/ODULO)": "https://eaip.flyisfp.com/#/eAIP"
+      "ZSPD-6A-1:AOC RWY17L/35R": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
-  "ZSSH": {
+  "ZSSS": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZSSH-HUAIAN/Lianshui": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSSH-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSSH-2:APDC": "https://eaip.flyisfp.com/#/eAIP"
+      "ZSSS-SHANGHAI/Hongqiao": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-1:DGS(1)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-2:DGS(1)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-3:DGS(1)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-4:DGS(1)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-5:DGS(2)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-6:DGS(2)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-7:DGS(2)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-8:DGS(3)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-9:DGS(3)": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSSS-0G-10:DGS(3)": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
-  "ZSXZ": {
+  "ZSWX": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZSXZ-XUZHOU/Guanyin": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-2:APDC": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-7A:SID RWY09": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-7B:SID RWY27": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-7C:SID RNP RWY09": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-7D:SID RNP RWY27": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-9A:STAR RWY09": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-9B:STAR RWY27": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-9C:STAR RNP RWY09": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-9D:STAR RNP RWY27": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-10A:IAC ILS/DME y RWY09": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-10B:IAC ILS/DME y RWY27": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-10C:IAC VOR/DME RWY09": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-10D:IAC VOR/DME RWY27": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-20A:IAC RNP ILS/DME z RWY09": "https://eaip.flyisfp.com/#/eAIP",
-      "ZSXZ-20B:IAC RNP ILS/DME z RWY27": "https://eaip.flyisfp.com/#/eAIP"
+      "ZSWX-WUXI/Shuofang": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSWX-10A:IAC ILS/DME y RWY03": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSWX-10B:IAC ILS/DME y RWY21": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSWX-10C:IAC VOR/DME RWY03": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSWX-10D:IAC VOR/DME RWY21": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
-  "ZUTF": {
+  "ZSYA": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
-      "ZUTF-CHENGDU/Tianfu": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZUUU": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZUUU-CHENGDU/Shuangliu": "https://eaip.flyisfp.com/#/eAIP",
-      "ZUUU-3V-3:SID RWY20L": "https://eaip.flyisfp.com/#/eAIP",
-      "ZUUU-3V-4:SID RWY20R": "https://eaip.flyisfp.com/#/eAIP"
-    }
-  },
-  "ZWSH": {
-    "_url": "https://eaip.flyisfp.com/#/eAIP",
-    "karten": {
-      "ZWSH-KASHI/Laining": "https://eaip.flyisfp.com/#/eAIP"
+      "ZSYA-YANGZHOU/Taizhou": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-3P-1:SID RNP RWY17": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-3P-2:SID RNP RWY35": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-3V-1:SID RWY17": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-3V-2:SID RWY35": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-4P-1:STAR RNP RWY17": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-4P-2:STAR RNP RWY35": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-4V-1:STAR RWY17": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-4V-2:STAR RWY35": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-5L-1:IAC RNP ILS/DME z RWY17": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-5L-2:IAC ILS/DME y RWY17": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-5L-3:IAC RNP ILS/DME z RWY35": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-5L-4:IAC ILS/DME y RWY35": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-5V-1:IAC VOR/DME RWY17": "https://eaip.flyisfp.com/#/eAIP",
+      "ZSYA-5V-2:IAC VOR/DME RWY35": "https://eaip.flyisfp.com/#/eAIP"
     }
   },
   "ZWTN": {
     "_url": "https://eaip.flyisfp.com/#/eAIP",
     "karten": {
       "ZWTN-HETIAN/Kungang": "https://eaip.flyisfp.com/#/eAIP"
+    }
+  },
+  "ZWYN": {
+    "_url": "https://eaip.flyisfp.com/#/eAIP",
+    "karten": {
+      "ZWYN-ILI/Yining": "https://eaip.flyisfp.com/#/eAIP",
+      "ZWYN-3V-1:SID RWY06": "https://eaip.flyisfp.com/#/eAIP",
+      "ZWYN-3V-2:SID RWY24": "https://eaip.flyisfp.com/#/eAIP",
+      "ZWYN-4V-1:STAR RWY06": "https://eaip.flyisfp.com/#/eAIP",
+      "ZWYN-4V-2:STAR RWY24": "https://eaip.flyisfp.com/#/eAIP",
+      "ZWYN-5L-1:IAC ILS/DME RWY06": "https://eaip.flyisfp.com/#/eAIP",
+      "ZWYN-5V-1:IAC VOR/DME RWY06": "https://eaip.flyisfp.com/#/eAIP",
+      "ZWYN-5V-2:IAC VOR/DME RWY24": "https://eaip.flyisfp.com/#/eAIP"
+    }
+  },
+  "ZYHB": {
+    "_url": "https://eaip.flyisfp.com/#/eAIP",
+    "karten": {
+      "ZYHB-HARBIN/Taiping": "https://eaip.flyisfp.com/#/eAIP"
+    }
+  },
+  "ZYJM": {
+    "_url": "https://eaip.flyisfp.com/#/eAIP",
+    "karten": {
+      "ZYJM-JIAMUSI/Songjiang": "https://eaip.flyisfp.com/#/eAIP"
+    }
+  },
+  "ZYTL": {
+    "_url": "https://eaip.flyisfp.com/#/eAIP",
+    "karten": {
+      "ZYTL-DALIAN/Zhoushuizi": "https://eaip.flyisfp.com/#/eAIP",
+      "ZYTL-1:ADC": "https://eaip.flyisfp.com/#/eAIP",
+      "ZYTL-2:APDC": "https://eaip.flyisfp.com/#/eAIP"
     }
   }
 }
