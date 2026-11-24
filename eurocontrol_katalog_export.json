@@ -26,7 +26,7 @@
   "Flight information region (FIR/UIR) charts": {
     "_url": "https://www.eurocontrol.int/publication/flight-information-region-firuir-charts",
     "karten": {
-      "Auf EUROCONTROL öffnen": "https://www.eurocontrol.int/publication/flight-information-region-firuir-charts"
+      "Download": "https://www.eurocontrol.int/sites/default/files/2026-07/eurocontrol-firuir-lower-airspace-europe-2026.pdf"
     }
   },
   "Free route airspace (FRA) implementation projection charts": {
