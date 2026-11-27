@@ -66,6 +66,12 @@
       "RDS": "https://www.airservicesaustralia.com/aip/current/ersa/RDS_YAPH_26NOV2026.pdf"
     }
   },
+  "YAVS": {
+    "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YAVS_26NOV2026.pdf",
+    "karten": {
+      "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YAVS_26NOV2026.pdf"
+    }
+  },
   "YAMT": {
     "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YAMT_26NOV2026.pdf",
     "karten": {
@@ -2676,6 +2682,12 @@
       "RDS": "https://www.airservicesaustralia.com/aip/current/ersa/RDS_YMHU_26NOV2026.pdf"
     }
   },
+  "YMCF": {
+    "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YMCF_26NOV2026.pdf",
+    "karten": {
+      "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YMCF_26NOV2026.pdf"
+    }
+  },
   "YMEK": {
     "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YMEK_26NOV2026.pdf",
     "karten": {
@@ -2833,6 +2845,12 @@
     "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YMOD_26NOV2026.pdf",
     "karten": {
       "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YMOD_26NOV2026.pdf"
+    }
+  },
+  "YOAR": {
+    "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YOAR_26NOV2026.pdf",
+    "karten": {
+      "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YOAR_26NOV2026.pdf"
     }
   },
   "YMNK": {
@@ -3287,12 +3305,6 @@
       "RDS": "https://www.airservicesaustralia.com/aip/current/ersa/RDS_YBOK_26NOV2026.pdf"
     }
   },
-  "YOAY": {
-    "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YOAY_26NOV2026.pdf",
-    "karten": {
-      "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YOAY_26NOV2026.pdf"
-    }
-  },
   "YOCA": {
     "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YOCA_26NOV2026.pdf",
     "karten": {
@@ -3440,8 +3452,7 @@
   "YPBH": {
     "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YPBH_26NOV2026.pdf",
     "karten": {
-      "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YPBH_26NOV2026.pdf",
-      "RDS": "https://www.airservicesaustralia.com/aip/current/ersa/RDS_YPBH_26NOV2026.pdf"
+      "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YPBH_26NOV2026.pdf"
     }
   },
   "YPET": {
@@ -4376,6 +4387,12 @@
     "karten": {
       "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YTMU_26NOV2026.pdf",
       "RDS": "https://www.airservicesaustralia.com/aip/current/ersa/RDS_YTMU_26NOV2026.pdf"
+    }
+  },
+  "YTUN": {
+    "_url": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YTUN_26NOV2026.pdf",
+    "karten": {
+      "FAC": "https://www.airservicesaustralia.com/aip/current/ersa/FAC_YTUN_26NOV2026.pdf"
     }
   },
   "YTPK": {
